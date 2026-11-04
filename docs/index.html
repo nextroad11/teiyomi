@@ -172,7 +172,11 @@ const VENUES={1:'桐生',2:'戸田',3:'江戸川',4:'平和島',5:'多摩川',6:
 let MODEL={weights:{skill:0.9,local:0.3,motor:0.45,boat:0.12,st:0.35,ex:0.5,fPen:0.3,kWin:0.75,kPlace:0.6},
   baseDefault:[0.55,0.14,0.12,0.11,0.06,0.02],
   baseVenue:{2:[0.45,0.17,0.15,0.13,0.07,0.03],3:[0.46,0.17,0.14,0.13,0.07,0.03],4:[0.47,0.17,0.14,0.12,0.07,0.03],12:[0.57,0.14,0.11,0.10,0.06,0.02],18:[0.62,0.13,0.10,0.08,0.05,0.02],24:[0.64,0.12,0.10,0.08,0.04,0.02]},
-  place:[0.20,0.21,0.19,0.18,0.13,0.09]};
+  place:[0.20,0.21,0.19,0.18,0.13,0.09],
+  // 人気の見立て（学習前の初期値。学習後は実際の払戻から推定した値になる）
+  market:{inner:0.15,kNat:0.99,kMotor:0,kEx:0,cls:{A1:0.225,A2:0.09,B1:-0.18,B2:-0.45},kPlace:0.77,c0:0},
+  ana:{minRatio:1.25,minOdds:20,minP:0.007,max:5}};
+let REPORT=null;
 const PAYBACK=0.75;
 
 /* ============ 予想エンジン ============ */
@@ -202,11 +206,12 @@ function analyze(race,exOverride){
   const boats=B.map((b,i)=>{
     const course=clamp(num(ex[b.waku].course)||b.waku,1,6);
     const nat=num(b.natWin)??5.0, loc=num(b.locWin), locEff=(loc&&loc>0)?loc:nat;
-    const m2=num(b.motor2)??33, b2=num(b.boat2)??33, st=num(b.st)??0.17, f=num(b.f)||0;
+    const m2=num(b.motor2)>0?num(b.motor2):33, b2=num(b.boat2)>0?num(b.boat2):33, st=num(b.st)??0.17, f=num(b.f)||0;
     const parts={skill:w.skill*(nat-5.5)/1.2, local:w.local*(locEff-nat)/1.2, motor:w.motor*(m2-35)/8, boat:w.boat*(b2-33)/6,
       st:-w.st*clamp((st-0.16)/0.025,-2.5,2.5), ex:(exMean!=null&&exT[i]!=null)?-w.ex*clamp((exT[i]-exMean)/0.07,-2.5,2.5):0};
     const s=sum(Object.values(parts)), fPen=f>0?-w.fPen:0;
-    const cls={A1:0.25,A2:0.1,B1:-0.2,B2:-0.5}[b.cls]??0, sm=1.1*(nat-5.5)/1.2+cls;
+    const mk=MODEL.market, exF=(exMean!=null&&exT[i]!=null)?-clamp((exT[i]-exMean)/0.07,-2.5,2.5):0;
+    const sm=mk.kNat*(nat-5.5)/1.2+mk.kMotor*(m2-35)/8+mk.kEx*exF+(mk.cls[b.cls]??0);
     const tags=[];
     if(m2Mean!=null&&m2>=m2Mean+5)tags.push(['plus','モーター上位']);
     if(m2Mean!=null&&m2<=m2Mean-5)tags.push(['minus','モーター劣勢']);
@@ -218,19 +223,19 @@ function analyze(race,exOverride){
     if(course!==b.waku)tags.push(['',course+'コース進入']);
     return {...b,course,parts,s,exTime:exT[i],tilt:num(ex[b.waku].tilt),tags,
       winW:Math.exp(Math.log(base[course-1])+w.kWin*(s+fPen)), plW:Math.exp(Math.log(PLACE[course-1])+w.kPlace*s),
-      mWinW:Math.exp(Math.log(base[course-1])+(course===1?0.15:0)+0.9*sm), mPlW:Math.exp(Math.log(PLACE[course-1])+0.7*sm)};
+      mWinW:Math.exp(Math.log(base[course-1])+(course===1?mk.inner:0)+sm), mPlW:Math.exp(Math.log(PLACE[course-1])+mk.kPlace*sm)};
   });
-  const ai=trifecta(boats,'winW','plW'), mk=trifecta(boats,'mWinW','mPlW');
+  const ai=trifecta(boats,'winW','plW'), mkP=trifecta(boats,'mWinW','mPlW');
   const W=sum(boats.map(b=>b.winW));
   boats.forEach(b=>{b.pWin=b.winW/W;});
-  const combos=Object.keys(ai).map(k=>{const pAi=ai[k],pMk=mk[k],odds=Math.max(1,Math.round(PAYBACK/pMk*10)/10);
+  const oddsK=PAYBACK*Math.exp(MODEL.market.c0||0);
+  const combos=Object.keys(ai).map(k=>{const pAi=ai[k],pMk=mkP[k],odds=Math.max(1,Math.round(oddsK/pMk*10)/10);
     return {k,pAi,pMk,odds,ev:pAi*odds,ratio:pAi/pMk};}).sort((x,y)=>y.pAi-x.pAi);
   const honsen=[];let cum=0;
   for(const c of combos){if(honsen.length>=6||(honsen.length>=3&&cum>=0.35))break;honsen.push(c);cum+=c.pAi;}
   const hset=new Set(honsen.map(c=>c.k));
-  const pool=combos.filter(c=>!hset.has(c.k)&&c.pAi>=0.007&&c.odds>=20);
-  let ana=pool.filter(c=>c.ratio>=1.25).sort((x,y)=>y.ev-x.ev).slice(0,5);
-  if(ana.length<3)ana=pool.filter(c=>c.ratio>=1.1).sort((x,y)=>y.ev-x.ev).slice(0,5);
+  const R=MODEL.ana;
+  const ana=combos.filter(c=>!hset.has(c.k)&&c.pAi>=R.minP&&c.odds>=R.minOdds&&c.ratio>=R.minRatio).sort((x,y)=>y.ev-x.ev).slice(0,R.max);
   const top=boats.slice().sort((a,b)=>b.pWin-a.pWin), topWin=top[0].pWin;
   return {boats,combos,honsen,ana,cover:cum,top,topWin,level:topWin>=0.6?'kata':topWin>=0.42?'futsu':'are',hasEx:exMean!=null};
 }
@@ -354,7 +359,7 @@ function renderYoso(){
         <p class="sub">${a.honsen.length}点で的中確率 ${pct(a.cover)}</p>
         <ul class="combo-list">${a.honsen.map(c=>rowC(c,false)).join('')}</ul></div>
       <div class="panel ana"><h3><span class="mark">穴</span>人気より強いと見た買い目</h3>
-        <p class="sub">推定20倍以上で、AI確率が人気想定を上回るもの</p>
+        <p class="sub">推定${MODEL.ana.minOdds}倍以上で、AI確率が人気想定の${MODEL.ana.minRatio}倍以上のもの</p>
         ${a.ana.length?`<ul class="combo-list">${a.ana.map(c=>rowC(c,true)).join('')}</ul>
         <p class="foot">${a.ana.length}点の的中確率 ${pct(sum(a.ana.map(c=>c.pAi)))}・1点あたり期待値 ${(anaEV*100).toFixed(0)}%</p>`
         :`<p class="sub">人気とのズレが小さく、狙える穴が見つかりません。見送り候補です。</p>`}</div>
@@ -440,14 +445,28 @@ function renderCalc(){
 }
 
 /* ============ 成績（今見ている日付のレース） ============ */
+function learnPanel(){
+  if(!REPORT)return `<div class="panel"><h3>AIの学習状況</h3><p class="sub">過去データでの学習はまだです。学習が終わるとここに成績が出ます。</p></div>`;
+  const t=REPORT.test, h=t.honsen, a=t.ana, d=s=>s?`${s.slice(0,4)}/${+s.slice(4,6)}/${+s.slice(6,8)}`:'';
+  return `<div class="panel"><h3>AIの学習状況</h3>
+    <p class="sub">${d(REPORT.period.from)}〜${d(REPORT.period.to)}の${REPORT.races.all.toLocaleString()}レースで学習。下の成績は、学習に使っていない${d(REPORT.period.testFrom)}以降の${REPORT.races.test.toLocaleString()}レースで試した結果です（1点100円・実際の払戻）。</p>
+    <div class="stats">
+      <div class="stat"><span>1着の的中率</span><b>${pct(t.winTopHit)}</b></div>
+      <div class="stat"><span>本線の的中率</span><b>${pct(h.hitRate)}</b></div>
+      <div class="stat"><span>本線の回収率</span><b>${Math.round(h.roi*100)}%</b></div>
+      <div class="stat"><span>穴の的中率</span><b>${pct(a.hitRate)}</b></div>
+      <div class="stat"><span>穴の回収率</span><b>${Math.round(a.roi*100)}%</b></div>
+    </div>
+    <p class="hint">学習日 ${esc((REPORT.trainedAt||'').slice(0,10))}。毎週月曜に最新のデータで学習し直します。</p></div>`;
+}
 function renderRec(){
   const el=$('#v-rec');
   const done=races.filter(r=>{const x=resultOf(r);return x&&x.order&&A(r);});
-  if(!done.length){el.innerHTML=`<div class="empty"><b>${fmtDate(dateSel)}はまだ結果の入ったレースがありません。</b><br>結果はレース後に自動で入ります。AI本線・AI穴・ChatGPT・一撃くん・自分の回収率をここで比べます。</div>`;return;}
+  if(!done.length){el.innerHTML=learnPanel()+`<div class="empty" style="margin-top:16px"><b>${fmtDate(dateSel)}はまだ結果の入ったレースがありません。</b><br>結果はレース後に自動で入ります。AI本線・AI穴・ChatGPT・一撃くん・自分の回収率をここで比べます。</div>`;return;}
   const aiH=r=>history[r.id]?.h||A(r).honsen.map(c=>c.k), aiA=r=>history[r.id]?.a||A(r).ana.map(c=>c.k);
   const srcs=[['AI本線',aiH],['AI穴',aiA],['ChatGPT',r=>parsePicks(picks[r.id]?.chatgpt)],['一撃くん',r=>parsePicks(picks[r.id]?.ikkun)],['自分',r=>parsePicks(picks[r.id]?.mine)]];
   const agg=srcs.map(([name,f])=>{let n=0,pts=0,ret=0,hits=0;done.forEach(r=>{const ks=f(r),x=resultOf(r);if(!ks.length)return;n++;pts+=ks.length;if(ks.includes(x.order)){hits++;ret+=x.payout||0;}});return {name,n,pts,ret,hits};});
-  el.innerHTML=`<div style="display:grid;gap:16px">
+  el.innerHTML=`<div style="display:grid;gap:16px">${learnPanel()}
     <div><p class="card-title">${fmtDate(dateSel)}の回収率（1点100円・${done.length}レース）</p><div class="tablebox"><table class="rec">
       <thead><tr><th>予想</th><th>レース数</th><th>的中</th><th>的中率</th><th>投資</th><th>払戻</th><th>回収率</th></tr></thead>
       <tbody>${agg.map(g=>`<tr><td class="src">${g.name}</td><td>${g.n}</td><td>${g.hits}</td><td>${g.n?pct(g.hits/g.n):'-'}</td><td>${yen(g.pts*100)}</td><td>${yen(g.ret)}</td><td class="${g.pts&&g.ret>=g.pts*100?'hit':''}">${g.pts?Math.round(g.ret/(g.pts*100)*100)+'%':'-'}</td></tr>`).join('')}</tbody></table></div></div>
@@ -464,7 +483,10 @@ $('#venue').addEventListener('change',e=>{jcdSel=+e.target.value;LS.set('jcd',jc
 $('#chips').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;raceId=b.dataset.id;renderChips();renderView();});
 document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>{view=b.dataset.view;LS.set('view',view);renderView();}));
 (async()=>{
-  try{const m=await fetch('model.json',{cache:'no-store'}).then(r=>r.ok?r.json():null);if(m)MODEL={...MODEL,...m,weights:{...MODEL.weights,...(m.weights||{})}};}catch(_){}
+  let m=null;
+  try{m=await fetchJSON('model.json');}catch(_){try{m=await fetch('model.json',{cache:'no-store'}).then(r=>r.ok?r.json():null);}catch(_){}}
+  if(m)MODEL={...MODEL,...m,weights:{...MODEL.weights,...(m.weights||{})},market:{...MODEL.market,...(m.market||{}),cls:{...MODEL.market.cls,...((m.market||{}).cls||{})}},ana:{...MODEL.ana,...(m.ana||{})}};
+  try{REPORT=await fetchJSON('report.json');}catch(_){}
   await loadIndex();await loadDay();
   setInterval(async()=>{if(document.hidden||/INPUT|TEXTAREA/.test(document.activeElement?.tagName||''))return;const keep=raceId;await loadDay();raceId=keep;renderChips();},60000);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)loadDay();});
