@@ -33,7 +33,7 @@ def nfkc(s: str) -> str:
 def download_text(kind: str, day: dt.date) -> str | None:
     url = f"{BASE}/{kind}/{day:%Y%m}/{kind.lower()}{day:%y%m%d}.lzh"
     try:
-        r = requests.get(url, headers=HEADERS, timeout=30)
+        r = requests.get(url, headers=HEADERS, timeout=(10, 30))
     except requests.RequestException as e:
         print(f"  {url}: {e}")
         return None
@@ -157,6 +157,7 @@ def main():
     ap.add_argument("--data", default="data")
     ap.add_argument("--days", type=int, default=400)
     ap.add_argument("--max-new", type=int, default=420, help="1回の実行で新しく取る日数の上限")
+    ap.add_argument("--minutes", type=float, default=45, help="この時間を過ぎたら区切って保存する")
     ap.add_argument("--parse-b")
     ap.add_argument("--parse-k")
     a = ap.parse_args()
@@ -172,11 +173,15 @@ def main():
     hist = Path(a.data) / "history"
     hist.mkdir(parents=True, exist_ok=True)
     today = dt.date.today()
-    todo = [today - dt.timedelta(days=i) for i in range(a.days, 0, -1)]
+    # 新しい日から順に取る（途中で区切っても直近のデータが先にそろう）
+    todo = [today - dt.timedelta(days=i) for i in range(1, a.days + 1)]
     todo = [d for d in todo if not (hist / f"{d:%Y%m%d}.json").exists()][: a.max_new]
-    print(f"未取得 {len(todo)}日")
-    got = 0
+    print(f"未取得 {len(todo)}日", flush=True)
+    got, t0 = 0, time.time()
     for d in todo:
+        if time.time() - t0 > a.minutes * 60:
+            print("時間切れ。続きは次回", flush=True)
+            break
         btxt = download_text("B", d)
         time.sleep(1)
         ktxt = download_text("K", d) if btxt else None
@@ -191,8 +196,14 @@ def main():
             json.dumps({"races": races}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
         got += 1
         if got % 20 == 0:
-            print(f"  {d} まで {got}日分")
-    print(f"取得 {got}日")
+            print(f"  {d} まで {got}日分 ({time.time() - t0:.0f}秒)", flush=True)
+    print(f"取得 {got}日", flush=True)
+    rest = len([1 for i in range(1, a.days + 1)
+                if not (hist / f"{today - dt.timedelta(days=i):%Y%m%d}.json").exists()])
+    (hist / "_progress.json").write_text(json.dumps(
+        {"updated": f"{dt.datetime.now():%Y-%m-%d %H:%M}", "new": got, "remaining": rest,
+         "secPerDay": round((time.time() - t0) / max(got, 1), 1)}), encoding="utf-8")
+    Path("/tmp/history_new").write_text(str(got))
 
 
 if __name__ == "__main__":

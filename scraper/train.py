@@ -30,7 +30,7 @@ CLS = ["A1", "A2", "B1", "B2"]
 
 # ---------------------------------------------------------------- データの準備
 def load(root: Path):
-    files = sorted((root / "history").glob("*.json"))
+    files = sorted(f for f in (root / "history").glob("*.json") if not f.name.startswith("_"))
     races = []
     for f in files:
         races += json.loads(f.read_text(encoding="utf-8")).get("races", [])
