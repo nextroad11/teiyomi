@@ -50,8 +50,20 @@ def download_text(kind: str, day: dt.date) -> str | None:
 
 # ---------------------------------------------------------------- 番組表（出走前の情報）
 B_ROW = re.compile(r"^([1-6]) (\d{4})(.{4})(\d{2})(.{2})(\d{2})([AB][12])")
-# 小数は必ず2桁。100.00 のように桁が増えると前の数字とくっつくので、空白ではなく形で切る
-B_NUM = re.compile(r"\d+\.\d{2}|\d+")
+# 級別の後ろは固定幅（全国勝率5 全国2連6 当地勝率5 当地2連6 モーター3 2連6 ボート3 2連6）。
+# 100.00 などで数字同士がくっつくので、空白ではなく桁位置で切る
+B_WIDTHS = (5, 6, 5, 6, 3, 6, 3, 6)
+
+
+def fixed_fields(rest: str):
+    out, i = [], 0
+    for w in B_WIDTHS:
+        f = rest[i:i + w].strip()
+        if not re.fullmatch(r"\d+(\.\d+)?", f):
+            return None
+        out.append(f)
+        i += w
+    return out
 B_RACE = re.compile(r"^\s*(\d{1,2})R\s+(\S+).*?H(\d{3,4})m(?:.*?締切予定(\d{1,2}:\d{2}))?")
 
 
@@ -73,8 +85,8 @@ def parse_b(text: str) -> dict:
             continue
         m = B_ROW.match(raw)
         if m and cur is not None:
-            t = B_NUM.findall(raw[m.end():])
-            if len(t) < 8:
+            t = fixed_fields(raw[m.end():])
+            if t is None:
                 continue
             g = m.groups() + tuple(t[:8])
             cur["boats"][int(g[0])] = {
