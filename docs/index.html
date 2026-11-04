@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>艇読みAI</title>
+<meta name="theme-color" content="#ffffff">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Dela+Gothic+One&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: 出走表を中心にした一列の作業画面。上に日付・場・レース選択、下に本線/穴、出走表、記録 */
+:root{
+  --bg:#eef3f5; --surface:#ffffff; --sunk:#e3ebef; --ink:#0d1f2b; --muted:#566b77; --line:#d2dde3;
+  --accent:#0b5cad; --accent-soft:#dbe9f7; --ana:#c2410c; --ana-soft:#fbe6da;
+  --good:#15803d; --good-soft:#dcf1e3;
+  --b1:#ffffff; --b1f:#111; --b2:#1b1b1b; --b2f:#fff; --b3:#d62839; --b3f:#fff;
+  --b4:#1f56d6; --b4f:#fff; --b5:#f2c40f; --b5f:#111; --b6:#138a43; --b6f:#fff;
+  --f-display:"Dela Gothic One","Hiragino Kaku Gothic StdN","Yu Gothic",sans-serif;
+  --f-body:"BIZ UDPGothic","Hiragino Sans","Yu Gothic UI","Meiryo",sans-serif;
+  --f-num:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#0a141b; --surface:#111e27; --sunk:#0d1820; --ink:#e4edf2; --muted:#8fa3ae; --line:#233440;
+  --accent:#62a8f2; --accent-soft:#132b42; --ana:#f39257; --ana-soft:#3a2216;
+  --good:#4ccb7f; --good-soft:#12301f; color-scheme:dark }}
+*{box-sizing:border-box}
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6}
+img{max-width:100%}
+[hidden]{display:none!important}
+.wrap{max-width:980px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-block:10px}
+.brand{font-family:var(--f-display);font-size:20px;letter-spacing:.02em;margin:0;display:flex;align-items:baseline;gap:8px;font-weight:400}
+.brand small{font-family:var(--f-body);font-size:11px;color:var(--muted);letter-spacing:.08em}
+.tabs{display:flex;gap:4px;margin-left:auto;background:var(--sunk);padding:3px;border-radius:9px}
+.tabs button{border:0;background:transparent;color:var(--muted);font:700 13px var(--f-body);padding:7px 12px;border-radius:7px;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgb(0 0 0 / .12)}
+button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+main.wrap{padding-block:16px 48px;display:grid;gap:18px}
+.meetbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.meetbar select{font:700 15px var(--f-body);padding:7px 10px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);max-width:100%}
+.meetbar .note{color:var(--muted);font-size:12px}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
+.chip{flex:0 0 auto;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:6px 10px;cursor:pointer;text-align:left;font-family:var(--f-body);min-width:74px}
+.chip b{font-family:var(--f-num);font-size:15px;display:block;line-height:1.2}
+.chip span{font-size:11px;color:var(--muted)}
+.chip[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.chip .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;vertical-align:1px}
+.racehead{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline}
+.racehead h2{font-family:var(--f-display);font-size:26px;margin:0;font-weight:400;text-wrap:balance}
+.racehead .meta{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px}
+.pill.kata{background:var(--good-soft);color:var(--good)}
+.pill.futsu{background:var(--accent-soft);color:var(--accent)}
+.pill.are{background:var(--ana-soft);color:var(--ana)}
+.pill.info{background:var(--sunk);color:var(--ink);font-weight:400}
+.picks{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;min-width:0}
+.panel h3{margin:0 0 2px;font-size:15px;display:flex;align-items:center;gap:8px}
+.panel h3 .mark{font-family:var(--f-display);font-weight:400;font-size:13px;padding:2px 8px;border-radius:6px;color:var(--surface)}
+.honsen h3 .mark{background:var(--accent)} .ana h3 .mark{background:var(--ana)}
+.panel .sub{color:var(--muted);font-size:12px;margin:0 0 10px}
+.combo-list{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.combo{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;font-variant-numeric:tabular-nums}
+.combo .nums,.cg .nums{display:flex;gap:3px;align-items:center}
+.combo .nums i,.cg .nums i{font-style:normal;color:var(--muted);font-size:11px}
+.combo .bar{height:6px;border-radius:3px;background:var(--sunk);overflow:hidden}
+.combo .bar span{display:block;height:100%;background:var(--accent)}
+.ana .combo .bar span{background:var(--ana)}
+.combo .val{font-family:var(--f-num);font-size:13px;text-align:right;white-space:nowrap}
+.combo .val small{color:var(--muted);font-size:11px;margin-left:6px}
+.combo.hit .nums{outline:2px solid var(--good);outline-offset:2px;border-radius:4px}
+.panel .foot{margin-top:10px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.bn{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:5px;font:600 13px var(--f-num);border:1px solid var(--line)}
+.bn[data-n="1"]{background:var(--b1);color:var(--b1f)} .bn[data-n="2"]{background:var(--b2);color:var(--b2f)}
+.bn[data-n="3"]{background:var(--b3);color:var(--b3f);border-color:transparent} .bn[data-n="4"]{background:var(--b4);color:var(--b4f);border-color:transparent}
+.bn[data-n="5"]{background:var(--b5);color:var(--b5f);border-color:transparent} .bn[data-n="6"]{background:var(--b6);color:var(--b6f);border-color:transparent}
+.bn.lg{width:30px;height:30px;font-size:16px;border-radius:7px}
+.comment{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:grid;gap:10px}
+.comment p{margin:0;max-width:68ch}
+.btn{font:700 13px var(--f-body);padding:8px 14px;border-radius:8px;border:1px solid var(--ink);background:var(--ink);color:var(--surface);cursor:pointer;justify-self:start}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn:disabled{opacity:.5;cursor:default}
+.card-title{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.06em;margin:0 0 8px}
+.tablebox{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+table.card{border-collapse:collapse;width:100%;min-width:700px;font-variant-numeric:tabular-nums}
+.card th,.card td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+.card th{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.04em;background:var(--sunk)}
+.card tr:last-child td{border-bottom:0}
+.card td.n{font-family:var(--f-num);font-size:13px;text-align:right}
+.card .who b{display:block;font-size:14px}
+.card .who span{font-size:11px;color:var(--muted)}
+.card input{width:64px;font:13px var(--f-num);padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);text-align:right}
+.card input.auto{border-color:var(--accent)}
+.winbar{display:flex;align-items:center;gap:8px;min-width:120px}
+.winbar .track{flex:1;height:8px;background:var(--sunk);border-radius:4px;overflow:hidden}
+.winbar .track span{display:block;height:100%;background:var(--accent)}
+.winbar b{font:600 13px var(--f-num);width:44px;text-align:right}
+.tags{display:flex;flex-wrap:wrap;gap:4px}
+.tag{font-size:11px;padding:1px 7px;border-radius:5px;background:var(--sunk);color:var(--ink);white-space:nowrap}
+.tag.plus{background:var(--good-soft);color:var(--good)}
+.tag.minus{background:var(--ana-soft);color:var(--ana)}
+.hint{font-size:12px;color:var(--muted);margin:6px 2px 0}
+.record{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.field{display:grid;gap:4px;min-width:0}
+.field label{font-size:12px;font-weight:700;color:var(--muted)}
+.field input,.field textarea{font:14px var(--f-num);padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:100%}
+.field textarea{min-height:58px;resize:vertical}
+.rowact{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
+.status{font-size:12px;color:var(--muted)}
+.picker{display:grid;gap:10px}
+.prow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.prow .lab{width:38px;font-weight:700;font-size:13px}
+.tog{width:38px;height:38px;border-radius:8px;border:1px solid var(--line);cursor:pointer;font:600 16px var(--f-num);opacity:.5}
+.tog[aria-pressed="true"]{opacity:1;outline:2px solid var(--ink);outline-offset:1px}
+.tog[data-n="1"]{background:var(--b1);color:var(--b1f)} .tog[data-n="2"]{background:var(--b2);color:var(--b2f)}
+.tog[data-n="3"]{background:var(--b3);color:var(--b3f)} .tog[data-n="4"]{background:var(--b4);color:var(--b4f)}
+.tog[data-n="5"]{background:var(--b5);color:var(--b5f)} .tog[data-n="6"]{background:var(--b6);color:var(--b6f)}
+.seg{display:inline-flex;background:var(--sunk);padding:3px;border-radius:8px;gap:3px}
+.seg button{border:0;background:transparent;padding:6px 12px;border-radius:6px;font:700 13px var(--f-body);color:var(--muted);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.stat span{font-size:11px;color:var(--muted);display:block}
+.stat b{font:600 20px var(--f-num)}
+.combo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+.cg{display:flex;justify-content:space-between;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:5px 8px;font:12px var(--f-num)}
+table.rec{border-collapse:collapse;width:100%;min-width:560px;font-variant-numeric:tabular-nums}
+.rec th,.rec td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:right}
+.rec th:first-child,.rec td:first-child{text-align:left}
+.rec th{font-size:11px;color:var(--muted);background:var(--sunk)}
+.rec td{font-family:var(--f-num);font-size:13px}
+.rec td.src{font-family:var(--f-body);font-weight:700}
+.hit{color:var(--good);font-weight:700}
+.empty{background:var(--surface);border:1px dashed var(--line);border-radius:12px;padding:22px;color:var(--muted);max-width:68ch}
+.empty b{color:var(--ink)}
+.disclaim{font-size:11px;color:var(--muted);max-width:72ch}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:8px 14px;border-radius:8px;font-size:13px;z-index:20}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <h1 class="brand">艇読みAI <small>BOATRACE ANALYZER</small></h1>
+  <nav class="tabs" role="tablist">
+    <button role="tab" id="tab-yoso" aria-selected="true" data-view="yoso">予想</button>
+    <button role="tab" id="tab-calc" aria-selected="false" data-view="calc">買い目計算</button>
+    <button role="tab" id="tab-rec" aria-selected="false" data-view="rec">成績</button>
+  </nav>
+</div></header>
+
+<main class="wrap">
+  <div class="meetbar">
+    <select id="date" aria-label="日付を選ぶ"></select>
+    <select id="venue" aria-label="レース場を選ぶ"></select>
+    <span class="note" id="loadnote">データを読み込み中…</span>
+  </div>
+  <div class="chips" id="chips" role="group" aria-label="レースを選ぶ"></div>
+  <section id="v-yoso"></section>
+  <section id="v-calc" hidden></section>
+  <section id="v-rec" hidden></section>
+  <p class="disclaim">確率は公式の出走表・直前情報から計算した推定値で、的中を保証するものではありません。推定オッズは人気を予想したもので、実際のオッズとは異なります。舟券は20歳から、無理のない金額で。データ出典：BOAT RACE オフィシャルウェブサイト。</p>
+</main>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+/* ============ 設定 ============ */
+const DATA_BASE='https://raw.githubusercontent.com/nextroad11/teiyomi/data/';
+const VENUES={1:'桐生',2:'戸田',3:'江戸川',4:'平和島',5:'多摩川',6:'浜名湖',7:'蒲郡',8:'常滑',9:'津',10:'三国',11:'びわこ',12:'住之江',13:'尼崎',14:'鳴門',15:'丸亀',16:'児島',17:'宮島',18:'徳山',19:'下関',20:'若松',21:'芦屋',22:'福岡',23:'唐津',24:'大村'};
+// 予想エンジンの重み（model.json があればそちらで上書き）
+let MODEL={weights:{skill:0.9,local:0.3,motor:0.45,boat:0.12,st:0.35,ex:0.5,fPen:0.3,kWin:0.75,kPlace:0.6},
+  baseDefault:[0.55,0.14,0.12,0.11,0.06,0.02],
+  baseVenue:{2:[0.45,0.17,0.15,0.13,0.07,0.03],3:[0.46,0.17,0.14,0.13,0.07,0.03],4:[0.47,0.17,0.14,0.12,0.07,0.03],12:[0.57,0.14,0.11,0.10,0.06,0.02],18:[0.62,0.13,0.10,0.08,0.05,0.02],24:[0.64,0.12,0.10,0.08,0.04,0.02]},
+  place:[0.20,0.21,0.19,0.18,0.13,0.09]};
+const PAYBACK=0.75;
+
+/* ============ 予想エンジン ============ */
+const num=v=>(v===null||v===undefined||v===''||isNaN(+v))?null:+v;
+const sum=a=>a.reduce((x,y)=>x+y,0);
+const avg=a=>a.length?sum(a)/a.length:null;
+const clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
+
+function trifecta(boats,wk,pk){
+  const W=sum(boats.map(b=>b[wk])),P=sum(boats.map(b=>b[pk])),out={};
+  for(const a of boats)for(const b of boats){if(b===a)continue;for(const c of boats){if(c===a||c===b)continue;
+    out[a.waku+'-'+b.waku+'-'+c.waku]=(a[wk]/W)*(b[pk]/(P-a[pk]))*(c[pk]/(P-a[pk]-b[pk]));}}
+  return out;
+}
+
+function analyze(race,exOverride){
+  const B=(race.boats||[]).slice().sort((a,b)=>a.waku-b.waku);
+  if(B.length!==6) return null;
+  const w=MODEL.weights, PLACE=MODEL.place;
+  const src=(race.before&&race.before.boats)||{};
+  const ex={};for(const k of ['1','2','3','4','5','6'])ex[k]={...(src[k]||{}),...((exOverride&&exOverride[k]!=null)?{exTime:exOverride[k]}:{})};
+  const exT=B.map(b=>num(ex[b.waku].exTime));
+  const exV=exT.filter(v=>v!=null);
+  const exMean=exV.length>=4?avg(exV):null, exBest=exV.length>=4?Math.min(...exV):null;
+  const base=MODEL.baseVenue[race.jcd]||MODEL.baseDefault;
+  const m2Mean=avg(B.map(b=>num(b.motor2)).filter(v=>v!=null));
+  const boats=B.map((b,i)=>{
+    const course=clamp(num(ex[b.waku].course)||b.waku,1,6);
+    const nat=num(b.natWin)??5.0, loc=num(b.locWin), locEff=(loc&&loc>0)?loc:nat;
+    const m2=num(b.motor2)??33, b2=num(b.boat2)??33, st=num(b.st)??0.17, f=num(b.f)||0;
+    const parts={skill:w.skill*(nat-5.5)/1.2, local:w.local*(locEff-nat)/1.2, motor:w.motor*(m2-35)/8, boat:w.boat*(b2-33)/6,
+      st:-w.st*clamp((st-0.16)/0.025,-2.5,2.5), ex:(exMean!=null&&exT[i]!=null)?-w.ex*clamp((exT[i]-exMean)/0.07,-2.5,2.5):0};
+    const s=sum(Object.values(parts)), fPen=f>0?-w.fPen:0;
+    const cls={A1:0.25,A2:0.1,B1:-0.2,B2:-0.5}[b.cls]??0, sm=1.1*(nat-5.5)/1.2+cls;
+    const tags=[];
+    if(m2Mean!=null&&m2>=m2Mean+5)tags.push(['plus','モーター上位']);
+    if(m2Mean!=null&&m2<=m2Mean-5)tags.push(['minus','モーター劣勢']);
+    if(loc&&loc>=nat+0.4)tags.push(['plus','当地巧者']);
+    if(loc&&loc>0&&loc<=nat-0.8)tags.push(['minus','当地苦戦']);
+    if(st<=0.13)tags.push(['plus','ST速い']); if(st>=0.18)tags.push(['minus','ST遅め']);
+    if(f>0)tags.push(['minus','F'+f+'持ち']);
+    if(exBest!=null&&exT[i]===exBest)tags.push(['plus','展示1位']);
+    if(course!==b.waku)tags.push(['',course+'コース進入']);
+    return {...b,course,parts,s,exTime:exT[i],tilt:num(ex[b.waku].tilt),tags,
+      winW:Math.exp(Math.log(base[course-1])+w.kWin*(s+fPen)), plW:Math.exp(Math.log(PLACE[course-1])+w.kPlace*s),
+      mWinW:Math.exp(Math.log(base[course-1])+(course===1?0.15:0)+0.9*sm), mPlW:Math.exp(Math.log(PLACE[course-1])+0.7*sm)};
+  });
+  const ai=trifecta(boats,'winW','plW'), mk=trifecta(boats,'mWinW','mPlW');
+  const W=sum(boats.map(b=>b.winW));
+  boats.forEach(b=>{b.pWin=b.winW/W;});
+  const combos=Object.keys(ai).map(k=>{const pAi=ai[k],pMk=mk[k],odds=Math.max(1,Math.round(PAYBACK/pMk*10)/10);
+    return {k,pAi,pMk,odds,ev:pAi*odds,ratio:pAi/pMk};}).sort((x,y)=>y.pAi-x.pAi);
+  const honsen=[];let cum=0;
+  for(const c of combos){if(honsen.length>=6||(honsen.length>=3&&cum>=0.35))break;honsen.push(c);cum+=c.pAi;}
+  const hset=new Set(honsen.map(c=>c.k));
+  const pool=combos.filter(c=>!hset.has(c.k)&&c.pAi>=0.007&&c.odds>=20);
+  let ana=pool.filter(c=>c.ratio>=1.25).sort((x,y)=>y.ev-x.ev).slice(0,5);
+  if(ana.length<3)ana=pool.filter(c=>c.ratio>=1.1).sort((x,y)=>y.ev-x.ev).slice(0,5);
+  const top=boats.slice().sort((a,b)=>b.pWin-a.pWin), topWin=top[0].pWin;
+  return {boats,combos,honsen,ana,cover:cum,top,topWin,level:topWin>=0.6?'kata':topWin>=0.42?'futsu':'are',hasEx:exMean!=null};
+}
+const LEVEL={kata:['堅い','var(--good)'],futsu:['本命寄り','var(--accent)'],are:['波乱含み','var(--ana)']};
+
+function commentary(r,A){
+  const [t1,t2]=A.top, nm=b=>b.waku+'号艇'+b.name;
+  let s=t1.course===1?`${nm(t1)}のイン逃げが軸。1着率は${pct(t1.pWin)}と見ます。`
+                     :`${nm(t1)}が${t1.course}コースから一番手（1着率${pct(t1.pWin)}）。インが盤石ではない一戦です。`;
+  s+=`対抗は${nm(t2)}（${pct(t2.pWin)}）。`;
+  const good=t1.tags.filter(t=>t[0]==='plus').map(t=>t[1]);
+  if(good.length)s+=`${t1.name}は${good.join('・')}。`;
+  if(A.ana.length){const h=+A.ana[0].k.split('-')[0],hb=A.boats[h-1],why=hb.tags.filter(t=>t[0]==='plus').map(t=>t[1]);
+    s+=`穴は${A.ana[0].k}。人気想定より${A.ana[0].ratio.toFixed(1)}倍高く評価${why.length?'（'+hb.name+'：'+why.join('・')+'）':''}。`;}
+  else s+='人気とのズレが小さく、穴は見送り候補です。';
+  if(!A.hasEx)s+='展示タイムが入ると計算し直します。';
+  return s;
+}
+
+function parsePicks(str){
+  const set=new Set();
+  const norm=(str||'').replace(/[０-９]/g,d=>String.fromCharCode(d.charCodeAt(0)-0xFEE0)).replace(/[ー－―−＝=]/g,'-');
+  norm.split(/[\s,、，・/]+/).forEach(tok=>{const g=tok.split('-');if(g.length!==3)return;
+    const gs=g.map(x=>[...x].map(Number).filter(n=>n>=1&&n<=6));
+    for(const a of gs[0])for(const b of gs[1])for(const c of gs[2])if(a!==b&&b!==c&&a!==c)set.add(a+'-'+b+'-'+c);});
+  return [...set];
+}
+
+/* ============ 端末内の保存（自分の記録） ============ */
+const LS={get(k,d){try{const v=localStorage.getItem('teiyomi:'+k);return v?JSON.parse(v):d}catch(_){return d}},
+  set(k,v){try{localStorage.setItem('teiyomi:'+k,JSON.stringify(v))}catch(_){}}};
+let picks=LS.get('picks',{}), exMan=LS.get('ex',{}), resMan=LS.get('res',{}), history=LS.get('hist',{});
+
+/* ============ 状態とデータ ============ */
+let dates=[], dateSel=null, races=[], jcdSel=null, raceId=null, view=LS.get('view','yoso');
+const calc={mode:'form',sel:[new Set([1]),new Set([2,3]),new Set([2,3,4])],stake:100};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pct=p=>(p*100).toFixed(p>=0.1?0:1)+'%';
+const yen=n=>(n||0).toLocaleString('ja-JP')+'円';
+const bn=(n,lg)=>`<span class="bn${lg?' lg':''}" data-n="${n}">${n}</span>`;
+const comboHtml=k=>k.split('-').map(n=>bn(n)).join('<i>-</i>');
+const fmtDate=d=>d?`${+d.slice(4,6)}/${+d.slice(6,8)}`:'';
+const odds=o=>o>=100?Math.round(o):o;
+const resultOf=r=>(r.result&&r.result.order)?r.result:(resMan[r.id]||null);
+const cache=new Map();
+function A(r){const key=JSON.stringify([r.boats,r.before,exMan[r.id]]);const c=cache.get(r.id);if(c&&c.key===key)return c.a;const a=analyze(r,exMan[r.id]);cache.set(r.id,{key,a});return a;}
+function toast(t){const el=$('#toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2200);}
+
+async function fetchJSON(path){const r=await fetch(DATA_BASE+path+'?t='+Math.floor(Date.now()/30000),{cache:'no-store'});if(!r.ok)throw new Error(r.status);return r.json();}
+
+function todayJST(){return new Date(Date.now()+9*3600e3).toISOString().slice(0,10).replace(/-/g,'');}
+
+async function loadIndex(){
+  try{const idx=await fetchJSON('index.json');dates=idx.dates||[];}catch(_){dates=[];}
+  if(!dateSel||!dates.includes(dateSel))dateSel=dates.includes(todayJST())?todayJST():dates[0]||null;
+  $('#date').innerHTML=dates.map(d=>`<option value="${d}"${d===dateSel?' selected':''}>${fmtDate(d)}</option>`).join('');
+  $('#date').hidden=!dates.length;
+}
+async function loadDay(){
+  const note=$('#loadnote');
+  if(!dateSel){races=[];note.textContent='';renderAll();return;}
+  try{const d=await fetchJSON(dateSel+'.json');races=d.races||[];
+    note.textContent=d.updated?`更新 ${d.updated.slice(11,16)}`:'';
+    snapshotAI();
+  }catch(_){note.textContent='データを読み込めませんでした。通信状態を確認してください。';}
+  renderAll();
+}
+// 締切を過ぎたレースのAI買い目を端末に固定（後からデータが変わっても成績は締切時点で数える）
+function snapshotAI(){
+  const now=Date.now();let ch=false;
+  for(const r of races){if(history[r.id]||!r.deadline)continue;const [h,m]=r.deadline.split(':').map(Number);
+    const dl=Date.UTC(+r.date.slice(0,4),+r.date.slice(4,6)-1,+r.date.slice(6,8),h-9,m);
+    if(now>=dl){const a=A(r);if(a){history[r.id]={h:a.honsen.map(c=>c.k),a:a.ana.map(c=>c.k)};ch=true;}}}
+  if(ch)LS.set('hist',history);
+}
+
+function renderAll(){renderVenues();renderChips();renderView();}
+function renderVenues(){
+  const jcds=[...new Set(races.map(r=>r.jcd))].sort((a,b)=>a-b);
+  const sel=$('#venue');sel.hidden=!jcds.length;
+  if(!jcds.includes(jcdSel))jcdSel=jcds.includes(LS.get('jcd',null))?LS.get('jcd',null):jcds[0]??null;
+  sel.innerHTML=jcds.map(j=>{const r=races.find(x=>x.jcd===j);return `<option value="${j}"${j===jcdSel?' selected':''}>${esc(VENUES[j])}${r.grade&&/^(SG|G1|G2|G3)/i.test(r.grade)?' '+esc(r.grade.replace(/b$/,'')):''}${r.title?' ・'+esc(r.title.slice(0,18)):''}</option>`}).join('');
+}
+const venueRaces=()=>races.filter(r=>r.jcd===jcdSel).sort((a,b)=>a.rno-b.rno);
+function nextRaceId(list){const t=new Date(Date.now()+9*3600e3).toISOString().slice(11,16);const n=list.find(r=>!resultOf(r)&&(r.deadline||'99')>=t);return (n||list[list.length-1])?.id??null;}
+function renderChips(){
+  const list=venueRaces();
+  if(!list.some(r=>r.id===raceId))raceId=nextRaceId(list);
+  $('#chips').innerHTML=list.map(r=>{const a=A(r),lv=a?LEVEL[a.level]:['-','var(--muted)'],res=resultOf(r);
+    return `<button class="chip" aria-pressed="${r.id===raceId}" data-id="${esc(r.id)}"><b>${r.rno}R</b><span><span class="dot" style="background:${lv[1]}"></span>${esc(r.deadline||'')} ${res?'確定':(r.before&&r.before.complete?'展示済':lv[0])}</span></button>`}).join('');
+}
+const cur=()=>races.find(r=>r.id===raceId)||null;
+function renderView(){
+  ['yoso','calc','rec'].forEach(v=>{$('#v-'+v).hidden=v!==view;$('#tab-'+v).setAttribute('aria-selected',v===view);});
+  $('#chips').hidden=view==='rec';
+  if(view==='yoso')renderYoso();else if(view==='calc')renderCalc();else renderRec();
+}
+const emptyState=()=>`<div class="empty"><b>この日のレースデータはまだありません。</b><br>毎朝7時ごろに、その日の全場の出走表を自動で取り込みます。</div>`;
+const WIND=['','北','北北東','北東','東北東','東','東南東','南東','南南東','南','南南西','南西','西南西','西','西北西','北西','北北西'];
+
+function renderYoso(){
+  const el=$('#v-yoso'), r=cur();
+  if(!r){el.innerHTML=emptyState();return;}
+  const a=A(r); if(!a){el.innerHTML=`<div class="empty">このレースは出走データが不完全です。</div>`;return;}
+  const lv=LEVEL[a.level], p=picks[r.id]||{}, res=resultOf(r), bf=r.before||{};
+  const maxWin=Math.max(...a.boats.map(b=>b.pWin));
+  const rowC=(c,ana)=>`<li class="combo${res&&res.order===c.k?' hit':''}"><span class="nums">${comboHtml(c.k)}</span><span class="bar"><span style="width:${Math.min(100,c.pAi/a.combos[0].pAi*100)}%"></span></span><span class="val">${pct(c.pAi)}<small>${ana?'人気比×'+c.ratio.toFixed(1)+' / ':''}推定${odds(c.odds)}倍</small></span></li>`;
+  const anaEV=a.ana.length?avg(a.ana.map(c=>c.ev)):0;
+  const wx=[bf.weather,bf.windDir?WIND[bf.windDir]+'風':null,bf.windSpeed!=null?bf.windSpeed+'m':null,bf.wave!=null?'波'+bf.wave+'cm':null].filter(Boolean).join(' ');
+  el.innerHTML=`<div style="display:grid;gap:18px">
+    <div class="racehead">
+      <h2>${esc(r.venue||VENUES[r.jcd])} ${r.rno}R ${esc(r.name||'')}</h2>
+      <span class="meta">${r.distance?r.distance+'m':''} ・締切 ${esc(r.deadline||'-')}${r.day?' ・'+esc(r.day):''}</span>
+      <span class="pill ${a.level}">${lv[0]}</span>
+      ${wx?`<span class="pill info">${esc(wx)}</span>`:''}
+      ${res?`<span class="pill kata">結果 ${esc(res.order||res.note||'')} ${res.payout?yen(res.payout):''}</span>`:''}
+    </div>
+    <div class="picks">
+      <div class="panel honsen"><h3><span class="mark">本線</span>確率の高い順</h3>
+        <p class="sub">${a.honsen.length}点で的中確率 ${pct(a.cover)}</p>
+        <ul class="combo-list">${a.honsen.map(c=>rowC(c,false)).join('')}</ul></div>
+      <div class="panel ana"><h3><span class="mark">穴</span>人気より強いと見た買い目</h3>
+        <p class="sub">推定20倍以上で、AI確率が人気想定を上回るもの</p>
+        ${a.ana.length?`<ul class="combo-list">${a.ana.map(c=>rowC(c,true)).join('')}</ul>
+        <p class="foot">${a.ana.length}点の的中確率 ${pct(sum(a.ana.map(c=>c.pAi)))}・1点あたり期待値 ${(anaEV*100).toFixed(0)}%</p>`
+        :`<p class="sub">人気とのズレが小さく、狙える穴が見つかりません。見送り候補です。</p>`}</div>
+    </div>
+    <div class="comment">
+      <p>${esc(commentary(r,a))}</p>
+      <button class="btn ghost" id="ask" type="button">Claudeに相談する文をコピー</button>
+    </div>
+    <div>
+      <p class="card-title">出走表とAI評価</p>
+      <div class="tablebox"><table class="card">
+        <thead><tr><th>枠</th><th>選手</th><th>全国勝率</th><th>当地勝率</th><th>モーター2連</th><th>平均ST</th><th>展示</th><th>AI 1着率</th><th>ポイント</th></tr></thead>
+        <tbody>${a.boats.map(b=>{const auto=r.before&&r.before.boats&&r.before.boats[b.waku]&&r.before.boats[b.waku].exTime!=null&&!(exMan[r.id]&&exMan[r.id][b.waku]!=null);
+          return `<tr>
+          <td>${bn(b.waku,1)}</td>
+          <td class="who"><b>${esc(b.name)}</b><span>${esc(b.cls||'')} ${esc(b.branch||'')}${b.age?' '+b.age+'歳':''}</span></td>
+          <td class="n">${num(b.natWin)?.toFixed(2)??'-'}</td>
+          <td class="n">${num(b.locWin)?num(b.locWin).toFixed(2):'-'}</td>
+          <td class="n">${num(b.motor2)?.toFixed(1)??'-'}%<br><span style="color:var(--muted);font-size:11px">${b.motor?b.motor+'号機':''}</span></td>
+          <td class="n">${num(b.st)?.toFixed(2)??'-'}</td>
+          <td><input id="ex-${b.waku}" class="${auto?'auto':''}" inputmode="decimal" aria-label="${b.waku}号艇の展示タイム" placeholder="6.80" value="${b.exTime??''}"></td>
+          <td><div class="winbar"><span class="track"><span style="width:${b.pWin/maxWin*100}%"></span></span><b>${pct(b.pWin)}</b></div></td>
+          <td><div class="tags">${b.tags.map(t=>`<span class="tag ${t[0]}">${esc(t[1])}</span>`).join('')}</div></td></tr>`}).join('')}</tbody></table></div>
+      <p class="hint">${r.before&&r.before.complete?'展示タイム・進入は自動で取得済み（青枠）。':'展示タイムは締切の約20分前から自動で入ります。'}手で入れ直すと、その場で計算し直します。</p>
+    </div>
+    <div class="panel">
+      <h3>このレースの記録</h3>
+      <p class="sub">他の予想を入れておくと「成績」で回収率を比べられます（この端末に保存）。書き方の例：1-2-3, 1-23-234</p>
+      <div class="record">
+        <div class="field"><label for="pk-chatgpt">ChatGPTの買い目</label><textarea id="pk-chatgpt">${esc(p.chatgpt||'')}</textarea></div>
+        <div class="field"><label for="pk-ikkun">一撃くんの買い目</label><textarea id="pk-ikkun">${esc(p.ikkun||'')}</textarea></div>
+        <div class="field"><label for="pk-mine">自分の買い目</label><textarea id="pk-mine">${esc(p.mine||'')}</textarea></div>
+      </div>
+      <div class="rowact"><button class="btn" id="save" type="button">記録を保存</button><span class="status">${r.result?'結果は自動で入ります。':''}</span></div>
+    </div>
+  </div>`;
+  a.boats.forEach(b=>{const inp=$('#ex-'+b.waku);inp.addEventListener('change',()=>{const v=num(inp.value);exMan[r.id]=exMan[r.id]||{};
+    if(v==null)delete exMan[r.id][b.waku];else exMan[r.id][b.waku]=v;LS.set('ex',exMan);renderChips();renderYoso();});});
+  $('#save').addEventListener('click',()=>{picks[r.id]={chatgpt:$('#pk-chatgpt').value.trim(),ikkun:$('#pk-ikkun').value.trim(),mine:$('#pk-mine').value.trim()};LS.set('picks',picks);toast('保存しました');});
+  $('#ask').addEventListener('click',()=>copyForClaude(r,a));
+}
+
+function copyForClaude(r,a){
+  const data={レース:`${fmtDate(r.date)} ${r.venue||VENUES[r.jcd]} ${r.rno}R ${r.name||''} ${r.distance||''}m 締切${r.deadline||''}`,
+    風波:r.before?{風速:r.before.windSpeed,波高:r.before.wave}:null,
+    艇:a.boats.map(b=>({枠:b.waku,選手:b.name,級:b.cls,全国勝率:b.natWin,当地勝率:b.locWin,モーター2連:b.motor2,ST:b.st,F:b.f,展示:b.exTime,チルト:b.tilt,進入:b.course,AI1着率:+(b.pWin*100).toFixed(1)})),
+    AI本線:a.honsen.map(c=>`${c.k} ${(c.pAi*100).toFixed(1)}%`),AI穴:a.ana.map(c=>`${c.k} ${(c.pAi*100).toFixed(1)}% 推定${odds(c.odds)}倍`)};
+  const text=`艇読みAIのこのレースを解説して。展開予想、本線と穴の根拠、注意点を短く。\n${JSON.stringify(data)}`;
+  const done=()=>toast('コピーしました。Claudeのチャットに貼り付けてください');
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done,()=>fallbackCopy(text,done));}else fallbackCopy(text,done);
+}
+function fallbackCopy(t,done){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done();}catch(_){toast('コピーできませんでした');}ta.remove();}
+
+/* ============ 買い目計算 ============ */
+function calcCombos(){const out=[];
+  if(calc.mode==='box'){const s=[...calc.sel[0]];for(const a of s)for(const b of s)for(const c of s)if(a!==b&&b!==c&&a!==c)out.push(a+'-'+b+'-'+c);}
+  else{for(const a of calc.sel[0])for(const b of calc.sel[1])for(const c of calc.sel[2])if(a!==b&&b!==c&&a!==c)out.push(a+'-'+b+'-'+c);}
+  return out.sort();}
+function statsHtml(list,r,a,map){const hitP=a?sum(list.map(k=>map[k]?.pAi||0)):0,back=a?sum(list.map(k=>(map[k]?.pAi||0)*(map[k]?.odds||0)))*calc.stake:0;
+  return `<div class="stat"><span>点数</span><b>${list.length}点</b></div><div class="stat"><span>合計金額</span><b>${yen(list.length*calc.stake)}</b></div>${a?`<div class="stat"><span>AI的中確率（${r.rno}R）</span><b>${pct(hitP)}</b></div><div class="stat"><span>推定回収の期待値</span><b>${list.length?Math.round(back/(list.length*calc.stake)*100)+'%':'-'}</b></div>`:''}`;}
+const gridHtml=(list,map)=>list.map(k=>`<div class="cg"><span class="nums">${comboHtml(k)}</span>${map[k]?`<span>${pct(map[k].pAi)}・${odds(map[k].odds)}倍</span>`:''}</div>`).join('');
+function renderCalc(){
+  const el=$('#v-calc'), r=cur(), a=r?A(r):null, map=a?Object.fromEntries(a.combos.map(c=>[c.k,c])):{};
+  const rows=calc.mode==='box'?[['ボックス',0]]:[['1着',0],['2着',1],['3着',2]], list=calcCombos();
+  el.innerHTML=`<div style="display:grid;gap:16px">
+    <div class="panel picker">
+      <div class="prow"><span class="seg"><button data-mode="form" aria-pressed="${calc.mode==='form'}">フォーメーション</button><button data-mode="box" aria-pressed="${calc.mode==='box'}">ボックス</button></span>
+      <label class="status" for="stake">1点</label><input id="stake" inputmode="numeric" value="${calc.stake}" style="width:80px;font:14px var(--f-num);padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)"><span class="status">円</span></div>
+      ${rows.map(([lab,i])=>`<div class="prow"><span class="lab">${lab}</span>${[1,2,3,4,5,6].map(n=>`<button class="tog" data-row="${i}" data-n="${n}" aria-pressed="${calc.sel[i].has(n)}" aria-label="${lab} ${n}号艇">${n}</button>`).join('')}</div>`).join('')}
+      <div class="prow"><button class="btn ghost" id="fill-h" type="button"${a?'':' disabled'}>AI本線を読み込む</button><button class="btn ghost" id="fill-a" type="button"${a?'':' disabled'}>AI穴を読み込む</button></div>
+      <div class="field"><label for="paste">買い目を貼り付けて計算（例：1-23-234, 2-1-3）</label><textarea id="paste" placeholder="一撃くんやChatGPTの買い目を貼ると、点数・金額を計算します"></textarea></div>
+    </div>
+    <div class="stats" id="cstats">${statsHtml(list,r,a,map)}</div>
+    <div class="combo-grid" id="cgrid">${gridHtml(list,map)}</div>
+    ${a?`<p class="hint">確率と倍率は${esc(r.venue||'')}${r.rno}Rの推定値です。倍率は人気の推定で、実際のオッズとは違います。</p>`:''}
+  </div>`;
+  const showList=ks=>{$('#cstats').innerHTML=statsHtml(ks,r,a,map);$('#cgrid').innerHTML=gridHtml(ks,map);el.querySelectorAll('.tog').forEach(b=>b.setAttribute('aria-pressed','false'));};
+  el.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{calc.mode=b.dataset.mode;renderCalc();});
+  el.querySelectorAll('.tog').forEach(b=>b.onclick=()=>{const s=calc.sel[+b.dataset.row],n=+b.dataset.n;s.has(n)?s.delete(n):s.add(n);renderCalc();});
+  $('#stake').onchange=e=>{calc.stake=Math.max(100,Math.round((num(e.target.value)||100)/100)*100);renderCalc();};
+  if(a){$('#fill-h').onclick=()=>showList(a.honsen.map(c=>c.k));$('#fill-a').onclick=()=>showList(a.ana.map(c=>c.k));}
+  $('#paste').oninput=e=>{const ks=parsePicks(e.target.value);if(ks.length)showList(ks);};
+}
+
+/* ============ 成績（今見ている日付のレース） ============ */
+function renderRec(){
+  const el=$('#v-rec');
+  const done=races.filter(r=>{const x=resultOf(r);return x&&x.order&&A(r);});
+  if(!done.length){el.innerHTML=`<div class="empty"><b>${fmtDate(dateSel)}はまだ結果の入ったレースがありません。</b><br>結果はレース後に自動で入ります。AI本線・AI穴・ChatGPT・一撃くん・自分の回収率をここで比べます。</div>`;return;}
+  const aiH=r=>history[r.id]?.h||A(r).honsen.map(c=>c.k), aiA=r=>history[r.id]?.a||A(r).ana.map(c=>c.k);
+  const srcs=[['AI本線',aiH],['AI穴',aiA],['ChatGPT',r=>parsePicks(picks[r.id]?.chatgpt)],['一撃くん',r=>parsePicks(picks[r.id]?.ikkun)],['自分',r=>parsePicks(picks[r.id]?.mine)]];
+  const agg=srcs.map(([name,f])=>{let n=0,pts=0,ret=0,hits=0;done.forEach(r=>{const ks=f(r),x=resultOf(r);if(!ks.length)return;n++;pts+=ks.length;if(ks.includes(x.order)){hits++;ret+=x.payout||0;}});return {name,n,pts,ret,hits};});
+  el.innerHTML=`<div style="display:grid;gap:16px">
+    <div><p class="card-title">${fmtDate(dateSel)}の回収率（1点100円・${done.length}レース）</p><div class="tablebox"><table class="rec">
+      <thead><tr><th>予想</th><th>レース数</th><th>的中</th><th>的中率</th><th>投資</th><th>払戻</th><th>回収率</th></tr></thead>
+      <tbody>${agg.map(g=>`<tr><td class="src">${g.name}</td><td>${g.n}</td><td>${g.hits}</td><td>${g.n?pct(g.hits/g.n):'-'}</td><td>${yen(g.pts*100)}</td><td>${yen(g.ret)}</td><td class="${g.pts&&g.ret>=g.pts*100?'hit':''}">${g.pts?Math.round(g.ret/(g.pts*100)*100)+'%':'-'}</td></tr>`).join('')}</tbody></table></div></div>
+    <div><p class="card-title">レースごと</p><div class="tablebox"><table class="rec">
+      <thead><tr><th>レース</th><th>結果</th><th>払戻</th><th>AI本線</th><th>AI穴</th><th>ChatGPT</th><th>一撃くん</th><th>自分</th></tr></thead>
+      <tbody>${done.sort((a,b)=>a.jcd-b.jcd||a.rno-b.rno).map(r=>{const x=resultOf(r);return `<tr><td class="src">${esc(r.venue||VENUES[r.jcd])}${r.rno}R</td><td>${esc(x.order)}</td><td>${yen(x.payout)}</td>${srcs.map(([,f])=>{const ks=f(r);return `<td>${!ks.length?'-':ks.includes(x.order)?'<span class="hit">的中</span>':'×'}</td>`}).join('')}</tr>`}).join('')}</tbody></table></div></div>
+    <p class="hint">AIの本線・穴は、締切時点でこの端末に記録した買い目で数えます（記録前のレースは今のデータで計算）。</p>
+  </div>`;
+}
+
+/* ============ 起動 ============ */
+$('#date').addEventListener('change',e=>{dateSel=e.target.value;raceId=null;loadDay();});
+$('#venue').addEventListener('change',e=>{jcdSel=+e.target.value;LS.set('jcd',jcdSel);raceId=null;renderChips();renderView();});
+$('#chips').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;raceId=b.dataset.id;renderChips();renderView();});
+document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>{view=b.dataset.view;LS.set('view',view);renderView();}));
+(async()=>{
+  try{const m=await fetch('model.json',{cache:'no-store'}).then(r=>r.ok?r.json():null);if(m)MODEL={...MODEL,...m,weights:{...MODEL.weights,...(m.weights||{})}};}catch(_){}
+  await loadIndex();await loadDay();
+  setInterval(async()=>{if(document.hidden||/INPUT|TEXTAREA/.test(document.activeElement?.tagName||''))return;const keep=raceId;await loadDay();raceId=keep;renderChips();},60000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)loadDay();});
+})();
+</script>
+</body>
+</html>

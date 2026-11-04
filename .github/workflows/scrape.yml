@@ -1,0 +1,64 @@
+name: レースデータ取得
+
+on:
+  schedule:
+    # 日本時間 7:00〜24:59 のあいだ5分おき（GitHubの時刻はUTC）
+    - cron: "*/5 22-23 * * *"
+    - cron: "*/5 0-15 * * *"
+  workflow_dispatch:
+    inputs:
+      force_load:
+        description: "出走表を取り直す"
+        type: boolean
+        default: false
+      date:
+        description: "日付（YYYYMMDD、空なら今日）"
+        required: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: scrape
+  cancel-in-progress: false
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/checkout@v4
+        with:
+          ref: data
+          path: data
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: scraper/requirements.txt
+
+      - run: pip install -r scraper/requirements.txt
+
+      - name: 公式サイトから取得
+        run: |
+          ARGS="--data data"
+          if [ "${{ inputs.force_load }}" = "true" ]; then ARGS="$ARGS --force-load"; fi
+          if [ -n "${{ inputs.date }}" ]; then ARGS="$ARGS --date ${{ inputs.date }}"; fi
+          python scraper/teiyomi_scraper.py $ARGS
+
+      - name: データを保存
+        working-directory: data
+        run: |
+          git config user.name "teiyomi-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then echo "変更なし"; exit 0; fi
+          git commit -m "データ更新 $(TZ=Asia/Tokyo date '+%m/%d %H:%M')"
+          for i in 1 2 3; do
+            git push && exit 0
+            git pull --rebase
+          done
+          exit 1
