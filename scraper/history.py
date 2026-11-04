@@ -49,9 +49,9 @@ def download_text(kind: str, day: dt.date) -> str | None:
 
 
 # ---------------------------------------------------------------- 番組表（出走前の情報）
-B_ROW = re.compile(
-    r"^([1-6]) (\d{4})(.{4})(\d{2})(.{2})(\d{2})([AB][12]) +([\d.]+) +([\d.]+) +([\d.]+) +([\d.]+)"
-    r" +(\d+) +([\d.]+) +(\d+) +([\d.]+)")
+B_ROW = re.compile(r"^([1-6]) (\d{4})(.{4})(\d{2})(.{2})(\d{2})([AB][12])")
+# 小数は必ず2桁。100.00 のように桁が増えると前の数字とくっつくので、空白ではなく形で切る
+B_NUM = re.compile(r"\d+\.\d{2}|\d+")
 B_RACE = re.compile(r"^\s*(\d{1,2})R\s+(\S+).*?H(\d{3,4})m(?:.*?締切予定(\d{1,2}:\d{2}))?")
 
 
@@ -73,7 +73,10 @@ def parse_b(text: str) -> dict:
             continue
         m = B_ROW.match(raw)
         if m and cur is not None:
-            g = m.groups()
+            t = B_NUM.findall(raw[m.end():])
+            if len(t) < 8:
+                continue
+            g = m.groups() + tuple(t[:8])
             cur["boats"][int(g[0])] = {
                 "toban": int(g[1]), "age": int(g[3]), "weight": int(g[5]), "cls": g[6],
                 "natWin": float(g[7]), "nat2": float(g[8]), "locWin": float(g[9]), "loc2": float(g[10]),
