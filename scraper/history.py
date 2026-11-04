@@ -41,7 +41,9 @@ def download_text(kind: str, day: dt.date) -> str | None:
         return None
     with tempfile.TemporaryDirectory() as td:
         (Path(td) / "a.lzh").write_bytes(r.content)
-        subprocess.run(["lha", "xqf", "a.lzh"], cwd=td, check=True)
+        p = subprocess.run(["lha", "xqf", "a.lzh"], cwd=td, capture_output=True, text=True)
+        if p.returncode != 0:
+            raise RuntimeError(f"lha {p.returncode} {url} head={r.content[:40]!r} {p.stderr[:200]}")
         txts = [f for f in Path(td).iterdir() if f.suffix.upper() == ".TXT"]
         return txts[0].read_bytes().decode("cp932", errors="replace") if txts else None
 
@@ -177,21 +179,27 @@ def main():
     todo = [today - dt.timedelta(days=i) for i in range(1, a.days + 1)]
     todo = [d for d in todo if not (hist / f"{d:%Y%m%d}.json").exists()][: a.max_new]
     print(f"未取得 {len(todo)}日", flush=True)
-    got, t0 = 0, time.time()
+    got, t0, errors = 0, time.time(), []
     for d in todo:
         if time.time() - t0 > a.minutes * 60:
             print("時間切れ。続きは次回", flush=True)
             break
-        btxt = download_text("B", d)
-        time.sleep(1)
-        ktxt = download_text("K", d) if btxt else None
-        time.sleep(1)
-        if not (btxt and ktxt):
+        try:
+            btxt = download_text("B", d)
+            time.sleep(1)
+            ktxt = download_text("K", d) if btxt else None
+            time.sleep(1)
+            races = merge(d, parse_b(btxt), parse_k(ktxt)) if (btxt and ktxt) else None
+        except Exception as e:  # 1日分の失敗で全体を止めない
+            msg = f"{d}: {type(e).__name__}: {e}"
+            print("  " + msg, flush=True)
+            errors.append(msg[:300])
+            continue
+        if races is None:
             # 開催なし・未公開の日も記録して二度取りしない（直近3日は再挑戦）
             if (today - d).days > 3:
                 (hist / f"{d:%Y%m%d}.json").write_text('{"races":[]}', encoding="utf-8")
             continue
-        races = merge(d, parse_b(btxt), parse_k(ktxt))
         (hist / f"{d:%Y%m%d}.json").write_text(
             json.dumps({"races": races}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
         got += 1
@@ -202,7 +210,8 @@ def main():
                 if not (hist / f"{today - dt.timedelta(days=i):%Y%m%d}.json").exists()])
     (hist / "_progress.json").write_text(json.dumps(
         {"updated": f"{dt.datetime.now():%Y-%m-%d %H:%M}", "new": got, "remaining": rest,
-         "secPerDay": round((time.time() - t0) / max(got, 1), 1)}), encoding="utf-8")
+         "secPerDay": round((time.time() - t0) / max(got, 1), 1),
+         "errors": errors[:30]}, ensure_ascii=False), encoding="utf-8")
     Path("/tmp/history_new").write_text(str(got))
 
 
