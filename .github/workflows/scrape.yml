@@ -3,9 +3,10 @@ name: レースデータ取得
 
 on:
   schedule:
-    # 日本時間 7:00〜24:59 のあいだ5分おき（GitHubの時刻はUTC）
-    - cron: "*/5 22-23 * * *"
-    - cron: "*/5 0-15 * * *"
+    # GitHubの短い間隔の予約は混雑で間引かれるため、1回の実行の中で2分半ごとに取り続ける。
+    # この予約は「止まっていたら起こす」ためのもの（日本時間 7:00〜23:59、30分おき）
+    - cron: "7,37 22-23 * * *"
+    - cron: "7,37 0-14 * * *"
   workflow_dispatch:
     inputs:
       force_load:
@@ -26,7 +27,7 @@ concurrency:
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 350
     steps:
       - uses: actions/checkout@v4
 
@@ -43,23 +44,35 @@ jobs:
 
       - run: pip install -r scraper/requirements.txt
 
-      - name: 公式サイトから取得
+      - name: 公式サイトから取得して保存（くり返し）
         run: |
+          cd data
+          git config user.name "teiyomi-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          cd ..
+          save() {
+            ( cd data
+              git add -A
+              if git diff --cached --quiet; then exit 0; fi
+              git commit -q -m "データ更新 $(TZ=Asia/Tokyo date '+%m/%d %H:%M')"
+              for i in 1 2 3; do git push -q && exit 0; git pull -q --rebase || git rebase --abort; done
+              echo "保存に失敗（次の回で再挑戦）" ) || true
+          }
           ARGS="--data data"
           if [ "${{ inputs.force_load }}" = "true" ]; then ARGS="$ARGS --force-load"; fi
           if [ -n "${{ inputs.date }}" ]; then ARGS="$ARGS --date ${{ inputs.date }}"; fi
-          python scraper/teiyomi_scraper.py $ARGS
-
-      - name: データを保存
-        working-directory: data
-        run: |
-          git config user.name "teiyomi-bot"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          if git diff --cached --quiet; then echo "変更なし"; exit 0; fi
-          git commit -m "データ更新 $(TZ=Asia/Tokyo date '+%m/%d %H:%M')"
-          for i in 1 2 3; do
-            git push && exit 0
-            git pull --rebase
+          if [ "$ARGS" != "--data data" ]; then
+            python scraper/teiyomi_scraper.py $ARGS; save; exit 0
+          fi
+          START=$(date +%s)
+          while :; do
+            T=$(date +%s)
+            python scraper/teiyomi_scraper.py $ARGS || echo "取得でエラー（次の回で再挑戦）"
+            save
+            H=$(TZ=Asia/Tokyo date +%H)
+            # 日本時間 0時〜6時台は止める。1回の実行は5時間半まで（次の予約が引き継ぐ）
+            if [ "$H" -lt 7 ]; then echo "本日の取得終了"; break; fi
+            if [ $(( $(date +%s) - START )) -gt 19800 ]; then echo "引き継ぎ"; break; fi
+            W=$(( 150 - ($(date +%s) - T) ))
+            if [ $W -gt 0 ]; then sleep $W; fi
           done
-          exit 1
