@@ -192,6 +192,10 @@ function trifecta(boats,wk,pk){
   return out;
 }
 
+const TRI_KEYS=[];for(let a=1;a<=6;a++)for(let b=1;b<=6;b++)for(let c=1;c<=6;c++)if(a!==b&&b!==c&&a!==c)TRI_KEYS.push(`${a}-${b}-${c}`);
+function realOdds(race){const o=race.odds;if(!o||!Array.isArray(o.t)||o.t.length!==120)return null;
+  const map={};let inv=0;o.t.forEach((v,i)=>{if(v&&v>=1){map[TRI_KEYS[i]]=v;inv+=1/v;}});
+  return inv>0?{map,inv,at:o.fetchedAt,final:!!o.final}:null;}
 function analyze(race,exOverride){
   const B=(race.boats||[]).slice().sort((a,b)=>a.waku-b.waku);
   if(B.length!==6) return null;
@@ -229,15 +233,19 @@ function analyze(race,exOverride){
   const W=sum(boats.map(b=>b.winW));
   boats.forEach(b=>{b.pWin=b.winW/W;});
   const oddsK=PAYBACK*Math.exp(MODEL.market.c0||0);
-  const combos=Object.keys(ai).map(k=>{const pAi=ai[k],pMk=mkP[k],odds=Math.max(1,Math.round(oddsK/pMk*10)/10);
-    return {k,pAi,pMk,odds,ev:pAi*odds,ratio:pAi/pMk};}).sort((x,y)=>y.pAi-x.pAi);
+  // 公式の3連単オッズが取れていればそれを使う（人気 = 1/オッズ を合計1にそろえたもの）
+  const real=realOdds(race);
+  const combos=Object.keys(ai).map(k=>{const pAi=ai[k];
+    if(real&&real.map[k]){const odds=real.map[k],pMk=(1/odds)/real.inv;return {k,pAi,pMk,odds,ev:pAi*odds,ratio:pAi/pMk,real:true};}
+    const pMk=mkP[k],odds=Math.max(1,Math.round(oddsK/pMk*10)/10);
+    return {k,pAi,pMk,odds,ev:pAi*odds,ratio:pAi/pMk,real:false};}).sort((x,y)=>y.pAi-x.pAi);
   const honsen=[];let cum=0;
   for(const c of combos){if(honsen.length>=6||(honsen.length>=3&&cum>=0.35))break;honsen.push(c);cum+=c.pAi;}
   const hset=new Set(honsen.map(c=>c.k));
   const R=MODEL.ana;
   const ana=combos.filter(c=>!hset.has(c.k)&&c.pAi>=R.minP&&c.odds>=R.minOdds&&c.ratio>=R.minRatio).sort((x,y)=>y.ev-x.ev).slice(0,R.max);
   const top=boats.slice().sort((a,b)=>b.pWin-a.pWin), topWin=top[0].pWin;
-  return {boats,combos,honsen,ana,cover:cum,top,topWin,level:topWin>=0.6?'kata':topWin>=0.42?'futsu':'are',hasEx:exMean!=null};
+  return {boats,combos,honsen,ana,cover:cum,top,topWin,real,level:topWin>=0.6?'kata':topWin>=0.42?'futsu':'are',hasEx:exMean!=null};
 }
 const LEVEL={kata:['堅い','var(--good)'],futsu:['本命寄り','var(--accent)'],are:['波乱含み','var(--ana)']};
 
@@ -343,7 +351,7 @@ function renderYoso(){
   const a=A(r); if(!a){el.innerHTML=`<div class="empty">このレースは出走データが不完全です。</div>`;return;}
   const lv=LEVEL[a.level], p=picks[r.id]||{}, res=resultOf(r), bf=r.before||{};
   const maxWin=Math.max(...a.boats.map(b=>b.pWin));
-  const rowC=(c,ana)=>`<li class="combo${res&&res.order===c.k?' hit':''}"><span class="nums">${comboHtml(c.k)}</span><span class="bar"><span style="width:${Math.min(100,c.pAi/a.combos[0].pAi*100)}%"></span></span><span class="val">${pct(c.pAi)}<small>${ana?'人気比×'+c.ratio.toFixed(1)+' / ':''}推定${odds(c.odds)}倍</small></span></li>`;
+  const rowC=(c,ana)=>`<li class="combo${res&&res.order===c.k?' hit':''}"><span class="nums">${comboHtml(c.k)}</span><span class="bar"><span style="width:${Math.min(100,c.pAi/a.combos[0].pAi*100)}%"></span></span><span class="val">${pct(c.pAi)}<small>${ana?'人気比×'+c.ratio.toFixed(1)+' / ':''}${c.real?'':'推定'}${odds(c.odds)}倍</small></span></li>`;
   const anaEV=a.ana.length?avg(a.ana.map(c=>c.ev)):0;
   const wx=[bf.weather,bf.windDir?WIND[bf.windDir]+'風':null,bf.windSpeed!=null?bf.windSpeed+'m':null,bf.wave!=null?'波'+bf.wave+'cm':null].filter(Boolean).join(' ');
   el.innerHTML=`<div style="display:grid;gap:18px">
@@ -359,7 +367,7 @@ function renderYoso(){
         <p class="sub">${a.honsen.length}点で的中確率 ${pct(a.cover)}</p>
         <ul class="combo-list">${a.honsen.map(c=>rowC(c,false)).join('')}</ul></div>
       <div class="panel ana"><h3><span class="mark">穴</span>人気より強いと見た買い目</h3>
-        <p class="sub">推定${MODEL.ana.minOdds}倍以上で、AI確率が人気想定の${MODEL.ana.minRatio}倍以上のもの</p>
+        <p class="sub">${a.real?`公式オッズ（${a.real.final?'締切時点':(a.real.at||'').slice(11,16)+'時点'}）で`:'推定'}${MODEL.ana.minOdds}倍以上、AI確率が人気の${MODEL.ana.minRatio}倍以上のもの</p>
         ${a.ana.length?`<ul class="combo-list">${a.ana.map(c=>rowC(c,true)).join('')}</ul>
         <p class="foot">${a.ana.length}点の的中確率 ${pct(sum(a.ana.map(c=>c.pAi)))}・1点あたり期待値 ${(anaEV*100).toFixed(0)}%</p>`
         :`<p class="sub">人気とのズレが小さく、狙える穴が見つかりません。見送り候補です。</p>`}</div>
@@ -406,7 +414,7 @@ function copyForClaude(r,a){
   const data={レース:`${fmtDate(r.date)} ${r.venue||VENUES[r.jcd]} ${r.rno}R ${r.name||''} ${r.distance||''}m 締切${r.deadline||''}`,
     風波:r.before?{風速:r.before.windSpeed,波高:r.before.wave}:null,
     艇:a.boats.map(b=>({枠:b.waku,選手:b.name,級:b.cls,全国勝率:b.natWin,当地勝率:b.locWin,モーター2連:b.motor2,ST:b.st,F:b.f,展示:b.exTime,チルト:b.tilt,進入:b.course,AI1着率:+(b.pWin*100).toFixed(1)})),
-    AI本線:a.honsen.map(c=>`${c.k} ${(c.pAi*100).toFixed(1)}%`),AI穴:a.ana.map(c=>`${c.k} ${(c.pAi*100).toFixed(1)}% 推定${odds(c.odds)}倍`)};
+    AI本線:a.honsen.map(c=>`${c.k} ${(c.pAi*100).toFixed(1)}%`),AI穴:a.ana.map(c=>`${c.k} ${(c.pAi*100).toFixed(1)}% ${c.real?'オッズ':'推定'}${odds(c.odds)}倍`)};
   const text=`艇読みAIのこのレースを解説して。展開予想、本線と穴の根拠、注意点を短く。\n${JSON.stringify(data)}`;
   const done=()=>toast('コピーしました。Claudeのチャットに貼り付けてください');
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done,()=>fallbackCopy(text,done));}else fallbackCopy(text,done);

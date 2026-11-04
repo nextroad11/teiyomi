@@ -244,6 +244,40 @@ def parse_result(html: str) -> dict | None:
     return None
 
 
+# ---------------------------------------------------------------- 3連単オッズ
+# 並び順は 1-2-3, 1-2-4, ... 6-5-4（辞書順の120通り）。アプリも同じ順で読む
+TRI_KEYS = [f"{a}-{b}-{c}" for a in range(1, 7) for b in range(1, 7) for c in range(1, 7) if len({a, b, c}) == 3]
+TRI_INDEX = {k: i for i, k in enumerate(TRI_KEYS)}
+
+
+def parse_odds3t(html: str) -> dict | None:
+    """公式の3連単オッズ表。20行×6列で、列が1着、4行ごとに2着、各行が3着。"""
+    soup = BeautifulSoup(html, "html.parser")
+    cells = soup.select("td.oddsPoint")
+    if len(cells) != 120:
+        return None
+    odds = [None] * 120
+    mismatch = 0
+    for i, td in enumerate(cells):
+        row, col = divmod(i, 6)
+        a = col + 1
+        rest = [x for x in range(1, 7) if x != a]
+        b = rest[row // 4]
+        rest2 = [x for x in rest if x != b]
+        c = rest2[row % 4]
+        # 念のため、直前のセル（3着の艇番）と位置からの読みが合っているか確かめる
+        prev = td.find_previous_sibling("td")
+        if prev is not None and prev.get_text(strip=True).isdigit() and int(prev.get_text(strip=True)) != c:
+            mismatch += 1
+        v = fnum(td.get_text(strip=True).replace(",", ""))
+        odds[TRI_INDEX[f"{a}-{b}-{c}"]] = v if v and v >= 1.0 else None
+    vals = [v for v in odds if v]
+    if len(vals) < 60:
+        return None
+    inv = sum(1 / v for v in vals)  # 控除率25%なら約1.33
+    return {"t": odds, "inv": round(inv, 3), "mismatch": mismatch}
+
+
 # ---------------------------------------------------------------- 本体
 def now_jst() -> dt.datetime:
     return dt.datetime.now(JST)
@@ -277,6 +311,19 @@ def update_before_and_results(day: dict, now: dt.datetime) -> int:
                     r["before"] = p
                     n += 1
                     log(f"  {r['venue']}{rno}R 直前情報 {'完了' if p['complete'] else '一部'}")
+        # 3連単オッズ: 締切20分前〜締切1分後。毎回取り直して最新にする（締切時点のものが残る）
+        o = r.get("odds") or {}
+        if dl - dt.timedelta(minutes=20) <= now <= dl + dt.timedelta(minutes=1) and not o.get("final"):
+            html = get(f"{BASE}/odds3t?{q}")
+            if html:
+                save_debug("odds3t", html)
+                p = parse_odds3t(html)
+                if p:
+                    p["fetchedAt"] = now.isoformat(timespec="seconds")
+                    p["final"] = now >= dl
+                    r["odds"] = p
+                    n += 1
+                    log(f"  {r['venue']}{rno}R オッズ 合計{p['inv']} ずれ{p['mismatch']}")
         # 結果: 締切8分後〜6時間後
         if not r.get("result") and dl + dt.timedelta(minutes=8) <= now <= dl + dt.timedelta(hours=6):
             html = get(f"{BASE}/raceresult?{q}")
