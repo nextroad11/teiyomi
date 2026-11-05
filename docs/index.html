@@ -430,7 +430,11 @@ function kmDist(jcd,c){const K=STATS&&STATS.km;const all=K&&K.all&&K.all[c],v=K&
 function slitOf(r,a){
   const bf=(r.before&&r.before.boats)||{};
   const rows=a.boats.map(b=>{const q=bf[b.waku]||{},hist=STATS&&STATS.p[String(b.toban)]?.st;
-    const avgST=hist&&hist.length>=5?avg(hist):num(b.st)??0.17, sd=hist&&hist.length>=5?Math.sqrt(avg(hist.map(x=>(x-avgST)**2))):null;
+    const base=hist&&hist.length>=5?avg(hist):num(b.st)??0.17, sd=hist&&hist.length>=5?Math.sqrt(avg(hist.map(x=>(x-base)**2))):null;
+    // 過去13万スタートで一番当たった方法: その選手のこのコースでのST（少ないときは全体平均に寄せる）＋場・コースのクセ
+    const V=STATS&&STATS.stv,allm=V?avg(Object.values(V)):null,vm=V&&V[`${r.jcd}-${b.course}`];
+    const adj=base+((vm!=null&&allm!=null)?vm-allm:0), hc=(STATS&&STATS.p[String(b.toban)]?.stc||[])[b.course-1]||[];
+    const avgST=(sum(hc)+adj*5)/(hc.length+5);
     const ex=q.exST!=null?Math.max(0,q.exST):null, pred=ex!=null?0.55*avgST+0.45*ex:avgST;
     return {waku:b.waku,course:b.course,name:b.name,avgST,sd,exST:q.exST,pred};}).sort((x,y)=>x.course-y.course);
   rows.forEach((x,i)=>{const inn=rows[i-1],out=rows[i+1];
@@ -464,11 +468,11 @@ function tenkaiHtml(r,a){
     ${x.dent?`<text class="mk-dn" x="${X1-4}" y="${y+15}" text-anchor="end">凹</text>`:x.course>1&&x.lead>=0.03?`<text class="mk-up" x="${X1-4}" y="${y+15}" text-anchor="end">先</text>`:''}`;}).join('');
   const maxP=T.sc[0].p;
   return `<div class="panel tenkai"><h3>スリット予測・展開予想</h3>
-    <p class="sub">予測ST = 最近20走の平均ST${sl.some(x=>x.exST!=null)?'と今日の展示ST':''}から。右ほど早いスタート。「凹」は両隣より遅れる予測、「先」は内より早い予測。</p>
+    <p class="sub">予測ST = その選手のこのコースでの平均ST（場のクセで補正）${sl.some(x=>x.exST!=null)?'と今日の展示ST':''}から。右ほど早いスタート。「凹」は両隣より遅れる予測、「先」は内より早い予測。</p>
     <div class="slit"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="スリット予測"><line class="line" x1="${X1}" x2="${X1}" y1="6" y2="${H-6}"/>${lanes}</svg></div>
     <p class="tk-text">${esc(T.text)}</p>
     <ul class="scen">${T.sc.slice(0,6).map(c=>`<li>${bn(c.waku)}<span>${c.km}<span class="bar"><span style="width:${c.p/maxP*100}%"></span></span></span><b>${pct(c.p)}</b></li>`).join('')}</ul>
-    <div class="tablebox"><table class="card"><thead><tr><th>コース</th><th>艇</th><th>平均ST</th><th>ばらつき</th><th>展示ST</th><th>予測ST</th></tr></thead><tbody>
+    <div class="tablebox"><table class="card"><thead><tr><th>コース</th><th>艇</th><th>コース別ST</th><th>ばらつき</th><th>展示ST</th><th>予測ST</th></tr></thead><tbody>
     ${sl.map(x=>`<tr><td>${x.course}</td><td>${bn(x.waku)}</td><td class="n">${x.avgST.toFixed(2).slice(1)}</td><td class="n">${x.sd!=null?x.sd.toFixed(3).slice(1):'-'}</td><td class="n">${x.exST==null?'-':x.exST<0?'F'+Math.abs(x.exST).toFixed(2).slice(1):x.exST.toFixed(2).slice(1)}</td><td class="n"><b>${x.pred.toFixed(2).slice(1)}</b></td></tr>`).join('')}</tbody></table></div></div>`;}
 
 // ---------------------------------------------------------------- 買い方（フォーメーション・BOX・金額配分）

@@ -83,6 +83,8 @@ def build(races):
     st_hist = defaultdict(list)   # toban -> 直近のST
     f_dates = defaultdict(list)   # toban -> Fの日付
     cw = defaultdict(lambda: [[0, 0] for _ in range(6)])  # toban -> コース別 [1着, 出走]
+    stc = defaultdict(lambda: [[] for _ in range(6)])     # toban -> コース別の直近ST（スリット予測用）
+    stv = defaultdict(list)                               # "jcd-course" -> 直近ST（場のクセ）
     recent = defaultdict(list)    # toban -> 直近の着順
     motorf = defaultdict(list)    # "jcd-motor" -> 直近の着順
     rows = []
@@ -127,6 +129,10 @@ def build(races):
                 f_dates[b["toban"]].append(d)
             elif b.get("st") is not None and 0 <= b["st"] <= 0.6:
                 st_hist[b["toban"]].append(b["st"])
+                if b.get("course") in range(1, 7):
+                    stc[b["toban"]][b["course"] - 1] = (stc[b["toban"]][b["course"] - 1] + [b["st"]])[-15:]
+                    k = f'{r["jcd"]}-{b["course"]}'
+                    stv[k] = (stv[k] + [b["st"]])[-300:]
             c, fin_b = b.get("course"), b.get("finish")
             if c in range(1, 7) and (fin_b or str(b.get("code", "")).startswith(("F", "L", "S"))):
                 cw[b["toban"]][c - 1][1] += 1
@@ -136,7 +142,7 @@ def build(races):
                 recent[b["toban"]] = (recent[b["toban"]] + [fin_b])[-10:]
                 k = f'{r["jcd"]}-{b["motor"]}'
                 motorf[k] = (motorf[k] + [fin_b])[-20:]
-    STATE.update(cw=cw, recent=recent, motorf=motorf, st=st_hist)
+    STATE.update(cw=cw, recent=recent, motorf=motorf, st=st_hist, stc=stc, stv=stv)
     return rows
 
 
@@ -405,9 +411,11 @@ def main():
         best_rule["maxOdds"] = 99999
     # アプリが同じ特徴量を計算できるよう、選手のコース別成績・直近着順とモーターの直近着順を書き出す
     stats = {"updated": model["trainedAt"],
-             "p": {str(t): {"cw": v, "rf": STATE["recent"].get(t, []), "st": [round(x, 2) for x in STATE["st"].get(t, [])[-20:]]}
+             "p": {str(t): {"cw": v, "rf": STATE["recent"].get(t, []), "st": [round(x, 2) for x in STATE["st"].get(t, [])[-20:]],
+                              "stc": [[round(x, 2) for x in l] for l in STATE["stc"][t]] if t in STATE["stc"] else None}
                    for t, v in STATE["cw"].items()},
              "km": kimarite_stats(races),
+             "stv": {k: round(float(np.mean(v)), 4) for k, v in STATE["stv"].items() if len(v) >= 50},
              "m": {k: v for k, v in STATE["motorf"].items()}}
     (root / "stats.json").write_text(json.dumps(stats, separators=(",", ":")), encoding="utf-8")
     (root / "model.json").write_text(json.dumps(model, ensure_ascii=False, indent=1), encoding="utf-8")
