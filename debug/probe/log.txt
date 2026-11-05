@@ -1,0 +1,11 @@
+200 20306 https://boatcast.jp/
+200 89478 https://boatcast.jp/assets/lib/js/jquery-3.5.1.min.js?20261105215707
+200 89478 https://boatcast.jp/assets/lib/js/jquery-3.5.1.min.js?20261105215707
+200 43346 https://boatcast.jp/assets/lib/js/slick.min.js?20261105215707
+  path originalStyling
+200 157933 https://boatcast.jp/assets/lib/js/vue.global.prod.js?20261105215707
+  path capitalize
+200 5580 https://boatcast.jp/assets/js/common.js?20261105215707
+200 19614 https://boatcast.jp/assets/js/top.js?20261105215707
+403 3330 https://boatcast.jp/race
+404 3430 https://boatcast.jp/api/
