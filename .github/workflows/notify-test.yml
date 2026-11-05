@@ -14,4 +14,4 @@ jobs:
       - run: python scraper/notify.py "艇読みAI" "テスト通知です。これが届いたら準備OK！（アラートは11/19の成績確認のあとに始まります）" 4 "speedboat,tada"
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
-# test-run: 0
+# test-run: 1
