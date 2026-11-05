@@ -1,10 +1,7 @@
-200 231 https://race.boatcast.jp/txt/12/bc_oriten_20261105_12_01.txt
-200 441 https://race.boatcast.jp/hp_txt/12/bc_j_tkz_20261105_12_01.txt
-403 2992 https://race.boatcast.jp/txt/12/bc_oriten_20261105_12_1.txt
-403 2992 https://race.boatcast.jp/hp_txt/12/bc_j_tkz_20261105_12_1.txt
-200 231 https://race.boatcast.jp/txt/12/bc_oriten_20261105_12_11.txt
-200 480 https://race.boatcast.jp/hp_txt/12/bc_j_tkz_20261105_12_11.txt
-200 265 https://race.boatcast.jp/txt/11/bc_oriten_20261105_11_01.txt
-200 441 https://race.boatcast.jp/hp_txt/11/bc_j_tkz_20261105_11_01.txt
-200 265 https://race.boatcast.jp/txt/04/bc_oriten_20261105_04_01.txt
-200 440 https://race.boatcast.jp/hp_txt/04/bc_j_tkz_20261105_04_01.txt
+200 231 https://race.boatcast.jp/txt/12/bc_oriten_20261001_12_01.txt
+403 2992 https://race.boatcast.jp/txt/12/bc_oriten_20260801_12_01.txt
+403 2992 https://race.boatcast.jp/txt/12/bc_oriten_20260501_12_01.txt
+403 2992 https://race.boatcast.jp/txt/12/bc_oriten_20260101_12_01.txt
+200 231 https://race.boatcast.jp/txt/12/bc_oriten_20251106_12_01.txt
+403 2992 https://race.boatcast.jp/txt/12/bc_oriten_20250601_12_01.txt
+200 231 https://race.boatcast.jp/txt/12/bc_oriten_20240601_12_01.txt
