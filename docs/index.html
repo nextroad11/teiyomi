@@ -314,6 +314,9 @@ function parsePicksOld(str){
 /* ============ 端末内の保存（自分の記録） ============ */
 const LS={get(k,d){try{const v=localStorage.getItem('teiyomi:'+k);return v?JSON.parse(v):d}catch(_){return d}},
   set(k,v){try{localStorage.setItem('teiyomi:'+k,JSON.stringify(v))}catch(_){}}};
+// 他の予想: 端末に保存したもの＋Claudeが書き起こして共有したもの（data/picks/日付.json）。端末の入力が優先
+let SHARED={};
+const pk=id=>{const sh=SHARED[id]||{},lo=picks[id]||{},o={};for(const k of ['chatgpt','ikkun','mine'])o[k]=(lo[k]!=null&&lo[k]!=='')?lo[k]:(sh[k]||'');o.ikkunType=sh.ikkunType;return o;};
 let picks=LS.get('picks',{}), exMan=LS.get('ex',{}), resMan=LS.get('res',{}), history=LS.get('hist',{});
 
 /* ============ 状態とデータ ============ */
@@ -345,6 +348,7 @@ async function loadIndex(){
 async function loadDay(){
   const note=$('#loadnote');
   if(!dateSel){races=[];note.textContent='';renderAll();return;}
+  try{SHARED=(await fetchJSON('picks/'+dateSel+'.json')).races||{};}catch(_){SHARED={};}
   try{const d=await fetchJSON(dateSel+'.json');races=d.races||[];
     note.textContent=d.updated?`更新 ${d.updated.slice(11,16)}`:'';
     snapshotAI();
@@ -435,7 +439,7 @@ function renderYoso(){
   const el=$('#v-yoso'), r=cur();
   if(!r){el.innerHTML=emptyState();return;}
   const a=A(r); if(!a){el.innerHTML=`<div class="empty">このレースは出走データが不完全です。</div>`;return;}
-  const lv=LEVEL[a.level], p=picks[r.id]||{}, res=resultOf(r), bf=r.before||{};
+  const lv=LEVEL[a.level], p=pk(r.id), res=resultOf(r), bf=r.before||{};
   const maxWin=Math.max(...a.boats.map(b=>b.pWin));
   const rowC=(c,ana)=>`<li class="combo${res&&res.order===c.k?' hit':''}"><span class="nums">${comboHtml(c.k)}</span><span class="bar"><span style="width:${Math.min(100,c.pAi/a.combos[0].pAi*100)}%"></span></span><span class="val">${pct(c.pAi)}<small>${ana?'人気比×'+c.ratio.toFixed(1)+' / ':''}${c.real?'':'推定'}${odds(c.odds)}倍</small></span></li>`;
   const anaEV=a.ana.length?avg(a.ana.map(c=>c.ev)):0;
@@ -485,7 +489,7 @@ function renderYoso(){
       <p class="sub">他の予想を入れておくと「成績」で回収率を比べられます（この端末に保存）。書き方の例：1-2-3, 1-23-234。金額つきは「132 135 300円」「156 251 100円」のように、買い目の後に金額（無ければ100円）</p>
       <div class="record">
         <div class="field"><label for="pk-chatgpt">ChatGPTの買い目</label><textarea id="pk-chatgpt">${esc(p.chatgpt||'')}</textarea></div>
-        <div class="field"><label for="pk-ikkun">一撃くんの買い目</label><textarea id="pk-ikkun">${esc(p.ikkun||'')}</textarea></div>
+        <div class="field"><label for="pk-ikkun">一撃くんの買い目${p.ikkunType?'（'+esc(p.ikkunType)+'）':''}</label><textarea id="pk-ikkun">${esc(p.ikkun||'')}</textarea></div>
         <div class="field"><label for="pk-mine">自分の買い目</label><textarea id="pk-mine">${esc(p.mine||'')}</textarea></div>
       </div>
       <div class="rowact"><button class="btn" id="save" type="button">記録を保存</button><span class="status">${r.result?'結果は自動で入ります。':''}</span></div>
@@ -563,12 +567,18 @@ function renderRec(){
   const unit=LS.get('unit',1000);
   const aiBets=(r,keys)=>{const a=A(r),m=Object.fromEntries(a.combos.map(c=>[c.k,c]));const P=betPlan(a,unit,keys.map(k=>m[k]).filter(Boolean));return P?Object.fromEntries(P.rows.map(x=>[x.k,x.stake])):{};};
   const aiH=r=>aiBets(r,history[r.id]?.h||A(r).honsen.map(c=>c.k)), aiA=r=>{const ks=history[r.id]?.a||A(r).ana.map(c=>c.k);return Object.fromEntries(ks.map(k=>[k,unit>0?unit:100]));};
-  const srcs=[['AI本線',aiH],['AI穴',aiA],['ChatGPT',r=>parseBets(picks[r.id]?.chatgpt)],['一撃くん',r=>parseBets(picks[r.id]?.ikkun)],['自分',r=>parseBets(picks[r.id]?.mine)]];
-  const agg=srcs.map(([name,f])=>{let n=0,pts=0,inv=0,ret=0,hits=0;done.forEach(r=>{const bs=f(r),x=resultOf(r),ks=Object.keys(bs);if(!ks.length)return;n++;pts+=ks.length;inv+=sum(Object.values(bs));if(bs[x.order]){hits++;ret+=(x.payout||0)*bs[x.order]/100;}});return {name,n,pts,inv,ret,hits};});
-  el.innerHTML=`<div style="display:grid;gap:16px">${learnPanel()}
-    <div><p class="card-title">${fmtDate(dateSel)}の回収率（入力した金額で計算・${done.length}レース）</p><div class="tablebox"><table class="rec">
+  const srcs=[['AI本線',aiH],['AI穴',aiA],['ChatGPT',r=>parseBets(pk(r.id).chatgpt)],['一撃くん',r=>parseBets(pk(r.id).ikkun)],['自分',r=>parseBets(pk(r.id).mine)]];
+  const aggOf=list=>srcs.map(([name,f])=>{let n=0,pts=0,inv=0,ret=0,hits=0;list.forEach(r=>{const bs=f(r),x=resultOf(r),ks=Object.keys(bs);if(!ks.length)return;n++;pts+=ks.length;inv+=sum(Object.values(bs));if(bs[x.order]){hits++;ret+=(x.payout||0)*bs[x.order]/100;}});return {name,n,pts,inv,ret,hits};});
+  const agg=aggOf(done);
+  // ChatGPT・一撃くん・自分のどれかを入れたレースだけで、同じ条件で比べる
+  const same=done.filter(r=>{const q=pk(r.id);return q.chatgpt||q.ikkun||q.mine;});
+  const aggS=same.length?aggOf(same):null;
+  const tbl=(g)=>`<div class="tablebox"><table class="rec">
       <thead><tr><th>予想</th><th>レース数</th><th>平均点数</th><th>的中</th><th>的中率</th><th>投資</th><th>払戻</th><th>回収率</th></tr></thead>
-      <tbody>${agg.map(g=>`<tr><td class="src">${g.name}</td><td>${g.n}</td><td>${g.n?(g.pts/g.n).toFixed(1)+'点':'-'}</td><td>${g.hits}</td><td>${g.n?pct(g.hits/g.n):'-'}</td><td>${yen(g.inv)}</td><td>${yen(Math.round(g.ret))}</td><td class="${g.inv&&g.ret>=g.inv?'hit':''}">${g.inv?Math.round(g.ret/g.inv*100)+'%':'-'}</td></tr>`).join('')}</tbody></table></div></div>
+      <tbody>${g.map(g=>`<tr><td class="src">${g.name}</td><td>${g.n}</td><td>${g.n?(g.pts/g.n).toFixed(1)+'点':'-'}</td><td>${g.hits}</td><td>${g.n?pct(g.hits/g.n):'-'}</td><td>${yen(g.inv)}</td><td>${yen(Math.round(g.ret))}</td><td class="${g.inv&&g.ret>=g.inv?'hit':''}">${g.inv?Math.round(g.ret/g.inv*100)+'%':'-'}</td></tr>`).join('')}</tbody></table></div>`;
+  el.innerHTML=`<div style="display:grid;gap:16px">${learnPanel()}
+    ${aggS?`<div><p class="card-title">同じレースで比較（他の予想を入れた${same.length}レース）</p>${tbl(aggS)}</div>`:''}
+    <div><p class="card-title">${fmtDate(dateSel)}の全レース（入力した金額で計算・${done.length}レース）</p>${tbl(agg)}</div>
     <div><p class="card-title">レースごと</p><div class="tablebox"><table class="rec">
       <thead><tr><th>レース</th><th>結果</th><th>払戻</th><th>AI本線</th><th>AI穴</th><th>ChatGPT</th><th>一撃くん</th><th>自分</th></tr></thead>
       <tbody>${done.sort((a,b)=>a.jcd-b.jcd||a.rno-b.rno).map(r=>{const x=resultOf(r);return `<tr><td class="src">${esc(r.venue||VENUES[r.jcd])}${r.rno}R</td><td>${esc(x.order)}</td><td>${yen(x.payout)}</td>${srcs.map(([,f])=>{const bs=f(r),ks=Object.keys(bs);return `<td>${!ks.length?'-':bs[x.order]?`<span class="hit">的中</span><br><small>${yen(Math.round(x.payout*bs[x.order]/100))}</small>`:'×'}</td>`}).join('')}</tr>`}).join('')}</tbody></table></div></div>
