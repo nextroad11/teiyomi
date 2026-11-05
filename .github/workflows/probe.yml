@@ -1,0 +1,28 @@
+name: 下見（オリジナル展示）
+on:
+  push:
+    branches: [main]
+    paths: ["scraper/probe.py", ".github/workflows/probe.yml"]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: probe
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with: { ref: data, path: data }
+      - run: pip install requests
+      - run: python scraper/probe.py data/debug/probe
+      - working-directory: data
+        run: |
+          git config user.name "teiyomi-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet && exit 0
+          git commit -q -m "下見: BOATCAST"
+          for i in 1 2 3; do git push -q && exit 0; git pull -q --rebase; done
