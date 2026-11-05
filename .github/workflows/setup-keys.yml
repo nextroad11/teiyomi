@@ -25,12 +25,16 @@ jobs:
         env:
           APP_PASS: ${{ secrets.APP_PASS }}
         run: |
-          python scraper/train.py --data data
+          mkdir -p data/debug
+          D=data/debug/setup-keys.txt
+          echo "合言葉の長さ: ${#APP_PASS}" > $D
+          python scraper/train.py --data data > /tmp/train.log 2>&1 && echo "学習: OK" >> $D || { echo "学習: 失敗" >> $D; tail -20 /tmp/train.log >> $D; }
           for f in model report stats; do
-            if [ -f data/$f.json ]; then python scraper/crypt.py encrypt data/$f.json data/enc/$f.json; rm data/$f.json; fi
+            if [ -f data/$f.json ]; then python scraper/crypt.py encrypt data/$f.json data/enc/$f.json 2>>$D && rm data/$f.json && echo "鍵: $f OK" >> $D; else echo "なし: $f" >> $D; fi
           done
-          python scraper/crypt.py pub data/enc/pub.txt
-          python scraper/crypt.py inbox data
+          python scraper/crypt.py pub data/enc/pub.txt 2>>$D && echo "公開鍵: OK" >> $D
+          python scraper/crypt.py inbox data >> $D 2>&1 || true
+          cat $D
       - name: 保存
         working-directory: data
         run: |
@@ -41,4 +45,4 @@ jobs:
           git commit -q -m "合言葉の準備"
           for i in 1 2 3; do git push -q && exit 0; git pull -q --rebase; done
           exit 1
-# run: 1
+# run: 2
