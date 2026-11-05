@@ -23,7 +23,7 @@ concurrency:
 jobs:
   learn:
     runs-on: ubuntu-latest
-    timeout-minutes: 100
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
 
@@ -44,6 +44,9 @@ jobs:
       - name: 過去データ
         run: python scraper/history.py --data data --minutes 45
 
+      - name: オリジナル展示（過去分を少しずつ）
+        run: python scraper/oriten.py --data data --minutes 35 || true
+
       - name: 過去データを先に保存
         working-directory: data
         run: |
@@ -58,7 +61,8 @@ jobs:
       - name: 学習
         run: |
           NEW=$(cat /tmp/history_new 2>/dev/null || echo 0)
-          if [ "$NEW" != "0" ] || [ ! -f data/model.json ] || [ "${{ github.event_name }}" != "schedule" ]; then
+          ORI=$(cat /tmp/oriten_new 2>/dev/null || echo 0)
+          if [ "$NEW" != "0" ] || [ "$ORI" -gt 2000 ] || [ ! -f data/model.json ] || [ "${{ github.event_name }}" != "schedule" ]; then
             python scraper/train.py --data data
           else
             echo "新しいデータなし。学習は省略"

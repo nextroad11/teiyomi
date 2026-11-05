@@ -194,6 +194,12 @@ let REPORT=null, STATS=null;
 const BASE1=[.55,.14,.12,.11,.06,.02], CW_K=8;
 const lgt=p=>Math.log(p/(1-p));
 function cwinOf(toban,c){const e=STATS&&STATS.p[String(toban)];const wn=e?e.cw[c-1]:[0,0];const p=(wn[0]+BASE1[c-1]*CW_K)/(wn[1]+CW_K);return lgt(p)-lgt(BASE1[c-1]);}
+const ORI_GROUP={'一周':0,'半周ラップ':0,'半周':0,'まわり足':1,'直線':2};
+// オリジナル展示を同じレース内で比べる（速いほど＋）→ {waku: [一周, まわり足, 直線]}。学習側(train.py)と同じ計算
+function oriFeats(o){const f={};for(let w=1;w<=6;w++)f[w]=[0,0,0];if(!o||!o.items)return f;
+  o.items.forEach((name,j)=>{const g=ORI_GROUP[name];if(g==null)return;const v=[1,2,3,4,5,6].map(w=>num((o.boats[w]||[])[j]));const ok=v.filter(x=>x!=null);if(ok.length<5)return;
+    const m=avg(ok),sd=Math.max(Math.sqrt(avg(ok.map(x=>(x-m)**2))),0.03);v.forEach((x,i)=>{if(x!=null)f[i+1][g]=-clamp((x-m)/sd,-2.5,2.5);});});return f;}
+function oriRank(o){const r={};if(!o||!o.items)return r;o.items.forEach((name,j)=>{const v=[1,2,3,4,5,6].map(w=>({w,x:num((o.boats[w]||[])[j])})).filter(e=>e.x!=null).sort((a,b)=>a.x-b.x);v.forEach((e,i)=>{(r[e.w]=r[e.w]||{})[name]=i+1;});});return r;}
 function formOf(fs,need){return fs&&fs.length>=need?(3.5-avg(fs))/1.5:0;}
 const PAYBACK=0.75;
 
@@ -225,6 +231,7 @@ function analyze(race,exOverride){
   const exMean=exV.length>=4?avg(exV):null, exBest=exV.length>=4?Math.min(...exV):null;
   const base=MODEL.baseVenue[race.jcd]||MODEL.baseDefault;
   const m2Mean=avg(B.map(b=>num(b.motor2)).filter(v=>v!=null));
+  const ORI=race.before&&race.before.ori, OF=oriFeats(ORI);
   const boats=B.map((b,i)=>{
     const course=clamp(num(ex[b.waku].course)||b.waku,1,6);
     const nat=num(b.natWin)??5.0, loc=num(b.locWin), locEff=(loc&&loc>0)?loc:nat;
@@ -232,7 +239,8 @@ function analyze(race,exOverride){
     const parts={skill:w.skill*(nat-5.5)/1.2, local:w.local*(locEff-nat)/1.2, motor:w.motor*(m2-35)/8, boat:w.boat*(b2-33)/6,
       st:-w.st*clamp((st-0.16)/0.025,-2.5,2.5), ex:(exMean!=null&&exT[i]!=null)?-w.ex*clamp((exT[i]-exMean)/0.07,-2.5,2.5):0,
       cwin:(w.cwin||0)*cwinOf(b.toban,course), form:(w.form||0)*formOf(STATS&&STATS.p[String(b.toban)]?.rf.slice(-10),3),
-      mform:(w.mform||0)*formOf(STATS&&STATS.m[`${race.jcd}-${b.motor}`]?.slice(-20),5)};
+      mform:(w.mform||0)*formOf(STATS&&STATS.m[`${race.jcd}-${b.motor}`]?.slice(-20),5),
+      olap:(w.olap||0)*OF[b.waku][0], oturn:(w.oturn||0)*OF[b.waku][1], ostr:(w.ostr||0)*OF[b.waku][2]};
     const s=sum(Object.values(parts)), fPen=f>0?-w.fPen:0;
     const mk=MODEL.market, exF=(exMean!=null&&exT[i]!=null)?-clamp((exT[i]-exMean)/0.07,-2.5,2.5):0;
     const sm=mk.kNat*(nat-5.5)/1.2+mk.kMotor*(m2-35)/8+mk.kEx*exF+(mk.cls[b.cls]??0);
@@ -255,7 +263,9 @@ function analyze(race,exOverride){
   });
   const ai=trifecta(boats,'winW','plW'), mkP=trifecta(boats,'mWinW','mPlW');
   // 舟足評価: 展示タイム・モーター2連率・モーターの直近成績を、学習した重みで足したもの
-  boats.forEach(b=>{b.foot=(b.parts.ex||0)+(b.parts.motor||0)+(b.parts.mform||0);});
+  // 学習した重みがまだ無いうちは、オリジナル展示は控えめな仮の重み(0.15)で舟足に入れる
+  boats.forEach(b=>{const o=OF[b.waku],ww=MODEL.weights;b.foot=(b.parts.ex||0)+(b.parts.motor||0)+(b.parts.mform||0)
+    +(ww.olap!=null?b.parts.olap:0.15*o[0])+(ww.oturn!=null?b.parts.oturn:0.15*o[1])+(ww.ostr!=null?b.parts.ostr:0.15*o[2]);});
   {const fm=avg(boats.map(b=>b.foot)),ord=boats.slice().sort((x,y)=>y.foot-x.foot);
     boats.forEach(b=>{const r=ord.indexOf(b),d=b.foot-fm;b.footGrade=d>=0.35&&r===0?'◎':d>=0.15&&r<=1?'○':d<=-0.3?'×':d<=-0.12?'▲':'△';});}
   const W=sum(boats.map(b=>b.winW));
@@ -486,10 +496,10 @@ function renderYoso(){
           <td class="n">${num(b.motor2)?.toFixed(1)??'-'}%<br><span style="color:var(--muted);font-size:11px">${b.motor?b.motor+'号機':''}</span></td>
           <td class="n">${num(b.st)?.toFixed(2)??'-'}</td>
           <td><input id="ex-${b.waku}" class="${auto?'auto':''}" inputmode="decimal" aria-label="${b.waku}号艇の展示タイム" placeholder="6.80" value="${b.exTime??''}"></td>
-          <td class="foot-cell"><b class="fg fg-${b.footGrade==='◎'||b.footGrade==='○'?'up':b.footGrade==='×'||b.footGrade==='▲'?'dn':'mid'}">${b.footGrade}</b>${(()=>{const q=(r.before&&r.before.boats&&r.before.boats[b.waku])||{};const x=[];if(q.exST!=null)x.push('ST'+(q.exST<0?' F'+Math.abs(q.exST).toFixed(2).slice(1):q.exST.toFixed(2).slice(1)));if(q.prop)x.push('ペラ'+q.prop);if(q.parts)x.push(q.parts);return x.length?`<span>${esc(x.join(' '))}</span>`:'';})()}</td>
+          <td class="foot-cell"><b class="fg fg-${b.footGrade==='◎'||b.footGrade==='○'?'up':b.footGrade==='×'||b.footGrade==='▲'?'dn':'mid'}">${b.footGrade}</b>${(()=>{const q=(r.before&&r.before.boats&&r.before.boats[b.waku])||{};const x=[];const ori=r.before&&r.before.ori,rk=oriRank(ori);if(ori&&ori.items)ori.items.forEach((nm,j)=>{const v=(ori.boats[b.waku]||[])[j];if(v!=null)x.push(`${nm.replace("まわり足","回り").replace("半周ラップ","半周")}${(+v).toFixed(2)}${rk[b.waku]&&rk[b.waku][nm]===1?'①':''}`);});if(q.exST!=null)x.push('ST'+(q.exST<0?' F'+Math.abs(q.exST).toFixed(2).slice(1):q.exST.toFixed(2).slice(1)));if(q.prop)x.push('ペラ'+q.prop);if(q.parts)x.push(q.parts);return x.length?`<span>${esc(x.join(' '))}</span>`:'';})()}</td>
           <td><div class="winbar"><span class="track"><span style="width:${b.pWin/maxWin*100}%"></span></span><b>${pct(b.pWin)}</b></div></td>
           <td><div class="tags">${b.tags.map(t=>`<span class="tag ${t[0]}">${esc(t[1])}</span>`).join('')}</div></td></tr>`}).join('')}</tbody></table></div>
-      <p class="hint">${r.before&&r.before.complete?'展示タイム・進入は自動で取得済み（青枠）。':'展示タイムは締切の約20分前から自動で入ります。'}手で入れ直すと、その場で計算し直します。舟足は展示タイム・モーター2連率・モーターの最近の成績から（◎○△▲×）。下の小さい字は展示のST・プロペラ・部品交換。</p>
+      <p class="hint">${r.before&&r.before.complete?'展示タイム・進入は自動で取得済み（青枠）。':'展示タイムは締切の約20分前から自動で入ります。'}手で入れ直すと、その場で計算し直します。舟足は展示タイム・オリジナル展示（一周・まわり足・直線）・モーターから（◎○△▲×）。下の小さい字はオリジナル展示（①はレース内1位）・展示のST・プロペラ・部品交換。</p>
     </div>
     <div class="panel">
       <h3>このレースの記録</h3>

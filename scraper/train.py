@@ -22,7 +22,28 @@ from pathlib import Path
 import numpy as np
 from scipy.optimize import least_squares, minimize
 
-FEATS = ["skill", "local", "motor", "boat", "st", "ex", "cwin", "form", "mform"]
+FEATS = ["skill", "local", "motor", "boat", "st", "ex", "cwin", "form", "mform", "olap", "oturn", "ostr"]
+# olap/oturn/ostr: オリジナル展示の 一周（半周）・まわり足・直線。同じレース内で速いほど＋（無い場は0）
+ORI_GROUP = {"一周": 0, "半周ラップ": 0, "半周": 0, "まわり足": 1, "直線": 2}
+ORI = {}
+
+
+def ori_feats(o):
+    f = np.zeros((6, 3))
+    if not o:
+        return f
+    for j, name in enumerate(o.get("items", [])):
+        g = ORI_GROUP.get(name)
+        if g is None:
+            continue
+        v = np.array([(o["boats"].get(str(w)) or [None] * 9)[j] if j < len(o["boats"].get(str(w)) or []) else None
+                      for w in range(1, 7)], dtype=float)
+        ok = np.isfinite(v)
+        if ok.sum() < 5:
+            continue
+        sd = max(np.nanstd(v), 0.03)
+        f[ok, g] = -np.clip((v[ok] - np.nanmean(v)) / sd, -2.5, 2.5)
+    return f
 # cwin: その選手のそのコースでの1着率（コースの平均との差、対数オッズ）
 # form: 直近10走の平均着順 / mform: そのモーターの直近20走の平均着順（場ごと）
 BASE1 = np.array([.55, .14, .12, .11, .06, .02])
@@ -39,6 +60,8 @@ def load(root: Path):
     for f in files:
         races += json.loads(f.read_text(encoding="utf-8")).get("races", [])
     races.sort(key=lambda r: (r["date"], r["jcd"], r["rno"]))
+    for f in (root / "oriten").glob("2*.json") if (root / "oriten").exists() else []:
+        ORI[f.stem] = json.loads(f.read_text(encoding="utf-8")).get("races", {})
     return races
 
 
@@ -76,6 +99,7 @@ def build(races):
         fflag = np.zeros(6)
         sm = np.zeros((6, 4))  # 人気モデル用: skill, motor, ex, 級別
         cls = np.zeros(6, dtype=int)
+        of = ori_feats(ORI.get(r["date"], {}).get(f'{r["jcd"]:02d}-{r["rno"]:02d}'))
         for i, b in enumerate(boats):
             nat = b["natWin"] or 5.0
             loc = b["locWin"] if b["locWin"] and b["locWin"] > 0 else nat
@@ -88,7 +112,7 @@ def build(races):
             x[i] = [(nat - 5.5) / 1.2, (loc - nat) / 1.2, (m2 - 35) / 8, (b2 - 33) / 6,
                     -np.clip((st_avg - 0.16) / 0.025, -2.5, 2.5), ex,
                     cwin_of(cw[b["toban"]][c - 1], c), form_of(recent[b["toban"]][-10:], 3),
-                    form_of(motorf[f'{r["jcd"]}-{b["motor"]}'][-20:], 5)]
+                    form_of(motorf[f'{r["jcd"]}-{b["motor"]}'][-20:], 5), *of[b["waku"] - 1]]
             fflag[i] = 1.0 if any((d - fd).days <= 180 for fd in f_dates[b["toban"]]) else 0.0
             cls[i] = CLS.index(b["cls"]) if b["cls"] in CLS else 2
         if ok:
