@@ -25,7 +25,11 @@ for i, s in enumerate(srcs[:12]):
     js = get(u, f"js{i}.js")
     for m in sorted(set(re.findall(r'["\'`](/?[A-Za-z0-9_\-/.]*(?:tenji|exhibit|original|api)[A-Za-z0-9_\-/.{}$]*)["\'`]', js)))[:80]:
         log.append(f"  path {m}")
-for u, n in [("https://boatcast.jp/race", "race.html"), ("https://boatcast.jp/api/", "api.txt")]:
-    get(u, n)
+for u, n in [("https://boatcast.jp/assets/js/config.js", "config.js"),
+             ("https://boatcast.jp/assets/js/components/Utils.js", "utils.js"),
+             ("https://boatcast.jp/live/020201.html", "live.html")]:
+    t = get(u, n)
+    for m in sorted(set(re.findall(r'["\'`](https?://[^"\'`]+|/[A-Za-z0-9_\-/.]+)["\'`]', t)))[:120]:
+        log.append(f"  ref {m}")
 (out / "log.txt").write_text("\n".join(log), encoding="utf-8")
 print("\n".join(log))
