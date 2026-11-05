@@ -1,7 +1,7 @@
-合言葉の長さ: 0
+合言葉の長さ: 5
 学習: OK
-APP_PASS が未設定です
-APP_PASS が未設定です
-APP_PASS が未設定です
-APP_PASS が未設定です
-APP_PASS が未設定です
+鍵: model OK
+鍵: report OK
+鍵: stats OK
+公開鍵: OK
+受け箱 0件を取り込み
