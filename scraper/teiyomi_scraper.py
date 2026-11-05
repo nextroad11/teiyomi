@@ -255,6 +255,33 @@ def parse_result(html: str) -> dict | None:
     return None
 
 
+# ---------------------------------------------------------------- オリジナル展示（BOATCAST）
+BOATCAST = "https://race.boatcast.jp"
+
+
+def fetch_oriten(hd: str, jcd: int, rno: int) -> dict | None:
+    """一周・まわり足・直線など（場ごとに項目が違う）。{items:[...], boats:{"1":[37.17, 5.63, 7.41], ...}}"""
+    url = f"{BOATCAST}/txt/{jcd:02d}/bc_oriten_{hd}_{jcd:02d}_{rno:02d}.txt"
+    txt = get(url)
+    return parse_oriten(txt) if txt else None
+
+
+def parse_oriten(txt: str) -> dict | None:
+    lines = [l for l in txt.replace("\r", "").split("\n") if l.strip() and not l.startswith("data=")]
+    if len(lines) < 3:
+        return None
+    items = [re.sub(r"[\s\u3000]", "", x) for x in lines[1].split("\t") if x.strip()]
+    boats = {}
+    for l in lines[2:]:
+        c = l.split("\t")
+        if c and c[0].strip() in list("123456"):
+            vals = [fnum(x) for x in c[2:2 + len(items)]]
+            boats[c[0].strip()] = vals
+    if not any(v is not None for vs in boats.values() for v in vs):
+        return None
+    return {"items": items, "boats": boats}
+
+
 # ---------------------------------------------------------------- 3連単オッズ
 # 並び順は 1-2-3, 1-2-4, ... 6-5-4（辞書順の120通り）。アプリも同じ順で読む
 TRI_KEYS = [f"{a}-{b}-{c}" for a in range(1, 7) for b in range(1, 7) for c in range(1, 7) if len({a, b, c}) == 3]
@@ -322,6 +349,14 @@ def update_before_and_results(day: dict, now: dt.datetime) -> int:
                     r["before"] = p
                     n += 1
                     log(f"  {r['venue']}{rno}R 直前情報 {'完了' if p['complete'] else '一部'}")
+        # オリジナル展示: 展示が出そろってから、取れるまで
+        b = r.get("before") or {}
+        if b.get("complete") and not b.get("ori") and now <= dl + dt.timedelta(minutes=3):
+            o = fetch_oriten(hd, jcd, rno)
+            if o:
+                b["ori"] = o
+                n += 1
+                log(f"  {r['venue']}{rno}R オリジナル展示 {'・'.join(o['items'])}")
         # 3連単オッズ: 締切20分前〜締切1分後。毎回取り直して最新にする（締切時点のものが残る）
         o = r.get("odds") or {}
         if dl - dt.timedelta(minutes=20) <= now <= dl + dt.timedelta(minutes=1) and not o.get("final"):
