@@ -74,6 +74,23 @@ main.wrap{padding-block:16px 48px;display:grid;gap:18px}
 .combo.hit .nums{outline:2px solid var(--good);outline-offset:2px;border-radius:4px}
 .foot-cell{white-space:nowrap}.foot-cell span{display:block;font-size:11px;color:var(--muted)}
 .fg{font-size:16px}.fg-up{color:var(--good)}.fg-dn{color:var(--ana)}.fg-mid{color:var(--muted)}
+.tenkai{display:grid;gap:14px}
+.slit svg{width:100%;height:auto;display:block}
+.slit .lane{fill:var(--bg)} .slit .line{stroke:var(--ana);stroke-width:2;stroke-dasharray:4 3}
+.slit text{font:11px var(--f-num);fill:var(--muted)}
+.slit .st{font:600 11px var(--f-num);fill:var(--ink)}
+.slit .mk-dn{fill:var(--ana);font-weight:700} .slit .mk-up{fill:var(--good);font-weight:700}
+.slit .bnr1{fill:var(--b1);stroke:var(--line)} .slit .bnt1{fill:var(--b1f);font:600 12px var(--f-num)}
+.slit .bnr2{fill:var(--b2);stroke:var(--line)} .slit .bnt2{fill:var(--b2f);font:600 12px var(--f-num)}
+.slit .bnr3{fill:var(--b3);stroke:var(--line)} .slit .bnt3{fill:var(--b3f);font:600 12px var(--f-num)}
+.slit .bnr4{fill:var(--b4);stroke:var(--line)} .slit .bnt4{fill:var(--b4f);font:600 12px var(--f-num)}
+.slit .bnr5{fill:var(--b5);stroke:var(--line)} .slit .bnt5{fill:var(--b5f);font:600 12px var(--f-num)}
+.slit .bnr6{fill:var(--b6);stroke:var(--line)} .slit .bnt6{fill:var(--b6f);font:600 12px var(--f-num)}
+.scen{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.scen li{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;font-size:13px}
+.scen .bar{height:8px;border-radius:4px;background:var(--bg);overflow:hidden}.scen .bar span{display:block;height:100%;background:var(--accent)}
+.scen li>span{display:grid;gap:3px}.scen b{font-variant-numeric:tabular-nums}
+.tk-text{font-size:13px;line-height:1.7;margin:0}
 .plan .forms{display:grid;gap:6px;margin:4px 0 12px}
 .plan .form{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-weight:600}
 .plan .form .lbl{font-size:12px;font-weight:600;color:var(--muted);min-width:5.5em}
@@ -404,6 +421,56 @@ function renderView(){
 const emptyState=()=>`<div class="empty"><b>この日のレースデータはまだありません。</b><br>毎朝7時ごろに、その日の全場の出走表を自動で取り込みます。</div>`;
 const WIND=['','北','北北東','北東','東北東','東','東南東','南東','南南東','南','南南西','南西','西南西','西','西北西','北西','北北西'];
 
+// ---------------------------------------------------------------- スリット予測・展開予想
+const KM_DEFAULT={1:{'逃げ':.93,'抜き':.04,'恵まれ':.03},2:{'差し':.55,'まくり':.3,'抜き':.1,'恵まれ':.05},3:{'まくり':.42,'まくり差し':.35,'差し':.13,'抜き':.07,'恵まれ':.03},
+  4:{'まくり':.42,'差し':.3,'まくり差し':.18,'抜き':.07,'恵まれ':.03},5:{'まくり差し':.45,'まくり':.28,'差し':.17,'抜き':.07,'恵まれ':.03},6:{'まくり差し':.4,'差し':.25,'まくり':.25,'抜き':.07,'恵まれ':.03}};
+function kmDist(jcd,c){const K=STATS&&STATS.km;const all=K&&K.all&&K.all[c],v=K&&K.v&&K.v[jcd]&&K.v[jcd][c];
+  if(!all)return KM_DEFAULT[c];const na=sum(Object.values(all)),pa={};for(const k in all)pa[k]=all[k]/na;if(!v)return pa;
+  const nv=sum(Object.values(v)),out={};for(const k of new Set([...Object.keys(pa),...Object.keys(v)]))out[k]=((v[k]||0)+20*(pa[k]||0))/(nv+20);return out;}
+function slitOf(r,a){
+  const bf=(r.before&&r.before.boats)||{};
+  const rows=a.boats.map(b=>{const q=bf[b.waku]||{},hist=STATS&&STATS.p[String(b.toban)]?.st;
+    const avgST=hist&&hist.length>=5?avg(hist):num(b.st)??0.17, sd=hist&&hist.length>=5?Math.sqrt(avg(hist.map(x=>(x-avgST)**2))):null;
+    const ex=q.exST!=null?Math.max(0,q.exST):null, pred=ex!=null?0.55*avgST+0.45*ex:avgST;
+    return {waku:b.waku,course:b.course,name:b.name,avgST,sd,exST:q.exST,pred};}).sort((x,y)=>x.course-y.course);
+  rows.forEach((x,i)=>{const inn=rows[i-1],out=rows[i+1];
+    x.lead=inn?inn.pred-x.pred:0; // 内より早い分（＋ならのぞく）
+    const nb=[inn,out].filter(Boolean).map(n=>n.pred);x.dent=nb.length&&x.pred-Math.min(...nb)>=0.03&&nb.every(v=>x.pred-v>=0.015);});
+  return rows;}
+function tenkaiOf(r,a){
+  const sl=slitOf(r,a),byW=Object.fromEntries(sl.map(x=>[x.waku,x]));
+  const sc=[];
+  a.boats.forEach(b=>{const x=byW[b.waku],d={...kmDist(r.jcd,b.course)};
+    if(x.lead>=0.03&&d['まくり'])d['まくり']*=1.6; if(x.dent&&d['まくり'])d['まくり']*=0.6;
+    const inn=sl.find(y=>y.course===b.course-1); if(inn&&inn.dent&&d['差し'])d['差し']*=1.3;
+    const Z=sum(Object.values(d));for(const k in d)sc.push({waku:b.waku,course:b.course,km:k,p:b.pWin*d[k]/Z});});
+  sc.sort((p,q)=>q.p-p.p);
+  // 文章
+  const t=[],c1=sl[0],top=sc[0];
+  t.push(`イン（${c1.waku}号艇）の予測ST ${c1.pred.toFixed(2).slice(1)}${c1.sd!=null?`（ばらつき${c1.sd<0.03?'小さく安定':c1.sd<0.05?'ふつう':'大きめ'}）`:''}。`);
+  sl.filter(x=>x.dent).forEach(x=>{const o=sl.find(y=>y.course===x.course+1);
+    t.push(o?`${x.course}コース（${x.waku}号艇）がスリットで凹む予測。外の${o.waku}号艇がのぞいて、まくり・まくり差しの形に注意。`:`${x.course}コース（${x.waku}号艇）はスタートで置いていかれる予測。`);});
+  sl.filter(x=>x.course>1&&x.lead>=0.03).forEach(x=>t.push(`${x.course}コース（${x.waku}号艇）がスリットで内より${x.lead.toFixed(2).slice(1)}秒早い予測。攻めの展開。`));
+  const f=a.boats.filter(b=>b.footGrade==='◎')[0]; if(f)t.push(`舟足◎は${f.waku}号艇。`);
+  t.push(`一番ありそうな決着の形は「${top.waku}号艇の${top.km}」（${pct(top.p)}）。`);
+  return {sl,sc,text:t.join('')};}
+function tenkaiHtml(r,a){
+  const T=tenkaiOf(r,a),sl=T.sl,W=340,H=6*26+24,X0=40,X1=W-12,maxST=0.30,sx=v=>X1-(clamp(v,0,maxST)/maxST)*(X1-X0-60);
+  const lanes=sl.map((x,i)=>{const y=12+i*26,cx=sx(x.pred);return `<rect class="lane" x="${X0}" y="${y}" width="${X1-X0}" height="22" rx="4"/>
+    <text x="4" y="${y+15}">${x.course}コース</text>
+    <line x1="${X0}" x2="${cx-12}" y1="${y+11}" y2="${y+11}" stroke="var(--line)" stroke-width="2"/>
+    <g transform="translate(${cx-12},${y+1})"><rect width="22" height="20" rx="4" class="bnr bnr${x.waku}"/><text x="11" y="14" text-anchor="middle" class="bnt bnt${x.waku}">${x.waku}</text></g>
+    <text class="st" x="${cx-16}" y="${y+15}" text-anchor="end">${x.pred.toFixed(2).slice(1)}</text>
+    ${x.dent?`<text class="mk-dn" x="${X1-4}" y="${y+15}" text-anchor="end">凹</text>`:x.course>1&&x.lead>=0.03?`<text class="mk-up" x="${X1-4}" y="${y+15}" text-anchor="end">先</text>`:''}`;}).join('');
+  const maxP=T.sc[0].p;
+  return `<div class="panel tenkai"><h3>スリット予測・展開予想</h3>
+    <p class="sub">予測ST = 最近20走の平均ST${sl.some(x=>x.exST!=null)?'と今日の展示ST':''}から。右ほど早いスタート。「凹」は両隣より遅れる予測、「先」は内より早い予測。</p>
+    <div class="slit"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="スリット予測"><line class="line" x1="${X1}" x2="${X1}" y1="6" y2="${H-6}"/>${lanes}</svg></div>
+    <p class="tk-text">${esc(T.text)}</p>
+    <ul class="scen">${T.sc.slice(0,6).map(c=>`<li>${bn(c.waku)}<span>${c.km}<span class="bar"><span style="width:${c.p/maxP*100}%"></span></span></span><b>${pct(c.p)}</b></li>`).join('')}</ul>
+    <div class="tablebox"><table class="card"><thead><tr><th>コース</th><th>艇</th><th>平均ST</th><th>ばらつき</th><th>展示ST</th><th>予測ST</th></tr></thead><tbody>
+    ${sl.map(x=>`<tr><td>${x.course}</td><td>${bn(x.waku)}</td><td class="n">${x.avgST.toFixed(2).slice(1)}</td><td class="n">${x.sd!=null?x.sd.toFixed(3).slice(1):'-'}</td><td class="n">${x.exST==null?'-':x.exST<0?'F'+Math.abs(x.exST).toFixed(2).slice(1):x.exST.toFixed(2).slice(1)}</td><td class="n"><b>${x.pred.toFixed(2).slice(1)}</b></td></tr>`).join('')}</tbody></table></div></div>`;}
+
 // ---------------------------------------------------------------- 買い方（フォーメーション・BOX・金額配分）
 const MAXMUL=5;
 function toForms(keys){
@@ -478,6 +545,7 @@ function renderYoso(){
         <p class="foot">${a.ana.length}点の的中確率 ${pct(sum(a.ana.map(c=>c.pAi)))}・1点あたり期待値 ${(anaEV*100).toFixed(0)}%</p>`
         :`<p class="sub">人気とのズレが小さく、狙える穴が見つかりません。見送り候補です。</p>`}</div>
     </div>
+    ${tenkaiHtml(r,a)}
     ${planHtml(a,res)}
     <div class="comment">
       <p>${esc(commentary(r,a))}</p>

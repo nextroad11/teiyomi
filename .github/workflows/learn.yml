@@ -23,7 +23,7 @@ concurrency:
 jobs:
   learn:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 150
     steps:
       - uses: actions/checkout@v4
 
@@ -39,10 +39,13 @@ jobs:
       - name: 準備
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq lhasa
-          pip install requests numpy scipy
+          pip install requests numpy scipy beautifulsoup4
 
       - name: 過去データ
         run: python scraper/history.py --data data --minutes 45
+
+      - name: 決まり手（過去分を少しずつ）
+        run: python scraper/history.py --data data --kimarite --minutes 25 || true
 
       - name: オリジナル展示（過去分を少しずつ）
         run: python scraper/oriten.py --data data --minutes 35 || true

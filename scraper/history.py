@@ -127,6 +127,10 @@ def parse_k(text: str) -> dict:
             continue
         if cur is None:
             continue
+        if "レースタイム" in line:  # 見出し行の右端が決まり手（逃げ・差し・まくり・まくり差し・抜き・恵まれ）
+            km = line.split("レースタイム", 1)[1].strip()
+            cur["kimarite"] = km or None
+            continue
         m = K_ROW.match(line)
         if m:
             code, waku = m.group(1), int(m.group(2))
@@ -165,7 +169,8 @@ def merge(day: dt.date, b: dict, k: dict) -> list[dict]:
             continue
         races.append({"date": f"{day:%Y%m%d}", "jcd": jcd, "rno": rno, "name": bb["name"], "distance": bb["distance"],
                       "deadline": bb["deadline"], "weather": kk["weather"], "windDir": kk["windDir"],
-                      "windSpeed": kk["windSpeed"], "wave": kk["wave"], "tri": kk["tri"], "boats": boats})
+                      "windSpeed": kk["windSpeed"], "wave": kk["wave"], "tri": kk["tri"],
+                      "kimarite": kk.get("kimarite"), "boats": boats})
     return races
 
 
@@ -175,6 +180,7 @@ def main():
     ap.add_argument("--days", type=int, default=400)
     ap.add_argument("--max-new", type=int, default=420, help="1回の実行で新しく取る日数の上限")
     ap.add_argument("--minutes", type=float, default=45, help="この時間を過ぎたら区切って保存する")
+    ap.add_argument("--kimarite", action="store_true", help="決まり手が無い過去の日に、競走成績だけ取り直して足す")
     ap.add_argument("--parse-b")
     ap.add_argument("--parse-k")
     a = ap.parse_args()
@@ -189,6 +195,31 @@ def main():
 
     hist = Path(a.data) / "history"
     hist.mkdir(parents=True, exist_ok=True)
+    if a.kimarite:
+        t0, n = time.time(), 0
+        for f in sorted(hist.glob("2*.json"), reverse=True):
+            if time.time() - t0 > a.minutes * 60:
+                print("時間切れ。続きは次回", flush=True)
+                break
+            d = json.loads(f.read_text(encoding="utf-8"))
+            if d.get("km") or not d.get("races"):
+                continue
+            day = dt.datetime.strptime(f.stem, "%Y%m%d").date()
+            try:
+                k = parse_k(download_text("K", day) or "")
+            except Exception as e:
+                print(f"  {day}: {e}", flush=True)
+                continue
+            time.sleep(1)
+            for r in d["races"]:
+                kk = k.get((r["jcd"], r["rno"]))
+                if kk:
+                    r["kimarite"] = kk.get("kimarite")
+            d["km"] = 1
+            f.write_text(json.dumps(d, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+            n += 1
+        print(f"決まり手を追加 {n}日", flush=True)
+        return
     today = dt.date.today()
     # 新しい日から順に取る（途中で区切っても直近のデータが先にそろう）
     todo = [today - dt.timedelta(days=i) for i in range(1, a.days + 1)]
@@ -216,7 +247,7 @@ def main():
                 (hist / f"{d:%Y%m%d}.json").write_text('{"races":[]}', encoding="utf-8")
             continue
         (hist / f"{d:%Y%m%d}.json").write_text(
-            json.dumps({"races": races}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+            json.dumps({"races": races, "km": 1}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
         got += 1
         if got % 20 == 0:
             print(f"  {d} まで {got}日分 ({time.time() - t0:.0f}秒)", flush=True)

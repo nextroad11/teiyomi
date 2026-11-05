@@ -136,7 +136,7 @@ def build(races):
                 recent[b["toban"]] = (recent[b["toban"]] + [fin_b])[-10:]
                 k = f'{r["jcd"]}-{b["motor"]}'
                 motorf[k] = (motorf[k] + [fin_b])[-20:]
-    STATE.update(cw=cw, recent=recent, motorf=motorf)
+    STATE.update(cw=cw, recent=recent, motorf=motorf, st=st_hist)
     return rows
 
 
@@ -291,6 +291,20 @@ def subset(D, m):
     return {k: (v[m] if isinstance(v, np.ndarray) else [v[i] for i in np.where(m)[0]]) for k, v in D.items()}
 
 
+def kimarite_stats(races):
+    """1着艇のコース別に決まり手を数える（全国と場ごと）。展開予想に使う"""
+    allc = defaultdict(lambda: defaultdict(int)); ven = defaultdict(lambda: defaultdict(lambda: defaultdict(int)))
+    for r in races:
+        km = r.get("kimarite")
+        w = next((b for b in r["boats"] if b.get("finish") == 1), None)
+        if not km or not w or w.get("course") not in range(1, 7):
+            continue
+        allc[str(w["course"])][km] += 1
+        ven[str(r["jcd"])][str(w["course"])][km] += 1
+    return {"all": {c: dict(v) for c, v in allc.items()},
+            "v": {j: {c: dict(v) for c, v in cs.items()} for j, cs in ven.items()}}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--data", default="data")
@@ -358,6 +372,11 @@ def main():
     Mall = fit_all(np.ones(len(dates), dtype=bool))
     base = np.exp(Mall["lnbase"])
     w = dict(zip(FEATS, Mall["beta"].round(4).tolist()))
+    n_ori = sum(len(v) for v in ORI.values())
+    if n_ori < 3000:  # オリジナル展示がまだ少ないうちは重みを出さない（アプリは仮の重みを使う）
+        for k in ("olap", "oturn", "ostr"):
+            w.pop(k, None)
+    print(f"オリジナル展示つきのレース {n_ori}")
     th = Mall["th"].round(4).tolist()
     model = {
         "version": 2,
@@ -386,7 +405,9 @@ def main():
         best_rule["maxOdds"] = 99999
     # アプリが同じ特徴量を計算できるよう、選手のコース別成績・直近着順とモーターの直近着順を書き出す
     stats = {"updated": model["trainedAt"],
-             "p": {str(t): {"cw": v, "rf": STATE["recent"].get(t, [])} for t, v in STATE["cw"].items()},
+             "p": {str(t): {"cw": v, "rf": STATE["recent"].get(t, []), "st": [round(x, 2) for x in STATE["st"].get(t, [])[-20:]]}
+                   for t, v in STATE["cw"].items()},
+             "km": kimarite_stats(races),
              "m": {k: v for k, v in STATE["motorf"].items()}}
     (root / "stats.json").write_text(json.dumps(stats, separators=(",", ":")), encoding="utf-8")
     (root / "model.json").write_text(json.dumps(model, ensure_ascii=False, indent=1), encoding="utf-8")
