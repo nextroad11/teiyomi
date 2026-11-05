@@ -703,7 +703,7 @@ async function unlock(){
   try{const raw=LS.get('k',null);if(raw){const k=await crypto.subtle.importKey('raw',ub64(raw),{name:'AES-GCM'},true,['decrypt']);await fetchEnc('model.json',k);DKEY=k;return;}}catch(_){}
   const L=$('#lock');L.hidden=false;$('#lockpw').focus();
   await new Promise(res=>{$('#lockf').onsubmit=async e=>{e.preventDefault();const msg=$('#lockmsg');msg.textContent='確認中…';
-    try{const k=await deriveKey($('#lockpw').value);await fetchEnc('model.json',k);DKEY=k;
+    try{const k=await deriveKey($('#lockpw').value.trim().normalize('NFKC'));await fetchEnc('model.json',k);DKEY=k;
       LS.set('k',btoa(String.fromCharCode(...new Uint8Array(await crypto.subtle.exportKey('raw',k)))));L.hidden=true;res();}
     catch(_){msg.textContent='合言葉が違うか、通信できませんでした。';}};});
 }

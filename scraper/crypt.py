@@ -21,6 +21,7 @@ import json
 import os
 import secrets
 import sys
+import unicodedata
 from pathlib import Path
 
 from cryptography.hazmat.primitives import hashes, serialization
@@ -38,7 +39,8 @@ def _pass() -> bytes:
     p = os.environ.get("APP_PASS", "")
     if not p:
         sys.exit("APP_PASS が未設定です")
-    return p.encode("utf-8")
+    # 日本語の合言葉でも、全角・半角や濁点の書き方の違いで食い違わないようにそろえる（アプリも同じ）
+    return unicodedata.normalize("NFKC", p.strip()).encode("utf-8")
 
 
 def data_key(pw: bytes) -> bytes:
