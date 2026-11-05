@@ -7,5 +7,20 @@
   path capitalize
 200 5580 https://boatcast.jp/assets/js/common.js?20261105215707
 200 19614 https://boatcast.jp/assets/js/top.js?20261105215707
-403 3330 https://boatcast.jp/race
-404 3430 https://boatcast.jp/api/
+200 103 https://boatcast.jp/assets/js/config.js
+  ref https://race.boatcast.jp/
+200 7199 https://boatcast.jp/assets/js/components/Utils.js
+200 12866 https://boatcast.jp/live/020201.html
+  ref /assets/img/icon_line_shere.svg
+  ref /assets/img/icon_twitter_shere.svg
+  ref https://boatcast.jp/assets/img/apple-touch-icon.png
+  ref https://boatcast.jp/assets/img/favicon.ico
+  ref https://boatcast.jp/assets/img/ogp.png
+  ref https://boatcast.jp/assets/thumbnail/compressed_20261012213533.jpg
+  ref https://boatcast.jp/live/020201.html
+  ref https://www.googletagmanager.com/gtm.js?id=
+  ref https://www.googletagmanager.com/ns.html?id=GTM-NBPRLN
+  ref https://www.ladies-info.jp/list/?utm_source=BC&utm_medium=link&utm_campaign=2022
+  ref https://www.ladies-info.jp/news/?utm_source=BC&utm_medium=link&utm_campaign=2022
+  ref https://www.ladies-info.jp/racecalendar/?utm_source=BC&utm_medium=link&utm_campaign=2022
+  ref https://www.youtube.com/embed/26Ow6ePUfHM?modestbranding=1&amp;playsinline=1&amp;rel=0
