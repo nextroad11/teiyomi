@@ -22,7 +22,11 @@ from pathlib import Path
 import numpy as np
 from scipy.optimize import least_squares, minimize
 
-FEATS = ["skill", "local", "motor", "boat", "st", "ex"]
+FEATS = ["skill", "local", "motor", "boat", "st", "ex", "cwin", "form", "mform"]
+# cwin: その選手のそのコースでの1着率（コースの平均との差、対数オッズ）
+# form: 直近10走の平均着順 / mform: そのモーターの直近20走の平均着順（場ごと）
+BASE1 = np.array([.55, .14, .12, .11, .06, .02])
+CW_K = 8
 PERMS = np.array(list(itertools.permutations(range(6), 3)))  # 120通り
 PAYBACK = 0.75
 CLS = ["A1", "A2", "B1", "B2"]
@@ -38,10 +42,26 @@ def load(root: Path):
     return races
 
 
+def cwin_of(wn, c):
+    w, n = wn
+    p = (w + BASE1[c - 1] * CW_K) / (n + CW_K)
+    return float(np.log(p / (1 - p)) - np.log(BASE1[c - 1] / (1 - BASE1[c - 1])))
+
+
+def form_of(fs, need):
+    return (3.5 - float(np.mean(fs))) / 1.5 if len(fs) >= need else 0.0
+
+
+STATE = {}
+
+
 def build(races):
-    """平均ST・F持ちを過去だけから計算し、特徴量の配列を作る"""
+    """平均ST・F持ち・コース別成績・調子を過去だけから計算し、特徴量の配列を作る"""
     st_hist = defaultdict(list)   # toban -> 直近のST
     f_dates = defaultdict(list)   # toban -> Fの日付
+    cw = defaultdict(lambda: [[0, 0] for _ in range(6)])  # toban -> コース別 [1着, 出走]
+    recent = defaultdict(list)    # toban -> 直近の着順
+    motorf = defaultdict(list)    # "jcd-motor" -> 直近の着順
     rows = []
     for r in races:
         d = dt.datetime.strptime(r["date"], "%Y%m%d").date()
@@ -64,8 +84,11 @@ def build(races):
             hist = st_hist[b["toban"]][-30:]
             st_avg = (sum(hist) + 0.16 * 3) / (len(hist) + 3)
             ex = -np.clip((exs[i] - ex_mean) / 0.07, -2.5, 2.5) if ex_ok else 0.0
+            c = b.get("course") if b.get("course") in range(1, 7) else b["waku"]
             x[i] = [(nat - 5.5) / 1.2, (loc - nat) / 1.2, (m2 - 35) / 8, (b2 - 33) / 6,
-                    -np.clip((st_avg - 0.16) / 0.025, -2.5, 2.5), ex]
+                    -np.clip((st_avg - 0.16) / 0.025, -2.5, 2.5), ex,
+                    cwin_of(cw[b["toban"]][c - 1], c), form_of(recent[b["toban"]][-10:], 3),
+                    form_of(motorf[f'{r["jcd"]}-{b["motor"]}'][-20:], 5)]
             fflag[i] = 1.0 if any((d - fd).days <= 180 for fd in f_dates[b["toban"]]) else 0.0
             cls[i] = CLS.index(b["cls"]) if b["cls"] in CLS else 2
         if ok:
@@ -80,6 +103,16 @@ def build(races):
                 f_dates[b["toban"]].append(d)
             elif b.get("st") is not None and 0 <= b["st"] <= 0.6:
                 st_hist[b["toban"]].append(b["st"])
+            c, fin_b = b.get("course"), b.get("finish")
+            if c in range(1, 7) and (fin_b or str(b.get("code", "")).startswith(("F", "L", "S"))):
+                cw[b["toban"]][c - 1][1] += 1
+                if fin_b == 1:
+                    cw[b["toban"]][c - 1][0] += 1
+            if fin_b:
+                recent[b["toban"]] = (recent[b["toban"]] + [fin_b])[-10:]
+                k = f'{r["jcd"]}-{b["motor"]}'
+                motorf[k] = (motorf[k] + [fin_b])[-20:]
+    STATE.update(cw=cw, recent=recent, motorf=motorf)
     return rows
 
 
@@ -205,7 +238,7 @@ def picks(pa, pm, ana_rule):
     odds = np.maximum(1.0, PAYBACK / pm)
     ratio = pa / pm
     cand = [i for i in range(120) if i not in hon and pa[i] >= ana_rule["minP"] and odds[i] >= ana_rule["minOdds"]
-            and ratio[i] >= ana_rule["minRatio"]]
+            and ratio[i] >= ana_rule["minRatio"] and odds[i] <= ana_rule.get("maxOdds", 1e9)]
     cand.sort(key=lambda i: -pa[i] * odds[i])
     return hon, cand[: ana_rule["max"]]
 
@@ -277,9 +310,11 @@ def main():
     # 2. 穴の条件を検証期間で選ぶ（回収率最大、ただし対象レースが十分あるもの）
     best, best_rule = -1, None
     for minRatio in (1.1, 1.25, 1.5, 1.8, 2.2):
-        for minOdds in (10, 20, 40, 80):
-            for minP in (0.003, 0.007, 0.012):
-                rule = {"minRatio": minRatio, "minOdds": minOdds, "minP": minP, "max": 5}
+        for minOdds in (8, 15, 25, 40, 80):
+            for minP, maxOdds in itertools.product((0.003, 0.007, 0.012), (40, 80, 150, 1e9)):
+                if maxOdds <= minOdds:
+                    continue
+                rule = {"minRatio": minRatio, "minOdds": minOdds, "minP": minP, "maxOdds": maxOdds, "max": 5}
                 bt = backtest(PAv, PMv, Dv, rule)["ana"]
                 if bt["races"] >= max(200, 0.15 * len(PAv)) and bt["roi"] > best:
                     best, best_rule = bt["roi"], rule
@@ -323,6 +358,13 @@ def main():
         },
         "anaRule": best_rule,
     }
+    if best_rule.get("maxOdds", 0) >= 1e9:
+        best_rule["maxOdds"] = 99999
+    # アプリが同じ特徴量を計算できるよう、選手のコース別成績・直近着順とモーターの直近着順を書き出す
+    stats = {"updated": model["trainedAt"],
+             "p": {str(t): {"cw": v, "rf": STATE["recent"].get(t, [])} for t, v in STATE["cw"].items()},
+             "m": {k: v for k, v in STATE["motorf"].items()}}
+    (root / "stats.json").write_text(json.dumps(stats, separators=(",", ":")), encoding="utf-8")
     (root / "model.json").write_text(json.dumps(model, ensure_ascii=False, indent=1), encoding="utf-8")
     (root / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=1), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=1))

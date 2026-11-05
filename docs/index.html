@@ -188,7 +188,11 @@ let MODEL={weights:{skill:0.9,local:0.3,motor:0.45,boat:0.12,st:0.35,ex:0.5,fPen
   // 人気の見立て（学習前の初期値。学習後は実際の払戻から推定した値になる）
   market:{inner:0.15,kNat:0.99,kMotor:0,kEx:0,cls:{A1:0.225,A2:0.09,B1:-0.18,B2:-0.45},kPlace:0.77,c0:0},
   ana:{minRatio:1.25,minOdds:20,minP:0.007,max:5}};
-let REPORT=null;
+let REPORT=null, STATS=null;
+const BASE1=[.55,.14,.12,.11,.06,.02], CW_K=8;
+const lgt=p=>Math.log(p/(1-p));
+function cwinOf(toban,c){const e=STATS&&STATS.p[String(toban)];const wn=e?e.cw[c-1]:[0,0];const p=(wn[0]+BASE1[c-1]*CW_K)/(wn[1]+CW_K);return lgt(p)-lgt(BASE1[c-1]);}
+function formOf(fs,need){return fs&&fs.length>=need?(3.5-avg(fs))/1.5:0;}
 const PAYBACK=0.75;
 
 /* ============ 予想エンジン ============ */
@@ -224,7 +228,9 @@ function analyze(race,exOverride){
     const nat=num(b.natWin)??5.0, loc=num(b.locWin), locEff=(loc&&loc>0)?loc:nat;
     const m2=num(b.motor2)>0?num(b.motor2):33, b2=num(b.boat2)>0?num(b.boat2):33, st=num(b.st)??0.17, f=num(b.f)||0;
     const parts={skill:w.skill*(nat-5.5)/1.2, local:w.local*(locEff-nat)/1.2, motor:w.motor*(m2-35)/8, boat:w.boat*(b2-33)/6,
-      st:-w.st*clamp((st-0.16)/0.025,-2.5,2.5), ex:(exMean!=null&&exT[i]!=null)?-w.ex*clamp((exT[i]-exMean)/0.07,-2.5,2.5):0};
+      st:-w.st*clamp((st-0.16)/0.025,-2.5,2.5), ex:(exMean!=null&&exT[i]!=null)?-w.ex*clamp((exT[i]-exMean)/0.07,-2.5,2.5):0,
+      cwin:(w.cwin||0)*cwinOf(b.toban,course), form:(w.form||0)*formOf(STATS&&STATS.p[String(b.toban)]?.rf.slice(-10),3),
+      mform:(w.mform||0)*formOf(STATS&&STATS.m[`${race.jcd}-${b.motor}`]?.slice(-20),5)};
     const s=sum(Object.values(parts)), fPen=f>0?-w.fPen:0;
     const mk=MODEL.market, exF=(exMean!=null&&exT[i]!=null)?-clamp((exT[i]-exMean)/0.07,-2.5,2.5):0;
     const sm=mk.kNat*(nat-5.5)/1.2+mk.kMotor*(m2-35)/8+mk.kEx*exF+(mk.cls[b.cls]??0);
@@ -233,6 +239,10 @@ function analyze(race,exOverride){
     if(m2Mean!=null&&m2<=m2Mean-5)tags.push(['minus','モーター劣勢']);
     if(loc&&loc>=nat+0.4)tags.push(['plus','当地巧者']);
     if(loc&&loc>0&&loc<=nat-0.8)tags.push(['minus','当地苦戦']);
+    if(STATS){const cv=cwinOf(b.toban,course),fv=formOf(STATS.p[String(b.toban)]?.rf.slice(-10),3),mv=formOf(STATS.m[`${race.jcd}-${b.motor}`]?.slice(-20),5);
+      if(cv>=0.8)tags.push(['plus',course+'コース得意']);else if(cv<=-0.8)tags.push(['minus',course+'コース苦手']);
+      if(fv>=0.5)tags.push(['plus','好調']);else if(fv<=-0.5)tags.push(['minus','不調']);
+      if(mv>=0.45)tags.push(['plus','機力上昇']);}
     if(st<=0.13)tags.push(['plus','ST速い']); if(st>=0.18)tags.push(['minus','ST遅め']);
     if(f>0)tags.push(['minus','F'+f+'持ち']);
     if(exBest!=null&&exT[i]===exBest)tags.push(['plus','展示1位']);
@@ -552,6 +562,7 @@ document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',
   try{m=await fetchJSON('model.json');}catch(_){try{m=await fetch('model.json',{cache:'no-store'}).then(r=>r.ok?r.json():null);}catch(_){}}
   if(m)MODEL={...MODEL,...m,weights:{...MODEL.weights,...(m.weights||{})},market:{...MODEL.market,...(m.market||{}),cls:{...MODEL.market.cls,...((m.market||{}).cls||{})}},ana:{...MODEL.ana,...(m.ana||{})}};
   try{REPORT=await fetchJSON('report.json');}catch(_){}
+  try{STATS=await fetchJSON('stats.json');}catch(_){}
   await loadIndex();await loadDay();
   setInterval(async()=>{if(document.hidden||/INPUT|TEXTAREA/.test(document.activeElement?.tagName||''))return;const keep=raceId;await loadDay();raceId=keep;renderChips();},60000);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)loadDay();});
