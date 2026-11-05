@@ -1,0 +1,44 @@
+name: 合言葉の準備
+# 合言葉を変えたときもこれを動かす（Actions の画面から手動で実行できる）
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/setup-keys.yml"]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: keys
+  cancel-in-progress: false
+jobs:
+  keys:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with: { ref: data, path: data }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install requests numpy scipy beautifulsoup4 cryptography
+      - name: 学習して鍵をかける
+        env:
+          APP_PASS: ${{ secrets.APP_PASS }}
+        run: |
+          python scraper/train.py --data data
+          for f in model report stats; do
+            if [ -f data/$f.json ]; then python scraper/crypt.py encrypt data/$f.json data/enc/$f.json; rm data/$f.json; fi
+          done
+          python scraper/crypt.py pub data/enc/pub.txt
+          python scraper/crypt.py inbox data
+      - name: 保存
+        working-directory: data
+        run: |
+          git config user.name "teiyomi-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet && exit 0
+          git commit -q -m "合言葉の準備"
+          for i in 1 2 3; do git push -q && exit 0; git pull -q --rebase; done
+          exit 1
+# run: 1

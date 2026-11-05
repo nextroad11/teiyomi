@@ -45,11 +45,14 @@ jobs:
       - run: pip install -r scraper/requirements.txt
 
       - name: 公式サイトから取得して保存（くり返し）
+        env:
+          APP_PASS: ${{ secrets.APP_PASS }}
         run: |
           cd data
           git config user.name "teiyomi-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           cd ..
+          inbox() { python scraper/crypt.py pub data/enc/pub.txt && python scraper/crypt.py inbox data || echo "受け箱の処理に失敗"; }
           save() {
             ( cd data
               git add -A
@@ -62,12 +65,13 @@ jobs:
           if [ "${{ inputs.force_load }}" = "true" ]; then ARGS="$ARGS --force-load"; fi
           if [ -n "${{ inputs.date }}" ]; then ARGS="$ARGS --date ${{ inputs.date }}"; fi
           if [ "$ARGS" != "--data data" ]; then
-            python scraper/teiyomi_scraper.py $ARGS; save; exit 0
+            python scraper/teiyomi_scraper.py $ARGS; inbox; save; exit 0
           fi
           START=$(date +%s)
           while :; do
             T=$(date +%s)
             python scraper/teiyomi_scraper.py $ARGS || echo "取得でエラー（次の回で再挑戦）"
+            inbox
             save
             H=$(TZ=Asia/Tokyo date +%H)
             # 日本時間 0時〜6時台は止める。1回の実行は5時間半まで（次の予約が引き継ぐ）

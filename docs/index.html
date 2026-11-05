@@ -91,6 +91,11 @@ main.wrap{padding-block:16px 48px;display:grid;gap:18px}
 .scen .bar{height:8px;border-radius:4px;background:var(--bg);overflow:hidden}.scen .bar span{display:block;height:100%;background:var(--accent)}
 .scen li>span{display:grid;gap:3px}.scen b{font-variant-numeric:tabular-nums}
 .tk-text{font-size:13px;line-height:1.7;margin:0}
+.lock{position:fixed;inset:0;z-index:50;background:var(--bg);display:grid;place-items:center;padding:16px}
+.lock[hidden]{display:none}.lockbox{display:grid;gap:12px;width:min(360px,100%);background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px}
+.lockbox h2{margin:0}.lockbox p{margin:0;color:var(--muted);font-size:13px}
+.lockbox input{font:16px var(--f-num);padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+.lockmsg{min-height:1.2em;color:var(--ana)!important}
 .plan .forms{display:grid;gap:6px;margin:4px 0 12px}
 .plan .form{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-weight:600}
 .plan .form .lbl{font-size:12px;font-weight:600;color:var(--muted);min-width:5.5em}
@@ -181,6 +186,10 @@ table.rec{border-collapse:collapse;width:100%;min-width:560px;font-variant-numer
   </nav>
 </div></header>
 
+<div id="lock" class="lock" hidden><form id="lockf" class="lockbox">
+  <h2>艇読みAI</h2><p>招待された人だけが見られます。合言葉を入れてください。</p>
+  <input id="lockpw" type="password" autocomplete="current-password" aria-label="合言葉" placeholder="合言葉">
+  <button class="btn" type="submit">ひらく</button><p id="lockmsg" class="lockmsg" role="status"></p></form></div>
 <main class="wrap">
   <div class="meetbar">
     <select id="date" aria-label="日付を選ぶ"></select>
@@ -381,7 +390,7 @@ async function loadIndex(){
 async function loadDay(){
   const note=$('#loadnote');
   if(!dateSel){races=[];note.textContent='';renderAll();return;}
-  try{SHARED=(await fetchJSON('picks/'+dateSel+'.json')).races||{};}catch(_){SHARED={};}
+  try{SHARED=(await fetchEnc('picks/'+dateSel+'.json')).races||{};}catch(_){SHARED={};}
   try{const d=await fetchJSON(dateSel+'.json');races=d.races||[];
     note.textContent=d.updated?`更新 ${d.updated.slice(11,16)}`:'';
     snapshotAI();
@@ -680,12 +689,29 @@ $('#date').addEventListener('change',e=>{dateSel=e.target.value;raceId=null;load
 $('#venue').addEventListener('change',e=>{jcdSel=+e.target.value;LS.set('jcd',jcdSel);raceId=null;renderChips();renderView();});
 $('#chips').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;raceId=b.dataset.id;renderChips();renderView();});
 document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>{view=b.dataset.view;LS.set('view',view);renderView();}));
+// ---------------------------------------------------------------- 合言葉（データの暗号を解く）
+// 合言葉 → PBKDF2-SHA256(310000回) → AES-256-GCM。scraper/crypt.py と同じ計算。端末には合言葉ではなく鍵だけを保存
+let DKEY=null;
+const ub64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function deriveKey(pw){const base=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveKey']);
+  return crypto.subtle.deriveKey({name:'PBKDF2',hash:'SHA-256',salt:new TextEncoder().encode('teiyomi-v1'),iterations:310000},base,{name:'AES-GCM',length:256},true,['decrypt']);}
+async function openBox(box,key){const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:ub64(box.iv)},key||DKEY,ub64(box.ct));return JSON.parse(new TextDecoder().decode(pt));}
+async function fetchEnc(path,key){return openBox(await fetchJSON('enc/'+path),key);}
+async function unlock(){
+  try{const raw=LS.get('k',null);if(raw){const k=await crypto.subtle.importKey('raw',ub64(raw),{name:'AES-GCM'},true,['decrypt']);await fetchEnc('model.json',k);DKEY=k;return;}}catch(_){}
+  const L=$('#lock');L.hidden=false;$('#lockpw').focus();
+  await new Promise(res=>{$('#lockf').onsubmit=async e=>{e.preventDefault();const msg=$('#lockmsg');msg.textContent='確認中…';
+    try{const k=await deriveKey($('#lockpw').value);await fetchEnc('model.json',k);DKEY=k;
+      LS.set('k',btoa(String.fromCharCode(...new Uint8Array(await crypto.subtle.exportKey('raw',k)))));L.hidden=true;res();}
+    catch(_){msg.textContent='合言葉が違うか、通信できませんでした。';}};});
+}
 (async()=>{
+  await unlock();
   let m=null;
-  try{m=await fetchJSON('model.json');}catch(_){try{m=await fetch('model.json',{cache:'no-store'}).then(r=>r.ok?r.json():null);}catch(_){}}
+  try{m=await fetchEnc('model.json');}catch(_){}
   if(m)MODEL={...MODEL,...m,weights:{...MODEL.weights,...(m.weights||{})},market:{...MODEL.market,...(m.market||{}),cls:{...MODEL.market.cls,...((m.market||{}).cls||{})}},ana:{...MODEL.ana,...(m.ana||{})}};
-  try{REPORT=await fetchJSON('report.json');}catch(_){}
-  try{STATS=await fetchJSON('stats.json');}catch(_){}
+  try{REPORT=await fetchEnc('report.json');}catch(_){}
+  try{STATS=await fetchEnc('stats.json');}catch(_){}
   await loadIndex();await loadDay();
   setInterval(async()=>{if(document.hidden||/INPUT|TEXTAREA/.test(document.activeElement?.tagName||''))return;const keep=raceId;await loadDay();raceId=keep;renderChips();},60000);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)loadDay();});

@@ -32,25 +32,34 @@ jobs:
           ref: data
           path: data
 
+      - name: 一時停止の確認
+        run: if [ -f data/.pause ]; then echo "PAUSE=1" >> $GITHUB_ENV; echo "一時停止中"; fi
+
       - uses: actions/setup-python@v5
+        if: env.PAUSE != '1'
         with:
           python-version: "3.12"
 
       - name: 準備
+        if: env.PAUSE != '1'
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq lhasa
-          pip install requests numpy scipy beautifulsoup4
+          pip install requests numpy scipy beautifulsoup4 cryptography
 
       - name: 過去データ
+        if: env.PAUSE != '1'
         run: python scraper/history.py --data data --minutes 45
 
       - name: 決まり手（過去分を少しずつ）
+        if: env.PAUSE != '1'
         run: python scraper/history.py --data data --kimarite --minutes 25 || true
 
       - name: オリジナル展示（過去分を少しずつ）
+        if: env.PAUSE != '1'
         run: python scraper/oriten.py --data data --minutes 35 || true
 
       - name: 過去データを先に保存
+        if: env.PAUSE != '1'
         working-directory: data
         run: |
           git config user.name "teiyomi-bot"
@@ -62,16 +71,29 @@ jobs:
           exit 1
 
       - name: 学習
+        if: env.PAUSE != '1'
         run: |
           NEW=$(cat /tmp/history_new 2>/dev/null || echo 0)
           ORI=$(cat /tmp/oriten_new 2>/dev/null || echo 0)
-          if [ "$NEW" != "0" ] || [ "$ORI" -gt 2000 ] || [ ! -f data/model.json ] || [ "${{ github.event_name }}" != "schedule" ]; then
+          if [ "$NEW" != "0" ] || [ "$ORI" -gt 2000 ] || [ ! -f data/enc/model.json ] || [ "${{ github.event_name }}" != "schedule" ]; then
             python scraper/train.py --data data
           else
             echo "新しいデータなし。学習は省略"
           fi
 
+      - name: 学習結果に合言葉で鍵をかける
+        if: env.PAUSE != '1'
+        env:
+          APP_PASS: ${{ secrets.APP_PASS }}
+        run: |
+          for f in model report stats; do
+            if [ -f data/$f.json ]; then python scraper/crypt.py encrypt data/$f.json data/enc/$f.json; rm data/$f.json; fi
+          done
+          python scraper/crypt.py pub data/enc/pub.txt
+          python scraper/crypt.py inbox data
+
       - name: データを保存
+        if: env.PAUSE != '1'
         working-directory: data
         run: |
           git add -A
