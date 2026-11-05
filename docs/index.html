@@ -289,10 +289,27 @@ function analyze(race,exOverride){
   });
   const ai=trifecta(boats,'winW','plW'), mkP=trifecta(boats,'mWinW','mPlW');
   // 舟足評価: 展示タイム・モーター2連率・モーターの直近成績を、学習した重みで足したもの
-  // 学習した重みがまだ無いうちは、オリジナル展示は控えめな仮の重み(0.15)で舟足に入れる
+  // 足スコア（場別）: 別チャットで検証した仕様。平和島(04)・浜名湖(06)は判別力が低いので使わず、これまでの方式
+const ASHI_CORR={1:[0.40,0.20,0,0.02],2:[0.30,0.10,0,0.01],3:[0.20,0,0,0],4:[0.10,-0.05,-0.01,-0.01],5:[0.05,-0.10,-0.02,-0.02],6:[0,-0.15,-0.02,-0.02]};
+const ASHI_DEF=[1,0.5,0.5,1];
+const ASHI_W={'02':[1,0.5,0.5,1],'05':[1,2/3,1,2/3],'07':[1,0,0,1],'11':[1,0.5,0.5,1],'19':[1,0,0,0.25],'24':[1,0,1,1]};
+const ASHI_SEP={'02':[18.3,336],'05':[23.0,348],'07':[20.1,396],'11':[15.9,347],'19':[18.9,360],'24':[15.3,348]};
+const ASHI_SKIP=new Set(['04','06']);
+function ashiScore(jcd,boats){const w=ASHI_W[String(jcd).padStart(2,'0')]||ASHI_DEF,keys=['lap','turn','straight','ex'],z=boats.map(()=>[0,0,0,0]);
+  keys.forEach((k,j)=>{const xs=boats.map(b=>b[k]==null?null:Math.round((b[k]+ASHI_CORR[b.waku][j])*100)/100);const v=xs.filter(x=>x!=null);if(v.length<2)return;
+    const mu=v.reduce((a,b)=>a+b,0)/v.length,sd=Math.sqrt(v.reduce((a,b)=>a+(b-mu)**2,0)/(v.length-1));if(sd===0)return;xs.forEach((x,i)=>{if(x!=null)z[i][j]=(mu-x)/sd;});});
+  const out=boats.map((b,i)=>({waku:b.waku,z:z[i],score:z[i].reduce((a,zz,j)=>a+w[j]*zz,0)}));
+  [...out].sort((a,b)=>b.score-a.score||a.waku-b.waku).forEach((o,r)=>{o.rank=r+1;});return out;}
+function ashiFor(race,exT,B){const jc=String(race.jcd).padStart(2,'0'),o=race.before&&race.before.ori;if(ASHI_SKIP.has(jc)||!o||!o.items)return null;
+  const idx=n=>o.items.indexOf(n),g=(w,n)=>{const j=idx(n);return j<0?null:num((o.boats[w]||[])[j]);};
+  const bs=B.map((b,i)=>({waku:b.waku,lap:g(b.waku,'一周'),turn:g(b.waku,'まわり足'),straight:g(b.waku,'直線'),ex:exT[i]})).filter(b=>b.ex!=null);
+  if(bs.length<4||bs.every(b=>b.lap==null&&b.turn==null&&b.straight==null))return null;return ashiScore(race.jcd,bs);}
+// 学習した重みがまだ無いうちは、オリジナル展示は控えめな仮の重み(0.15)で舟足に入れる
   boats.forEach(b=>{const o=OF[b.waku],ww=MODEL.weights;b.foot=(b.parts.ex||0)+(b.parts.motor||0)+(b.parts.mform||0)
     +(ww.olap!=null?b.parts.olap:0.15*o[0])+(ww.oturn!=null?b.parts.oturn:0.15*o[1])+(ww.ostr!=null?b.parts.ostr:0.15*o[2]);});
-  {const fm=avg(boats.map(b=>b.foot)),ord=boats.slice().sort((x,y)=>y.foot-x.foot);
+  const AS=ashiFor(race,exT,B);
+  if(AS){const GR=['◎','○','△','△','▲','×'];boats.forEach(b=>{const a=AS.find(x=>x.waku===b.waku);b.ashi=a||null;b.footGrade=a?GR[a.rank-1]:'-';});}
+  else{const fm=avg(boats.map(b=>b.foot)),ord=boats.slice().sort((x,y)=>y.foot-x.foot);
     boats.forEach(b=>{const r=ord.indexOf(b),d=b.foot-fm;b.footGrade=d>=0.35&&r===0?'◎':d>=0.15&&r<=1?'○':d<=-0.3?'×':d<=-0.12?'▲':'△';});}
   const W=sum(boats.map(b=>b.winW));
   boats.forEach(b=>{b.pWin=b.winW/W;});
@@ -311,7 +328,7 @@ function analyze(race,exOverride){
   const anaMax=real&&!(MODEL.live&&MODEL.live.ready)?Math.min(R.max,2):R.max;
   const ana=combos.filter(c=>!hset.has(c.k)&&c.pAi>=R.minP&&c.odds>=R.minOdds&&c.ratio>=R.minRatio).sort((x,y)=>y.ev-x.ev).slice(0,anaMax);
   const top=boats.slice().sort((a,b)=>b.pWin-a.pWin), topWin=top[0].pWin;
-  return {boats,combos,honsen,ana,cover:cum,top,topWin,real,level:topWin>=0.6?'kata':topWin>=0.42?'futsu':'are',hasEx:exMean!=null};
+  return {boats,combos,honsen,ana,cover:cum,top,topWin,real,ashi:AS?(ASHI_W[String(race.jcd).padStart(2,'0')]?'場別':'既定'):null,level:topWin>=0.6?'kata':topWin>=0.42?'futsu':'are',hasEx:exMean!=null};
 }
 const LEVEL={kata:['堅い','var(--good)'],futsu:['本命寄り','var(--accent)'],are:['波乱含み','var(--ana)']};
 
@@ -577,10 +594,10 @@ function renderYoso(){
           <td class="n">${num(b.motor2)?.toFixed(1)??'-'}%<br><span style="color:var(--muted);font-size:11px">${b.motor?b.motor+'号機':''}</span></td>
           <td class="n">${num(b.st)?.toFixed(2)??'-'}</td>
           <td><input id="ex-${b.waku}" class="${auto?'auto':''}" inputmode="decimal" aria-label="${b.waku}号艇の展示タイム" placeholder="6.80" value="${b.exTime??''}"></td>
-          <td class="foot-cell"><b class="fg fg-${b.footGrade==='◎'||b.footGrade==='○'?'up':b.footGrade==='×'||b.footGrade==='▲'?'dn':'mid'}">${b.footGrade}</b>${(()=>{const q=(r.before&&r.before.boats&&r.before.boats[b.waku])||{};const x=[];const ori=r.before&&r.before.ori,rk=oriRank(ori);if(ori&&ori.items)ori.items.forEach((nm,j)=>{const v=(ori.boats[b.waku]||[])[j];if(v!=null)x.push(`${nm.replace("まわり足","回り").replace("半周ラップ","半周")}${(+v).toFixed(2)}${rk[b.waku]&&rk[b.waku][nm]===1?'①':''}`);});if(q.exST!=null)x.push('ST'+(q.exST<0?' F'+Math.abs(q.exST).toFixed(2).slice(1):q.exST.toFixed(2).slice(1)));if(q.prop)x.push('ペラ'+q.prop);if(q.parts)x.push(q.parts);return x.length?`<span>${esc(x.join(' '))}</span>`:'';})()}</td>
+          <td class="foot-cell"><b class="fg fg-${b.footGrade==='◎'||b.footGrade==='○'?'up':b.footGrade==='×'||b.footGrade==='▲'?'dn':'mid'}">${b.footGrade}</b>${(()=>{const q=(r.before&&r.before.boats&&r.before.boats[b.waku])||{};const x=[];const ori=r.before&&r.before.ori,rk=oriRank(ori);if(b.ashi)x.push(`足${b.ashi.rank}位(${b.ashi.score>=0?'+':''}${b.ashi.score.toFixed(2)})`);if(ori&&ori.items)ori.items.forEach((nm,j)=>{const v=(ori.boats[b.waku]||[])[j];if(v!=null)x.push(`${nm.replace("まわり足","回り").replace("半周ラップ","半周")}${(+v).toFixed(2)}${rk[b.waku]&&rk[b.waku][nm]===1?'①':''}`);});if(q.exST!=null)x.push('ST'+(q.exST<0?' F'+Math.abs(q.exST).toFixed(2).slice(1):q.exST.toFixed(2).slice(1)));if(q.prop)x.push('ペラ'+q.prop);if(q.parts)x.push(q.parts);return x.length?`<span>${esc(x.join(' '))}</span>`:'';})()}</td>
           <td><div class="winbar"><span class="track"><span style="width:${b.pWin/maxWin*100}%"></span></span><b>${pct(b.pWin)}</b></div></td>
           <td><div class="tags">${b.tags.map(t=>`<span class="tag ${t[0]}">${esc(t[1])}</span>`).join('')}</div></td></tr>`}).join('')}</tbody></table></div>
-      <p class="hint">${r.before&&r.before.complete?'展示タイム・進入は自動で取得済み（青枠）。':'展示タイムは締切の約20分前から自動で入ります。'}手で入れ直すと、その場で計算し直します。舟足は展示タイム・オリジナル展示（一周・まわり足・直線）・モーターから（◎○△▲×）。下の小さい字はオリジナル展示（①はレース内1位）・展示のST・プロペラ・部品交換。</p>
+      <p class="hint">${r.before&&r.before.complete?'展示タイム・進入は自動で取得済み（青枠）。':'展示タイムは締切の約20分前から自動で入ります。'}手で入れ直すと、その場で計算し直します。${a.ashi?`舟足は足スコア（${a.ashi==='場別'?'この場で検証した重み・判別力sep '+ASHI_SEP[String(r.jcd).padStart(2,'0')][0]+'（'+ASHI_SEP[String(r.jcd).padStart(2,'0')][1]+'R）':'未検証の場なので既定の戸田新式'}）の順位：1位◎ 2位○ 3・4位△ 5位▲ 6位×。`:'舟足は展示タイム・オリジナル展示（一周・まわり足・直線）・モーターから（◎○△▲×）。'}下の小さい字はオリジナル展示（①はレース内1位）・展示のST・プロペラ・部品交換。</p>
     </div>
     <div class="panel">
       <h3>このレースの記録</h3>
