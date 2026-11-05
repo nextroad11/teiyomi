@@ -72,6 +72,18 @@ main.wrap{padding-block:16px 48px;display:grid;gap:18px}
 .combo .val{font-family:var(--f-num);font-size:13px;text-align:right;white-space:nowrap}
 .combo .val small{color:var(--muted);font-size:11px;margin-left:6px}
 .combo.hit .nums{outline:2px solid var(--good);outline-offset:2px;border-radius:4px}
+.plan .forms{display:grid;gap:6px;margin:4px 0 12px}
+.plan .form{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-weight:600}
+.plan .form .lbl{font-size:12px;font-weight:600;color:var(--muted);min-width:5.5em}
+.plan .form .arrow{color:var(--muted)}
+.plan table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:13px}
+.plan td,.plan th{padding:6px 4px;border-top:1px solid var(--line);text-align:right}
+.plan th{font-size:11px;color:var(--muted);font-weight:600}
+.plan td:first-child,.plan th:first-child{text-align:left}
+.plan tr.big td{font-weight:700}
+.plan .warn{color:var(--ana)}
+.plan .unit{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-bottom:8px}
+.plan .unit select{font:inherit;padding:4px 6px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
 .panel .foot{margin-top:10px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
 .bn{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:5px;font:600 13px var(--f-num);border:1px solid var(--line)}
 .bn[data-n="1"]{background:var(--b1);color:var(--b1f)} .bn[data-n="2"]{background:var(--b2);color:var(--b2f)}
@@ -243,7 +255,9 @@ function analyze(race,exOverride){
   for(const c of combos){if(honsen.length>=6||(honsen.length>=3&&cum>=0.35))break;honsen.push(c);cum+=c.pAi;}
   const hset=new Set(honsen.map(c=>c.k));
   const R=MODEL.ana;
-  const ana=combos.filter(c=>!hset.has(c.k)&&c.pAi>=R.minP&&c.odds>=R.minOdds&&c.ratio>=R.minRatio).sort((x,y)=>y.ev-x.ev).slice(0,R.max);
+  // 公式オッズのときは、オッズでの実績がそろうまで穴は2点までの参考扱い
+  const anaMax=real&&!(MODEL.live&&MODEL.live.ready)?Math.min(R.max,2):R.max;
+  const ana=combos.filter(c=>!hset.has(c.k)&&c.pAi>=R.minP&&c.odds>=R.minOdds&&c.ratio>=R.minRatio).sort((x,y)=>y.ev-x.ev).slice(0,anaMax);
   const top=boats.slice().sort((a,b)=>b.pWin-a.pWin), topWin=top[0].pWin;
   return {boats,combos,honsen,ana,cover:cum,top,topWin,real,level:topWin>=0.6?'kata':topWin>=0.42?'futsu':'are',hasEx:exMean!=null};
 }
@@ -345,6 +359,47 @@ function renderView(){
 const emptyState=()=>`<div class="empty"><b>この日のレースデータはまだありません。</b><br>毎朝7時ごろに、その日の全場の出走表を自動で取り込みます。</div>`;
 const WIND=['','北','北北東','北東','東北東','東','東南東','南東','南南東','南','南南西','南西','西南西','西','西北西','北西','北北西'];
 
+// ---------------------------------------------------------------- 買い方（フォーメーション・BOX・金額配分）
+const MAXMUL=5;
+function toForms(keys){
+  const ks=[...new Set(keys)], parts=k=>k.split('-').map(Number), out=[];
+  const boats=[...new Set(ks.flatMap(parts))];
+  if(boats.length===3&&ks.length===6)return [{type:'BOX',legs:[boats.sort()]}];
+  const covers=(f,s2,t)=>{const r=[];f.forEach(a=>s2.forEach(b=>t.forEach(c=>{if(a!==b&&b!==c&&a!==c)r.push(`${a}-${b}-${c}`)})));return r;};
+  // 1着ごとにまとめ、2着×3着の形でぴったり表せればフォーメーション、だめなら1・2着ごとにまとめる
+  const byA={};ks.forEach(k=>{const [a]=parts(k);(byA[a]=byA[a]||[]).push(k);});
+  for(const a of Object.keys(byA).map(Number).sort()){
+    const g=byA[a],S2=[...new Set(g.map(k=>parts(k)[1]))].sort(),T=[...new Set(g.map(k=>parts(k)[2]))].sort();
+    const c=covers([a],S2,T);
+    if(c.length===g.length&&c.every(x=>g.includes(x))){out.push({type:g.length===1?'1点':'フォーメーション',legs:[[a],S2,T]});continue;}
+    const byB={};g.forEach(k=>{const b=parts(k)[1];(byB[b]=byB[b]||[]).push(parts(k)[2]);});
+    Object.keys(byB).map(Number).sort().forEach(b=>out.push({type:byB[b].length===1?'1点':'流し',legs:[[a],[b],byB[b].sort()]}));
+  }
+  return out;
+}
+function betPlan(a,unit){
+  const list=a.honsen;if(!list.length)return null;
+  const pMin=Math.min(...list.map(c=>c.pAi));
+  const rows=list.map(c=>{const mul=Math.max(1,Math.min(MAXMUL,Math.round(c.pAi/pMin)));return {...c,mul,stake:mul*unit};});
+  const total=sum(rows.map(x=>x.stake));
+  rows.forEach(x=>{x.back=Math.round(x.stake*x.odds);x.gami=x.back<total;});
+  const evBack=sum(rows.map(x=>x.pAi*x.back));
+  return {rows,total,hitP:a.cover,evBack,forms:toForms(list.map(c=>c.k)),real:!!a.real};
+}
+function planHtml(a,res){
+  const unit=LS.get('unit',1000), P=betPlan(a,unit); if(!P)return '';
+  const ready=MODEL.live&&MODEL.live.ready;
+  const leg=l=>l.map(n=>bn(n)).join('');
+  const fh=P.forms.map(f=>`<div class="form"><span class="lbl">${f.type==='BOX'?'3連単BOX':f.type}</span>${f.type==='BOX'?leg(f.legs[0]):f.legs.map(leg).join('<span class="arrow">→</span>')}</div>`).join('');
+  return `<div class="panel plan honsen"><h3><span class="mark">買い方</span>${ready?'':'参考・'}金額は自信の度合いで配分</h3>
+    <p class="sub">${ready?'':'公式オッズでの実績を集計中のため参考です。'}1点${yen(unit)}を基本に、確率の高い買い目ほど多く（最大${MAXMUL}倍）。</p>
+    <div class="unit"><label for="unit">1点の基本</label><select id="unit">${[100,500,1000,2000,3000,5000,10000].map(v=>`<option value="${v}"${v===unit?' selected':''}>${yen(v)}</option>`).join('')}</select></div>
+    <div class="forms">${fh}</div>
+    <table><thead><tr><th>買い目</th><th>確率</th><th>オッズ</th><th>金額</th><th>当たれば</th></tr></thead><tbody>
+    ${P.rows.map(x=>`<tr class="${x.mul>1?'big':''}${res&&res.order===x.k?' hit':''}"><td>${comboHtml(x.k)}</td><td>${pct(x.pAi)}</td><td>${x.real?'':'推定'}${odds(x.odds)}</td><td>${yen(x.stake)}</td><td class="${x.gami?'warn':''}">${yen(x.back)}${x.gami?' 損':''}</td></tr>`).join('')}
+    </tbody></table>
+    <p class="foot">合計 ${yen(P.total)}・${P.rows.length}点・的中確率 ${pct(P.hitP)}・期待回収 ${(P.evBack/P.total*100).toFixed(0)}%${P.rows.some(x=>x.gami)?'・「損」は当たっても合計を下回る買い目':''}</p></div>`;
+}
 function renderYoso(){
   const el=$('#v-yoso'), r=cur();
   if(!r){el.innerHTML=emptyState();return;}
@@ -367,11 +422,12 @@ function renderYoso(){
         <p class="sub">${a.honsen.length}点で的中確率 ${pct(a.cover)}</p>
         <ul class="combo-list">${a.honsen.map(c=>rowC(c,false)).join('')}</ul></div>
       <div class="panel ana"><h3><span class="mark">穴</span>人気より強いと見た買い目</h3>
-        <p class="sub">${a.real?`公式オッズ（${a.real.final?'締切時点':(a.real.at||'').slice(11,16)+'時点'}）で`:'推定'}${MODEL.ana.minOdds}倍以上、AI確率が人気の${MODEL.ana.minRatio}倍以上のもの</p>
+        <p class="sub">${a.real&&!(MODEL.live&&MODEL.live.ready)?'参考（オッズでの実績を集計中のため2点まで）。':''}${a.real?`公式オッズ（${a.real.final?'締切時点':(a.real.at||'').slice(11,16)+'時点'}）で`:'推定'}${MODEL.ana.minOdds}倍以上、AI確率が人気の${MODEL.ana.minRatio}倍以上のもの</p>
         ${a.ana.length?`<ul class="combo-list">${a.ana.map(c=>rowC(c,true)).join('')}</ul>
         <p class="foot">${a.ana.length}点の的中確率 ${pct(sum(a.ana.map(c=>c.pAi)))}・1点あたり期待値 ${(anaEV*100).toFixed(0)}%</p>`
         :`<p class="sub">人気とのズレが小さく、狙える穴が見つかりません。見送り候補です。</p>`}</div>
     </div>
+    ${planHtml(a,res)}
     <div class="comment">
       <p>${esc(commentary(r,a))}</p>
       <button class="btn ghost" id="ask" type="button">Claudeに相談する文をコピー</button>
@@ -408,6 +464,7 @@ function renderYoso(){
     if(v==null)delete exMan[r.id][b.waku];else exMan[r.id][b.waku]=v;LS.set('ex',exMan);renderChips();renderYoso();});});
   $('#save').addEventListener('click',()=>{picks[r.id]={chatgpt:$('#pk-chatgpt').value.trim(),ikkun:$('#pk-ikkun').value.trim(),mine:$('#pk-mine').value.trim()};LS.set('picks',picks);toast('保存しました');});
   $('#ask').addEventListener('click',()=>copyForClaude(r,a));
+  $('#unit')?.addEventListener('change',e=>{LS.set('unit',+e.target.value);renderYoso();});
 }
 
 function copyForClaude(r,a){
