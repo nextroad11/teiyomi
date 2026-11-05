@@ -287,7 +287,22 @@ function commentary(r,A){
   return s;
 }
 
-function parsePicks(str){
+// 金額つきの買い目: 「1-3-2 300」「132 135 341 300円」「1-23-234:200」など。金額は直前の買い目まとめてに付く。無ければ100円
+function parseBets(str){
+  const out={};
+  const norm=(str||'').replace(/[０-９]/g,d=>String.fromCharCode(d.charCodeAt(0)-0xFEE0)).replace(/[ー－―−＝=]/g,'-').replace(/[：@×xX]/g,' ').replace(/[円¥￥]/g,' ').replace(/(\d),(\d{3})/g,'$1$2');
+  let pend=[];
+  const flush=amt=>{pend.forEach(k=>{out[k]=(out[k]||0)+amt;});pend=[];};
+  norm.split(/[\s,、，・/]+/).filter(Boolean).forEach(tok=>{
+    if(/^\d+$/.test(tok)&&(tok.includes('0')||tok.length>=4||!/^[1-6]{3}$/.test(tok))){if(pend.length)flush(+tok);return;}
+    const g=tok.includes('-')?tok.split('-'):(/^[1-6]{3}$/.test(tok)?[...tok]:null);if(!g||g.length!==3)return;
+    const gs=g.map(x=>[...x].map(Number).filter(n=>n>=1&&n<=6));
+    for(const a of gs[0])for(const b of gs[1])for(const c of gs[2])if(a!==b&&b!==c&&a!==c)pend.push(a+'-'+b+'-'+c);});
+  flush(100);
+  return out;
+}
+function parsePicks(str){return Object.keys(parseBets(str));}
+function parsePicksOld(str){
   const set=new Set();
   const norm=(str||'').replace(/[０-９]/g,d=>String.fromCharCode(d.charCodeAt(0)-0xFEE0)).replace(/[ー－―−＝=]/g,'-');
   norm.split(/[\s,、，・/]+/).forEach(tok=>{const g=tok.split('-');if(g.length!==3)return;
@@ -387,10 +402,14 @@ function toForms(keys){
   }
   return out;
 }
-function betPlan(a,unit){
-  const list=a.honsen;if(!list.length)return null;
+// unit が正なら「1点の基本」、負なら「1レースの予算」（例: -3000 = 3,000円を配分）
+function betPlan(a,unit,list){
+  list=list||a.honsen;if(!list.length)return null;
   const pMin=Math.min(...list.map(c=>c.pAi));
-  const rows=list.map(c=>{const mul=Math.max(1,Math.min(MAXMUL,Math.round(c.pAi/pMin)));return {...c,mul,stake:mul*unit};});
+  const rows=list.map(c=>({...c,mul:Math.max(1,Math.min(MAXMUL,Math.round(c.pAi/pMin)))}));
+  if(unit>0)rows.forEach(x=>x.stake=x.mul*unit);
+  else{const B=-unit,M=sum(rows.map(x=>x.mul));rows.forEach(x=>x.stake=Math.max(100,Math.floor(B*x.mul/M/100)*100));
+    let left=B-sum(rows.map(x=>x.stake));for(const x of rows.slice().sort((p,q)=>q.pAi-p.pAi)){if(left<100)break;x.stake+=100;left-=100;}}
   const total=sum(rows.map(x=>x.stake));
   rows.forEach(x=>{x.back=Math.round(x.stake*x.odds);x.gami=x.back<total;});
   const evBack=sum(rows.map(x=>x.pAi*x.back));
@@ -402,8 +421,10 @@ function planHtml(a,res){
   const leg=l=>l.map(n=>bn(n)).join('');
   const fh=P.forms.map(f=>`<div class="form"><span class="lbl">${f.type==='BOX'?'3連単BOX':f.type}</span>${f.type==='BOX'?leg(f.legs[0]):f.legs.map(leg).join('<span class="arrow">→</span>')}</div>`).join('');
   return `<div class="panel plan honsen"><h3><span class="mark">買い方</span>${ready?'':'参考・'}金額は自信の度合いで配分</h3>
-    <p class="sub">${ready?'':'公式オッズでの実績を集計中のため参考です。'}1点${yen(unit)}を基本に、確率の高い買い目ほど多く（最大${MAXMUL}倍）。</p>
-    <div class="unit"><label for="unit">1点の基本</label><select id="unit">${[100,500,1000,2000,3000,5000,10000].map(v=>`<option value="${v}"${v===unit?' selected':''}>${yen(v)}</option>`).join('')}</select></div>
+    <p class="sub">${ready?'':'公式オッズでの実績を集計中のため参考です。'}${unit>0?`1点${yen(unit)}を基本に、確率の高い買い目ほど多く（最大${MAXMUL}倍）。`:`1レース${yen(-unit)}を、確率の高い買い目ほど多く配分。`}</p>
+    <div class="unit"><label for="unit">金額</label><select id="unit">
+      <optgroup label="1レースの予算">${[1000,3000,5000,10000].map(v=>`<option value="${-v}"${-v===unit?' selected':''}>予算 ${yen(v)}</option>`).join('')}</optgroup>
+      <optgroup label="1点の基本">${[100,500,1000,2000,3000,5000].map(v=>`<option value="${v}"${v===unit?' selected':''}>1点 ${yen(v)}〜</option>`).join('')}</optgroup></select></div>
     <div class="forms">${fh}</div>
     <table><thead><tr><th>買い目</th><th>確率</th><th>オッズ</th><th>金額</th><th>当たれば</th></tr></thead><tbody>
     ${P.rows.map(x=>`<tr class="${x.mul>1?'big':''}${res&&res.order===x.k?' hit':''}"><td>${comboHtml(x.k)}</td><td>${pct(x.pAi)}</td><td>${x.real?'':'推定'}${odds(x.odds)}</td><td>${yen(x.stake)}</td><td class="${x.gami?'warn':''}">${yen(x.back)}${x.gami?' 損':''}</td></tr>`).join('')}
@@ -461,7 +482,7 @@ function renderYoso(){
     </div>
     <div class="panel">
       <h3>このレースの記録</h3>
-      <p class="sub">他の予想を入れておくと「成績」で回収率を比べられます（この端末に保存）。書き方の例：1-2-3, 1-23-234</p>
+      <p class="sub">他の予想を入れておくと「成績」で回収率を比べられます（この端末に保存）。書き方の例：1-2-3, 1-23-234。金額つきは「132 135 300円」「156 251 100円」のように、買い目の後に金額（無ければ100円）</p>
       <div class="record">
         <div class="field"><label for="pk-chatgpt">ChatGPTの買い目</label><textarea id="pk-chatgpt">${esc(p.chatgpt||'')}</textarea></div>
         <div class="field"><label for="pk-ikkun">一撃くんの買い目</label><textarea id="pk-ikkun">${esc(p.ikkun||'')}</textarea></div>
@@ -538,16 +559,19 @@ function renderRec(){
   const el=$('#v-rec');
   const done=races.filter(r=>{const x=resultOf(r);return x&&x.order&&A(r);});
   if(!done.length){el.innerHTML=learnPanel()+`<div class="empty" style="margin-top:16px"><b>${fmtDate(dateSel)}はまだ結果の入ったレースがありません。</b><br>結果はレース後に自動で入ります。AI本線・AI穴・ChatGPT・一撃くん・自分の回収率をここで比べます。</div>`;return;}
-  const aiH=r=>history[r.id]?.h||A(r).honsen.map(c=>c.k), aiA=r=>history[r.id]?.a||A(r).ana.map(c=>c.k);
-  const srcs=[['AI本線',aiH],['AI穴',aiA],['ChatGPT',r=>parsePicks(picks[r.id]?.chatgpt)],['一撃くん',r=>parsePicks(picks[r.id]?.ikkun)],['自分',r=>parsePicks(picks[r.id]?.mine)]];
-  const agg=srcs.map(([name,f])=>{let n=0,pts=0,ret=0,hits=0;done.forEach(r=>{const ks=f(r),x=resultOf(r);if(!ks.length)return;n++;pts+=ks.length;if(ks.includes(x.order)){hits++;ret+=x.payout||0;}});return {name,n,pts,ret,hits};});
+  // AIは「買い方」と同じ配分（予算・基本額の設定どおり）、他の予想は入力した金額で数える
+  const unit=LS.get('unit',1000);
+  const aiBets=(r,keys)=>{const a=A(r),m=Object.fromEntries(a.combos.map(c=>[c.k,c]));const P=betPlan(a,unit,keys.map(k=>m[k]).filter(Boolean));return P?Object.fromEntries(P.rows.map(x=>[x.k,x.stake])):{};};
+  const aiH=r=>aiBets(r,history[r.id]?.h||A(r).honsen.map(c=>c.k)), aiA=r=>{const ks=history[r.id]?.a||A(r).ana.map(c=>c.k);return Object.fromEntries(ks.map(k=>[k,unit>0?unit:100]));};
+  const srcs=[['AI本線',aiH],['AI穴',aiA],['ChatGPT',r=>parseBets(picks[r.id]?.chatgpt)],['一撃くん',r=>parseBets(picks[r.id]?.ikkun)],['自分',r=>parseBets(picks[r.id]?.mine)]];
+  const agg=srcs.map(([name,f])=>{let n=0,pts=0,inv=0,ret=0,hits=0;done.forEach(r=>{const bs=f(r),x=resultOf(r),ks=Object.keys(bs);if(!ks.length)return;n++;pts+=ks.length;inv+=sum(Object.values(bs));if(bs[x.order]){hits++;ret+=(x.payout||0)*bs[x.order]/100;}});return {name,n,pts,inv,ret,hits};});
   el.innerHTML=`<div style="display:grid;gap:16px">${learnPanel()}
-    <div><p class="card-title">${fmtDate(dateSel)}の回収率（1点100円・${done.length}レース）</p><div class="tablebox"><table class="rec">
+    <div><p class="card-title">${fmtDate(dateSel)}の回収率（入力した金額で計算・${done.length}レース）</p><div class="tablebox"><table class="rec">
       <thead><tr><th>予想</th><th>レース数</th><th>平均点数</th><th>的中</th><th>的中率</th><th>投資</th><th>払戻</th><th>回収率</th></tr></thead>
-      <tbody>${agg.map(g=>`<tr><td class="src">${g.name}</td><td>${g.n}</td><td>${g.n?(g.pts/g.n).toFixed(1)+'点':'-'}</td><td>${g.hits}</td><td>${g.n?pct(g.hits/g.n):'-'}</td><td>${yen(g.pts*100)}</td><td>${yen(g.ret)}</td><td class="${g.pts&&g.ret>=g.pts*100?'hit':''}">${g.pts?Math.round(g.ret/(g.pts*100)*100)+'%':'-'}</td></tr>`).join('')}</tbody></table></div></div>
+      <tbody>${agg.map(g=>`<tr><td class="src">${g.name}</td><td>${g.n}</td><td>${g.n?(g.pts/g.n).toFixed(1)+'点':'-'}</td><td>${g.hits}</td><td>${g.n?pct(g.hits/g.n):'-'}</td><td>${yen(g.inv)}</td><td>${yen(Math.round(g.ret))}</td><td class="${g.inv&&g.ret>=g.inv?'hit':''}">${g.inv?Math.round(g.ret/g.inv*100)+'%':'-'}</td></tr>`).join('')}</tbody></table></div></div>
     <div><p class="card-title">レースごと</p><div class="tablebox"><table class="rec">
       <thead><tr><th>レース</th><th>結果</th><th>払戻</th><th>AI本線</th><th>AI穴</th><th>ChatGPT</th><th>一撃くん</th><th>自分</th></tr></thead>
-      <tbody>${done.sort((a,b)=>a.jcd-b.jcd||a.rno-b.rno).map(r=>{const x=resultOf(r);return `<tr><td class="src">${esc(r.venue||VENUES[r.jcd])}${r.rno}R</td><td>${esc(x.order)}</td><td>${yen(x.payout)}</td>${srcs.map(([,f])=>{const ks=f(r);return `<td>${!ks.length?'-':ks.includes(x.order)?'<span class="hit">的中</span>':'×'}</td>`}).join('')}</tr>`}).join('')}</tbody></table></div></div>
+      <tbody>${done.sort((a,b)=>a.jcd-b.jcd||a.rno-b.rno).map(r=>{const x=resultOf(r);return `<tr><td class="src">${esc(r.venue||VENUES[r.jcd])}${r.rno}R</td><td>${esc(x.order)}</td><td>${yen(x.payout)}</td>${srcs.map(([,f])=>{const bs=f(r),ks=Object.keys(bs);return `<td>${!ks.length?'-':bs[x.order]?`<span class="hit">的中</span><br><small>${yen(Math.round(x.payout*bs[x.order]/100))}</small>`:'×'}</td>`}).join('')}</tr>`}).join('')}</tbody></table></div></div>
     <p class="hint">AIの本線・穴は、締切時点でこの端末に記録した買い目で数えます（記録前のレースは今のデータで計算）。</p>
   </div>`;
 }
