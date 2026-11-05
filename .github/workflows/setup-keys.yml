@@ -45,4 +45,4 @@ jobs:
           git commit -q -m "合言葉の準備"
           for i in 1 2 3; do git push -q && exit 0; git pull -q --rebase; done
           exit 1
-# run: 2
+# run: 3
