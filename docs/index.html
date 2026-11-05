@@ -543,8 +543,8 @@ function renderRec(){
   const agg=srcs.map(([name,f])=>{let n=0,pts=0,ret=0,hits=0;done.forEach(r=>{const ks=f(r),x=resultOf(r);if(!ks.length)return;n++;pts+=ks.length;if(ks.includes(x.order)){hits++;ret+=x.payout||0;}});return {name,n,pts,ret,hits};});
   el.innerHTML=`<div style="display:grid;gap:16px">${learnPanel()}
     <div><p class="card-title">${fmtDate(dateSel)}の回収率（1点100円・${done.length}レース）</p><div class="tablebox"><table class="rec">
-      <thead><tr><th>予想</th><th>レース数</th><th>的中</th><th>的中率</th><th>投資</th><th>払戻</th><th>回収率</th></tr></thead>
-      <tbody>${agg.map(g=>`<tr><td class="src">${g.name}</td><td>${g.n}</td><td>${g.hits}</td><td>${g.n?pct(g.hits/g.n):'-'}</td><td>${yen(g.pts*100)}</td><td>${yen(g.ret)}</td><td class="${g.pts&&g.ret>=g.pts*100?'hit':''}">${g.pts?Math.round(g.ret/(g.pts*100)*100)+'%':'-'}</td></tr>`).join('')}</tbody></table></div></div>
+      <thead><tr><th>予想</th><th>レース数</th><th>平均点数</th><th>的中</th><th>的中率</th><th>投資</th><th>払戻</th><th>回収率</th></tr></thead>
+      <tbody>${agg.map(g=>`<tr><td class="src">${g.name}</td><td>${g.n}</td><td>${g.n?(g.pts/g.n).toFixed(1)+'点':'-'}</td><td>${g.hits}</td><td>${g.n?pct(g.hits/g.n):'-'}</td><td>${yen(g.pts*100)}</td><td>${yen(g.ret)}</td><td class="${g.pts&&g.ret>=g.pts*100?'hit':''}">${g.pts?Math.round(g.ret/(g.pts*100)*100)+'%':'-'}</td></tr>`).join('')}</tbody></table></div></div>
     <div><p class="card-title">レースごと</p><div class="tablebox"><table class="rec">
       <thead><tr><th>レース</th><th>結果</th><th>払戻</th><th>AI本線</th><th>AI穴</th><th>ChatGPT</th><th>一撃くん</th><th>自分</th></tr></thead>
       <tbody>${done.sort((a,b)=>a.jcd-b.jcd||a.rno-b.rno).map(r=>{const x=resultOf(r);return `<tr><td class="src">${esc(r.venue||VENUES[r.jcd])}${r.rno}R</td><td>${esc(x.order)}</td><td>${yen(x.payout)}</td>${srcs.map(([,f])=>{const ks=f(r);return `<td>${!ks.length?'-':ks.includes(x.order)?'<span class="hit">的中</span>':'×'}</td>`}).join('')}</tr>`}).join('')}</tbody></table></div></div>
