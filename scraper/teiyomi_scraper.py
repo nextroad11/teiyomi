@@ -199,18 +199,29 @@ def parse_beforeinfo(html: str) -> dict | None:
         if waku in boats:
             continue
         ex = tilt = None
+        prop = parts = ""
         for i, c in enumerate(cells[1:], start=1):
             if ex is None and re.fullmatch(r"\d\.\d{2}", c) and 6.0 <= float(c) <= 7.8:
                 ex = float(c)
                 if i + 1 < len(cells) and re.fullmatch(r"-?\d\.\d", cells[i + 1]):
                     tilt = float(cells[i + 1])
+                    # チルトの後ろは プロペラ（新など）・部品交換（リング等）
+                    prop = cells[i + 2] if i + 2 < len(cells) else ""
+                    parts = cells[i + 3] if i + 3 < len(cells) else ""
                 break
-        boats[waku] = {"exTime": ex, "tilt": tilt}
+        boats[waku] = {"exTime": ex, "tilt": tilt, "prop": prop, "parts": parts}
     # スタート展示: 上から順にコース1〜6
     order = re.findall(r"table1_boatImage1Number[^\"]*\"[^>]*>\s*(\d)\s*<", html)
+    sts = re.findall(r"table1_boatImage1Time[^>]*>\s*([^<]*?)\s*<", html)
     if len(order) >= 6:
         for course, w in enumerate(order[:6], start=1):
             boats.setdefault(w, {})["course"] = course
+            if course - 1 < len(sts):
+                t = sts[course - 1].replace(" ", "")
+                m = re.fullmatch(r"(F|L)?(\d*\.\d+)", t)
+                if m:  # 展示のST。フライングはマイナスで持つ
+                    v = float(m.group(2))
+                    boats[w]["exST"] = -v if m.group(1) == "F" else v
     txt = text_of(html)
     out = {"boats": boats}
     m = re.search(r"風速\s*(\d+)\s*m", txt)
