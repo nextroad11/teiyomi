@@ -1,0 +1,17 @@
+name: 通知テスト
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/notify-test.yml"]
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install requests
+      - run: python scraper/notify.py "艇読みAI" "テスト通知です。これが届いたら準備OK！（アラートは11/19の成績確認のあとに始まります）" 4 "speedboat,tada"
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+# test-run: 0
