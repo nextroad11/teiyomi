@@ -203,6 +203,8 @@ for jcd_s, v in CFG['venues'].items():
             open(path, 'w').write('\n'.join(allk[k] for k in ks) + '\n')
     d, _ = G.load_compact([path])
     d['day'] = d.race.str[:8]
+    since = v.get('since', '00000000')
+    d = d[d.day >= since].copy()  # 新モーター導入後のデータだけを使う
     d['grade'] = d.day.map(grades[jcd_s]).fillna('不明')
     # 出走表が残っていない過去の日は、その日の出場選手のA1の割合でグレードを推定する
     # （SG・G1はほぼ全員A1、一般戦は1〜3割）。0.6以上→SG/G1扱いで除外、0.3〜0.6→一般扱いだが要確認
@@ -219,6 +221,7 @@ for jcd_s, v in CFG['venues'].items():
     W0 = FORMS[v['adopted']]
     newdays = sorted({l[:8] for l in added})
     lines += [f"## {v['name']}（採用式: {v['adopted']} {wstr(W0)}）", ""]
+    if since > '0': lines.append(f"- 対象期間: {since[:4]}/{since[4:6]}/{since[6:]} 以降（{v.get('since_note', '新モーター導入後')}）")
     lines.append(f"- データ: 一般戦 {d.race.nunique()}R・{d['節'].nunique()}節（{d.day.min()}〜{d.day.max()}）。今回追加 {len(added)}R" + (f"（{', '.join(x[4:6]+'/'+x[6:] for x in newdays)}）" if newdays else "（新しい結果なし）"))
     if inferred: lines.append(f"- 出走表が残っていない日 {len(inferred)}日はA1の割合でグレードを推定（SG/G1と推定して除外 {len(ex_inf)}日" + (f": {', '.join(ex_inf)}" if ex_inf else "") + "）")
     if unknown: lines.append(f"- ⚠ グレード不明の日（A1が3〜6割。一般戦として分析に含めています）: {', '.join(unknown)}")

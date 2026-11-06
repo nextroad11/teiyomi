@@ -3,12 +3,16 @@
   "4": {
    "name": "平和島",
    "file": "data/heiwajima.txt",
-   "adopted": "一周のみ"
+   "adopted": "一周のみ",
+   "since": "20260618",
+   "since_note": "新モーター初下ろし 2026/6/18（モーター2連対率の初期化から確認）"
   },
   "6": {
    "name": "浜名湖",
    "file": "data/hamanako.txt",
-   "adopted": "戸田新"
+   "adopted": "戸田新",
+   "since": "20260501",
+   "since_note": "新モーター 2026/4/9 導入。ユーザー指定で5月から"
   }
  },
  "exclude_grades": [
