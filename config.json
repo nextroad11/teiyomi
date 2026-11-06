@@ -223,6 +223,13 @@
     }
    },
    "corr_note": "2026/11/7採用"
+  },
+  "7": {
+   "name": "蒲郡",
+   "file": "data/gamagori.txt",
+   "adopted": "蒲郡",
+   "since": "20260811",
+   "since_note": "新モーター 2026/8/11 初下ろし（モーター2連対率の初期化から確認）"
   }
  },
  "exclude_grades": [
