@@ -27,6 +27,13 @@
    "adopted": "大村",
    "since": "20260524",
    "since_note": "新モーター 2026/5/24 導入（モーター2連対率の初期化から確認）"
+  },
+  "19": {
+   "name": "下関",
+   "file": "data/shimonoseki.txt",
+   "adopted": "下関",
+   "since": "20260601",
+   "since_note": "新モーター 2026/4/29 導入。ユーザー指定で6月から"
   }
  },
  "exclude_grades": [
