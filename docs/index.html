@@ -99,7 +99,15 @@ main.wrap{padding-block:16px 48px;display:grid;gap:18px}
 .lockbox input{font:16px var(--f-num);padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
 .lockmsg{min-height:1.2em;color:var(--ana)!important}
 .ashi td.pos{color:var(--good);font-weight:600}.ashi td.neg{color:var(--ana)}
-.ori td small{display:inline-block;margin-left:4px;font-size:10px;color:var(--muted)}.ori td em{display:block;font-style:normal;font-size:10px;color:var(--muted)}.ori td.best{color:var(--good);font-weight:700}
+.ori td small{display:inline-block;margin-left:4px;font-size:10px;color:var(--muted)}
+/* オリ展の色分け: 1位 濃い緑 / 2位 うすい緑 / 5位 うすい赤 / 6位 濃い赤（補正後のレース内順位） */
+.ori td.rk1{background:color-mix(in srgb,var(--good) 30%,transparent);font-weight:700}
+.ori td.rk2{background:color-mix(in srgb,var(--good) 13%,transparent)}
+.ori td.rk5{background:color-mix(in srgb,var(--ana) 17%,transparent)}
+.ori td.rk6{background:color-mix(in srgb,var(--ana) 30%,transparent)}
+.ori td.rk1 small,.ori td.rk2 small{color:var(--good);font-weight:700}.ori td.rk5 small,.ori td.rk6 small{color:var(--ana);font-weight:700}
+.ori .legend{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px;font-size:11px}
+.ori .legend span{padding:2px 8px;border-radius:6px}.ori td em{display:block;font-style:normal;font-size:10px;color:var(--muted)}
 .plan .forms{display:grid;gap:6px;margin:4px 0 12px}
 .plan .form{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-weight:600}
 .plan .form .lbl{font-size:12px;font-weight:600;color:var(--muted);min-width:5.5em}
@@ -536,10 +544,11 @@ function oriHtml(r,a){
   const exC=w=>{const b=a.boats.find(x=>x.waku===w);return b&&b.exTime!=null?Math.round((b.exTime+ASHI_CORR[w][3])*100)/100:null;};
   const rankOf=f=>{const v=a.boats.map(b=>({w:b.waku,x:f(b.waku)})).filter(e=>e.x!=null).sort((p,q)=>p.x-q.x);const r={};v.forEach((e,i)=>r[e.w]=i+1);return r;};
   const rEx=rankOf(exC), rI=items.map((n,j)=>rankOf(w=>cor(w,n,j)));
-  const cell=(c,rw,rank)=>c==null?'<td class="n">-</td>':`<td class="n${rank===1?' best':''}">${c.toFixed(2)}<small>${rank||''}</small>${rw!=null&&Math.abs(rw-c)>0.001?`<em>生${rw.toFixed(2)}</em>`:''}</td>`;
+  const cell=(c,rw,rank)=>c==null?'<td class="n">-</td>':`<td class="n rk rk${rank||0}">${c.toFixed(2)}<small>${rank?rank+'位':''}</small>${rw!=null&&Math.abs(rw-c)>0.001?`<em>生${rw.toFixed(2)}</em>`:''}</td>`;
   const st=v=>v==null?'-':v<0?'F'+Math.abs(v).toFixed(2).slice(1):v.toFixed(2).slice(1);
   return `<div class="panel ori"><h3>オリジナル展示・直前情報</h3>
     <p class="sub">${o?'BOATCASTのオリジナル展示（秒・小さいほど速い）。大きい数字は<b>枠別補正後</b>（内枠ほど速く出やすい分を差し引いた値）、小さい数字は補正後のレース内順位、下の「生」は公式の生タイム。場ごとに計測の仕方が違うので、ほかの場とは比べないでください。':'オリジナル展示はまだ出ていません（締切の約20分前に自動で入ります）。展示タイムは枠別補正後。'}</p>
+    <div class="legend"><span class="rk1" style="background:color-mix(in srgb,var(--good) 30%,transparent)">1位</span><span style="background:color-mix(in srgb,var(--good) 13%,transparent)">2位</span><span style="background:var(--bg)">3・4位</span><span style="background:color-mix(in srgb,var(--ana) 17%,transparent)">5位</span><span style="background:color-mix(in srgb,var(--ana) 30%,transparent)">6位</span></div>
     <div class="tablebox"><table class="card"><thead><tr><th>艇</th><th>展示</th>${items.map(n=>`<th>${esc(n)}</th>`).join('')}<th>展示ST</th><th>チルト</th><th>ペラ・部品</th></tr></thead><tbody>
     ${a.boats.map(b=>{const q=bf[b.waku]||{};return `<tr><td>${bn(b.waku)}</td>${cell(exC(b.waku),b.exTime,rEx[b.waku])}${items.map((n,j)=>cell(cor(b.waku,n,j),raw(b.waku,j),rI[j][b.waku])).join('')}<td class="n">${st(q.exST)}</td><td class="n">${q.tilt!=null?q.tilt:'-'}</td><td>${esc([q.prop?'ペラ'+q.prop:'',q.parts||''].filter(Boolean).join(' ')||'-')}</td></tr>`;}).join('')}
     </tbody></table></div></div>`;}
