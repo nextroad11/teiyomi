@@ -807,7 +807,7 @@ async function unlock(){
   try{REPORT=await fetchEnc('report.json');}catch(_){}
   try{STATS=await fetchEnc('stats.json');}catch(_){}
   await loadIndex();await loadDay();
-  setInterval(async()=>{if(document.hidden||/INPUT|TEXTAREA/.test(document.activeElement?.tagName||''))return;const keep=raceId;await loadDay();raceId=keep;renderChips();},60000);
+  setInterval(async()=>{if(document.hidden||/INPUT|TEXTAREA/.test(document.activeElement?.tagName||''))return;const keep=raceId;await loadDay();raceId=keep;renderChips();},30000);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)loadDay();});
 })();
 </script>
