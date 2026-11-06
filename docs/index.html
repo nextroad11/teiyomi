@@ -72,7 +72,9 @@ main.wrap{padding-block:16px 48px;display:grid;gap:18px}
 .combo .val{font-family:var(--f-num);font-size:13px;text-align:right;white-space:nowrap}
 .combo .val small{color:var(--muted);font-size:11px;margin-left:6px}
 .combo.hit .nums{outline:2px solid var(--good);outline-offset:2px;border-radius:4px}
-.foot-cell{white-space:nowrap}.foot-cell span{display:block;font-size:11px;color:var(--muted)}
+.foot-cell{white-space:nowrap;text-align:center}
+.tablebox{max-width:100%;overflow-x:auto}
+#v-yoso>div>*,#v-self>div>*{min-width:0}.foot-cell span{display:block;font-size:11px;color:var(--muted)}
 .fg{font-size:16px}.fg-up{color:var(--good)}.fg-dn{color:var(--ana)}.fg-mid{color:var(--muted)}
 .tenkai{display:grid;gap:14px}
 .slit svg{width:100%;height:auto;display:block}
@@ -96,6 +98,8 @@ main.wrap{padding-block:16px 48px;display:grid;gap:18px}
 .lockbox h2{margin:0}.lockbox p{margin:0;color:var(--muted);font-size:13px}
 .lockbox input{font:16px var(--f-num);padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
 .lockmsg{min-height:1.2em;color:var(--ana)!important}
+.ashi td.pos{color:var(--good);font-weight:600}.ashi td.neg{color:var(--ana)}
+.ori td small{display:inline-block;margin-left:4px;font-size:10px;color:var(--muted)}.ori td.best{color:var(--good);font-weight:700}
 .plan .forms{display:grid;gap:6px;margin:4px 0 12px}
 .plan .form{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-weight:600}
 .plan .form .lbl{font-size:12px;font-weight:600;color:var(--muted);min-width:5.5em}
@@ -181,6 +185,7 @@ table.rec{border-collapse:collapse;width:100%;min-width:560px;font-variant-numer
   <h1 class="brand">艇読みAI <small>BOATRACE ANALYZER</small></h1>
   <nav class="tabs" role="tablist">
     <button role="tab" id="tab-yoso" aria-selected="true" data-view="yoso">予想</button>
+    <button role="tab" id="tab-self" aria-selected="false" data-view="self">自分で予想</button>
     <button role="tab" id="tab-calc" aria-selected="false" data-view="calc">買い目計算</button>
     <button role="tab" id="tab-rec" aria-selected="false" data-view="rec">成績</button>
   </nav>
@@ -198,6 +203,7 @@ table.rec{border-collapse:collapse;width:100%;min-width:560px;font-variant-numer
   </div>
   <div class="chips" id="chips" role="group" aria-label="レースを選ぶ"></div>
   <section id="v-yoso"></section>
+  <section id="v-self" hidden></section>
   <section id="v-calc" hidden></section>
   <section id="v-rec" hidden></section>
   <p class="disclaim">確率は公式の出走表・直前情報から計算した推定値で、的中を保証するものではありません。推定オッズは人気を予想したもので、実際のオッズとは異なります。舟券は20歳から、無理のない金額で。データ出典：BOAT RACE オフィシャルウェブサイト。</p>
@@ -440,9 +446,9 @@ function renderChips(){
 }
 const cur=()=>races.find(r=>r.id===raceId)||null;
 function renderView(){
-  ['yoso','calc','rec'].forEach(v=>{$('#v-'+v).hidden=v!==view;$('#tab-'+v).setAttribute('aria-selected',v===view);});
+  ['yoso','self','calc','rec'].forEach(v=>{$('#v-'+v).hidden=v!==view;$('#tab-'+v).setAttribute('aria-selected',v===view);});
   $('#chips').hidden=view==='rec';
-  if(view==='yoso')renderYoso();else if(view==='calc')renderCalc();else renderRec();
+  if(view==='yoso')renderYoso();else if(view==='self')renderSelf();else if(view==='calc')renderCalc();else renderRec();
 }
 const emptyState=()=>`<div class="empty"><b>この日のレースデータはまだありません。</b><br>毎朝7時ごろに、その日の全場の出走表を自動で取り込みます。</div>`;
 const WIND=['','北','北北東','北東','東北東','東','東南東','南東','南南東','南','南南西','南西','西南西','西','西北西','北西','北北西'];
@@ -484,22 +490,52 @@ function tenkaiOf(r,a){
   const f=a.boats.filter(b=>b.footGrade==='◎')[0]; if(f)t.push(`舟足◎は${f.waku}号艇。`);
   t.push(`一番ありそうな決着の形は「${top.waku}号艇の${top.km}」（${pct(top.p)}）。`);
   return {sl,sc,text:t.join('')};}
-function tenkaiHtml(r,a){
-  const T=tenkaiOf(r,a),sl=T.sl,W=340,H=6*26+24,X0=40,X1=W-12,maxST=0.30,sx=v=>X1-(clamp(v,0,maxST)/maxST)*(X1-X0-60);
+function slitSvg(T){
+  const sl=T.sl,W=340,H=6*26+24,X0=40,X1=W-12,maxST=0.30,sx=v=>X1-(clamp(v,0,maxST)/maxST)*(X1-X0-60);
   const lanes=sl.map((x,i)=>{const y=12+i*26,cx=sx(x.pred);return `<rect class="lane" x="${X0}" y="${y}" width="${X1-X0}" height="22" rx="4"/>
     <text x="4" y="${y+15}">${x.course}コース</text>
     <line x1="${X0}" x2="${cx-12}" y1="${y+11}" y2="${y+11}" stroke="var(--line)" stroke-width="2"/>
     <g transform="translate(${cx-12},${y+1})"><rect width="22" height="20" rx="4" class="bnr bnr${x.waku}"/><text x="11" y="14" text-anchor="middle" class="bnt bnt${x.waku}">${x.waku}</text></g>
     <text class="st" x="${cx-16}" y="${y+15}" text-anchor="end">${x.pred.toFixed(2).slice(1)}</text>
     ${x.dent?`<text class="mk-dn" x="${X1-4}" y="${y+15}" text-anchor="end">凹</text>`:x.course>1&&x.lead>=0.03?`<text class="mk-up" x="${X1-4}" y="${y+15}" text-anchor="end">先</text>`:''}`;}).join('');
+  return `<div class="slit"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="スリット予測"><line class="line" x1="${X1}" x2="${X1}" y1="6" y2="${H-6}"/>${lanes}</svg></div>`;}
+function tenkaiHtml(r,a){
+  const T=tenkaiOf(r,a),sl=T.sl;
   const maxP=T.sc[0].p;
   return `<div class="panel tenkai"><h3>スリット予測・展開予想</h3>
     <p class="sub">予測ST = その選手のこのコースでの平均ST（場のクセで補正）${sl.some(x=>x.exST!=null)?'と今日の展示ST':''}から。右ほど早いスタート。「凹」は両隣より遅れる予測、「先」は内より早い予測。</p>
-    <div class="slit"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="スリット予測"><line class="line" x1="${X1}" x2="${X1}" y1="6" y2="${H-6}"/>${lanes}</svg></div>
+    ${slitSvg(T)}
     <p class="tk-text">${esc(T.text)}</p>
     <ul class="scen">${T.sc.slice(0,6).map(c=>`<li>${bn(c.waku)}<span>${c.km}<span class="bar"><span style="width:${c.p/maxP*100}%"></span></span></span><b>${pct(c.p)}</b></li>`).join('')}</ul>
     <div class="tablebox"><table class="card"><thead><tr><th>コース</th><th>艇</th><th>コース別ST</th><th>ばらつき</th><th>展示ST</th><th>予測ST</th></tr></thead><tbody>
     ${sl.map(x=>`<tr><td>${x.course}</td><td>${bn(x.waku)}</td><td class="n">${x.avgST.toFixed(2).slice(1)}</td><td class="n">${x.sd!=null?x.sd.toFixed(3).slice(1):'-'}</td><td class="n">${x.exST==null?'-':x.exST<0?'F'+Math.abs(x.exST).toFixed(2).slice(1):x.exST.toFixed(2).slice(1)}</td><td class="n"><b>${x.pred.toFixed(2).slice(1)}</b></td></tr>`).join('')}</tbody></table></div></div>`;}
+
+// ---------------------------------------------------------------- 自分で予想: 足評価・オリジナル展示
+function ashiHtml(r,a){
+  const f=v=>v==null?'-':(v>=0?'+':'')+v.toFixed(2), cls=v=>v>=0.5?'pos':v<=-0.5?'neg':'';
+  if(a.ashi){const rows=a.boats.slice().sort((x,y)=>(x.ashi?.rank||9)-(y.ashi?.rank||9));
+    return `<div class="panel ashi"><h3>足評価（足スコア）</h3>
+      <p class="sub">枠ごとの計測のクセを補正し、同じレースの中で速いほど＋。${a.ashi.kind==='場別'&&a.ashi.sep?`この場の重み（判別力sep ${a.ashi.sep[0]}・${a.ashi.sep[1]}Rで検証）`:'未検証の場なので既定の戸田新式（一周1・まわり足0.5・直線0.5・展示1）'}で合計。</p>
+      <div class="tablebox"><table class="card"><thead><tr><th>順位</th><th>艇</th><th>一周</th><th>まわり足</th><th>直線</th><th>展示</th><th>足スコア</th><th>評価</th></tr></thead><tbody>
+      ${rows.map(b=>b.ashi?`<tr><td>${b.ashi.rank}位</td><td>${bn(b.waku)}</td>${b.ashi.z.map(z=>`<td class="n ${cls(z)}">${f(z)}</td>`).join('')}<td class="n"><b>${f(b.ashi.score)}</b></td><td><b class="fg fg-${b.footGrade==='◎'||b.footGrade==='○'?'up':b.footGrade==='×'||b.footGrade==='▲'?'dn':'mid'}">${b.footGrade}</b></td></tr>`:`<tr><td>-</td><td>${bn(b.waku)}</td><td colspan="6" class="n">展示なし</td></tr>`).join('')}
+      </tbody></table></div></div>`;}
+  const jc=String(r.jcd).padStart(2,'0');
+  return `<div class="panel ashi"><h3>足評価</h3><p class="sub">${ASHI_SKIP_NOTE(jc,r)}展示タイム・オリジナル展示・モーターの最近の成績を、AIが学んだ重みで合計した評価です。</p>
+    <div class="tablebox"><table class="card"><thead><tr><th>艇</th><th>展示</th><th>オリ展</th><th>モーター</th><th>合計</th><th>評価</th></tr></thead><tbody>
+    ${a.boats.slice().sort((x,y)=>y.foot-x.foot).map(b=>{const o=(b.parts.olap||0)+(b.parts.oturn||0)+(b.parts.ostr||0);return `<tr><td>${bn(b.waku)}</td><td class="n">${f(b.parts.ex||0)}</td><td class="n">${f(o)}</td><td class="n">${f((b.parts.motor||0)+(b.parts.mform||0))}</td><td class="n"><b>${f(b.foot)}</b></td><td><b class="fg fg-${b.footGrade==='◎'||b.footGrade==='○'?'up':b.footGrade==='×'||b.footGrade==='▲'?'dn':'mid'}">${b.footGrade}</b></td></tr>`;}).join('')}
+    </tbody></table></div></div>`;}
+const ASHI_SKIP_NOTE=(jc,r)=>jc==='04'||jc==='06'?'この場は足スコアの判別力が低いため使わず、':(r.before&&r.before.ori?'':'オリジナル展示がまだ無いため、');
+function oriHtml(r,a){
+  const o=r.before&&r.before.ori, bf=(r.before&&r.before.boats)||{};
+  const items=o&&o.items?o.items:[], rk=oriRank(o);
+  const exR={};a.boats.filter(b=>b.exTime!=null).slice().sort((x,y)=>x.exTime-y.exTime).forEach((b,i)=>exR[b.waku]=i+1);
+  const cell=(v,rank)=>v==null?'<td class="n">-</td>':`<td class="n${rank===1?' best':''}">${(+v).toFixed(2)}${rank?`<small>${rank}</small>`:''}</td>`;
+  const st=v=>v==null?'-':v<0?'F'+Math.abs(v).toFixed(2).slice(1):v.toFixed(2).slice(1);
+  return `<div class="panel ori"><h3>オリジナル展示・直前情報</h3>
+    <p class="sub">${o?'BOATCASTのオリジナル展示（秒・小さいほど速い。小さい数字はレース内の順位）。場ごとに計測の仕方が違うので、ほかの場とは比べないでください。':'オリジナル展示はまだ出ていません（締切の約20分前に自動で入ります）。'}</p>
+    <div class="tablebox"><table class="card"><thead><tr><th>艇</th><th>展示</th>${items.map(n=>`<th>${esc(n)}</th>`).join('')}<th>展示ST</th><th>チルト</th><th>ペラ・部品</th></tr></thead><tbody>
+    ${a.boats.map(b=>{const q=bf[b.waku]||{};return `<tr><td>${bn(b.waku)}</td>${cell(b.exTime,exR[b.waku])}${items.map((n,j)=>cell((o.boats[b.waku]||[])[j],rk[b.waku]&&rk[b.waku][n])).join('')}<td class="n">${st(q.exST)}</td><td class="n">${q.tilt!=null?q.tilt:'-'}</td><td>${esc([q.prop?'ペラ'+q.prop:'',q.parts||''].filter(Boolean).join(' ')||'-')}</td></tr>`;}).join('')}
+    </tbody></table></div></div>`;}
 
 // ---------------------------------------------------------------- 買い方（フォーメーション・BOX・金額配分）
 const MAXMUL=5;
@@ -575,11 +611,39 @@ function renderYoso(){
         <p class="foot">${a.ana.length}点の的中確率 ${pct(sum(a.ana.map(c=>c.pAi)))}・1点あたり期待値 ${(anaEV*100).toFixed(0)}%</p>`
         :`<p class="sub">人気とのズレが小さく、狙える穴が見つかりません。見送り候補です。</p>`}</div>
     </div>
-    ${tenkaiHtml(r,a)}
+    <div class="panel"><h3>スリット予測</h3><p class="sub">右ほど早いスタート。「凹」は両隣より遅れる予測、「先」は内より早い予測。展開予想・足評価・オリジナル展示は「自分で予想」タブに。</p>${slitSvg(tenkaiOf(r,a))}</div>
     ${planHtml(a,res)}
-    <div class="comment">
-      <p>${esc(commentary(r,a))}</p>
-      <button class="btn ghost" id="ask" type="button">Claudeに相談する文をコピー</button>
+    <div class="panel">
+      <h3>このレースの記録</h3>
+      <p class="sub">他の予想を入れておくと「成績」で回収率を比べられます（この端末に保存）。書き方の例：1-2-3, 1-23-234。金額つきは「132 135 300円」「156 251 100円」のように、買い目の後に金額（無ければ100円）</p>
+      <div class="record">
+        <div class="field"><label for="pk-chatgpt">ChatGPTの買い目</label><textarea id="pk-chatgpt">${esc(p.chatgpt||'')}</textarea></div>
+        <div class="field"><label for="pk-ikkun">一撃くんの買い目${p.ikkunType?'（'+esc(p.ikkunType)+'）':''}</label><textarea id="pk-ikkun">${esc(p.ikkun||'')}</textarea></div>
+        <div class="field"><label for="pk-mine">自分の買い目</label><textarea id="pk-mine">${esc(p.mine||'')}</textarea></div>
+      </div>
+      <div class="rowact"><button class="btn" id="save" type="button">記録を保存</button><span class="status">${r.result?'結果は自動で入ります。':''}</span></div>
+    </div>
+  </div>`;
+  $('#save').addEventListener('click',()=>{picks[r.id]={chatgpt:$('#pk-chatgpt').value.trim(),ikkun:$('#pk-ikkun').value.trim(),mine:$('#pk-mine').value.trim()};LS.set('picks',picks);toast('保存しました');});
+  $('#unit')?.addEventListener('change',e=>{LS.set('unit',+e.target.value);renderYoso();});
+}
+
+function renderSelf(){
+  const el=$('#v-self'), r=cur();
+  if(!r){el.innerHTML=emptyState();return;}
+  const a=A(r); if(!a){el.innerHTML=`<div class="empty">このレースは出走データが不完全です。</div>`;return;}
+  const lv=LEVEL[a.level], p=pk(r.id), res=resultOf(r), bf=r.before||{};
+  const maxWin=Math.max(...a.boats.map(b=>b.pWin));
+  const rowC=(c,ana)=>`<li class="combo${res&&res.order===c.k?' hit':''}"><span class="nums">${comboHtml(c.k)}</span><span class="bar"><span style="width:${Math.min(100,c.pAi/a.combos[0].pAi*100)}%"></span></span><span class="val">${pct(c.pAi)}<small>${ana?'人気比×'+c.ratio.toFixed(1)+' / ':''}${c.real?'':'推定'}${odds(c.odds)}倍</small></span></li>`;
+  const anaEV=a.ana.length?avg(a.ana.map(c=>c.ev)):0;
+  const wx=[bf.weather,bf.windDir?WIND[bf.windDir]+'風':null,bf.windSpeed!=null?bf.windSpeed+'m':null,bf.wave!=null?'波'+bf.wave+'cm':null].filter(Boolean).join(' ');
+  el.innerHTML=`<div style="display:grid;gap:18px">
+    <div class="racehead">
+      <h2>${esc(r.venue||VENUES[r.jcd])} ${r.rno}R ${esc(r.name||'')}</h2>
+      <span class="meta">${r.distance?r.distance+'m':''} ・締切 ${esc(r.deadline||'-')}${r.day?' ・'+esc(r.day):''}</span>
+      <span class="pill ${a.level}">${lv[0]}</span>
+      ${wx?`<span class="pill info">${esc(wx)}</span>`:''}
+      ${res?`<span class="pill kata">結果 ${esc(res.order||res.note||'')} ${res.payout?yen(res.payout):''}</span>`:''}
     </div>
     <div>
       <p class="card-title">出走表とAI評価</p>
@@ -594,27 +658,22 @@ function renderYoso(){
           <td class="n">${num(b.motor2)?.toFixed(1)??'-'}%<br><span style="color:var(--muted);font-size:11px">${b.motor?b.motor+'号機':''}</span></td>
           <td class="n">${num(b.st)?.toFixed(2)??'-'}</td>
           <td><input id="ex-${b.waku}" class="${auto?'auto':''}" inputmode="decimal" aria-label="${b.waku}号艇の展示タイム" placeholder="6.80" value="${b.exTime??''}"></td>
-          <td class="foot-cell"><b class="fg fg-${b.footGrade==='◎'||b.footGrade==='○'?'up':b.footGrade==='×'||b.footGrade==='▲'?'dn':'mid'}">${b.footGrade}</b>${(()=>{const q=(r.before&&r.before.boats&&r.before.boats[b.waku])||{};const x=[];const ori=r.before&&r.before.ori,rk=oriRank(ori);if(b.ashi)x.push(`足${b.ashi.rank}位(${b.ashi.score>=0?'+':''}${b.ashi.score.toFixed(2)})`);if(ori&&ori.items)ori.items.forEach((nm,j)=>{const v=(ori.boats[b.waku]||[])[j];if(v!=null)x.push(`${nm.replace("まわり足","回り").replace("半周ラップ","半周")}${(+v).toFixed(2)}${rk[b.waku]&&rk[b.waku][nm]===1?'①':''}`);});if(q.exST!=null)x.push('ST'+(q.exST<0?' F'+Math.abs(q.exST).toFixed(2).slice(1):q.exST.toFixed(2).slice(1)));if(q.prop)x.push('ペラ'+q.prop);if(q.parts)x.push(q.parts);return x.length?`<span>${esc(x.join(' '))}</span>`:'';})()}</td>
+          <td class="foot-cell"><b class="fg fg-${b.footGrade==='◎'||b.footGrade==='○'?'up':b.footGrade==='×'||b.footGrade==='▲'?'dn':'mid'}">${b.footGrade}</b>${b.ashi?`<span>足${b.ashi.rank}位</span>`:''}</td>
           <td><div class="winbar"><span class="track"><span style="width:${b.pWin/maxWin*100}%"></span></span><b>${pct(b.pWin)}</b></div></td>
           <td><div class="tags">${b.tags.map(t=>`<span class="tag ${t[0]}">${esc(t[1])}</span>`).join('')}</div></td></tr>`}).join('')}</tbody></table></div>
-      <p class="hint">${r.before&&r.before.complete?'展示タイム・進入は自動で取得済み（青枠）。':'展示タイムは締切の約20分前から自動で入ります。'}手で入れ直すと、その場で計算し直します。${a.ashi?`舟足は足スコア（${a.ashi.kind==='場別'&&a.ashi.sep?'この場で検証した重み・判別力sep '+a.ashi.sep[0]+'（'+a.ashi.sep[1]+'R）':'未検証の場なので既定の戸田新式'}）の順位：1位◎ 2位○ 3・4位△ 5位▲ 6位×。`:'舟足は展示タイム・オリジナル展示（一周・まわり足・直線）・モーターから（◎○△▲×）。'}下の小さい字はオリジナル展示（①はレース内1位）・展示のST・プロペラ・部品交換。</p>
+      <p class="hint">${r.before&&r.before.complete?'展示タイム・進入は自動で取得済み（青枠）。':'展示タイムは締切の約20分前から自動で入ります。'}手で入れ直すと、その場で計算し直します。${a.ashi?`舟足は足スコア（${a.ashi.kind==='場別'&&a.ashi.sep?'この場で検証した重み・判別力sep '+a.ashi.sep[0]+'（'+a.ashi.sep[1]+'R）':'未検証の場なので既定の戸田新式'}）の順位：1位◎ 2位○ 3・4位△ 5位▲ 6位×。`:'舟足は展示タイム・オリジナル展示（一周・まわり足・直線）・モーターから（◎○△▲×）。'}くわしくは下の「足評価」「オリジナル展示」。</p>
     </div>
-    <div class="panel">
-      <h3>このレースの記録</h3>
-      <p class="sub">他の予想を入れておくと「成績」で回収率を比べられます（この端末に保存）。書き方の例：1-2-3, 1-23-234。金額つきは「132 135 300円」「156 251 100円」のように、買い目の後に金額（無ければ100円）</p>
-      <div class="record">
-        <div class="field"><label for="pk-chatgpt">ChatGPTの買い目</label><textarea id="pk-chatgpt">${esc(p.chatgpt||'')}</textarea></div>
-        <div class="field"><label for="pk-ikkun">一撃くんの買い目${p.ikkunType?'（'+esc(p.ikkunType)+'）':''}</label><textarea id="pk-ikkun">${esc(p.ikkun||'')}</textarea></div>
-        <div class="field"><label for="pk-mine">自分の買い目</label><textarea id="pk-mine">${esc(p.mine||'')}</textarea></div>
-      </div>
-      <div class="rowact"><button class="btn" id="save" type="button">記録を保存</button><span class="status">${r.result?'結果は自動で入ります。':''}</span></div>
+    ${ashiHtml(r,a)}
+    ${oriHtml(r,a)}
+    ${tenkaiHtml(r,a)}
+    <div class="comment">
+      <p>${esc(commentary(r,a))}</p>
+      <button class="btn ghost" id="ask" type="button">Claudeに相談する文をコピー</button>
     </div>
   </div>`;
   a.boats.forEach(b=>{const inp=$('#ex-'+b.waku);inp.addEventListener('change',()=>{const v=num(inp.value);exMan[r.id]=exMan[r.id]||{};
-    if(v==null)delete exMan[r.id][b.waku];else exMan[r.id][b.waku]=v;LS.set('ex',exMan);renderChips();renderYoso();});});
-  $('#save').addEventListener('click',()=>{picks[r.id]={chatgpt:$('#pk-chatgpt').value.trim(),ikkun:$('#pk-ikkun').value.trim(),mine:$('#pk-mine').value.trim()};LS.set('picks',picks);toast('保存しました');});
+    if(v==null)delete exMan[r.id][b.waku];else exMan[r.id][b.waku]=v;LS.set('ex',exMan);renderChips();renderView();});});
   $('#ask').addEventListener('click',()=>copyForClaude(r,a));
-  $('#unit')?.addEventListener('change',e=>{LS.set('unit',+e.target.value);renderYoso();});
 }
 
 function copyForClaude(r,a){
