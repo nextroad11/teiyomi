@@ -5,5 +5,5 @@ BOATCASTのオリジナル展示（一周・まわり足・直線）と展示タ
 - `data/heiwajima.txt` `data/hamanako.txt`：1レース1行のデータ（9月〜はBOATCAST画面から収集、以降は data ブランチの history/ と oriten/ から自動追記）
 - `data/grades.json`：日付ごとのグレード（SG・G1・G2は分析から除外）
 - `config.json`：採用式と比較する式
-- `daily.py DATA_DIR`：追記＋分析、`reports/YYYYMMDD.md` を作成
+- `daily.py DATA_DIR`：追記＋分析、`reports/YYYYMMDD.md` を作成（採用式の検証＋場専用補正の検証）
 - 補正値（枠別）：`lib/gama.py` の CORR

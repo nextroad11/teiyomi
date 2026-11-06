@@ -97,6 +97,88 @@ def boot(d, wa, wb, B=300, seed=0):
         out.append(sep(pd.concat([A[r] for r in s])) - sep(pd.concat([Bm[r] for r in s])))
     return np.percentile(out, [2.5, 50, 97.5])
 
+
+# ---- 補正値の調整（場ごとに計測のくせを推定。結果は使わない） ----
+CUR_CORR = {k: {w: G.CORR[w][i] for w in range(1, 7)} for i, k in enumerate(KEYS)}
+
+def est_corr(dd):
+    """レース平均からのずれを 枠＋級別 で最小二乗。ずれを打ち消す値を6号艇基準で返す"""
+    dv = pd.DataFrame({k: dd[k] - dd.groupby('race')[k].transform('mean') for k in KEYS})
+    X = pd.get_dummies(dd['枠'].astype(int).astype(str), prefix='w').astype(float)
+    X = X.join(pd.get_dummies(dd['級別'], prefix='c', drop_first=True).astype(float))
+    X = X[[c for c in X.columns if c.startswith('w')] + [c for c in X.columns if c.startswith('c')]]
+    out = {}
+    for k in KEYS:
+        m = dv[k].notna().values
+        coef = np.linalg.lstsq(X.values[m], dv[k].values[m], rcond=None)[0][:6]
+        c = -(coef - coef[5])
+        out[k] = {w: round(float(c[w - 1]), 2) for w in range(1, 7)}
+    return out
+
+def rez(dd, corr):
+    dd = dd.copy()
+    for k in KEYS:
+        x = (dd[k] + dd['枠'].map(lambda w: corr[k][int(w)])).round(2); g = x.groupby(dd.race)
+        dd['Z' + k] = ((g.transform('mean') - x) / g.transform('std')).fillna(0)
+    return dd
+
+def boot2(da, wa, db, wb, B=300, seed=0):
+    da = da[da.fin.notna()].assign(rk=lambda x: ranks(x, wa)); db = db[db.fin.notna()].assign(rk=lambda x: ranks(x, wb))
+    A = dict(tuple(da.groupby('race'))); Bm = dict(tuple(db.groupby('race')))
+    races = da.race.unique(); rng = np.random.default_rng(seed)
+    def sep(x):
+        num = den = 0
+        for c, g in x.groupby('進入'):
+            u = g[g.rk <= 3].top3.mean(); l = g[g.rk > 3].top3.mean()
+            if not (np.isnan(u) or np.isnan(l)): num += (u - l) * len(g); den += len(g)
+        return num / den * 100
+    o = []
+    for _ in range(B):
+        s = rng.choice(races, len(races)); a = pd.concat([A[r] for r in s]); b = pd.concat([Bm[r] for r in s])
+        o.append((sep(a) - sep(b), (a[a.rk == 1].top3.mean() - b[b.rk == 1].top3.mean()) * 100))
+    o = np.array(o); return np.percentile(o[:, 0], [2.5, 50, 97.5]), np.percentile(o[:, 1], [2.5, 50, 97.5])
+
+def corr_section(d, W0, adopted, jcd_s):
+    L = ["", "### 補正値の調整（この場専用の補正）", "",
+         "枠ごとの計測のくせ（級別の偏りを除く）をこの場のデータから推定し、それを打ち消す補正に替えた場合の検証です。補正は結果を使わずに決めています。", ""]
+    nc = est_corr(d)
+    prev = CFG.get('_corr_hist', {}).get(jcd_s)
+    L += ["| 枠 | " + " | ".join(f"{k} 今→案" for k in KEYS) + " |", "|---|" + "---|" * len(KEYS)]
+    for w in range(1, 7):
+        cells = []
+        for k in KEYS:
+            cur = CUR_CORR[k][w] - CUR_CORR[k][6]
+            cells.append(f"{cur:+.2f}→{nc[k][w]:+.2f}")
+        L.append(f"| {w} | " + " | ".join(cells) + " |")
+    L.append("（6号艇を0にそろえた値。全艇に同じ数を足しても結果は同じ）")
+    dN = rez(d, nc)
+    names = sorted(d['節'].unique()); lo = {fn: [] for fn in FORMS}; loC = []; nr = []
+    for n in names:
+        tr = d[d['節'] != n]; te = d[d['節'] == n]
+        if te.race.nunique() < 12: continue
+        teN = rez(te, est_corr(tr)); nr.append(te.race.nunique())
+        loC.append((stats(te, W0)['sep'], stats(te, W0)['top1_3']))
+        for fn, fw in FORMS.items():
+            s = stats(teN, fw); lo[fn].append((s['sep'], s['top1_3']))
+    wavg = lambda xs, i: np.average([x[i] for x in xs], weights=nr) * 100 if xs else np.nan
+    L += ["", "| 組み合わせ | sep | 1位艇3連対 | 節ごとの検証 sep | 節ごとの検証 1位艇3連対 |", "|---|---|---|---|---|"]
+    s0 = stats(d, W0)
+    L.append(f"| **今の補正 × {adopted}（採用）** | {pct(s0['sep'])} | {pct(s0['top1_3'])}% | {wavg(loC,0):.1f} | {wavg(loC,1):.1f}% |")
+    res = {}
+    for fn, fw in FORMS.items():
+        s = stats(dN, fw); res[fn] = wavg(lo[fn], 0)
+        L.append(f"| 場専用補正 × {fn} | {pct(s['sep'])} | {pct(s['top1_3'])}% | {res[fn]:.1f} | {wavg(lo[fn],1):.1f}% |")
+    bf = max(res, key=res.get)
+    (sl, sm, sh), (tl, tm, th) = boot2(dN, FORMS[bf], d, W0)
+    tagc = '現行維持'
+    if sl > 0 and res[bf] - wavg(loC, 0) >= 1.5: tagc = '切り替え候補あり'
+    L.append("")
+    L.append(f"- 場専用補正で一番良い式: {bf}。採用式との差 sep {sm:+.1f}（95%区間 {sl:+.1f}〜{sh:+.1f}）、1位艇3連対 {tm:+.1f}（{tl:+.1f}〜{th:+.1f}）")
+    if tl > 0 and sl > -1.5:
+        L.append("- 1位艇の3連対率ははっきり上がっています。ただし今の補正は内枠を不利にしすぎているので、この上がり分には「内枠が正当な割合で1位に戻った」分も含まれます。足の見分け（sep）で判断してください。")
+    L.append(f"- **補正調整の判定: {tagc}**" + ("（区間が0をまたがず、節ごとの検証でも1.5ポイント以上上回った）" if tagc != '現行維持' else "（差が誤差の範囲）"))
+    return L, tagc, bf
+
 def wstr(w): return '/'.join(f"{w[k]:.2g}" for k in KEYS)
 def pct(x): return f"{x*100:.1f}"
 
@@ -177,8 +259,10 @@ for jcd_s, v in CFG['venues'].items():
     lines.append(f"- 節ごとの検証で一番良い既存の式: {best_fixed}（{alt.get(best_fixed, float('nan')):.1f}）／採用式 {cur:.1f}")
     if loso_pick: lines.append(f"- 節ごとに選び直した重み: {', '.join(loso_pick)}（ばらつきが大きいほど式が安定していない）")
     lines.append(f"- **判定: {tag}**" + ("（区間が0をまたがず、検証でも1.5ポイント以上上回った）" if tag != '現行維持' else ""))
+    CL, tagc, bfc = corr_section(d, W0, v['adopted'], jcd_s)
+    lines += CL
     lines.append("")
-    summary.append(f"{v['name']}: 追加{len(added)}R／計{d.race.nunique()}R、採用式 sep {pct(stats(d, W0)['sep'])}、{tag}")
+    summary.append(f"{v['name']}: 追加{len(added)}R／計{d.race.nunique()}R、採用式 sep {pct(stats(d, W0)['sep'])}、{tag}、補正調整 {tagc}（最良 場専用補正×{bfc}）")
 json.dump(grades, open(GR_PATH, 'w'), indent=0, sort_keys=True)
 lines = lines[:1] + ["", "**要約** " + ' ／ '.join(summary)] + lines[1:]
 rep = '\n'.join(lines)
