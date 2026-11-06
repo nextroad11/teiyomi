@@ -13,6 +13,13 @@
    "adopted": "戸田新",
    "since": "20260501",
    "since_note": "新モーター 2026/4/9 導入。ユーザー指定で5月から"
+  },
+  "11": {
+   "name": "びわこ",
+   "file": "data/biwako.txt",
+   "adopted": "戸田新",
+   "since": "20260409",
+   "since_note": "新モーター 2026/4/9 導入（モーター2連対率の初期化から確認）"
   }
  },
  "exclude_grades": [
