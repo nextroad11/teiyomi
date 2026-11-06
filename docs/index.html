@@ -99,7 +99,7 @@ main.wrap{padding-block:16px 48px;display:grid;gap:18px}
 .lockbox input{font:16px var(--f-num);padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
 .lockmsg{min-height:1.2em;color:var(--ana)!important}
 .ashi td.pos{color:var(--good);font-weight:600}.ashi td.neg{color:var(--ana)}
-.ori td small{display:inline-block;margin-left:4px;font-size:10px;color:var(--muted)}.ori td.best{color:var(--good);font-weight:700}
+.ori td small{display:inline-block;margin-left:4px;font-size:10px;color:var(--muted)}.ori td em{display:block;font-style:normal;font-size:10px;color:var(--muted)}.ori td.best{color:var(--good);font-weight:700}
 .plan .forms{display:grid;gap:6px;margin:4px 0 12px}
 .plan .form{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-weight:600}
 .plan .form .lbl{font-size:12px;font-weight:600;color:var(--muted);min-width:5.5em}
@@ -252,6 +252,22 @@ const TRI_KEYS=[];for(let a=1;a<=6;a++)for(let b=1;b<=6;b++)for(let c=1;c<=6;c++
 function realOdds(race){const o=race.odds;if(!o||!Array.isArray(o.t)||o.t.length!==120)return null;
   const map={};let inv=0;o.t.forEach((v,i)=>{if(v&&v>=1){map[TRI_KEYS[i]]=v;inv+=1/v;}});
   return inv>0?{map,inv,at:o.fetchedAt,final:!!o.final}:null;}
+// 足スコア（場別）: 別チャットで検証した仕様。平和島(04)・浜名湖(06)は判別力が低いので使わず、これまでの方式
+const ASHI_CORR={1:[0.40,0.20,0,0.02],2:[0.30,0.10,0,0.01],3:[0.20,0,0,0],4:[0.10,-0.05,-0.01,-0.01],5:[0.05,-0.10,-0.02,-0.02],6:[0,-0.15,-0.02,-0.02]};
+const ASHI_DEF=[1,0.5,0.5,1];
+const ASHI_W={'02':[1,0.5,0.5,1],'05':[1,2/3,1,2/3],'07':[1,0,0,1],'11':[1,0.5,0.5,1],'19':[1,0,0,0.25],'24':[1,0,1,1]};
+const ASHI_SEP={'02':[18.3,336],'05':[23.0,348],'07':[20.1,396],'11':[15.9,347],'19':[18.9,360],'24':[15.3,348]};
+const ASHI_SKIP=new Set(['04','06']);
+function ashiScore(jcd,boats){const w=ASHI_W[String(jcd).padStart(2,'0')]||ASHI_DEF,keys=['lap','turn','straight','ex'],z=boats.map(()=>[0,0,0,0]);
+keys.forEach((k,j)=>{const xs=boats.map(b=>b[k]==null?null:Math.round((b[k]+ASHI_CORR[b.waku][j])*100)/100);const v=xs.filter(x=>x!=null);if(v.length<2)return;
+  const mu=v.reduce((a,b)=>a+b,0)/v.length,sd=Math.sqrt(v.reduce((a,b)=>a+(b-mu)**2,0)/(v.length-1));if(sd===0)return;xs.forEach((x,i)=>{if(x!=null)z[i][j]=(mu-x)/sd;});});
+const out=boats.map((b,i)=>({waku:b.waku,z:z[i],score:z[i].reduce((a,zz,j)=>a+w[j]*zz,0)}));
+[...out].sort((a,b)=>b.score-a.score||a.waku-b.waku).forEach((o,r)=>{o.rank=r+1;});return out;}
+function ashiFor(race,exT,B){const jc=String(race.jcd).padStart(2,'0'),o=race.before&&race.before.ori;if(ASHI_SKIP.has(jc)||!o||!o.items)return null;
+const idx=n=>o.items.indexOf(n),g=(w,n)=>{const j=idx(n);return j<0?null:num((o.boats[w]||[])[j]);};
+const bs=B.map((b,i)=>({waku:b.waku,lap:g(b.waku,'一周'),turn:g(b.waku,'まわり足'),straight:g(b.waku,'直線'),ex:exT[i]})).filter(b=>b.ex!=null);
+if(bs.length<4||bs.every(b=>b.lap==null&&b.turn==null&&b.straight==null))return null;return ashiScore(race.jcd,bs);}
+
 function analyze(race,exOverride){
   const B=(race.boats||[]).slice().sort((a,b)=>a.waku-b.waku);
   if(B.length!==6) return null;
@@ -295,22 +311,7 @@ function analyze(race,exOverride){
   });
   const ai=trifecta(boats,'winW','plW'), mkP=trifecta(boats,'mWinW','mPlW');
   // 舟足評価: 展示タイム・モーター2連率・モーターの直近成績を、学習した重みで足したもの
-  // 足スコア（場別）: 別チャットで検証した仕様。平和島(04)・浜名湖(06)は判別力が低いので使わず、これまでの方式
-const ASHI_CORR={1:[0.40,0.20,0,0.02],2:[0.30,0.10,0,0.01],3:[0.20,0,0,0],4:[0.10,-0.05,-0.01,-0.01],5:[0.05,-0.10,-0.02,-0.02],6:[0,-0.15,-0.02,-0.02]};
-const ASHI_DEF=[1,0.5,0.5,1];
-const ASHI_W={'02':[1,0.5,0.5,1],'05':[1,2/3,1,2/3],'07':[1,0,0,1],'11':[1,0.5,0.5,1],'19':[1,0,0,0.25],'24':[1,0,1,1]};
-const ASHI_SEP={'02':[18.3,336],'05':[23.0,348],'07':[20.1,396],'11':[15.9,347],'19':[18.9,360],'24':[15.3,348]};
-const ASHI_SKIP=new Set(['04','06']);
-function ashiScore(jcd,boats){const w=ASHI_W[String(jcd).padStart(2,'0')]||ASHI_DEF,keys=['lap','turn','straight','ex'],z=boats.map(()=>[0,0,0,0]);
-  keys.forEach((k,j)=>{const xs=boats.map(b=>b[k]==null?null:Math.round((b[k]+ASHI_CORR[b.waku][j])*100)/100);const v=xs.filter(x=>x!=null);if(v.length<2)return;
-    const mu=v.reduce((a,b)=>a+b,0)/v.length,sd=Math.sqrt(v.reduce((a,b)=>a+(b-mu)**2,0)/(v.length-1));if(sd===0)return;xs.forEach((x,i)=>{if(x!=null)z[i][j]=(mu-x)/sd;});});
-  const out=boats.map((b,i)=>({waku:b.waku,z:z[i],score:z[i].reduce((a,zz,j)=>a+w[j]*zz,0)}));
-  [...out].sort((a,b)=>b.score-a.score||a.waku-b.waku).forEach((o,r)=>{o.rank=r+1;});return out;}
-function ashiFor(race,exT,B){const jc=String(race.jcd).padStart(2,'0'),o=race.before&&race.before.ori;if(ASHI_SKIP.has(jc)||!o||!o.items)return null;
-  const idx=n=>o.items.indexOf(n),g=(w,n)=>{const j=idx(n);return j<0?null:num((o.boats[w]||[])[j]);};
-  const bs=B.map((b,i)=>({waku:b.waku,lap:g(b.waku,'一周'),turn:g(b.waku,'まわり足'),straight:g(b.waku,'直線'),ex:exT[i]})).filter(b=>b.ex!=null);
-  if(bs.length<4||bs.every(b=>b.lap==null&&b.turn==null&&b.straight==null))return null;return ashiScore(race.jcd,bs);}
-// 学習した重みがまだ無いうちは、オリジナル展示は控えめな仮の重み(0.15)で舟足に入れる
+  // 学習した重みがまだ無いうちは、オリジナル展示は控えめな仮の重み(0.15)で舟足に入れる
   boats.forEach(b=>{const o=OF[b.waku],ww=MODEL.weights;b.foot=(b.parts.ex||0)+(b.parts.motor||0)+(b.parts.mform||0)
     +(ww.olap!=null?b.parts.olap:0.15*o[0])+(ww.oturn!=null?b.parts.oturn:0.15*o[1])+(ww.ostr!=null?b.parts.ostr:0.15*o[2]);});
   const AS=ashiFor(race,exT,B);
@@ -527,14 +528,20 @@ function ashiHtml(r,a){
 const ASHI_SKIP_NOTE=(jc,r)=>jc==='04'||jc==='06'?'この場は足スコアの判別力が低いため使わず、':(r.before&&r.before.ori?'':'オリジナル展示がまだ無いため、');
 function oriHtml(r,a){
   const o=r.before&&r.before.ori, bf=(r.before&&r.before.boats)||{};
-  const items=o&&o.items?o.items:[], rk=oriRank(o);
-  const exR={};a.boats.filter(b=>b.exTime!=null).slice().sort((x,y)=>x.exTime-y.exTime).forEach((b,i)=>exR[b.waku]=i+1);
-  const cell=(v,rank)=>v==null?'<td class="n">-</td>':`<td class="n${rank===1?' best':''}">${(+v).toFixed(2)}${rank?`<small>${rank}</small>`:''}</td>`;
+  const items=o&&o.items?o.items:[];
+  // 足スコアと同じ枠別補正（内枠ほど速く出やすい分を差し引く）。補正後の値でレース内の順位をつける
+  const CI={'一周':0,'まわり足':1,'直線':2};
+  const raw=(w,j)=>o?num((o.boats[w]||[])[j]):null;
+  const cor=(w,n,j)=>{const v=raw(w,j);return v==null?null:(CI[n]!=null?Math.round((v+ASHI_CORR[w][CI[n]])*100)/100:v);};
+  const exC=w=>{const b=a.boats.find(x=>x.waku===w);return b&&b.exTime!=null?Math.round((b.exTime+ASHI_CORR[w][3])*100)/100:null;};
+  const rankOf=f=>{const v=a.boats.map(b=>({w:b.waku,x:f(b.waku)})).filter(e=>e.x!=null).sort((p,q)=>p.x-q.x);const r={};v.forEach((e,i)=>r[e.w]=i+1);return r;};
+  const rEx=rankOf(exC), rI=items.map((n,j)=>rankOf(w=>cor(w,n,j)));
+  const cell=(c,rw,rank)=>c==null?'<td class="n">-</td>':`<td class="n${rank===1?' best':''}">${c.toFixed(2)}<small>${rank||''}</small>${rw!=null&&Math.abs(rw-c)>0.001?`<em>生${rw.toFixed(2)}</em>`:''}</td>`;
   const st=v=>v==null?'-':v<0?'F'+Math.abs(v).toFixed(2).slice(1):v.toFixed(2).slice(1);
   return `<div class="panel ori"><h3>オリジナル展示・直前情報</h3>
-    <p class="sub">${o?'BOATCASTのオリジナル展示（秒・小さいほど速い。小さい数字はレース内の順位）。場ごとに計測の仕方が違うので、ほかの場とは比べないでください。':'オリジナル展示はまだ出ていません（締切の約20分前に自動で入ります）。'}</p>
+    <p class="sub">${o?'BOATCASTのオリジナル展示（秒・小さいほど速い）。大きい数字は<b>枠別補正後</b>（内枠ほど速く出やすい分を差し引いた値）、小さい数字は補正後のレース内順位、下の「生」は公式の生タイム。場ごとに計測の仕方が違うので、ほかの場とは比べないでください。':'オリジナル展示はまだ出ていません（締切の約20分前に自動で入ります）。展示タイムは枠別補正後。'}</p>
     <div class="tablebox"><table class="card"><thead><tr><th>艇</th><th>展示</th>${items.map(n=>`<th>${esc(n)}</th>`).join('')}<th>展示ST</th><th>チルト</th><th>ペラ・部品</th></tr></thead><tbody>
-    ${a.boats.map(b=>{const q=bf[b.waku]||{};return `<tr><td>${bn(b.waku)}</td>${cell(b.exTime,exR[b.waku])}${items.map((n,j)=>cell((o.boats[b.waku]||[])[j],rk[b.waku]&&rk[b.waku][n])).join('')}<td class="n">${st(q.exST)}</td><td class="n">${q.tilt!=null?q.tilt:'-'}</td><td>${esc([q.prop?'ペラ'+q.prop:'',q.parts||''].filter(Boolean).join(' ')||'-')}</td></tr>`;}).join('')}
+    ${a.boats.map(b=>{const q=bf[b.waku]||{};return `<tr><td>${bn(b.waku)}</td>${cell(exC(b.waku),b.exTime,rEx[b.waku])}${items.map((n,j)=>cell(cor(b.waku,n,j),raw(b.waku,j),rI[j][b.waku])).join('')}<td class="n">${st(q.exST)}</td><td class="n">${q.tilt!=null?q.tilt:'-'}</td><td>${esc([q.prop?'ペラ'+q.prop:'',q.parts||''].filter(Boolean).join(' ')||'-')}</td></tr>`;}).join('')}
     </tbody></table></div></div>`;}
 
 // ---------------------------------------------------------------- 買い方（フォーメーション・BOX・金額配分）
