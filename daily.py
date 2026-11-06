@@ -204,15 +204,24 @@ for jcd_s, v in CFG['venues'].items():
     d, _ = G.load_compact([path])
     d['day'] = d.race.str[:8]
     d['grade'] = d.day.map(grades[jcd_s]).fillna('不明')
-    unknown = sorted(d[d.grade == '不明'].day.unique())
-    ex = set(CFG['exclude_grades'])
+    # 出走表が残っていない過去の日は、その日の出場選手のA1の割合でグレードを推定する
+    # （SG・G1はほぼ全員A1、一般戦は1〜3割）。0.6以上→SG/G1扱いで除外、0.3〜0.6→一般扱いだが要確認
+    a1 = d[d.grade == '不明'].groupby('day')['級別'].apply(lambda s: (s == 'A1').mean())
+    inferred = {}
+    for day, r in a1.items():
+        inferred[day] = '推定SG/G1' if r >= 0.6 else ('推定一般(要確認)' if r >= 0.3 else '推定一般')
+    d.loc[d.grade == '不明', 'grade'] = d.day.map(inferred)
+    unknown = sorted(k for k, g in inferred.items() if g == '推定一般(要確認)')
+    ex_inf = sorted(k for k, g in inferred.items() if g == '推定SG/G1')
+    ex = set(CFG['exclude_grades']) | {'推定SG/G1'}
     d = d[~d.grade.isin(ex)].copy()
     lab = series_of(d.day.unique()); d['節'] = d.day.map(lab)
     W0 = FORMS[v['adopted']]
     newdays = sorted({l[:8] for l in added})
     lines += [f"## {v['name']}（採用式: {v['adopted']} {wstr(W0)}）", ""]
     lines.append(f"- データ: 一般戦 {d.race.nunique()}R・{d['節'].nunique()}節（{d.day.min()}〜{d.day.max()}）。今回追加 {len(added)}R" + (f"（{', '.join(x[4:6]+'/'+x[6:] for x in newdays)}）" if newdays else "（新しい結果なし）"))
-    if unknown: lines.append(f"- ⚠ グレード不明の日（分析には含めています）: {', '.join(unknown)}")
+    if inferred: lines.append(f"- 出走表が残っていない日 {len(inferred)}日はA1の割合でグレードを推定（SG/G1と推定して除外 {len(ex_inf)}日" + (f": {', '.join(ex_inf)}" if ex_inf else "") + "）")
+    if unknown: lines.append(f"- ⚠ グレード不明の日（A1が3〜6割。一般戦として分析に含めています）: {', '.join(unknown)}")
     # 追加分の当たり具合
     if added:
         nd = d[d.race.isin({l.split('|')[0] for l in added})]
