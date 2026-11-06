@@ -138,16 +138,17 @@ def boot2(da, wa, db, wb, B=300, seed=0):
         o.append((sep(a) - sep(b), (a[a.rk == 1].top3.mean() - b[b.rk == 1].top3.mean()) * 100))
     o = np.array(o); return np.percentile(o[:, 0], [2.5, 50, 97.5]), np.percentile(o[:, 1], [2.5, 50, 97.5])
 
-def corr_section(d, W0, adopted, jcd_s):
+def corr_section(d, W0, adopted, jcd_s, AC=None):
+    AC = AC or CUR_CORR
     L = ["", "### 補正値の調整（この場専用の補正）", "",
          "枠ごとの計測のくせ（級別の偏りを除く）をこの場のデータから推定し、それを打ち消す補正に替えた場合の検証です。補正は結果を使わずに決めています。", ""]
     nc = est_corr(d)
     prev = CFG.get('_corr_hist', {}).get(jcd_s)
-    L += ["| 枠 | " + " | ".join(f"{k} 今→案" for k in KEYS) + " |", "|---|" + "---|" * len(KEYS)]
+    L += ["| 枠 | " + " | ".join(f"{k} 採用中→最新推定" for k in KEYS) + " |", "|---|" + "---|" * len(KEYS)]
     for w in range(1, 7):
         cells = []
         for k in KEYS:
-            cur = CUR_CORR[k][w] - CUR_CORR[k][6]
+            cur = AC[k][w] - AC[k][6]
             cells.append(f"{cur:+.2f}→{nc[k][w]:+.2f}")
         L.append(f"| {w} | " + " | ".join(cells) + " |")
     L.append("（6号艇を0にそろえた値。全艇に同じ数を足しても結果は同じ）")
@@ -163,7 +164,7 @@ def corr_section(d, W0, adopted, jcd_s):
     wavg = lambda xs, i: np.average([x[i] for x in xs], weights=nr) * 100 if xs else np.nan
     L += ["", "| 組み合わせ | sep | 1位艇3連対 | 節ごとの検証 sep | 節ごとの検証 1位艇3連対 |", "|---|---|---|---|---|"]
     s0 = stats(d, W0)
-    L.append(f"| **今の補正 × {adopted}（採用）** | {pct(s0['sep'])} | {pct(s0['top1_3'])}% | {wavg(loC,0):.1f} | {wavg(loC,1):.1f}% |")
+    L.append(f"| **採用中の補正 × {adopted}（採用）** | {pct(s0['sep'])} | {pct(s0['top1_3'])}% | {wavg(loC,0):.1f} | {wavg(loC,1):.1f}% |")
     res = {}
     for fn, fw in FORMS.items():
         s = stats(dN, fw); res[fn] = wavg(lo[fn], 0)
@@ -217,10 +218,12 @@ for jcd_s, v in CFG['venues'].items():
     ex_inf = sorted(k for k, g in inferred.items() if g == '推定SG/G1')
     ex = set(CFG['exclude_grades']) | {'推定SG/G1'}
     d = d[~d.grade.isin(ex)].copy()
+    AC = {k: {int(w): x for w, x in c.items()} for k, c in v['corr'].items()} if v.get('corr') else None
+    if AC: d = rez(d, AC)  # 採用中の場専用補正でz値を計算し直す
     lab = series_of(d.day.unique()); d['節'] = d.day.map(lab)
     W0 = FORMS[v['adopted']]
     newdays = sorted({l[:8] for l in added})
-    lines += [f"## {v['name']}（採用式: {v['adopted']} {wstr(W0)}）", ""]
+    lines += [f"## {v['name']}（採用式: {v['adopted']} {wstr(W0)}・補正: {'場専用（' + v.get('corr_note', '') + '）' if AC else '全場共通'}）", ""]
     if since > '0': lines.append(f"- 対象期間: {since[:4]}/{since[4:6]}/{since[6:]} 以降（{v.get('since_note', '新モーター導入後')}）")
     lines.append(f"- データ: 一般戦 {d.race.nunique()}R・{d['節'].nunique()}節（{d.day.min()}〜{d.day.max()}）。今回追加 {len(added)}R" + (f"（{', '.join(x[4:6]+'/'+x[6:] for x in newdays)}）" if newdays else "（新しい結果なし）"))
     if inferred: lines.append(f"- 出走表が残っていない日 {len(inferred)}日はA1の割合でグレードを推定（SG/G1と推定して除外 {len(ex_inf)}日" + (f": {', '.join(ex_inf)}" if ex_inf else "") + "）")
@@ -271,7 +274,7 @@ for jcd_s, v in CFG['venues'].items():
     lines.append(f"- 節ごとの検証で一番良い既存の式: {best_fixed}（{alt.get(best_fixed, float('nan')):.1f}）／採用式 {cur:.1f}")
     if loso_pick: lines.append(f"- 節ごとに選び直した重み: {', '.join(loso_pick)}（ばらつきが大きいほど式が安定していない）")
     lines.append(f"- **判定: {tag}**" + ("（区間が0をまたがず、検証でも1.5ポイント以上上回った）" if tag != '現行維持' else ""))
-    CL, tagc, bfc = corr_section(d, W0, v['adopted'], jcd_s)
+    CL, tagc, bfc = corr_section(d, W0, v['adopted'], jcd_s, AC)
     lines += CL
     lines.append("")
     summary.append(f"{v['name']}: 追加{len(added)}R／計{d.race.nunique()}R、採用式 sep {pct(stats(d, W0)['sep'])}、{tag}、補正調整 {tagc}（最良 場専用補正×{bfc}）")
