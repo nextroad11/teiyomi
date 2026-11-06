@@ -328,7 +328,7 @@ function ashiFor(race,exT,B){const jc=String(race.jcd).padStart(2,'0'),o=race.be
   const anaMax=real&&!(MODEL.live&&MODEL.live.ready)?Math.min(R.max,2):R.max;
   const ana=combos.filter(c=>!hset.has(c.k)&&c.pAi>=R.minP&&c.odds>=R.minOdds&&c.ratio>=R.minRatio).sort((x,y)=>y.ev-x.ev).slice(0,anaMax);
   const top=boats.slice().sort((a,b)=>b.pWin-a.pWin), topWin=top[0].pWin;
-  return {boats,combos,honsen,ana,cover:cum,top,topWin,real,ashi:AS?(ASHI_W[String(race.jcd).padStart(2,'0')]?'場別':'既定'):null,level:topWin>=0.6?'kata':topWin>=0.42?'futsu':'are',hasEx:exMean!=null};
+  return {boats,combos,honsen,ana,cover:cum,top,topWin,real,ashi:AS?{kind:ASHI_W[String(race.jcd).padStart(2,'0')]?'場別':'既定',sep:ASHI_SEP[String(race.jcd).padStart(2,'0')]||null}:null,level:topWin>=0.6?'kata':topWin>=0.42?'futsu':'are',hasEx:exMean!=null};
 }
 const LEVEL={kata:['堅い','var(--good)'],futsu:['本命寄り','var(--accent)'],are:['波乱含み','var(--ana)']};
 
@@ -597,7 +597,7 @@ function renderYoso(){
           <td class="foot-cell"><b class="fg fg-${b.footGrade==='◎'||b.footGrade==='○'?'up':b.footGrade==='×'||b.footGrade==='▲'?'dn':'mid'}">${b.footGrade}</b>${(()=>{const q=(r.before&&r.before.boats&&r.before.boats[b.waku])||{};const x=[];const ori=r.before&&r.before.ori,rk=oriRank(ori);if(b.ashi)x.push(`足${b.ashi.rank}位(${b.ashi.score>=0?'+':''}${b.ashi.score.toFixed(2)})`);if(ori&&ori.items)ori.items.forEach((nm,j)=>{const v=(ori.boats[b.waku]||[])[j];if(v!=null)x.push(`${nm.replace("まわり足","回り").replace("半周ラップ","半周")}${(+v).toFixed(2)}${rk[b.waku]&&rk[b.waku][nm]===1?'①':''}`);});if(q.exST!=null)x.push('ST'+(q.exST<0?' F'+Math.abs(q.exST).toFixed(2).slice(1):q.exST.toFixed(2).slice(1)));if(q.prop)x.push('ペラ'+q.prop);if(q.parts)x.push(q.parts);return x.length?`<span>${esc(x.join(' '))}</span>`:'';})()}</td>
           <td><div class="winbar"><span class="track"><span style="width:${b.pWin/maxWin*100}%"></span></span><b>${pct(b.pWin)}</b></div></td>
           <td><div class="tags">${b.tags.map(t=>`<span class="tag ${t[0]}">${esc(t[1])}</span>`).join('')}</div></td></tr>`}).join('')}</tbody></table></div>
-      <p class="hint">${r.before&&r.before.complete?'展示タイム・進入は自動で取得済み（青枠）。':'展示タイムは締切の約20分前から自動で入ります。'}手で入れ直すと、その場で計算し直します。${a.ashi?`舟足は足スコア（${a.ashi==='場別'?'この場で検証した重み・判別力sep '+ASHI_SEP[String(r.jcd).padStart(2,'0')][0]+'（'+ASHI_SEP[String(r.jcd).padStart(2,'0')][1]+'R）':'未検証の場なので既定の戸田新式'}）の順位：1位◎ 2位○ 3・4位△ 5位▲ 6位×。`:'舟足は展示タイム・オリジナル展示（一周・まわり足・直線）・モーターから（◎○△▲×）。'}下の小さい字はオリジナル展示（①はレース内1位）・展示のST・プロペラ・部品交換。</p>
+      <p class="hint">${r.before&&r.before.complete?'展示タイム・進入は自動で取得済み（青枠）。':'展示タイムは締切の約20分前から自動で入ります。'}手で入れ直すと、その場で計算し直します。${a.ashi?`舟足は足スコア（${a.ashi.kind==='場別'&&a.ashi.sep?'この場で検証した重み・判別力sep '+a.ashi.sep[0]+'（'+a.ashi.sep[1]+'R）':'未検証の場なので既定の戸田新式'}）の順位：1位◎ 2位○ 3・4位△ 5位▲ 6位×。`:'舟足は展示タイム・オリジナル展示（一周・まわり足・直線）・モーターから（◎○△▲×）。'}下の小さい字はオリジナル展示（①はレース内1位）・展示のST・プロペラ・部品交換。</p>
     </div>
     <div class="panel">
       <h3>このレースの記録</h3>
