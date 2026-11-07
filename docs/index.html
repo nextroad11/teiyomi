@@ -668,11 +668,14 @@ function tenkaiHtml(r,a){
 const ARE_CAL=0.69; // AIの「50倍以上になる確率」は高く出る（予測38%→実際27%）ので補正
 const subsets=max=>{const r=[];for(let m=1;m<64;m++){const s=[1,2,3,4,5,6].filter((_,i)=>m>>i&1);if(s.length<=max)r.push(s);}return r;};
 const SUB2=subsets(2),SUB4=subsets(4);
+// 点数は4〜12点で自由。「1点増やすなら、50倍以上が当たる確率を1%以上増やすこと」で決める
+// （50倍以上の平均配当は約100倍なので、1点あたり1%が損益の分かれ目）。3日分の試しで平均7.4点・回収156%（12点固定は123%）
+const ARE_LAMBDA=0.010;
 function areForm(a){
   const P={};a.combos.forEach(c=>P[c.k]=c);let best=null;
   for(const F of SUB2)for(const S of SUB4)for(const T of SUB4){let pts=0,c50=0;const ks=[];
     for(const x of F)for(const y of S)for(const z of T){if(x===y||y===z||x===z)continue;pts++;if(pts>12)break;const k=x+'-'+y+'-'+z;ks.push(k);if(P[k].odds>=50)c50+=P[k].pAi;}
-    if(pts>12||pts<4)continue;if(!best||c50>best.c50+1e-9)best={F,S,T,pts,c50,ks};}
+    if(pts>12||pts<4)continue;const sc=c50-ARE_LAMBDA*pts;if(!best||sc>best.sc+1e-9)best={F,S,T,pts,c50,ks,sc};}
   return best;}
 function areHtml(r,a,res){
   const p50raw=sum(a.combos.filter(c=>c.odds>=50).map(c=>c.pAi)),p50=clamp(ARE_CAL*p50raw,0,0.8);
@@ -683,11 +686,11 @@ function areHtml(r,a,res){
   const P={};a.combos.forEach(c=>P[c.k]=c);const unit=LS.get('unit',1000)>0?LS.get('unit',1000):100;
   const leg=l=>l.map(n=>bn(n)).join('');
   const rows=B.ks.map(k=>P[k]).sort((x,y)=>y.pAi-x.pAi);
-  return `<div class="panel arep"><h3><span class="mark">荒れ狙い</span>50倍以上を狙うフォーメーション（参考）</h3>
+  return `<div class="panel arep"><h3><span class="mark">荒れ狙い</span>50倍以上を12点以内で狙うフォーメーション（参考）</h3>
     <div class="expect man-hi"><span class="lbl">荒れる自信</span><b>高い</b><span class="num">50倍以上で決まる確率 ${pct(p50)}（全レースの平均は約27%）</span></div>
     <div class="forms plan"><div class="form"><span class="lbl">フォーメーション${B.pts}点</span>${leg(B.F)}<span class="arrow">→</span>${leg(B.S)}<span class="arrow">→</span>${leg(B.T)}</div></div>
     <ul class="combo-list">${rows.map(c=>`<li class="combo${res&&res.order===c.k?' hit':''}"><span class="nums">${comboHtml(c.k)}</span><span class="bar"><span style="width:${Math.min(100,c.pAi/rows[0].pAi*100)}%"></span></span><span class="val">${pct(c.pAi)}<small>${c.real?'':'推定'}${odds(c.odds)}倍${c.odds<50?'・50倍未満':''}</small></span></li>`).join('')}</ul>
-    <p class="foot">1点${yen(unit)}なら合計${yen(unit*B.pts)}。50倍以上の決着の${pct(B.c50/p50raw)}をこの${B.pts}点で押さえます。過去3日の実績：「荒れる自信 高い」のレースで的中19.6%・回収123%（51レース）。まだ少ないデータなので参考に。</p></div>`;}
+    <p class="foot">1点${yen(unit)}なら合計${yen(unit*B.pts)}。50倍以上の決着の${pct(B.c50/p50raw)}をこの${B.pts}点で押さえます。点数は4〜12点で、押さえる確率が1点あたり1%以上増えるところまで。過去3日の試し：「荒れる自信 高い」51レースで的中8本・回収156%（平均7.4点）。まだ少ないデータなので参考に。</p></div>`;}
 
 // ---------------------------------------------------------------- 展示で変わったこと（展示前＝出走表だけの予想と比べる）
 function changeHtml(r,a){
