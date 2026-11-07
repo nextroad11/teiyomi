@@ -118,6 +118,7 @@ main.wrap{padding-block:16px 48px;display:grid;gap:18px}
 .pill.exp-hi{background:color-mix(in srgb,var(--good) 18%,transparent);color:var(--good)}
 .pill.exp-mid,.pill.exp-lo{background:var(--bg);color:var(--muted)}
 .pill.man-hi{color:var(--ana)}
+.arep .mark{background:var(--ana);color:#fff}
 .change ul{margin:4px 0 0;padding-left:18px;display:grid;gap:6px;font-size:13px}.change b.up{color:var(--good)}.change b.dn{color:var(--ana)}
 .change .cmb{display:inline-flex;margin:2px 8px 2px 0;vertical-align:middle}
 .change.big{border-color:var(--ana);background:color-mix(in srgb,var(--ana) 8%,var(--surface))}
@@ -661,6 +662,33 @@ function tenkaiHtml(r,a){
     <div class="tablebox"><table class="card"><thead><tr><th>コース</th><th>艇</th><th>コース別ST</th><th>ばらつき</th><th>展示ST</th><th>予測ST</th></tr></thead><tbody>
     ${sl.map(x=>`<tr><td>${x.course}</td><td>${bn(x.waku)}</td><td class="n">${x.avgST.toFixed(2).slice(1)}</td><td class="n">${x.sd!=null?x.sd.toFixed(3).slice(1):'-'}</td><td class="n">${x.exST==null?'-':x.exST<0?'F'+Math.abs(x.exST).toFixed(2).slice(1):x.exST.toFixed(2).slice(1)}</td><td class="n"><b>${x.pred.toFixed(2).slice(1)}</b></td></tr>`).join('')}</tbody></table></div></div>`;}
 
+// ---------------------------------------------------------------- 荒れ狙いフォーメーション（50倍以上の決着を12点以内で押さえる）
+// 11/5〜7の411R（公式オッズあり）で確認: 万舟期待「高い」レースで的中19.6%・回収123%（51R・10本的中なので参考）。
+// それより自信の低いレースでは回収54%、全レースで買うと56%なので、万舟期待「高い」レースだけ出す
+const ARE_CAL=0.69; // AIの「50倍以上になる確率」は高く出る（予測38%→実際27%）ので補正
+const subsets=max=>{const r=[];for(let m=1;m<64;m++){const s=[1,2,3,4,5,6].filter((_,i)=>m>>i&1);if(s.length<=max)r.push(s);}return r;};
+const SUB2=subsets(2),SUB4=subsets(4);
+function areForm(a){
+  const P={};a.combos.forEach(c=>P[c.k]=c);let best=null;
+  for(const F of SUB2)for(const S of SUB4)for(const T of SUB4){let pts=0,c50=0;const ks=[];
+    for(const x of F)for(const y of S)for(const z of T){if(x===y||y===z||x===z)continue;pts++;if(pts>12)break;const k=x+'-'+y+'-'+z;ks.push(k);if(P[k].odds>=50)c50+=P[k].pAi;}
+    if(pts>12||pts<4)continue;if(!best||c50>best.c50+1e-9)best={F,S,T,pts,c50,ks};}
+  return best;}
+function areHtml(r,a,res){
+  const p50raw=sum(a.combos.filter(c=>c.odds>=50).map(c=>c.pAi)),p50=clamp(ARE_CAL*p50raw,0,0.8);
+  // 「やや高い」帯（素の50倍以上確率45%以上だが万舟期待は高くない）は3日で回収54%だったので出さない
+  const conf=a.manP>=0.20?'高':null;
+  if(!conf)return '';
+  const B=areForm(a);if(!B)return '';
+  const P={};a.combos.forEach(c=>P[c.k]=c);const unit=LS.get('unit',1000)>0?LS.get('unit',1000):100;
+  const leg=l=>l.map(n=>bn(n)).join('');
+  const rows=B.ks.map(k=>P[k]).sort((x,y)=>y.pAi-x.pAi);
+  return `<div class="panel arep"><h3><span class="mark">荒れ狙い</span>50倍以上を狙うフォーメーション（参考）</h3>
+    <div class="expect man-hi"><span class="lbl">荒れる自信</span><b>高い</b><span class="num">50倍以上で決まる確率 ${pct(p50)}（全レースの平均は約27%）</span></div>
+    <div class="forms plan"><div class="form"><span class="lbl">フォーメーション${B.pts}点</span>${leg(B.F)}<span class="arrow">→</span>${leg(B.S)}<span class="arrow">→</span>${leg(B.T)}</div></div>
+    <ul class="combo-list">${rows.map(c=>`<li class="combo${res&&res.order===c.k?' hit':''}"><span class="nums">${comboHtml(c.k)}</span><span class="bar"><span style="width:${Math.min(100,c.pAi/rows[0].pAi*100)}%"></span></span><span class="val">${pct(c.pAi)}<small>${c.real?'':'推定'}${odds(c.odds)}倍${c.odds<50?'・50倍未満':''}</small></span></li>`).join('')}</ul>
+    <p class="foot">1点${yen(unit)}なら合計${yen(unit*B.pts)}。50倍以上の決着の${pct(B.c50/p50raw)}をこの${B.pts}点で押さえます。過去3日の実績：「荒れる自信 高い」のレースで的中19.6%・回収123%（51レース）。まだ少ないデータなので参考に。</p></div>`;}
+
 // ---------------------------------------------------------------- 展示で変わったこと（展示前＝出走表だけの予想と比べる）
 function changeHtml(r,a){
   if(!(r.before&&r.before.boats&&Object.values(r.before.boats).some(v=>v.exTime!=null)))return '';
@@ -796,6 +824,7 @@ function renderYoso(){
         <p class="foot">${a.ana.length}点の的中確率 ${pct(sum(a.ana.map(c=>c.pAi)))}・1点あたり期待値 ${(anaEV*100).toFixed(0)}%</p>`
         :`<p class="sub">人気とのズレが小さく、狙える穴が見つかりません。見送り候補です。</p>`}</div>
     </div>
+    ${areHtml(r,a,res)}
     <div class="panel"><h3>スリット予測</h3><p class="sub">右ほど早いスタート。「凹」は両隣より遅れる予測、「先」は内より早い予測。展開予想・足評価・オリジナル展示は「自分で予想」タブに。</p>${slitSvg(tenkaiOf(r,a))}</div>
     ${planHtml(a,res)}
     <div class="panel">
