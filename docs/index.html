@@ -260,21 +260,120 @@ const TRI_KEYS=[];for(let a=1;a<=6;a++)for(let b=1;b<=6;b++)for(let c=1;c<=6;c++
 function realOdds(race){const o=race.odds;if(!o||!Array.isArray(o.t)||o.t.length!==120)return null;
   const map={};let inv=0;o.t.forEach((v,i)=>{if(v&&v>=1){map[TRI_KEYS[i]]=v;inv+=1/v;}});
   return inv>0?{map,inv,at:o.fetchedAt,final:!!o.final}:null;}
-// 足スコア（場別）: 別チャットで検証した仕様。平和島(04)・浜名湖(06)は判別力が低いので使わず、これまでの方式
-const ASHI_CORR={1:[0.40,0.20,0,0.02],2:[0.30,0.10,0,0.01],3:[0.20,0,0,0],4:[0.10,-0.05,-0.01,-0.01],5:[0.05,-0.10,-0.02,-0.02],6:[0,-0.15,-0.02,-0.02]};
-const ASHI_DEF=[1,0.5,0.5,1];
-const ASHI_W={'02':[1,0.5,0.5,1],'05':[1,2/3,1,2/3],'07':[1,0,0,1],'11':[1,0.5,0.5,1],'19':[1,0,0,0.25],'24':[1,0,1,1]};
-const ASHI_SEP={'02':[18.3,336],'05':[23.0,348],'07':[20.1,396],'11':[15.9,347],'19':[18.9,360],'24':[15.3,348]};
-const ASHI_SKIP=new Set(['04','06']);
-function ashiScore(jcd,boats){const w=ASHI_W[String(jcd).padStart(2,'0')]||ASHI_DEF,keys=['lap','turn','straight','ex'],z=boats.map(()=>[0,0,0,0]);
-keys.forEach((k,j)=>{const xs=boats.map(b=>b[k]==null?null:Math.round((b[k]+ASHI_CORR[b.waku][j])*100)/100);const v=xs.filter(x=>x!=null);if(v.length<2)return;
-  const mu=v.reduce((a,b)=>a+b,0)/v.length,sd=Math.sqrt(v.reduce((a,b)=>a+(b-mu)**2,0)/(v.length-1));if(sd===0)return;xs.forEach((x,i)=>{if(x!=null)z[i][j]=(mu-x)/sd;});});
-const out=boats.map((b,i)=>({waku:b.waku,z:z[i],score:z[i].reduce((a,zz,j)=>a+w[j]*zz,0)}));
-[...out].sort((a,b)=>b.score-a.score||a.waku-b.waku).forEach((o,r)=>{o.rank=r+1;});return out;}
-function ashiFor(race,exT,B){const jc=String(race.jcd).padStart(2,'0'),o=race.before&&race.before.ori;if(ASHI_SKIP.has(jc)||!o||!o.items)return null;
-const idx=n=>o.items.indexOf(n),g=(w,n)=>{const j=idx(n);return j<0?null:num((o.boats[w]||[])[j]);};
-const bs=B.map((b,i)=>({waku:b.waku,lap:g(b.waku,'一周'),turn:g(b.waku,'まわり足'),straight:g(b.waku,'直線'),ex:exT[i]})).filter(b=>b.ex!=null);
-if(bs.length<4||bs.every(b=>b.lap==null&&b.turn==null&&b.straight==null))return null;return ashiScore(race.jcd,bs);}
+// 足スコア（場別）2026/11/7版：別チャットで検証した ashi_score.js をそのまま組み込み
+const ASHI_CONFIG = {
+  version: '2026-11-07',
+  // 全場共通の補正（枠番: [一周, まわり足, 直線, 展示] に足す値）
+  corrCommon: {
+    1: [0.40, 0.20, 0, 0.02], 2: [0.30, 0.10, 0, 0.01], 3: [0.20, 0, 0, 0],
+    4: [0.10, -0.05, -0.01, -0.01], 5: [0.05, -0.10, -0.02, -0.02], 6: [0, -0.15, -0.02, -0.02],
+  },
+  // 場専用の補正（6号艇=0基準。レース結果を使わず、枠ごとの計測のくせを打ち消す値）
+  corrVenue: {
+    2:  {1: [0.40, 0.08, 0.07, 0.05], 2: [0.15, 0.04, 0.03, 0.03], 3: [0.04, 0.02, 0.01, 0.02], 4: [0.01, 0.01, 0, 0.01], 5: [-0.02, 0.01, 0, 0], 6: [0, 0, 0, 0]},     // 戸田
+    4:  {1: [0.41, 0.18, 0.01, 0.01], 2: [0.14, 0.11, 0, 0], 3: [0.05, 0.05, 0, 0], 4: [0.03, 0.03, 0, -0.01], 5: [0, 0.01, 0, -0.01], 6: [0, 0, 0, 0]},              // 平和島
+    6:  {1: [0.48, 0.19, -0.06, 0.02], 2: [0.17, 0.12, -0.04, 0.01], 3: [0.05, 0.07, -0.03, 0], 4: [0.03, 0.04, -0.02, 0], 5: [0.01, 0.02, -0.01, 0], 6: [0, 0, 0, 0]}, // 浜名湖
+    7:  {1: [0.35, 0.29, -0.02, 0.04], 2: [0.10, 0.15, -0.02, 0.01], 3: [0, 0.07, -0.02, 0], 4: [0, 0.02, -0.01, 0], 5: [-0.01, 0, 0, 0], 6: [0, 0, 0, 0]},             // 蒲郡
+    11: {1: [0.38, 0.35, -0.12, 0.03], 2: [0.10, 0.19, -0.09, 0.02], 3: [0.03, 0.11, -0.06, 0.01], 4: [0, 0.05, -0.04, 0], 5: [-0.03, 0.02, -0.01, 0], 6: [0, 0, 0, 0]}, // びわこ
+    24: {1: [0.30, 0.06, 0.03, 0.01], 2: [0.10, 0.02, 0, 0], 3: [0.04, 0.02, -0.01, 0], 4: [0.02, 0.02, -0.01, -0.01], 5: [0.02, 0.01, 0, 0], 6: [0, 0, 0, 0]},          // 大村
+  },
+  // 重み [一周, まわり足, 直線, 展示]
+  defaultWeights: [1, 0.5, 0.5, 1],   // 戸田新式（未検証の場）
+  weights: {
+    2:  [1, 0.5, 0.5, 1],     // 戸田   戸田新式＋戸田補正
+    4:  [1, 0.5, 0.5, 1],     // 平和島 戸田新式＋平和島補正
+    5:  [1, 2 / 3, 1, 2 / 3], // 多摩川 多摩川式＋共通補正
+    6:  [1, 0.5, 0.5, 1],     // 浜名湖 戸田新式＋浜名湖補正
+    7:  [1, 0, 0, 1],         // 蒲郡   蒲郡式＋蒲郡補正
+    11: [1, 0.5, 0.5, 1],     // びわこ 戸田新式＋びわこ補正
+    19: [1, 0, 0, 0.25],      // 下関   下関式＋共通補正
+    24: [1, 0, 1, 1],         // 大村   大村式＋大村補正
+  },
+  // 検証済みの場の判別力（sep＝同じ進入コースで足スコア上位3艇と下位3艇の3連対率の差、ポイント）
+  // 信頼度の表示などに使う。未検証の場は null
+  sep: {2: 14.8, 4: 16.3, 5: 18.2, 6: 16.0, 7: 18.7, 11: 14.0, 19: 15.0, 24: 14.7},
+};
+
+const ASHI_ITEMS = ['lap', 'turn', 'straight', 'ex'];  // 一周, まわり足, 直線, 展示
+
+/**
+ * 汎用の計算。
+ * @param {number|string} jcd 場コード（1〜24）
+ * @param {Array<{waku:number, lap?:number|null, turn?:number|null, straight?:number|null, ex:number}>} boats
+ * @returns {Array<{waku, score, rank, z:number[]}>} 入力と同じ並び
+ */
+function ashiScore(jcd, boats) {
+  const code = Number(jcd);
+  const w = ASHI_CONFIG.weights[code] || ASHI_CONFIG.defaultWeights;
+  const corr = ASHI_CONFIG.corrVenue[code] || ASHI_CONFIG.corrCommon;
+  const z = boats.map(() => [0, 0, 0, 0]);
+  ASHI_ITEMS.forEach((k, j) => {
+    const xs = boats.map(b => (b[k] == null || isNaN(b[k])) ? null
+      : Math.round((Number(b[k]) + corr[b.waku][j]) * 100) / 100);   // 補正後を小数第2位に
+    const v = xs.filter(x => x != null);
+    if (v.length < 2) return;
+    const mu = v.reduce((a, b) => a + b, 0) / v.length;
+    const sd = Math.sqrt(v.reduce((a, b) => a + (b - mu) ** 2, 0) / (v.length - 1));
+    if (!(sd > 0)) return;
+    xs.forEach((x, i) => { if (x != null) z[i][j] = (mu - x) / sd; });
+  });
+  const out = boats.map((b, i) => ({
+    waku: b.waku, z: z[i],
+    score: z[i].reduce((a, zz, j) => a + w[j] * zz, 0),
+  }));
+  [...out].sort((a, b) => b.score - a.score || a.waku - b.waku).forEach((o, r) => { o.rank = r + 1; });
+  return out;
+}
+
+/**
+ * 艇読みAIのレースデータ（race.jcd, race.before.boats[waku].exTime, race.before.ori）から計算する。
+ * オリジナル展示がない場・項目が足りない場もそのまま計算できる（ない項目は全艇 z=0）。
+ * @returns {null | {jcd, verified, sep, items, note, boats:{[waku]:{score, rank, z}}}}
+ */
+function ashiFromRace(race) {
+  const bf = race && race.before;
+  if (!bf || !bf.boats) return null;
+  const ori = bf.ori && bf.ori.items ? bf.ori : null;
+  const idx = {};
+  const notes = [];
+  if (ori) ori.items.forEach((nm, j) => {
+    if (nm === '一周') idx.lap = j;
+    else if (nm === '半周ラップ') { idx.lap = j; notes.push('一周の代わりに半周ラップを使用'); }
+    else if (nm === 'まわり足') idx.turn = j;
+    else if (nm === '直線') idx.straight = j;
+  });
+  if (!ori) notes.push('オリジナル展示なし（展示タイムのみ）');
+  else if (idx.straight == null) notes.push('直線の計測なし');
+  const boats = [];
+  for (let w = 1; w <= 6; w++) {
+    const q = bf.boats[w] || bf.boats[String(w)];
+    if (!q || q.exTime == null) continue;           // 欠場・展示タイムなしは外す
+    const ov = ori ? (ori.boats[w] || ori.boats[String(w)] || []) : [];
+    const g = k => (idx[k] == null ? null : (ov[idx[k]] == null ? null : Number(ov[idx[k]])));
+    boats.push({waku: w, lap: g('lap'), turn: g('turn'), straight: g('straight'), ex: Number(q.exTime)});
+  }
+  if (boats.length < 2) return null;
+  const jcd = Number(race.jcd);
+  const res = {};
+  ashiScore(jcd, boats).forEach(o => { res[o.waku] = {score: o.score, rank: o.rank, z: o.z}; });
+  const verified = ASHI_CONFIG.weights[jcd] != null;
+  return {
+    jcd, verified, sep: ASHI_CONFIG.sep[jcd] ?? null,
+    items: ASHI_ITEMS.filter(k => boats.some(b => b[k] != null)),
+    note: (verified ? '' : '未検証の場（戸田新式＋共通補正）') + (notes.length ? (verified ? '' : '・') + notes.join('・') : ''),
+    boats: res,
+  };
+}
+
+// アプリ用: 手で入れ直した展示タイムも使う（項目の読み替えは ashiFromRace と同じ）
+const ASHI_SEP=ASHI_CONFIG.sep, ASHI_W=ASHI_CONFIG.weights;
+const ashiCorr=jcd=>ASHI_CONFIG.corrVenue[Number(jcd)]||ASHI_CONFIG.corrCommon;
+function ashiFor(race,exT,B){const o=race.before&&race.before.ori&&race.before.ori.items?race.before.ori:null;const idx={},notes=[];
+  if(o)o.items.forEach((nm,j)=>{if(nm==='一周')idx.lap=j;else if(nm==='半周ラップ'){idx.lap=j;notes.push('一周の代わりに半周ラップを使用');}else if(nm==='まわり足')idx.turn=j;else if(nm==='直線')idx.straight=j;});
+  if(!o)notes.push('オリジナル展示なし（展示タイムのみ）');else if(idx.straight==null)notes.push('直線の計測なし');
+  const g=(w,k)=>{if(idx[k]==null)return null;const v=(o.boats[w]||o.boats[String(w)]||[])[idx[k]];return v==null?null:Number(v);};
+  const bs=B.map((b,i)=>({waku:b.waku,lap:g(b.waku,'lap'),turn:g(b.waku,'turn'),straight:g(b.waku,'straight'),ex:exT[i]})).filter(b=>b.ex!=null);
+  if(bs.length<2)return null;const out=ashiScore(race.jcd,bs);out.notes=notes;return out;}
 
 function analyze(race,exOverride){
   const B=(race.boats||[]).slice().sort((a,b)=>a.waku-b.waku);
@@ -343,7 +442,7 @@ function analyze(race,exOverride){
   const anaMax=real&&!(MODEL.live&&MODEL.live.ready)?Math.min(R.max,2):R.max;
   const ana=combos.filter(c=>!hset.has(c.k)&&c.pAi>=R.minP&&c.odds>=R.minOdds&&c.ratio>=R.minRatio).sort((x,y)=>y.ev-x.ev).slice(0,anaMax);
   const top=boats.slice().sort((a,b)=>b.pWin-a.pWin), topWin=top[0].pWin;
-  return {boats,combos,honsen,ana,cover:cum,top,topWin,real,ashi:AS?{kind:ASHI_W[String(race.jcd).padStart(2,'0')]?'場別':'既定',sep:ASHI_SEP[String(race.jcd).padStart(2,'0')]||null}:null,level:topWin>=0.6?'kata':topWin>=0.42?'futsu':'are',hasEx:exMean!=null};
+  return {boats,combos,honsen,ana,cover:cum,top,topWin,real,ashi:AS?{kind:ASHI_W[Number(race.jcd)]?'場別':'既定',sep:ASHI_SEP[Number(race.jcd)]??null,venueCorr:!!ASHI_CONFIG.corrVenue[Number(race.jcd)],notes:AS.notes||[]}:null,level:topWin>=0.6?'kata':topWin>=0.42?'futsu':'are',hasEx:exMean!=null};
 }
 const LEVEL={kata:['堅い','var(--good)'],futsu:['本命寄り','var(--accent)'],are:['波乱含み','var(--ana)']};
 
@@ -524,7 +623,7 @@ function ashiHtml(r,a){
   const f=v=>v==null?'-':(v>=0?'+':'')+v.toFixed(2), cls=v=>v>=0.5?'pos':v<=-0.5?'neg':'';
   if(a.ashi){const rows=a.boats.slice().sort((x,y)=>(x.ashi?.rank||9)-(y.ashi?.rank||9));
     return `<div class="panel ashi"><h3>足評価（足スコア）</h3>
-      <p class="sub">枠ごとの計測のクセを補正し、同じレースの中で速いほど＋。${a.ashi.kind==='場別'&&a.ashi.sep?`この場の重み（判別力sep ${a.ashi.sep[0]}・${a.ashi.sep[1]}Rで検証）`:'未検証の場なので既定の戸田新式（一周1・まわり足0.5・直線0.5・展示1）'}で合計。</p>
+      <p class="sub">枠ごとの計測のクセを補正し、同じレースの中で速いほど＋。${a.ashi.venueCorr?'この場専用の補正':'全場共通の補正'}をかけ、${a.ashi.kind==='場別'?`この場で検証した重み${a.ashi.sep!=null?`（判別力sep ${a.ashi.sep}）`:''}`:'未検証の場なので既定の戸田新式（一周1・まわり足0.5・直線0.5・展示1）'}で合計。${a.ashi.notes.length?'※'+esc(a.ashi.notes.join('・')):''}</p>
       <div class="tablebox"><table class="card"><thead><tr><th>順位</th><th>艇</th><th>一周</th><th>まわり足</th><th>直線</th><th>展示</th><th>足スコア</th><th>評価</th></tr></thead><tbody>
       ${rows.map(b=>b.ashi?`<tr><td>${b.ashi.rank}位</td><td>${bn(b.waku)}</td>${b.ashi.z.map(z=>`<td class="n ${cls(z)}">${f(z)}</td>`).join('')}<td class="n"><b>${f(b.ashi.score)}</b></td><td><b class="fg fg-${b.footGrade==='◎'||b.footGrade==='○'?'up':b.footGrade==='×'||b.footGrade==='▲'?'dn':'mid'}">${b.footGrade}</b></td></tr>`:`<tr><td>-</td><td>${bn(b.waku)}</td><td colspan="6" class="n">展示なし</td></tr>`).join('')}
       </tbody></table></div></div>`;}
@@ -533,21 +632,21 @@ function ashiHtml(r,a){
     <div class="tablebox"><table class="card"><thead><tr><th>艇</th><th>展示</th><th>オリ展</th><th>モーター</th><th>合計</th><th>評価</th></tr></thead><tbody>
     ${a.boats.slice().sort((x,y)=>y.foot-x.foot).map(b=>{const o=(b.parts.olap||0)+(b.parts.oturn||0)+(b.parts.ostr||0);return `<tr><td>${bn(b.waku)}</td><td class="n">${f(b.parts.ex||0)}</td><td class="n">${f(o)}</td><td class="n">${f((b.parts.motor||0)+(b.parts.mform||0))}</td><td class="n"><b>${f(b.foot)}</b></td><td><b class="fg fg-${b.footGrade==='◎'||b.footGrade==='○'?'up':b.footGrade==='×'||b.footGrade==='▲'?'dn':'mid'}">${b.footGrade}</b></td></tr>`;}).join('')}
     </tbody></table></div></div>`;}
-const ASHI_SKIP_NOTE=(jc,r)=>jc==='04'||jc==='06'?'この場は足スコアの判別力が低いため使わず、':(r.before&&r.before.ori?'':'オリジナル展示がまだ無いため、');
+const ASHI_SKIP_NOTE=(jc,r)=>'展示タイムがまだ無いため、';
 function oriHtml(r,a){
   const o=r.before&&r.before.ori, bf=(r.before&&r.before.boats)||{};
   const items=o&&o.items?o.items:[];
   // 足スコアと同じ枠別補正（内枠ほど速く出やすい分を差し引く）。補正後の値でレース内の順位をつける
-  const CI={'一周':0,'まわり足':1,'直線':2};
+  const CI={'一周':0,'半周ラップ':0,'まわり足':1,'直線':2}, CR=ashiCorr(r.jcd);
   const raw=(w,j)=>o?num((o.boats[w]||[])[j]):null;
-  const cor=(w,n,j)=>{const v=raw(w,j);return v==null?null:(CI[n]!=null?Math.round((v+ASHI_CORR[w][CI[n]])*100)/100:v);};
-  const exC=w=>{const b=a.boats.find(x=>x.waku===w);return b&&b.exTime!=null?Math.round((b.exTime+ASHI_CORR[w][3])*100)/100:null;};
+  const cor=(w,n,j)=>{const v=raw(w,j);return v==null?null:(CI[n]!=null?Math.round((v+CR[w][CI[n]])*100)/100:v);};
+  const exC=w=>{const b=a.boats.find(x=>x.waku===w);return b&&b.exTime!=null?Math.round((b.exTime+CR[w][3])*100)/100:null;};
   const rankOf=f=>{const v=a.boats.map(b=>({w:b.waku,x:f(b.waku)})).filter(e=>e.x!=null).sort((p,q)=>p.x-q.x);const r={};v.forEach((e,i)=>r[e.w]=i+1);return r;};
   const rEx=rankOf(exC), rI=items.map((n,j)=>rankOf(w=>cor(w,n,j)));
   const cell=(c,rw,rank)=>c==null?'<td class="n">-</td>':`<td class="n rk rk${rank||0}">${c.toFixed(2)}<small>${rank?rank+'位':''}</small>${rw!=null&&Math.abs(rw-c)>0.001?`<em>生${rw.toFixed(2)}</em>`:''}</td>`;
   const st=v=>v==null?'-':v<0?'F'+Math.abs(v).toFixed(2).slice(1):v.toFixed(2).slice(1);
   return `<div class="panel ori"><h3>オリジナル展示・直前情報</h3>
-    <p class="sub">${o?'BOATCASTのオリジナル展示（秒・小さいほど速い）。大きい数字は<b>枠別補正後</b>（内枠ほど速く出やすい分を差し引いた値）、小さい数字は補正後のレース内順位、下の「生」は公式の生タイム。場ごとに計測の仕方が違うので、ほかの場とは比べないでください。':'オリジナル展示はまだ出ていません（締切の約20分前に自動で入ります）。展示タイムは枠別補正後。'}</p>
+    <p class="sub">${o?'BOATCASTのオリジナル展示（秒・小さいほど速い）。大きい数字は<b>枠別補正後</b>（'+(ASHI_CONFIG.corrVenue[Number(r.jcd)]?'この場専用の補正':'全場共通の補正')+'で、内枠ほど速く出やすい分を差し引いた値）、小さい数字は補正後のレース内順位、下の「生」は公式の生タイム。場ごとに計測の仕方が違うので、ほかの場とは比べないでください。':'オリジナル展示はまだ出ていません（締切の約20分前に自動で入ります）。展示タイムは枠別補正後。'}</p>
     <div class="legend"><span class="rk1" style="background:color-mix(in srgb,var(--good) 30%,transparent)">1位</span><span style="background:color-mix(in srgb,var(--good) 13%,transparent)">2位</span><span style="background:var(--bg)">3・4位</span><span style="background:color-mix(in srgb,var(--ana) 17%,transparent)">5位</span><span style="background:color-mix(in srgb,var(--ana) 30%,transparent)">6位</span></div>
     <div class="tablebox"><table class="card"><thead><tr><th>艇</th><th>展示</th>${items.map(n=>`<th>${esc(n)}</th>`).join('')}<th>展示ST</th><th>チルト</th><th>ペラ・部品</th></tr></thead><tbody>
     ${a.boats.map(b=>{const q=bf[b.waku]||{};return `<tr><td>${bn(b.waku)}</td>${cell(exC(b.waku),b.exTime,rEx[b.waku])}${items.map((n,j)=>cell(cor(b.waku,n,j),raw(b.waku,j),rI[j][b.waku])).join('')}<td class="n">${st(q.exST)}</td><td class="n">${q.tilt!=null?q.tilt:'-'}</td><td>${esc([q.prop?'ペラ'+q.prop:'',q.parts||''].filter(Boolean).join(' ')||'-')}</td></tr>`;}).join('')}
@@ -677,7 +776,7 @@ function renderSelf(){
           <td class="foot-cell"><b class="fg fg-${b.footGrade==='◎'||b.footGrade==='○'?'up':b.footGrade==='×'||b.footGrade==='▲'?'dn':'mid'}">${b.footGrade}</b>${b.ashi?`<span>足${b.ashi.rank}位</span>`:''}</td>
           <td><div class="winbar"><span class="track"><span style="width:${b.pWin/maxWin*100}%"></span></span><b>${pct(b.pWin)}</b></div></td>
           <td><div class="tags">${b.tags.map(t=>`<span class="tag ${t[0]}">${esc(t[1])}</span>`).join('')}</div></td></tr>`}).join('')}</tbody></table></div>
-      <p class="hint">${r.before&&r.before.complete?'展示タイム・進入は自動で取得済み（青枠）。':'展示タイムは締切の約20分前から自動で入ります。'}手で入れ直すと、その場で計算し直します。${a.ashi?`舟足は足スコア（${a.ashi.kind==='場別'&&a.ashi.sep?'この場で検証した重み・判別力sep '+a.ashi.sep[0]+'（'+a.ashi.sep[1]+'R）':'未検証の場なので既定の戸田新式'}）の順位：1位◎ 2位○ 3・4位△ 5位▲ 6位×。`:'舟足は展示タイム・オリジナル展示（一周・まわり足・直線）・モーターから（◎○△▲×）。'}くわしくは下の「足評価」「オリジナル展示」。</p>
+      <p class="hint">${r.before&&r.before.complete?'展示タイム・進入は自動で取得済み（青枠）。':'展示タイムは締切の約20分前から自動で入ります。'}手で入れ直すと、その場で計算し直します。${a.ashi?`舟足は足スコア（${a.ashi.kind==='場別'?'この場で検証した重み'+(a.ashi.sep!=null?'・判別力sep '+a.ashi.sep:''):'未検証の場なので既定の戸田新式'}）の順位：1位◎ 2位○ 3・4位△ 5位▲ 6位×。`:'舟足は展示タイム・オリジナル展示（一周・まわり足・直線）・モーターから（◎○△▲×）。'}くわしくは下の「足評価」「オリジナル展示」。</p>
     </div>
     ${ashiHtml(r,a)}
     ${oriHtml(r,a)}
