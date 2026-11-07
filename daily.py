@@ -62,7 +62,7 @@ def convert(jcd, have):
                 if not v: continue
                 m = dict(zip(o['items'], v))
                 fin = str(b['finish']) if b.get('finish') else (b.get('code') or '')
-                boats.append(','.join([str(b['waku']), b.get('cls') or '', fmt(b.get('exTime')), fmt(m.get('一周')),
+                boats.append(','.join([str(b['waku']), b.get('cls') or '', fmt(b.get('exTime')), fmt(m.get('一周', m.get('半周ラップ'))),
                                        fmt(m.get('まわり足')), fmt(m.get('直線')), fin, str(b.get('course') or '')]))
             if len(boats) < 5: continue
             t = r.get('tri') or {}
@@ -185,7 +185,7 @@ def wstr(w): return '/'.join(f"{w[k]:.2g}" for k in KEYS)
 def pct(x): return f"{x*100:.1f}"
 
 GR = list(grid())
-lines = [f"# 足スコア日次レポート（9場） {today[:4]}/{today[4:6]}/{today[6:]}", "",
+lines = [f"# 足スコア日次レポート（10場） {today[:4]}/{today[4:6]}/{today[6:]}", "",
          "式の重みは 一周/まわり足/直線/展示。sep＝同じ進入コース内で足スコア上位3艇と下位3艇の3連対率の差（ポイント）。SG・G1・G2は除外、G3は含む。", ""]
 summary = []
 for jcd_s, v in CFG['venues'].items():
