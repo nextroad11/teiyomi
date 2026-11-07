@@ -118,6 +118,9 @@ main.wrap{padding-block:16px 48px;display:grid;gap:18px}
 .pill.exp-hi{background:color-mix(in srgb,var(--good) 18%,transparent);color:var(--good)}
 .pill.exp-mid,.pill.exp-lo{background:var(--bg);color:var(--muted)}
 .pill.man-hi{color:var(--ana)}
+.change ul{margin:4px 0 0;padding-left:18px;display:grid;gap:6px;font-size:13px}.change b.up{color:var(--good)}.change b.dn{color:var(--ana)}
+.change .cmb{display:inline-flex;margin:2px 8px 2px 0;vertical-align:middle}
+.change.big{border-color:var(--ana);background:color-mix(in srgb,var(--ana) 8%,var(--surface))}
 .plan .forms{display:grid;gap:6px;margin:4px 0 12px}
 .plan .form{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-weight:600}
 .plan .form .lbl{font-size:12px;font-weight:600;color:var(--muted);min-width:5.5em}
@@ -658,6 +661,29 @@ function tenkaiHtml(r,a){
     <div class="tablebox"><table class="card"><thead><tr><th>コース</th><th>艇</th><th>コース別ST</th><th>ばらつき</th><th>展示ST</th><th>予測ST</th></tr></thead><tbody>
     ${sl.map(x=>`<tr><td>${x.course}</td><td>${bn(x.waku)}</td><td class="n">${x.avgST.toFixed(2).slice(1)}</td><td class="n">${x.sd!=null?x.sd.toFixed(3).slice(1):'-'}</td><td class="n">${x.exST==null?'-':x.exST<0?'F'+Math.abs(x.exST).toFixed(2).slice(1):x.exST.toFixed(2).slice(1)}</td><td class="n"><b>${x.pred.toFixed(2).slice(1)}</b></td></tr>`).join('')}</tbody></table></div></div>`;}
 
+// ---------------------------------------------------------------- 展示で変わったこと（展示前＝出走表だけの予想と比べる）
+function changeHtml(r,a){
+  if(!(r.before&&r.before.boats&&Object.values(r.before.boats).some(v=>v.exTime!=null)))return '';
+  let b0;try{b0=analyze({...r,before:null});}catch(_){return '';} if(!b0)return '';
+  const items=[];let big=false;
+  // 1着率の動き
+  const mv=a.boats.map(b=>{const o=b0.boats.find(x=>x.waku===b.waku);return {w:b.waku,d:b.pWin-(o?o.pWin:0),from:o?o.pWin:0,to:b.pWin};}).filter(x=>Math.abs(x.d)>=0.04).sort((x,y)=>Math.abs(y.d)-Math.abs(x.d));
+  mv.forEach(x=>{if(Math.abs(x.d)>=0.12)big=true;items.push(`<li>${bn(x.w)} 1着率 ${pct(x.from)} → <b class="${x.d>0?'up':'dn'}">${pct(x.to)}</b>（${x.d>0?'+':''}${(x.d*100).toFixed(0)}pt）</li>`);});
+  // 本命の入れ替わり
+  if(b0.top[0].waku!==a.top[0].waku){big=true;items.unshift(`<li><b>本命が交代</b>：${bn(b0.top[0].waku)} → ${bn(a.top[0].waku)}</li>`);}
+  // 進入の変化
+  const cv=a.boats.filter(b=>b.course!==b.waku);if(cv.length){big=true;items.push(`<li><b>進入が枠なりでない</b>：${cv.map(b=>`${bn(b.waku)}→${b.course}コース`).join(' ')}</li>`);}
+  // 本線の入れ替わり
+  const h0=new Set(b0.honsen.map(c=>c.k)),h1=new Set(a.honsen.map(c=>c.k));
+  const add=[...h1].filter(k=>!h0.has(k)),del=[...h0].filter(k=>!h1.has(k));
+  if(add.length||del.length){items.push(`<li>本線 ${add.length?`追加 ${add.map(k=>`<span class="cmb">${comboHtml(k)}</span>`).join('')}`:''}${del.length?` 外れた ${del.map(k=>`<span class="cmb">${comboHtml(k)}</span>`).join('')}`:''}</li>`);}
+  // 期待度・万舟期待
+  const e0=expectOf(b0.cover),e1=expectOf(a.cover);if(e0.st!==e1.st)items.push(`<li>当たる期待度 ${e0.st} → <b>${e1.st}</b></li>`);
+  const m0=manOf(b0.manP),m1=manOf(a.manP);if(m0.t!==m1.t){if(m1.cls==='hi')big=true;items.push(`<li>万舟期待 ${m0.t}（${pct(b0.manP)}）→ <b>${m1.t}（${pct(a.manP)}）</b></li>`);}
+  if(!items.length)return `<div class="panel change"><h3>展示で変わったこと</h3><p class="sub">展示前（出走表だけ）の予想から大きな変化はありません。</p></div>`;
+  return `<div class="panel change${big?' big':''}"><h3>${big?'⚠️ 展示で大きく変わりました':'展示で変わったこと'}</h3><p class="sub">展示前（出走表だけ）の予想と、展示・進入・オリジナル展示を入れた今の予想の違い。${big?'大きく変わったレースは荒れやすく、11/5〜7では本線の的中29%（ふだんは40%）でした。':''}</p><ul>${items.join('')}</ul></div>`;
+}
+
 // ---------------------------------------------------------------- 自分で予想: 足評価・オリジナル展示
 function ashiHtml(r,a){
   const f=v=>v==null?'-':(v>=0?'+':'')+v.toFixed(2), cls=v=>v>=0.5?'pos':v<=-0.5?'neg':'';
@@ -758,6 +784,7 @@ function renderYoso(){
       ${wx?`<span class="pill info">${esc(wx)}</span>`:''}
       ${res?`<span class="pill kata">結果 ${esc(res.order||res.note||'')} ${res.payout?yen(res.payout):''}</span>`:''}
     </div>
+    ${changeHtml(r,a)}
     <div class="picks">
       <div class="panel honsen"><h3><span class="mark">本線</span>確率の高い順</h3>
         <div class="expect ex-${expectOf(a.cover).cls}"><span class="lbl">当たる期待度</span><b class="stars">${expectOf(a.cover).st}</b><b>${expectOf(a.cover).t}</b><span class="num">${a.honsen.length}点で的中確率 ${pct(a.cover)}</span></div>
