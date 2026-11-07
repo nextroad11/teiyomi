@@ -207,6 +207,11 @@ for jcd_s, v in CFG['venues'].items():
     since = v.get('since', '00000000')
     d = d[d.day >= since].copy()  # 新モーター導入後のデータだけを使う
     d['grade'] = d.day.map(grades[jcd_s]).fillna('不明')
+    # 公式のグレード別日程（SG・PG1／G1・G2）で確定させる。載っていない日は G3以下（一般・G3）として扱う
+    for a, b, g, t in CFG.get('official_grade_periods', {}).get(jcd_s, []):
+        d.loc[d.day.between(a, b), 'grade'] = g
+    yrs = set(CFG.get('official_grade_years', []))
+    d.loc[(d.grade == '不明') & d.day.str[:4].isin(yrs), 'grade'] = 'G3以下'
     # 出走表が残っていない過去の日は、その日の出場選手のA1の割合でグレードを推定する
     # （SG・G1はほぼ全員A1、一般戦は1〜3割）。0.6以上→SG/G1扱いで除外、0.3〜0.6→一般扱いだが要確認
     a1 = d[d.grade == '不明'].groupby('day')['級別'].apply(lambda s: (s == 'A1').mean())
@@ -226,6 +231,8 @@ for jcd_s, v in CFG['venues'].items():
     lines += [f"## {v['name']}（採用式: {v['adopted']} {wstr(W0)}・補正: {'場専用（' + v.get('corr_note', '') + '）' if AC else '全場共通'}）", ""]
     if since > '0': lines.append(f"- 対象期間: {since[:4]}/{since[4:6]}/{since[6:]} 以降（{v.get('since_note', '新モーター導入後')}）")
     lines.append(f"- データ: 一般戦 {d.race.nunique()}R・{d['節'].nunique()}節（{d.day.min()}〜{d.day.max()}）。今回追加 {len(added)}R" + (f"（{', '.join(x[4:6]+'/'+x[6:] for x in newdays)}）" if newdays else "（新しい結果なし）"))
+    offx = sorted({f"{a[4:6]}/{a[6:]}〜{b[4:6]}/{b[6:]} {t}" for a, b, g, t in CFG.get('official_grade_periods', {}).get(jcd_s, []) if b >= since and a <= today})
+    if offx: lines.append(f"- 公式日程でSG・G1・G2として除外: {', '.join(offx)}")
     if inferred: lines.append(f"- 出走表が残っていない日 {len(inferred)}日はA1の割合でグレードを推定（SG/G1と推定して除外 {len(ex_inf)}日" + (f": {', '.join(ex_inf)}" if ex_inf else "") + "）")
     if unknown: lines.append(f"- ⚠ グレード不明の日（A1が3〜6割。一般戦として分析に含めています）: {', '.join(unknown)}")
     # 追加分の当たり具合
@@ -258,7 +265,7 @@ for jcd_s, v in CFG['venues'].items():
     lines.append("")
     lines.append("「全体最良」の節ごとの検証欄は、毎回その節を除いて式を選び直したときの成績（過学習を差し引いた実力）です。")
     # G3 抜き
-    g3 = d[~d.grade.astype(str).str.startswith('G3')]
+    g3 = d[d.grade.astype(str) != 'G3']
     if g3.race.nunique() < d.race.nunique():
         s1 = stats(g3, W0); s2 = stats(g3, FORMS['戸田新'])
         lines.append(f"- G3を除くと（{g3.race.nunique()}R）: 採用式 sep {pct(s1['sep'])}・1位艇3連対 {pct(s1['top1_3'])}% ／ 戸田新 sep {pct(s2['sep'])}")
