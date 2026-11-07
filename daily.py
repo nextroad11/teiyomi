@@ -14,6 +14,7 @@ from search_g import ranks, stats, grid, score
 
 DATA = sys.argv[1]
 UPDATE = '--no-update' not in sys.argv
+ONLY = sys.argv[sys.argv.index('--only') + 1].split(',') if '--only' in sys.argv else None  # 例: --only 15
 CFG = json.load(open(os.path.join(HERE, 'config.json')))
 KEYS = ['一周', 'まわり足', '直線', '展示']
 FORMS = {k: dict(zip(KEYS, v)) for k, v in CFG['forms'].items()}
@@ -184,10 +185,11 @@ def wstr(w): return '/'.join(f"{w[k]:.2g}" for k in KEYS)
 def pct(x): return f"{x*100:.1f}"
 
 GR = list(grid())
-lines = [f"# 足スコア日次レポート（8場） {today[:4]}/{today[4:6]}/{today[6:]}", "",
+lines = [f"# 足スコア日次レポート（9場） {today[:4]}/{today[4:6]}/{today[6:]}", "",
          "式の重みは 一周/まわり足/直線/展示。sep＝同じ進入コース内で足スコア上位3艇と下位3艇の3連対率の差（ポイント）。SG・G1・G2は除外、G3は含む。", ""]
 summary = []
 for jcd_s, v in CFG['venues'].items():
+    if ONLY and jcd_s not in ONLY: continue
     jcd = int(jcd_s); path = os.path.join(HERE, v['file'])
     have = {l.split('|')[0] for l in open(path) if l.strip()}
     added = []
