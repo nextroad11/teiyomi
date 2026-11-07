@@ -185,7 +185,7 @@ def wstr(w): return '/'.join(f"{w[k]:.2g}" for k in KEYS)
 def pct(x): return f"{x*100:.1f}"
 
 GR = list(grid())
-lines = [f"# 足スコア日次レポート（17場） {today[:4]}/{today[4:6]}/{today[6:]}", "",
+lines = [f"# 足スコア日次レポート（18場） {today[:4]}/{today[4:6]}/{today[6:]}", "",
          "式の重みは 一周/まわり足/直線/展示。sep＝同じ進入コース内で足スコア上位3艇と下位3艇の3連対率の差（ポイント）。SG・G1・G2は除外、G3は含む。", ""]
 summary = []
 for jcd_s, v in CFG['venues'].items():
@@ -227,6 +227,10 @@ for jcd_s, v in CFG['venues'].items():
     d = d[~d.grade.isin(ex)].copy()
     AC = {k: {int(w): x for w, x in c.items()} for k, c in v['corr'].items()} if v.get('corr') else None
     if AC: d = rez(d, AC)  # 採用中の場専用補正でz値を計算し直す
+    # holdout_from がある場は、その日より前（旧モーター）で式・補正を作り、それ以降（新モーター）は照合だけに使う
+    HO = v.get('holdout_from'); dall = d; dnew = None
+    if HO:
+        dnew = d[d.day >= HO].copy(); d = d[d.day < HO].copy()
     lab = series_of(d.day.unique()); d['節'] = d.day.map(lab)
     W0 = FORMS[v['adopted']]
     newdays = sorted({l[:8] for l in added})
@@ -239,7 +243,7 @@ for jcd_s, v in CFG['venues'].items():
     if unknown: lines.append(f"- ⚠ グレード不明の日（A1が3〜6割。一般戦として分析に含めています）: {', '.join(unknown)}")
     # 追加分の当たり具合
     if added:
-        nd = d[d.race.isin({l.split('|')[0] for l in added})]
+        nd = dall[dall.race.isin({l.split('|')[0] for l in added})]
         if len(nd):
             x = nd.assign(rk=ranks(nd, W0)); x = x[x.fin.notna() & (x.rk == 1)]
             lines.append(f"- 追加分で採用式の1位艇: 3連対 {int((x.fin<=3).sum())}/{len(x)}、1着 {int((x.fin==1).sum())}/{len(x)}")
@@ -285,8 +289,26 @@ for jcd_s, v in CFG['venues'].items():
     lines.append(f"- **判定: {tag}**" + ("（区間が0をまたがず、検証でも1.5ポイント以上上回った）" if tag != '現行維持' else ""))
     CL, tagc, bfc = corr_section(d, W0, v['adopted'], jcd_s, AC)
     lines += CL
+    hos = ''
+    if dnew is not None:
+        nn = dnew.race.nunique()
+        lines += ["", f"### 新モーターでの照合（{HO[:4]}/{HO[4:6]}/{HO[6:]}〜・一般戦 {nn}R）", "",
+                  "上の式と補正は旧モーターのデータだけで作ったものです。それを新モーターのレースにそのまま当てた成績です（新モーターのデータは式選びにも補正にも使っていません）。", ""]
+        if nn >= 12:
+            lines += ["| 式 | sep | 1位艇3連対 | 1位艇1着 |", "|---|---|---|---|"]
+            for fn, fw in FORMS.items():
+                s = stats(dnew, fw)
+                lines.append(f"| {'**' + fn + '（採用）**' if fn == v['adopted'] else fn} | {pct(s['sep'])} | {pct(s['top1_3'])}% | {pct(s['top1_1'])}% |")
+            s0 = stats(dnew, W0); hos = f"、新モーター照合 {nn}R sep {pct(s0['sep'])}"
+            if nn >= 100:
+                ne = est_corr(dnew); cur = AC or CUR_CORR
+                lines.append("")
+                lines.append("- 新モーターのデータで推定した一周の補正（採用中→新モーターで推定）: " + '、'.join(f"{w}号艇 {cur['一周'][w]:+.2f}→{ne['一周'][w]:+.2f}" for w in range(1, 7)))
+            lines.append(f"- 新モーターの一般戦が1,000Rを超えたら、新モーターだけで作り直す目安（いま {nn}R。300R未満は sep が±7程度ぶれる）")
+        else:
+            lines.append("- まだレースが少ないため省略")
     lines.append("")
-    summary.append(f"{v['name']}: 追加{len(added)}R／計{d.race.nunique()}R、採用式 sep {pct(stats(d, W0)['sep'])}、{tag}、補正調整 {tagc}（最良 場専用補正×{bfc}）")
+    summary.append(f"{v['name']}: 追加{len(added)}R／計{d.race.nunique()}R、採用式 sep {pct(stats(d, W0)['sep'])}、{tag}、補正調整 {tagc}（最良 場専用補正×{bfc}）{hos}")
 json.dump(grades, open(GR_PATH, 'w'), indent=0, sort_keys=True)
 lines = lines[:1] + ["", "**要約** " + ' ／ '.join(summary)] + lines[1:]
 rep = '\n'.join(lines)
