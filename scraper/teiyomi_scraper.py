@@ -345,6 +345,11 @@ def update_before_and_results(day: dict, now: dt.datetime) -> int:
                 save_debug("beforeinfo", html)
                 p = parse_beforeinfo(html)
                 if p and any(v.get("exTime") for v in p["boats"].values()):
+                    # 欠場が1艇いると展示は5艇分しか出ない。締切12分前を過ぎて5艇そろっていれば完了とみなす
+                    nex = sum(1 for v in p["boats"].values() if v.get("exTime") is not None)
+                    if not p["complete"] and nex == 5 and now >= dl - dt.timedelta(minutes=12):
+                        p["complete"] = True
+                        p["absent"] = True
                     p["fetchedAt"] = now.isoformat(timespec="seconds")
                     r["before"] = p
                     n += 1
