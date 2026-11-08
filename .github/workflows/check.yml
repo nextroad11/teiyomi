@@ -1,0 +1,40 @@
+name: 中身の確認
+# 鍵のかかったデータに、アプリが使う項目が入っているかを確かめる（合言葉や中身そのものは書き出さない）
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/check.yml"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with: { ref: data, path: data }
+      - run: pip install cryptography
+      - env:
+          APP_PASS: ${{ secrets.APP_PASS }}
+        run: |
+          python scraper/crypt.py decrypt data/enc/stats.json /tmp/stats.json
+          python scraper/crypt.py decrypt data/enc/model.json /tmp/model.json
+          python - <<'PY' > data/debug/check.txt
+          import json
+          s=json.load(open('/tmp/stats.json'));m=json.load(open('/tmp/model.json'))
+          p=s.get('p',{});n=len(p)
+          print('更新',s.get('updated'),'選手',n)
+          for k in ['cw','rf','st','stc','kmy','cy','kon']:
+              print(k, sum(1 for v in p.values() if v.get(k)))
+          print('cbase', bool(s.get('cbase')), 'km', bool(s.get('km')), 'stv', bool(s.get('stv')))
+          print('model', m.get('trainedAt'), sorted(m.get('weights',{}).keys()))
+          PY
+          cat data/debug/check.txt
+      - working-directory: data
+        run: |
+          git config user.name "teiyomi-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add debug/check.txt && git commit -q -m "中身の確認" && for i in 1 2 3; do git push -q && exit 0; git pull -q --rebase; done
+# run: 1
