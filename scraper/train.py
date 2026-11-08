@@ -297,6 +297,32 @@ def subset(D, m):
     return {k: (v[m] if isinstance(v, np.ndarray) else [v[i] for i in np.where(m)[0]]) for k, v in D.items()}
 
 
+def kimarite_year(races):
+    """選手ごとの直近1年の決まり手。[2〜6コースの出走, 差し, まくり, まくり差し, 1コースの出走, 逃げ]（1着になったときの決まり手）"""
+    last = max(r["date"] for r in races)
+    since = (dt.datetime.strptime(last, "%Y%m%d") - dt.timedelta(days=365)).strftime("%Y%m%d")
+    out = defaultdict(lambda: [0, 0, 0, 0, 0, 0])
+    idx = {"差し": 1, "まくり": 2, "まくり差し": 3}
+    for r in races:
+        if r["date"] < since:
+            continue
+        km = r.get("kimarite")
+        for b in r["boats"]:
+            c = b.get("course")
+            if c not in range(1, 7) or b.get("code") in ("欠", "K0", "K1"):
+                continue
+            o = out[b["toban"]]
+            if c == 1:
+                o[4] += 1
+                if b.get("finish") == 1 and km == "逃げ":
+                    o[5] += 1
+            else:
+                o[0] += 1
+                if b.get("finish") == 1 and km in idx:
+                    o[idx[km]] += 1
+    return out
+
+
 def kimarite_stats(races):
     """1着艇のコース別に決まり手を数える（全国と場ごと）。展開予想に使う"""
     allc = defaultdict(lambda: defaultdict(int)); ven = defaultdict(lambda: defaultdict(lambda: defaultdict(int)))
@@ -410,9 +436,11 @@ def main():
     if best_rule.get("maxOdds", 0) >= 1e9:
         best_rule["maxOdds"] = 99999
     # アプリが同じ特徴量を計算できるよう、選手のコース別成績・直近着順とモーターの直近着順を書き出す
+    kmy = kimarite_year(races)
     stats = {"updated": model["trainedAt"],
              "p": {str(t): {"cw": v, "rf": STATE["recent"].get(t, []), "st": [round(x, 2) for x in STATE["st"].get(t, [])[-20:]],
-                              "stc": [[round(x, 2) for x in l] for l in STATE["stc"][t]] if t in STATE["stc"] else None}
+                              "stc": [[round(x, 2) for x in l] for l in STATE["stc"][t]] if t in STATE["stc"] else None,
+                              "kmy": kmy.get(t)}
                    for t, v in STATE["cw"].items()},
              "km": kimarite_stats(races),
              "stv": {k: round(float(np.mean(v)), 4) for k, v in STATE["stv"].items() if len(v) >= 50},

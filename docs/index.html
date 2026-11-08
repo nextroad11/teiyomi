@@ -119,6 +119,10 @@ main.wrap{padding-block:16px 48px;display:grid;gap:18px}
 .pill.exp-mid,.pill.exp-lo{background:var(--bg);color:var(--muted)}
 .pill.man-hi{color:var(--ana)}
 .arep .mark{background:var(--ana);color:#fff}
+.km-cell{min-width:160px}
+td.who{min-width:6.5em}td.who b{white-space:nowrap}td.who span{white-space:nowrap}.km{display:flex;flex-wrap:wrap;gap:2px 8px;font-size:12px;font-variant-numeric:tabular-nums}
+.km span small{margin-left:2px;font-size:10px;color:var(--muted)}.km .km-hi{color:var(--good);font-weight:700}.km .km-hi small{color:var(--good)}
+.km .km-lo{color:var(--muted)}.km-n,.km-na{display:block;font-size:10px;color:var(--muted)}
 .change ul{margin:4px 0 0;padding-left:18px;display:grid;gap:6px;font-size:13px}.change b.up{color:var(--good)}.change b.dn{color:var(--ana)}
 .change .cmb{display:inline-flex;margin:2px 8px 2px 0;vertical-align:middle}
 .change.big{border-color:var(--ana);background:color-mix(in srgb,var(--ana) 8%,var(--surface))}
@@ -662,6 +666,15 @@ function tenkaiHtml(r,a){
     <div class="tablebox"><table class="card"><thead><tr><th>コース</th><th>艇</th><th>コース別ST</th><th>ばらつき</th><th>展示ST</th><th>予測ST</th></tr></thead><tbody>
     ${sl.map(x=>`<tr><td>${x.course}</td><td>${bn(x.waku)}</td><td class="n">${x.avgST.toFixed(2).slice(1)}</td><td class="n">${x.sd!=null?x.sd.toFixed(3).slice(1):'-'}</td><td class="n">${x.exST==null?'-':x.exST<0?'F'+Math.abs(x.exST).toFixed(2).slice(1):x.exST.toFixed(2).slice(1)}</td><td class="n"><b>${x.pred.toFixed(2).slice(1)}</b></td></tr>`).join('')}</tbody></table></div></div>`;}
 
+// 選手の直近1年の決まり手（1着になったときの決まり手を、出走数あたりで）。全国平均の1.5倍以上は緑、半分以下は灰
+const KM_AVG={'差し':0.0245,'まくり':0.0316,'まくり差し':0.0241,'逃げ':0.529};
+function kmCell(b){
+  const k=STATS&&STATS.p[String(b.toban)]?.kmy; if(!k)return '<span class="km-na">データなし</span>';
+  const [nO,sa,ma,mz,n1,ni]=k, f=(c,n,avg,lbl)=>{if(!n)return '';const r=c/n,cl=r>=avg*1.5?'km-hi':r<=avg*0.5?'km-lo':'';return `<span class="${cl}">${lbl}${c}<small>${(r*100).toFixed(1)}%</small></span>`;};
+  const out=[f(sa,nO,KM_AVG['差し'],'差'),f(ma,nO,KM_AVG['まくり'],'捲'),f(mz,nO,KM_AVG['まくり差し'],'捲差')].join('');
+  const nige=n1?f(ni,n1,KM_AVG['逃げ'],'逃'):'';
+  return `<div class="km">${b.course===1&&nige?nige:''}${out}</div><small class="km-n">外${nO}走${n1?`・1コース${n1}走`:''}</small>`;}
+
 // ---------------------------------------------------------------- 荒れ狙いフォーメーション（50倍以上の決着を12点以内で押さえる）
 // 11/5〜7の411R（公式オッズあり）で確認: 万舟期待「高い」レースで的中19.6%・回収123%（51R・10本的中なので参考）。
 // それより自信の低いレースでは回収54%、全レースで買うと56%なので、万舟期待「高い」レースだけ出す
@@ -867,7 +880,7 @@ function renderSelf(){
     <div>
       <p class="card-title">出走表とAI評価</p>
       <div class="tablebox"><table class="card">
-        <thead><tr><th>枠</th><th>選手</th><th>全国勝率</th><th>当地勝率</th><th>モーター2連</th><th>平均ST</th><th>展示</th><th>舟足</th><th>AI 1着率</th><th>ポイント</th></tr></thead>
+        <thead><tr><th>枠</th><th>選手</th><th>全国勝率</th><th>当地勝率</th><th>モーター2連</th><th>平均ST</th><th>展示</th><th>舟足</th><th>決まり手（直近1年）</th><th>AI 1着率</th><th>ポイント</th></tr></thead>
         <tbody>${a.boats.map(b=>{const auto=r.before&&r.before.boats&&r.before.boats[b.waku]&&r.before.boats[b.waku].exTime!=null&&!(exMan[r.id]&&exMan[r.id][b.waku]!=null);
           return `<tr>
           <td>${bn(b.waku,1)}</td>
@@ -878,9 +891,10 @@ function renderSelf(){
           <td class="n">${num(b.st)?.toFixed(2)??'-'}</td>
           <td><input id="ex-${b.waku}" class="${auto?'auto':''}" inputmode="decimal" aria-label="${b.waku}号艇の展示タイム" placeholder="6.80" value="${b.exTime??''}"></td>
           <td class="foot-cell"><b class="fg fg-${b.footGrade==='◎'||b.footGrade==='○'?'up':b.footGrade==='×'||b.footGrade==='▲'?'dn':'mid'}">${b.footGrade}</b>${b.ashi?`<span>足${b.ashi.rank}位</span>`:''}</td>
+          <td class="km-cell">${kmCell(b)}</td>
           <td><div class="winbar"><span class="track"><span style="width:${b.pWin/maxWin*100}%"></span></span><b>${pct(b.pWin)}</b></div></td>
           <td><div class="tags">${b.tags.map(t=>`<span class="tag ${t[0]}">${esc(t[1])}</span>`).join('')}</div></td></tr>`}).join('')}</tbody></table></div>
-      <p class="hint">${r.before&&r.before.complete?'展示タイム・進入は自動で取得済み（青枠）。':'展示タイムは締切の約20分前から自動で入ります。'}手で入れ直すと、その場で計算し直します。${a.ashi?`舟足は足スコア（${a.ashi.kind==='場別'?'この場で検証した重み'+(a.ashi.sep!=null?'・判別力sep '+a.ashi.sep:''):'未検証の場なので既定の戸田新式'}）の順位：1位◎ 2位○ 3・4位△ 5位▲ 6位×。`:'舟足は展示タイム・オリジナル展示（一周・まわり足・直線）・モーターから（◎○△▲×）。'}くわしくは下の「足評価」「オリジナル展示」。</p>
+      <p class="hint">${r.before&&r.before.complete?'展示タイム・進入は自動で取得済み（青枠）。':'展示タイムは締切の約20分前から自動で入ります。'}手で入れ直すと、その場で計算し直します。${a.ashi?`舟足は足スコア（${a.ashi.kind==='場別'?'この場で検証した重み'+(a.ashi.sep!=null?'・判別力sep '+a.ashi.sep:''):'未検証の場なので既定の戸田新式'}）の順位：1位◎ 2位○ 3・4位△ 5位▲ 6位×。`:'舟足は展示タイム・オリジナル展示（一周・まわり足・直線）・モーターから（◎○△▲×）。'}くわしくは下の「足評価」「オリジナル展示」。決まり手は直近1年で1着になったときの回数と出走あたりの割合（差＝差し・捲＝まくり・捲差＝まくり差しは2〜6コースの出走あたり、逃＝逃げは1コースの出走あたり。1コースの艇だけ逃げも表示）。全国平均の1.5倍以上は緑、半分以下は灰色。</p>
     </div>
     ${ashiHtml(r,a)}
     ${oriHtml(r,a)}
