@@ -323,6 +323,52 @@ def kimarite_year(races):
     return out
 
 
+def course_year(races):
+    """選手×コースの直近1年。[出走, 1着, 2連対, 3連対, ST合計, ST数, ST順合計, 差し, まくり, まくり差し, 逃げ]
+    ＋全体のコース別平均（cbase）と、今節（同じ場で続けて走っている日）のSTとST順"""
+    last = max(r["date"] for r in races)
+    since = (dt.datetime.strptime(last, "%Y%m%d") - dt.timedelta(days=365)).strftime("%Y%m%d")
+    out = defaultdict(lambda: [[0] * 11 for _ in range(6)])
+    base = [[0] * 7 for _ in range(6)]  # 出走, 1着, 2連, 3連, ST合計, ST数, ST順合計
+    kon = {}  # toban -> {"jcd", "dates":set, "st":[], "rk":[]}（新しい日から見て同じ場が続く間）
+    kidx = {"差し": 7, "まくり": 8, "まくり差し": 9, "逃げ": 10}
+    for r in races:
+        if r["date"] < since:
+            continue
+        km = r.get("kimarite")
+        sts = sorted(b["st"] for b in r["boats"] if b.get("st") is not None and 0 <= b["st"] <= 0.6 and not b.get("flying"))
+        for b in r["boats"]:
+            c = b.get("course")
+            if c not in range(1, 7) or b.get("code") in ("欠", "K0", "K1"):
+                continue
+            o, g = out[b["toban"]][c - 1], base[c - 1]
+            f = b.get("finish")
+            for a in (o, g):
+                a[0] += 1
+                if f == 1: a[1] += 1
+                if f and f <= 2: a[2] += 1
+                if f and f <= 3: a[3] += 1
+            st = b.get("st")
+            if st is not None and 0 <= st <= 0.6 and not b.get("flying"):
+                rk = 1 + sum(1 for x in sts if x < st)
+                for a in (o, g):
+                    a[4] += st; a[5] += 1; a[6] += rk
+                # 今節
+                k = kon.get(b["toban"])
+                if k is None or k["jcd"] != r["jcd"] or (dt.datetime.strptime(r["date"], "%Y%m%d") - dt.datetime.strptime(max(k["dates"]), "%Y%m%d")).days > 2:
+                    k = kon[b["toban"]] = {"jcd": r["jcd"], "dates": set(), "st": [], "rk": []}
+                k["dates"].add(r["date"]); k["st"].append(st); k["rk"].append(rk)
+            if f == 1 and km in kidx:
+                o[kidx[km]] += 1
+    cbase = [{"n": g[0], "win": g[1] / max(g[0], 1), "top2": g[2] / max(g[0], 1), "top3": g[3] / max(g[0], 1),
+              "st": g[4] / max(g[5], 1), "rk": g[6] / max(g[5], 1)} for g in base]
+    pl = {t: [[round(x, 2) if isinstance(x, float) else x for x in row] for row in v] for t, v in out.items()}
+    kn = {t: {"jcd": k["jcd"], "last": max(k["dates"]), "days": len(k["dates"]),
+              "st": round(sum(k["st"]) / len(k["st"]), 3), "rk": round(sum(k["rk"]) / len(k["rk"]), 2), "n": len(k["st"])}
+          for t, k in kon.items()}
+    return pl, cbase, kn
+
+
 def kimarite_stats(races):
     """1着艇のコース別に決まり手を数える（全国と場ごと）。展開予想に使う"""
     allc = defaultdict(lambda: defaultdict(int)); ven = defaultdict(lambda: defaultdict(lambda: defaultdict(int)))
@@ -437,12 +483,14 @@ def main():
         best_rule["maxOdds"] = 99999
     # アプリが同じ特徴量を計算できるよう、選手のコース別成績・直近着順とモーターの直近着順を書き出す
     kmy = kimarite_year(races)
+    cy, cbase, kon = course_year(races)
     stats = {"updated": model["trainedAt"],
              "p": {str(t): {"cw": v, "rf": STATE["recent"].get(t, []), "st": [round(x, 2) for x in STATE["st"].get(t, [])[-20:]],
                               "stc": [[round(x, 2) for x in l] for l in STATE["stc"][t]] if t in STATE["stc"] else None,
-                              "kmy": kmy.get(t)}
+                              "kmy": kmy.get(t), "cy": cy.get(t), "kon": kon.get(t)}
                    for t, v in STATE["cw"].items()},
              "km": kimarite_stats(races),
+             "cbase": cbase,
              "stv": {k: round(float(np.mean(v)), 4) for k, v in STATE["stv"].items() if len(v) >= 50},
              "m": {k: v for k, v in STATE["motorf"].items()}}
     (root / "stats.json").write_text(json.dumps(stats, separators=(",", ":")), encoding="utf-8")

@@ -123,6 +123,11 @@ main.wrap{padding-block:16px 48px;display:grid;gap:18px}
 td.who{min-width:6.5em}td.who b{white-space:nowrap}td.who span{white-space:nowrap}.km{display:flex;flex-wrap:wrap;gap:2px 8px;font-size:12px;font-variant-numeric:tabular-nums}
 .km span small{margin-left:2px;font-size:10px;color:var(--muted)}.km .km-hi{color:var(--good);font-weight:700}.km .km-hi small{color:var(--good)}
 .km .km-lo{color:var(--muted)}.km-n,.km-na{display:block;font-size:10px;color:var(--muted)}
+.cdata td small{display:block;font-size:10px;color:var(--muted)}
+.cdata .cd-hi,.cdata td.cd-hi{color:var(--good);font-weight:700}.cdata td.cd-hi{background:color-mix(in srgb,var(--good) 12%,transparent)}
+.cdata .cd-lo,.cdata td.cd-lo{color:var(--muted)}.cdata .cd-few{color:var(--muted);font-style:italic}.cdata .cd-na{color:var(--muted);font-size:12px}
+.cdata .cd-km{white-space:nowrap;font-size:12px}.cdata .cd-km span{margin-right:6px}.cdata .cd-strong{color:var(--ana);font-weight:700}
+.cdata .cd-base{font-size:11px;color:var(--muted);text-align:left}
 .change ul{margin:4px 0 0;padding-left:18px;display:grid;gap:6px;font-size:13px}.change b.up{color:var(--good)}.change b.dn{color:var(--ana)}
 .change .cmb{display:inline-flex;margin:2px 8px 2px 0;vertical-align:middle}
 .change.big{border-color:var(--ana);background:color-mix(in srgb,var(--ana) 8%,var(--surface))}
@@ -728,6 +733,26 @@ function changeHtml(r,a){
   return `<div class="panel change${big?' big':''}"><h3>${big?'⚠️ 展示で大きく変わりました':'展示で変わったこと'}</h3><p class="sub">展示前（出走表だけ）の予想と、展示・進入・オリジナル展示を入れた今の予想の違い。${big?'大きく変わったレースは荒れやすく、11/5〜7では本線の的中29%（ふだんは40%）でした。':''}</p><ul>${items.join('')}</ul></div>`;
 }
 
+// ---------------------------------------------------------------- コース別データ（直近1年）: 今日入るコースに絞った成績
+function courseHtml(r,a){
+  if(!STATS||!STATS.cbase)return '';
+  const rd=r.date||String(r.id||'').slice(0,8), dd=(x,y)=>Math.abs((new Date(x.slice(0,4)+'-'+x.slice(4,6)+'-'+x.slice(6))-new Date(y.slice(0,4)+'-'+y.slice(4,6)+'-'+y.slice(6)))/864e5);
+  const pc=v=>(v*100).toFixed(1)+'%';
+  const rate=(x,n,base)=>{if(!n)return '<td class="n cd-na">-</td>';const v=x/n,cl=n<5?'cd-few':v>=base*1.3&&v>=base+0.03?'cd-hi':v<=base*0.6?'cd-lo':'';return `<td class="n ${cl}">${pc(v)}</td>`;};
+  const rows=a.boats.slice().sort((x,y)=>x.course-y.course).map(b=>{
+    const e=STATS.p[String(b.toban)]||{},cy=(e.cy||[])[b.course-1],B=STATS.cbase[b.course-1];
+    const k=e.kon,konOk=k&&k.jcd===r.jcd&&rd&&dd(k.last,rd)<=2;
+    const kon=konOk?`<td class="n ${k.rk<=B.rk-0.6?'cd-hi':k.rk>=B.rk+0.6?'cd-lo':''}">${k.st.toFixed(2).slice(1)}<small>${k.rk.toFixed(1)}番・${k.days}日</small></td>`:'<td class="n cd-na">-</td>';
+    if(!cy||!cy[0])return `<tr><td class="n">${b.course}</td><td>${bn(b.waku)}</td><td class="who"><b>${esc(b.name)}</b></td><td class="n cd-na" colspan="6">このコースの出走なし（直近1年）</td>${kon}</tr>`;
+    const [n,w,t2,t3,stS,stN,rkS,sa,ma,mz,ni]=cy, st=stN?stS/stN:null, rk=stN?rkS/stN:null;
+    const stc=st==null?'':(st<=B.st-0.015?'cd-hi':st>=B.st+0.015?'cd-lo':''), rkc=rk==null?'':(rk<=B.rk-0.6?'cd-hi':rk>=B.rk+0.6?'cd-lo':'');
+    const km=b.course===1?`<span class="${ni/n>=0.6?'cd-hi':''}">逃げ${ni}</span>`:`<span class="${sa>=2&&sa>=ma&&sa>=mz?'cd-strong':''}">差${sa}</span><span class="${ma>=2&&ma>=sa&&ma>=mz?'cd-strong':''}">捲${ma}</span><span class="${mz>=2&&mz>=sa&&mz>=ma?'cd-strong':''}">捲差${mz}</span>`;
+    return `<tr><td class="n"><b>${b.course}</b></td><td>${bn(b.waku)}</td><td class="who"><b>${esc(b.name)}</b></td><td class="n">${n}</td>${rate(w,n,B.win)}${rate(t2,n,B.top2)}${rate(t3,n,B.top3)}<td class="n ${stc}">${st!=null?st.toFixed(2).slice(1):'-'}<small class="${rkc}">${rk!=null?rk.toFixed(1)+'番':''}</small></td><td class="cd-km">${km}</td>${kon}</tr>`;}).join('');
+  return `<div class="panel cdata"><h3>コース別データ（直近1年）</h3>
+    <p class="sub">今日入るコース${r.before&&r.before.complete?'（展示の進入）':'（枠なりの想定）'}での、その選手の直近1年の成績。<span class="cd-hi">緑</span>は全国のそのコースの平均よりはっきり良い、<span class="cd-lo">灰色</span>は悪い。STの「番」は6艇中で何番目に早いか（平均）。決まり手はそのコースで1着になったときの回数。今節は同じ場で続けて走っている日（昨日まで）の平均STと順番。</p>
+    <div class="tablebox"><table class="card"><thead><tr><th>コース</th><th>艇</th><th>選手</th><th>走</th><th>1着率</th><th>2連率</th><th>3連率</th><th>平均ST</th><th>決まり手</th><th>今節ST</th></tr></thead><tbody>${rows}</tbody>
+    <tfoot><tr><td colspan="10" class="cd-base">全国平均（1〜6コース）1着率 ${STATS.cbase.map(B=>pc(B.win)).join('・')}</td></tr></tfoot></table></div></div>`;}
+
 // ---------------------------------------------------------------- 自分で予想: 足評価・オリジナル展示
 function ashiHtml(r,a){
   const f=v=>v==null?'-':(v>=0?'+':'')+v.toFixed(2), cls=v=>v>=0.5?'pos':v<=-0.5?'neg':'';
@@ -880,7 +905,7 @@ function renderSelf(){
     <div>
       <p class="card-title">出走表とAI評価</p>
       <div class="tablebox"><table class="card">
-        <thead><tr><th>枠</th><th>選手</th><th>全国勝率</th><th>当地勝率</th><th>モーター2連</th><th>平均ST</th><th>展示</th><th>舟足</th><th>決まり手（直近1年）</th><th>AI 1着率</th><th>ポイント</th></tr></thead>
+        <thead><tr><th>枠</th><th>選手</th><th>全国勝率</th><th>当地勝率</th><th>モーター2連</th><th>平均ST</th><th>展示</th><th>舟足</th><th>AI 1着率</th><th>ポイント</th></tr></thead>
         <tbody>${a.boats.map(b=>{const auto=r.before&&r.before.boats&&r.before.boats[b.waku]&&r.before.boats[b.waku].exTime!=null&&!(exMan[r.id]&&exMan[r.id][b.waku]!=null);
           return `<tr>
           <td>${bn(b.waku,1)}</td>
@@ -891,11 +916,11 @@ function renderSelf(){
           <td class="n">${num(b.st)?.toFixed(2)??'-'}</td>
           <td><input id="ex-${b.waku}" class="${auto?'auto':''}" inputmode="decimal" aria-label="${b.waku}号艇の展示タイム" placeholder="6.80" value="${b.exTime??''}"></td>
           <td class="foot-cell"><b class="fg fg-${b.footGrade==='◎'||b.footGrade==='○'?'up':b.footGrade==='×'||b.footGrade==='▲'?'dn':'mid'}">${b.footGrade}</b>${b.ashi?`<span>足${b.ashi.rank}位</span>`:''}</td>
-          <td class="km-cell">${kmCell(b)}</td>
           <td><div class="winbar"><span class="track"><span style="width:${b.pWin/maxWin*100}%"></span></span><b>${pct(b.pWin)}</b></div></td>
           <td><div class="tags">${b.tags.map(t=>`<span class="tag ${t[0]}">${esc(t[1])}</span>`).join('')}</div></td></tr>`}).join('')}</tbody></table></div>
-      <p class="hint">${r.before&&r.before.complete?'展示タイム・進入は自動で取得済み（青枠）。':'展示タイムは締切の約20分前から自動で入ります。'}手で入れ直すと、その場で計算し直します。${a.ashi?`舟足は足スコア（${a.ashi.kind==='場別'?'この場で検証した重み'+(a.ashi.sep!=null?'・判別力sep '+a.ashi.sep:''):'未検証の場なので既定の戸田新式'}）の順位：1位◎ 2位○ 3・4位△ 5位▲ 6位×。`:'舟足は展示タイム・オリジナル展示（一周・まわり足・直線）・モーターから（◎○△▲×）。'}くわしくは下の「足評価」「オリジナル展示」。決まり手は直近1年で1着になったときの回数と出走あたりの割合（差＝差し・捲＝まくり・捲差＝まくり差しは2〜6コースの出走あたり、逃＝逃げは1コースの出走あたり。1コースの艇だけ逃げも表示）。全国平均の1.5倍以上は緑、半分以下は灰色。</p>
+      <p class="hint">${r.before&&r.before.complete?'展示タイム・進入は自動で取得済み（青枠）。':'展示タイムは締切の約20分前から自動で入ります。'}手で入れ直すと、その場で計算し直します。${a.ashi?`舟足は足スコア（${a.ashi.kind==='場別'?'この場で検証した重み'+(a.ashi.sep!=null?'・判別力sep '+a.ashi.sep:''):'未検証の場なので既定の戸田新式'}）の順位：1位◎ 2位○ 3・4位△ 5位▲ 6位×。`:'舟足は展示タイム・オリジナル展示（一周・まわり足・直線）・モーターから（◎○△▲×）。'}くわしくは下の「足評価」「オリジナル展示」。コース別の成績・ST・決まり手は下の「コース別データ」。</p>
     </div>
+    ${courseHtml(r,a)}
     ${ashiHtml(r,a)}
     ${oriHtml(r,a)}
     ${tenkaiHtml(r,a)}
