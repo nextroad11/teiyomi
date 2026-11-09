@@ -473,7 +473,7 @@ function analyze(race,exOverride){
   boats.forEach(b=>{const o=OF[b.waku],ww=MODEL.weights;b.foot=(b.parts.ex||0)+(b.parts.motor||0)+(b.parts.mform||0)
     +(ww.olap!=null?b.parts.olap:0.15*o[0])+(ww.oturn!=null?b.parts.oturn:0.15*o[1])+(ww.ostr!=null?b.parts.ostr:0.15*o[2]);});
   const AS=ashiFor(race,exT,B);
-  if(AS){const GR=['◎','○','△','△','▲','×'];boats.forEach(b=>{const a=AS.find(x=>x.waku===b.waku);b.ashi=a||null;b.footGrade=a?GR[a.rank-1]:'-';});}
+  if(AS){const GR=['◎','○','△','△','△','×']; /* 11/6〜9の538Rで5位は3・4位と同じ成績だったので△に */boats.forEach(b=>{const a=AS.find(x=>x.waku===b.waku);b.ashi=a||null;b.footGrade=a?GR[a.rank-1]:'-';});}
   else{const fm=avg(boats.map(b=>b.foot)),ord=boats.slice().sort((x,y)=>y.foot-x.foot);
     boats.forEach(b=>{const r=ord.indexOf(b),d=b.foot-fm;b.footGrade=d>=0.35&&r===0?'◎':d>=0.15&&r<=1?'○':d<=-0.3?'×':d<=-0.12?'▲':'△';});}
   const W=sum(boats.map(b=>b.winW));
@@ -628,7 +628,8 @@ function slitOf(r,a){
     const V=STATS&&STATS.stv,allm=V?avg(Object.values(V)):null,vm=V&&V[`${r.jcd}-${b.course}`];
     const adj=base+((vm!=null&&allm!=null)?vm-allm:0), hc=(STATS&&STATS.p[String(b.toban)]?.stc||[])[b.course-1]||[];
     const avgST=(sum(hc)+adj*5)/(hc.length+5);
-    const ex=q.exST!=null?Math.max(0,q.exST):null, pred=ex!=null?0.55*avgST+0.45*ex:avgST;
+    // 展示STは本番のSTとほぼ関係がない（11/6〜8の2,395艇で、混ぜるほど誤差が増えた）ので予測には使わず、参考表示だけ
+    const pred=avgST;
     return {waku:b.waku,course:b.course,name:b.name,avgST,sd,exST:q.exST,pred};}).sort((x,y)=>x.course-y.course);
   rows.forEach((x,i)=>{const inn=rows[i-1],out=rows[i+1];
     x.lead=inn?inn.pred-x.pred:0; // 内より早い分（＋ならのぞく）
@@ -638,8 +639,9 @@ function tenkaiOf(r,a){
   const sl=slitOf(r,a),byW=Object.fromEntries(sl.map(x=>[x.waku,x]));
   const sc=[];
   a.boats.forEach(b=>{const x=byW[b.waku],d={...kmDist(r.jcd,b.course)};
+    // 7〜11月の9.2万スタートで確認: 内より早い（先）とまくり系の1着が2倍、内が凹むと外のまくり系が1.3〜1.7倍
     if(x.lead>=0.03&&d['まくり'])d['まくり']*=1.6; if(x.dent&&d['まくり'])d['まくり']*=0.6;
-    const inn=sl.find(y=>y.course===b.course-1); if(inn&&inn.dent&&d['差し'])d['差し']*=1.3;
+    const inn=sl.find(y=>y.course===b.course-1); if(inn&&inn.dent){if(d['まくり'])d['まくり']*=1.5;if(d['まくり差し'])d['まくり差し']*=1.5;}
     const Z=sum(Object.values(d));for(const k in d)sc.push({waku:b.waku,course:b.course,km:k,p:b.pWin*d[k]/Z});});
   sc.sort((p,q)=>q.p-p.p);
   // 文章
@@ -664,7 +666,7 @@ function tenkaiHtml(r,a){
   const T=tenkaiOf(r,a),sl=T.sl;
   const maxP=T.sc[0].p;
   return `<div class="panel tenkai"><h3>スリット予測・展開予想</h3>
-    <p class="sub">予測ST = その選手のこのコースでの平均ST（場のクセで補正）${sl.some(x=>x.exST!=null)?'と今日の展示ST':''}から。右ほど早いスタート。「凹」は両隣より遅れる予測、「先」は内より早い予測。</p>
+    <p class="sub">予測ST = その選手のこのコースでの平均ST（場のクセで補正）。展示STは本番とほぼ関係がないので予測には使わず、表に参考で出しています。右ほど早いスタート。「凹」は両隣より遅れる予測、「先」は内より早い予測。</p>
     ${slitSvg(T)}
     <p class="tk-text">${esc(T.text)}</p>
     <ul class="scen">${T.sc.slice(0,6).map(c=>`<li>${bn(c.waku)}<span>${c.km}<span class="bar"><span style="width:${c.p/maxP*100}%"></span></span></span><b>${pct(c.p)}</b></li>`).join('')}</ul>
@@ -918,7 +920,7 @@ function renderSelf(){
           <td class="foot-cell"><b class="fg fg-${b.footGrade==='◎'||b.footGrade==='○'?'up':b.footGrade==='×'||b.footGrade==='▲'?'dn':'mid'}">${b.footGrade}</b>${b.ashi?`<span>足${b.ashi.rank}位</span>`:''}</td>
           <td><div class="winbar"><span class="track"><span style="width:${b.pWin/maxWin*100}%"></span></span><b>${pct(b.pWin)}</b></div></td>
           <td><div class="tags">${b.tags.map(t=>`<span class="tag ${t[0]}">${esc(t[1])}</span>`).join('')}</div></td></tr>`}).join('')}</tbody></table></div>
-      <p class="hint">${r.before&&r.before.complete?'展示タイム・進入は自動で取得済み（青枠）。':'展示タイムは締切の約20分前から自動で入ります。'}手で入れ直すと、その場で計算し直します。${a.ashi?`舟足は足スコア（${a.ashi.kind==='場別'?'この場で検証した重み'+(a.ashi.sep!=null?'・判別力sep '+a.ashi.sep:''):'未検証の場なので既定の戸田新式'}）の順位：1位◎ 2位○ 3・4位△ 5位▲ 6位×。`:'舟足は展示タイム・オリジナル展示（一周・まわり足・直線）・モーターから（◎○△▲×）。'}くわしくは下の「足評価」「オリジナル展示」。コース別の成績・ST・決まり手は下の「コース別データ」。</p>
+      <p class="hint">${r.before&&r.before.complete?'展示タイム・進入は自動で取得済み（青枠）。':'展示タイムは締切の約20分前から自動で入ります。'}手で入れ直すと、その場で計算し直します。${a.ashi?`舟足は足スコア（${a.ashi.kind==='場別'?'この場で検証した重み'+(a.ashi.sep!=null?'・判別力sep '+a.ashi.sep:''):'未検証の場なので既定の戸田新式'}）の順位：1位◎ 2位○ 3〜5位△ 6位×。`:'舟足は展示タイム・オリジナル展示（一周・まわり足・直線）・モーターから（◎○△▲×）。'}くわしくは下の「足評価」「オリジナル展示」。コース別の成績・ST・決まり手は下の「コース別データ」。</p>
     </div>
     ${courseHtml(r,a)}
     ${ashiHtml(r,a)}
