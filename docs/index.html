@@ -694,8 +694,11 @@ const WIND=['','北','北北東','北東','東北東','東','東南東','南東'
 // ---------------------------------------------------------------- 選手検索
 let plQuery=LS.get('plq',''), plSel=LS.get('pls',null);
 const plNorm=x=>String(x||'').normalize('NFKC').replace(/\s+/g,'');
+// 名簿にまだ名前がない選手も、表示中の日の出走表に載っていれば名前を補う
+function plFill(){if(!STATS)return;for(const r of races)for(const b of (r.boats||[])){const e=STATS.p[String(b.toban)];
+  if(e&&!e.nm&&b.name)Object.assign(e,{nm:plNorm(b.name),br:b.branch||'',cl:b.cls||'',ag:b.age||null,d:r.date||dateSel});}}
 function plList(q){
-  if(!STATS)return [];const Q=plNorm(q);if(!Q)return [];
+  if(!STATS)return [];plFill();const Q=plNorm(q);if(!Q)return [];
   return Object.entries(STATS.p).filter(([t,v])=>v.nm&&(plNorm(v.nm).includes(Q)||t.startsWith(Q))).sort((a,b)=>(b[1].d||'').localeCompare(a[1].d||'')).slice(0,40);}
 function plProfile(t){
   const v=STATS.p[t];if(!v)return '';const B=STATS.cbase||[];const pc=x=>(x*100).toFixed(1)+'%';
@@ -716,7 +719,7 @@ function plProfile(t){
 function renderPlayers(){
   const el=$('#v-pl');
   if(!STATS){el.innerHTML='<div class="empty">選手データを読み込み中です。</div>';return;}
-  const named=Object.values(STATS.p).filter(v=>v.nm).length;
+  plFill();const named=Object.values(STATS.p).filter(v=>v.nm).length;
   const list=plList(plQuery);
   el.innerHTML=`<div style="display:grid;gap:14px">
     <div class="panel"><h3>選手を調べる</h3>
@@ -730,7 +733,7 @@ function renderPlayers(){
   el.querySelectorAll('.pl-item').forEach(b=>b.addEventListener('click',()=>{plSel=b.dataset.t;LS.set('pls',plSel);renderPlayers();el.querySelector('.plp')?.scrollIntoView({behavior:'smooth',block:'start'});}));
   el.querySelectorAll('.pl-go').forEach(b=>b.addEventListener('click',()=>{const r=races.find(x=>x.id===b.dataset.id);if(!r)return;jcdSel=r.jcd;LS.set('jcd',jcdSel);raceId=r.id;view='yoso';LS.set('view',view);const s2=$('#venue');if(s2)s2.value=String(jcdSel);renderChips();renderView();window.scrollTo(0,0);}));
 }
-function openPlayer(t){plSel=String(t);LS.set('pls',plSel);const v=STATS&&STATS.p[plSel];if(v&&v.nm){plQuery=v.nm;LS.set('plq',plQuery);}view='pl';LS.set('view',view);renderView();window.scrollTo(0,0);}
+function openPlayer(t){plFill();plSel=String(t);LS.set('pls',plSel);const v=STATS&&STATS.p[plSel];if(v&&v.nm){plQuery=v.nm;LS.set('plq',plQuery);}view='pl';LS.set('view',view);renderView();window.scrollTo(0,0);}
 
 // ---------------------------------------------------------------- イン飛び: その日の全レースの「1号艇が飛ぶ確率」
 let tobuSort=LS.get('tobuSort','p');
