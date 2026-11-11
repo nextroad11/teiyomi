@@ -316,6 +316,20 @@ def parse_odds3t(html: str) -> dict | None:
     return {"t": odds, "inv": round(inv, 3), "mismatch": mismatch}
 
 
+# ---------------------------------------------------------------- オッズの動き（締切までの途中の値も残す）
+# アプリでは読まない別ファイル（data/odds/YYYYMMDD.json）。締切の何分前かで区切って1回ずつ保存する
+ODDS_HIST: dict = {}
+ODDS_BUCKETS = (30, 20, 15, 10, 5, 3, 1, 0, -1)  # -1 は締切後（確定に近い値）
+
+
+def record_odds(rid: str, p: dict, mins_before: float):
+    b = max([x for x in ODDS_BUCKETS if x <= mins_before], default=-1) if mins_before >= 0 else -1
+    h = ODDS_HIST.setdefault(rid, {})
+    if str(b) in h:
+        return
+    h[str(b)] = {"m": round(mins_before, 1), "o": [int(round(v * 10)) if v else 0 for v in p["t"]]}
+
+
 # ---------------------------------------------------------------- 本体
 def now_jst() -> dt.datetime:
     return dt.datetime.now(JST)
@@ -362,9 +376,9 @@ def update_before_and_results(day: dict, now: dt.datetime) -> int:
                 b["ori"] = o
                 n += 1
                 log(f"  {r['venue']}{rno}R オリジナル展示 {'・'.join(o['items'])}")
-        # 3連単オッズ: 締切20分前〜締切1分後。毎回取り直して最新にする（締切時点のものが残る）
+        # 3連単オッズ: 締切30分前〜締切1分後。毎回取り直して最新にする（締切時点のものが残る）。途中の値は ODDS_HIST へ
         o = r.get("odds") or {}
-        if dl - dt.timedelta(minutes=20) <= now <= dl + dt.timedelta(minutes=1) and not o.get("final"):
+        if dl - dt.timedelta(minutes=30) <= now <= dl + dt.timedelta(minutes=1) and not o.get("final"):
             html = get(f"{BASE}/odds3t?{q}")
             if html:
                 save_debug("odds3t", html)
@@ -373,6 +387,7 @@ def update_before_and_results(day: dict, now: dt.datetime) -> int:
                     p["fetchedAt"] = now.isoformat(timespec="seconds")
                     p["final"] = now >= dl
                     r["odds"] = p
+                    record_odds(r["id"], p, (dl - now).total_seconds() / 60)
                     n += 1
                     log(f"  {r['venue']}{rno}R オッズ 合計{p['inv']} ずれ{p['mismatch']}")
         # 結果: 締切8分後〜6時間後
@@ -414,6 +429,9 @@ def main():
     path = root / f"{hd}.json"
     day = read_json(path, {"date": hd, "races": []})
     before = json.dumps(day, ensure_ascii=False, sort_keys=True)
+    opath = root / "odds" / f"{hd}.json"
+    ODDS_HIST.update(read_json(opath, {}))
+    obefore = json.dumps(ODDS_HIST, sort_keys=True)
 
     # 1. 出走表（その日最初の実行、または手動指定）
     if a.force_load or not day.get("loadedAt"):
@@ -443,6 +461,9 @@ def main():
             if json.dumps(yday, ensure_ascii=False, sort_keys=True) != ybefore:
                 write_json(ypath, yday)
 
+    if json.dumps(ODDS_HIST, sort_keys=True) != obefore:
+        opath.parent.mkdir(parents=True, exist_ok=True)
+        write_json(opath, ODDS_HIST)
     if json.dumps(day, ensure_ascii=False, sort_keys=True) != before:
         day["updated"] = now.isoformat(timespec="seconds")
         write_json(path, day)
