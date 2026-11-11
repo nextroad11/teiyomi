@@ -482,12 +482,18 @@ def main():
     if best_rule.get("maxOdds", 0) >= 1e9:
         best_rule["maxOdds"] = 99999
     # アプリが同じ特徴量を計算できるよう、選手のコース別成績・直近着順とモーターの直近着順を書き出す
+    # 選手名簿（番組表から取った名前・支部・級別・年齢の、いちばん新しいもの）
+    prof = {}
+    for r in races:
+        for b in r["boats"]:
+            if b.get("name"):
+                prof[b["toban"]] = {"nm": b["name"], "br": b.get("branch", ""), "cl": b.get("cls", ""), "ag": b.get("age"), "d": r["date"]}
     kmy = kimarite_year(races)
     cy, cbase, kon = course_year(races)
     stats = {"updated": model["trainedAt"],
              "p": {str(t): {"cw": v, "rf": STATE["recent"].get(t, []), "st": [round(x, 2) for x in STATE["st"].get(t, [])[-20:]],
                               "stc": [[round(x, 2) for x in l] for l in STATE["stc"][t]] if t in STATE["stc"] else None,
-                              "kmy": kmy.get(t), "cy": cy.get(t), "kon": kon.get(t)}
+                              "kmy": kmy.get(t), "cy": cy.get(t), "kon": kon.get(t), **prof.get(t, {})}
                    for t, v in STATE["cw"].items()},
              "km": kimarite_stats(races),
              "cbase": cbase,

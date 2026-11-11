@@ -90,7 +90,8 @@ def parse_b(text: str) -> dict:
                 continue
             g = m.groups() + tuple(t[:8])
             cur["boats"][int(g[0])] = {
-                "toban": int(g[1]), "age": int(g[3]), "weight": int(g[5]), "cls": g[6],
+                "toban": int(g[1]), "name": g[2].replace("\u3000", "").strip(), "branch": g[4].replace("\u3000", "").strip(),
+                "age": int(g[3]), "weight": int(g[5]), "cls": g[6],
                 "natWin": float(g[7]), "nat2": float(g[8]), "locWin": float(g[9]), "loc2": float(g[10]),
                 "motor": int(g[11]), "motor2": float(g[12]), "boat": int(g[13]), "boat2": float(g[14]),
             }
@@ -180,6 +181,7 @@ def main():
     ap.add_argument("--days", type=int, default=400)
     ap.add_argument("--max-new", type=int, default=420, help="1回の実行で新しく取る日数の上限")
     ap.add_argument("--minutes", type=float, default=45, help="この時間を過ぎたら区切って保存する")
+    ap.add_argument("--names", type=int, default=0, help="直近N日分の番組表を取り直して、選手名と支部を足す")
     ap.add_argument("--kimarite", action="store_true", help="決まり手が無い過去の日に、競走成績だけ取り直して足す")
     ap.add_argument("--parse-b")
     ap.add_argument("--parse-k")
@@ -195,6 +197,35 @@ def main():
 
     hist = Path(a.data) / "history"
     hist.mkdir(parents=True, exist_ok=True)
+    if a.names:
+        t0, n = time.time(), 0
+        for f in sorted(hist.glob("2*.json"), reverse=True)[: a.names]:
+            if time.time() - t0 > a.minutes * 60:
+                print("時間切れ。続きは次回", flush=True)
+                break
+            d = json.loads(f.read_text(encoding="utf-8"))
+            if d.get("nm") or not d.get("races"):
+                continue
+            day = dt.datetime.strptime(f.stem, "%Y%m%d").date()
+            try:
+                b = parse_b(download_text("B", day) or "")
+            except Exception as e:
+                print(f"  {day}: {e}", flush=True)
+                continue
+            time.sleep(1)
+            for r in d["races"]:
+                bb = b.get((r["jcd"], r["rno"]))
+                if not bb:
+                    continue
+                for x in r["boats"]:
+                    q = bb["boats"].get(x["waku"])
+                    if q and q["toban"] == x["toban"]:
+                        x["name"], x["branch"] = q["name"], q["branch"]
+            d["nm"] = 1
+            f.write_text(json.dumps(d, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+            n += 1
+        print(f"選手名を追加 {n}日", flush=True)
+        return
     if a.kimarite:
         t0, n = time.time(), 0
         for f in sorted(hist.glob("2*.json"), reverse=True):
@@ -247,7 +278,7 @@ def main():
                 (hist / f"{d:%Y%m%d}.json").write_text('{"races":[]}', encoding="utf-8")
             continue
         (hist / f"{d:%Y%m%d}.json").write_text(
-            json.dumps({"races": races, "km": 1}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+            json.dumps({"races": races, "km": 1, "nm": 1}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
         got += 1
         if got % 20 == 0:
             print(f"  {d} まで {got}日分 ({time.time() - t0:.0f}秒)", flush=True)

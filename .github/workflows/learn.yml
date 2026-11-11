@@ -50,6 +50,10 @@ jobs:
         if: env.PAUSE != '1'
         run: python scraper/history.py --data data --minutes 45
 
+      - name: 選手名（直近90日分の番組表から）
+        if: env.PAUSE != '1'
+        run: python scraper/history.py --data data --names 90 --minutes 25 || true
+
       - name: 決まり手（過去分を少しずつ）
         if: env.PAUSE != '1'
         run: python scraper/history.py --data data --kimarite --minutes 25 || true
