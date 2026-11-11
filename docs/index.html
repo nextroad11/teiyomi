@@ -716,22 +716,34 @@ function plProfile(t){
       return `<p class="sub">${dd<=3?'今節':'最後に走った開催'}（${esc(VENUES[k.jcd]||'')}・${k.days}日・${k.last.slice(4,6)}/${k.last.slice(6)}まで）：平均ST ${k.st.toFixed(2).slice(1)}・6艇中${k.rk.toFixed(1)}番目</p>`;})():''}
     <div class="tablebox"><table class="card"><thead><tr><th>コース</th><th>走</th><th>1着率</th><th>2連率</th><th>3連率</th><th>平均ST</th><th>決まり手</th></tr></thead><tbody>${cyRows}</tbody></table></div>
     <p class="sub">直近1年の公式データから。緑は全国のそのコースの平均よりはっきり良い、灰色は悪い。</p></div>`;}
+function plResults(){
+  const box=$('#pl-res');if(!box)return;const list=plList(plQuery);
+  box.innerHTML=(plQuery&&!list.length?'<p class="sub">見つかりませんでした。名前の一部（例：「峰」）や登録番号でも探せます。</p>':'')+
+    (list.length?`<ul class="pl-list">${list.map(([t,v])=>`<li><button class="pl-item${t===String(plSel)?' on':''}" data-t="${t}"><b>${esc(v.nm)}</b><span>${t}・${esc(v.br||'')}・${esc(v.cl||'')}</span></button></li>`).join('')}</ul>`:'');
+  box.querySelectorAll('.pl-item').forEach(b=>b.addEventListener('click',()=>{plSel=b.dataset.t;LS.set('pls',plSel);$('#pl-prof').innerHTML=plProfile(plSel);wireProfile();plResults();$('#pl-prof').scrollIntoView({behavior:'smooth',block:'start'});}));
+}
+function wireProfile(){
+  $('#v-pl').querySelectorAll('.pl-go').forEach(b=>b.addEventListener('click',()=>{const r=races.find(x=>x.id===b.dataset.id);if(!r)return;jcdSel=r.jcd;LS.set('jcd',jcdSel);raceId=r.id;view='yoso';LS.set('view',view);const s2=$('#venue');if(s2)s2.value=String(jcdSel);renderChips();renderView();window.scrollTo(0,0);}));
+}
 function renderPlayers(){
   const el=$('#v-pl');
   if(!STATS){el.innerHTML='<div class="empty">選手データを読み込み中です。</div>';return;}
   plFill();const named=Object.values(STATS.p).filter(v=>v.nm).length;
-  const list=plList(plQuery);
   el.innerHTML=`<div style="display:grid;gap:14px">
     <div class="panel"><h3>選手を調べる</h3>
-      <input id="plq" class="plq" type="search" lang="ja" placeholder="名前の一部 または 登録番号（例：峰竜太、4320）" value="${esc(plQuery)}" autocomplete="off">
-      <p class="sub">${named}人の選手を検索できます（直近90日に走った選手）。今日の出走表の選手名を押しても開けます。</p>
-      ${plQuery&&!list.length?'<p class="sub">見つかりませんでした。</p>':''}
-      ${list.length?`<ul class="pl-list">${list.map(([t,v])=>`<li><button class="pl-item${t===String(plSel)?' on':''}" data-t="${t}"><b>${esc(v.nm)}</b><span>${t}・${esc(v.br||'')}・${esc(v.cl||'')}</span></button></li>`).join('')}</ul>`:''}</div>
-    ${plSel&&STATS.p[plSel]?plProfile(String(plSel)):''}</div>`;
-  const inp=$('#plq');let tmr;
-  inp.addEventListener('input',e=>{clearTimeout(tmr);tmr=setTimeout(()=>{plQuery=e.target.value;LS.set('plq',plQuery);const pos=e.target.selectionStart;renderPlayers();const n=$('#plq');n.focus();try{n.setSelectionRange(pos,pos);}catch(_){}},200);});
-  el.querySelectorAll('.pl-item').forEach(b=>b.addEventListener('click',()=>{plSel=b.dataset.t;LS.set('pls',plSel);renderPlayers();el.querySelector('.plp')?.scrollIntoView({behavior:'smooth',block:'start'});}));
-  el.querySelectorAll('.pl-go').forEach(b=>b.addEventListener('click',()=>{const r=races.find(x=>x.id===b.dataset.id);if(!r)return;jcdSel=r.jcd;LS.set('jcd',jcdSel);raceId=r.id;view='yoso';LS.set('view',view);const s2=$('#venue');if(s2)s2.value=String(jcdSel);renderChips();renderView();window.scrollTo(0,0);}));
+      <input id="plq" class="plq" type="search" lang="ja" enterkeyhint="search" placeholder="名前の一部 または 登録番号（例：峰竜太、4320）" autocomplete="off" autocorrect="off" spellcheck="false">
+      <p class="sub">${named}人の選手を検索できます。今日の出走表の選手名を押しても開けます。</p>
+      <div id="pl-res"></div></div>
+    <div id="pl-prof">${plSel&&STATS.p[plSel]?plProfile(String(plSel)):''}</div></div>`;
+  const inp=$('#plq');inp.value=plQuery;
+  // 日本語の変換中は検索しない（変換が確定してから）。入力欄そのものは描き直さない
+  let composing=false,tmr;
+  const run=()=>{plQuery=inp.value;LS.set('plq',plQuery);plResults();};
+  inp.addEventListener('compositionstart',()=>{composing=true;});
+  inp.addEventListener('compositionend',()=>{composing=false;clearTimeout(tmr);tmr=setTimeout(run,50);});
+  inp.addEventListener('input',e=>{if(composing||e.isComposing)return;clearTimeout(tmr);tmr=setTimeout(run,150);});
+  inp.addEventListener('search',run);
+  plResults();wireProfile();
 }
 function openPlayer(t){plFill();plSel=String(t);LS.set('pls',plSel);const v=STATS&&STATS.p[plSel];if(v&&v.nm){plQuery=v.nm;LS.set('plq',plQuery);}view='pl';LS.set('view',view);renderView();window.scrollTo(0,0);}
 
