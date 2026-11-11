@@ -128,6 +128,13 @@ td.who{min-width:6.5em}td.who b{white-space:nowrap}td.who span{white-space:nowra
 .cdata .cd-lo,.cdata td.cd-lo{color:var(--muted)}.cdata .cd-few{color:var(--muted);font-style:italic}.cdata .cd-na{color:var(--muted);font-size:12px}
 .cdata .cd-km{white-space:nowrap;font-size:12px}.cdata .cd-km span{margin-right:6px}.cdata .cd-strong{color:var(--ana);font-weight:700}
 .cdata .cd-base{font-size:11px;color:var(--muted);text-align:left}
+.one-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:4px 0 8px}
+.one-grid div{background:var(--bg);border-radius:10px;padding:8px;text-align:center}.one-grid span{display:block;font-size:11px;color:var(--muted)}
+.one-grid b{font:700 18px var(--f-num)}.one-grid em{display:block;font-style:normal;font-size:11px;font-weight:700}
+.onep.tobu-hi .tobu{background:color-mix(in srgb,var(--ana) 22%,transparent)}.onep.tobu-hi .tobu b,.onep.tobu-hi .tobu em{color:var(--ana)}
+.onep.tobu-mid .tobu{background:color-mix(in srgb,var(--ana) 10%,transparent)}
+.pill.tobu-hi{background:color-mix(in srgb,var(--ana) 20%,transparent);color:var(--ana)}.pill.tobu-mid,.pill.tobu-lo{background:var(--bg);color:var(--muted)}
+@media (max-width:420px){.one-grid{grid-template-columns:repeat(2,1fr)}}
 .change ul{margin:4px 0 0;padding-left:18px;display:grid;gap:6px;font-size:13px}.change b.up{color:var(--good)}.change b.dn{color:var(--ana)}
 .change .cmb{display:inline-flex;margin:2px 8px 2px 0;vertical-align:middle}
 .change.big{border-color:var(--ana);background:color-mix(in srgb,var(--ana) 8%,var(--surface))}
@@ -425,6 +432,7 @@ function ashiFor(race,exT,B){const o=race.before&&race.before.ori&&race.before.o
 const MAN_CAL=0.61, MAN_AVG=0.134;
 // 本線の当たる期待度（本線の的中確率から。418Rで予測と実際がほぼ一致していることを確認済み）
 const expectOf=c=>c>=0.40?{st:'★★★',t:'高い',cls:'hi'}:c>=0.33?{st:'★★☆',t:'ふつう',cls:'mid'}:{st:'★☆☆',t:'低め',cls:'lo'};
+const tobuOf=p=>p>=0.30?{t:'危ない',cls:'hi'}:p>=0.18?{t:'ややあり',cls:'mid'}:{t:'低い',cls:'lo'};
 const manOf=p=>p>=0.20?{t:'高い',cls:'hi'}:p>=0.12?{t:'ふつう',cls:'mid'}:{t:'低い',cls:'lo'};
 function analyze(race,exOverride){
   const B=(race.boats||[]).slice().sort((a,b)=>a.waku-b.waku);
@@ -495,7 +503,11 @@ function analyze(race,exOverride){
   const top=boats.slice().sort((a,b)=>b.pWin-a.pWin), topWin=top[0].pWin;
   // 万舟（3連単1万円以上）になる確率。AIはそのままだと高く出すぎる（11/5〜7の418Rで予測22%→実際13%）ので0.61倍して使う
   const manP=clamp(MAN_CAL*sum(combos.filter(c=>c.odds>=100).map(c=>c.pAi)),0,0.6);
-  return {boats,combos,honsen,ana,cover:cum,top,topWin,real,manP,ashi:AS?{kind:ASHI_W[Number(race.jcd)]?'場別':'既定',sep:ASHI_SEP[Number(race.jcd)]??null,venueCorr:!!ASHI_CONFIG.corrVenue[Number(race.jcd)],notes:AS.notes||[]}:null,level:topWin>=0.6?'kata':topWin>=0.42?'futsu':'are',hasEx:exMean!=null};
+  // 1号艇が飛ぶ（3着に入らない）確率。11/5〜11の982Rで予測17.6%→実際17.4%。両端の言い過ぎを補正（0.04＋0.73倍）
+  const p1in3=sum(combos.filter(c=>c.k.split('-').includes('1')).map(c=>c.pAi)), p1in2=sum(combos.filter(c=>c.k.split('-').slice(0,2).includes('1')).map(c=>c.pAi));
+  const b1=boats.find(b=>b.waku===1), tobu=clamp(0.04+0.73*(1-p1in3),0.02,0.8);
+  const one={win:b1?b1.pWin:0,in2:p1in2,in3:1-tobu,tobu,course:b1?b1.course:1};
+  return {boats,combos,honsen,ana,cover:cum,top,topWin,real,manP,one,ashi:AS?{kind:ASHI_W[Number(race.jcd)]?'場別':'既定',sep:ASHI_SEP[Number(race.jcd)]??null,venueCorr:!!ASHI_CONFIG.corrVenue[Number(race.jcd)],notes:AS.notes||[]}:null,level:topWin>=0.6?'kata':topWin>=0.42?'futsu':'are',hasEx:exMean!=null};
 }
 const LEVEL={kata:['堅い','var(--good)'],futsu:['本命寄り','var(--accent)'],are:['波乱含み','var(--ana)']};
 
@@ -852,10 +864,14 @@ function renderYoso(){
       <span class="pill ${a.level}">${lv[0]}</span>
       <span class="pill exp-${expectOf(a.cover).cls}">本線 ${expectOf(a.cover).st}</span>
       ${a.manP>=0.20?`<span class="pill man-hi">万舟期待 ${pct(a.manP)}</span>`:''}
+      <span class="pill tobu-${tobuOf(a.one.tobu).cls}">1号艇が飛ぶ ${pct(a.one.tobu)}</span>
       ${wx?`<span class="pill info">${esc(wx)}</span>`:''}
       ${res?`<span class="pill kata">結果 ${esc(res.order||res.note||'')} ${res.payout?yen(res.payout):''}</span>`:''}
     </div>
     ${changeHtml(r,a)}
+    <div class="panel onep tobu-${tobuOf(a.one.tobu).cls}"><h3>1号艇の見立て${a.one.course!==1?`（進入${a.one.course}コース）`:''}</h3>
+      <div class="one-grid"><div><span>1着</span><b>${pct(a.one.win)}</b></div><div><span>2着以内</span><b>${pct(a.one.in2)}</b></div><div><span>3着以内</span><b>${pct(a.one.in3)}</b></div><div class="tobu"><span>飛ぶ（4着以下）</span><b>${pct(a.one.tobu)}</b><em>${tobuOf(a.one.tobu).t}</em></div></div>
+      <p class="sub">全レースの平均は、1着55%・飛ぶ17%。11/5〜11の982レースで、AIの飛ぶ確率と実際に飛んだ割合はほぼ一致（飛ぶ確率30%以上のレースは実際に約4割が飛んだ）。</p></div>
     <div class="picks">
       <div class="panel honsen"><h3><span class="mark">本線</span>確率の高い順</h3>
         <div class="expect ex-${expectOf(a.cover).cls}"><span class="lbl">当たる期待度</span><b class="stars">${expectOf(a.cover).st}</b><b>${expectOf(a.cover).t}</b><span class="num">${a.honsen.length}点で的中確率 ${pct(a.cover)}</span></div>
@@ -901,6 +917,7 @@ function renderSelf(){
       <span class="pill ${a.level}">${lv[0]}</span>
       <span class="pill exp-${expectOf(a.cover).cls}">本線 ${expectOf(a.cover).st}</span>
       ${a.manP>=0.20?`<span class="pill man-hi">万舟期待 ${pct(a.manP)}</span>`:''}
+      <span class="pill tobu-${tobuOf(a.one.tobu).cls}">1号艇が飛ぶ ${pct(a.one.tobu)}</span>
       ${wx?`<span class="pill info">${esc(wx)}</span>`:''}
       ${res?`<span class="pill kata">結果 ${esc(res.order||res.note||'')} ${res.payout?yen(res.payout):''}</span>`:''}
     </div>
