@@ -26,7 +26,7 @@ jobs:
           s=json.load(open('/tmp/stats.json'));m=json.load(open('/tmp/model.json'))
           p=s.get('p',{});n=len(p)
           print('更新',s.get('updated'),'選手',n)
-          for k in ['cw','rf','st','stc','kmy','cy','kon']:
+          for k in ['cw','rf','st','stc','kmy','cy','kon','nm']:
               print(k, sum(1 for v in p.values() if v.get(k)))
           print('cbase', bool(s.get('cbase')), 'km', bool(s.get('km')), 'stv', bool(s.get('stv')))
           print('model', m.get('trainedAt'), sorted(m.get('weights',{}).keys()))
@@ -37,4 +37,4 @@ jobs:
           git config user.name "teiyomi-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add debug/check.txt && git commit -q -m "中身の確認" && for i in 1 2 3; do git push -q && exit 0; git pull -q --rebase; done
-# run: 2
+# run: 3
