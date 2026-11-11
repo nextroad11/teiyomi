@@ -1,10 +1,11 @@
-更新 2026-11-08T17:28:45 選手 1652
-cw 1652
-rf 1652
-st 1652
-stc 1652
-kmy 1650
-cy 1650
-kon 1650
+更新 2026-11-11T18:54:11 選手 1655
+cw 1655
+rf 1655
+st 1655
+stc 1655
+kmy 1653
+cy 1653
+kon 1653
+nm 1616
 cbase True km True stv True
-model 2026-11-08T17:28:45 ['boat', 'cwin', 'ex', 'fPen', 'form', 'kPlace', 'kWin', 'local', 'mform', 'motor', 'olap', 'ostr', 'oturn', 'skill', 'st']
+model 2026-11-11T18:54:11 ['boat', 'cwin', 'ex', 'fPen', 'form', 'kPlace', 'kWin', 'local', 'mform', 'motor', 'olap', 'ostr', 'oturn', 'skill', 'st']
