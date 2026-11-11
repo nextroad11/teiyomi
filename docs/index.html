@@ -34,12 +34,15 @@ header.top{position:sticky;top:0;z-index:5;background:var(--surface);border-bott
 .top .wrap{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-block:10px}
 .brand{font-family:var(--f-display);font-size:20px;letter-spacing:.02em;margin:0;display:flex;align-items:baseline;gap:8px;font-weight:400}
 .brand small{font-family:var(--f-body);font-size:11px;color:var(--muted);letter-spacing:.08em}
-.tabs{display:flex;gap:4px;margin-left:auto;background:var(--sunk);padding:3px;border-radius:9px}
-.tabs button{border:0;background:transparent;color:var(--muted);font:700 13px var(--f-body);padding:7px 12px;border-radius:7px;cursor:pointer}
+.tabs{display:flex;gap:4px;margin-left:auto;background:var(--sunk);padding:3px;border-radius:9px;max-width:100%;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{border:0;background:transparent;color:var(--muted);font:700 13px var(--f-body);padding:7px 12px;border-radius:7px;cursor:pointer;white-space:nowrap;flex:0 0 auto}
+@media (max-width:480px){.tabs{margin-left:0;width:100%}.tabs button{padding:7px 9px;font-size:12px}}
 .tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgb(0 0 0 / .12)}
 button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 main.wrap{padding-block:16px 48px;display:grid;gap:18px}
 .meetbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+main.wrap>*{min-width:0}main.wrap section>div>*{min-width:0}.meetbar select{max-width:100%;min-width:0}
 .meetbar select{font:700 15px var(--f-body);padding:7px 10px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);max-width:100%}
 .meetbar .note{color:var(--muted);font-size:12px}
 .chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
@@ -135,6 +138,20 @@ td.who{min-width:6.5em}td.who b{white-space:nowrap}td.who span{white-space:nowra
 .onep.tobu-mid .tobu{background:color-mix(in srgb,var(--ana) 10%,transparent)}
 .pill.tobu-hi{background:color-mix(in srgb,var(--ana) 20%,transparent);color:var(--ana)}.pill.tobu-mid,.pill.tobu-lo{background:var(--bg);color:var(--muted)}
 @media (max-width:420px){.one-grid{grid-template-columns:repeat(2,1fr)}}
+.seg{display:inline-flex;gap:4px;background:var(--bg);padding:3px;border-radius:10px}
+.seg button{font:inherit;font-size:12px;border:0;background:transparent;color:var(--muted);padding:6px 10px;border-radius:8px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--surface);color:var(--ink);font-weight:700}
+.tobu-list{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.tb-row{width:100%;display:grid;grid-template-columns:5.5em minmax(0,1fr) 6.5em 5.2em;gap:8px;align-items:center;text-align:left;font:inherit;color:inherit;
+  background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 10px;cursor:pointer}
+.tb-row.tobu-hi{border-color:var(--ana);background:color-mix(in srgb,var(--ana) 8%,var(--surface))}
+.tb-when{display:grid;font-size:12px;color:var(--muted)}.tb-when b{font:700 15px var(--f-num);color:var(--ink)}
+.tb-who{display:flex;align-items:center;gap:6px;min-width:0;font-size:13px}.tb-who>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tb-who small{display:block;font-size:10px;color:var(--ana)}
+.tb-p{display:grid;gap:2px;text-align:right}.tb-p b{font:700 16px var(--f-num)}.tb-p small{font-size:10px;color:var(--muted)}
+.tobu-hi .tb-p b{color:var(--ana)}.tb-p .bar{height:5px;border-radius:3px;background:var(--bg);overflow:hidden}.tb-p .bar span{display:block;height:100%;background:var(--ana)}
+.tb-res{font-size:11px;text-align:center;border-radius:6px;padding:3px 4px;white-space:nowrap}.tb-res small{display:block;font-size:10px;font-weight:400}.tb-res.flop{background:color-mix(in srgb,var(--ana) 20%,transparent);color:var(--ana);font-weight:700}
+.tb-res.ok{background:var(--bg)}.tb-res.ex{color:var(--good)}.tb-res.pre{color:var(--muted)}
+@media (max-width:420px){.tb-row{grid-template-columns:4.6em minmax(0,1fr) 5.6em 4.6em;gap:6px;padding:8px}}
 .change ul{margin:4px 0 0;padding-left:18px;display:grid;gap:6px;font-size:13px}.change b.up{color:var(--good)}.change b.dn{color:var(--ana)}
 .change .cmb{display:inline-flex;margin:2px 8px 2px 0;vertical-align:middle}
 .change.big{border-color:var(--ana);background:color-mix(in srgb,var(--ana) 8%,var(--surface))}
@@ -223,6 +240,7 @@ table.rec{border-collapse:collapse;width:100%;min-width:560px;font-variant-numer
   <h1 class="brand">艇読みAI <small>BOATRACE ANALYZER</small></h1>
   <nav class="tabs" role="tablist">
     <button role="tab" id="tab-yoso" aria-selected="true" data-view="yoso">予想</button>
+    <button role="tab" id="tab-tobu" aria-selected="false" data-view="tobu">イン飛び</button>
     <button role="tab" id="tab-self" aria-selected="false" data-view="self">自分で予想</button>
     <button role="tab" id="tab-calc" aria-selected="false" data-view="calc">買い目計算</button>
     <button role="tab" id="tab-rec" aria-selected="false" data-view="rec">成績</button>
@@ -241,6 +259,7 @@ table.rec{border-collapse:collapse;width:100%;min-width:560px;font-variant-numer
   </div>
   <div class="chips" id="chips" role="group" aria-label="レースを選ぶ"></div>
   <section id="v-yoso"></section>
+  <section id="v-tobu" hidden></section>
   <section id="v-self" hidden></section>
   <section id="v-calc" hidden></section>
   <section id="v-rec" hidden></section>
@@ -619,12 +638,42 @@ function renderChips(){
 }
 const cur=()=>races.find(r=>r.id===raceId)||null;
 function renderView(){
-  ['yoso','self','calc','rec'].forEach(v=>{$('#v-'+v).hidden=v!==view;$('#tab-'+v).setAttribute('aria-selected',v===view);});
-  $('#chips').hidden=view==='rec';
-  if(view==='yoso')renderYoso();else if(view==='self')renderSelf();else if(view==='calc')renderCalc();else renderRec();
+  ['yoso','tobu','self','calc','rec'].forEach(v=>{$('#v-'+v).hidden=v!==view;$('#tab-'+v).setAttribute('aria-selected',v===view);});
+  $('#chips').hidden=view==='rec'||view==='tobu';
+  if(view==='yoso')renderYoso();else if(view==='tobu')renderTobu();else if(view==='self')renderSelf();else if(view==='calc')renderCalc();else renderRec();
 }
 const emptyState=()=>`<div class="empty"><b>この日のレースデータはまだありません。</b><br>毎朝7時ごろに、その日の全場の出走表を自動で取り込みます。</div>`;
 const WIND=['','北','北北東','北東','東北東','東','東南東','南東','南南東','南','南南西','南西','西南西','西','西北西','北西','北北西'];
+
+// ---------------------------------------------------------------- イン飛び: その日の全レースの「1号艇が飛ぶ確率」
+let tobuSort=LS.get('tobuSort','p');
+function renderTobu(){
+  const el=$('#v-tobu');if(!races.length){el.innerHTML=emptyState();return;}
+  const pc=v=>Math.round(v*100)+'%';
+  const rows=races.map(r=>{let a=null,a0=null;try{a=analyze(r);}catch(_){}
+    const hasEx=r.before&&r.before.boats&&Object.values(r.before.boats).some(v=>v.exTime!=null);
+    if(a&&hasEx){try{a0=analyze({...r,before:null});}catch(_){}}
+    const res=resultOf(r),fin=res&&res.order?res.order.split('-').indexOf('1')+1:0;
+    return {r,a,a0,hasEx,res,fin};}).filter(x=>x.a);
+  rows.sort(tobuSort==='p'?(x,y)=>y.a.one.tobu-x.a.one.tobu:(x,y)=>(x.r.deadline||'').localeCompare(y.r.deadline||'')||x.r.jcd-y.r.jcd);
+  const done=rows.filter(x=>x.res&&x.res.order),hiDone=done.filter(x=>x.a.one.tobu>=0.35);
+  const flop=x=>x.fin===0||x.fin>=4;
+  const sum=done.length?`<p class="sub">今日の結果：1号艇が飛んだのは${done.filter(flop).length}/${done.length}レース（${pc(done.filter(flop).length/done.length)}）。そのうち飛ぶ確率35%以上と見たレースでは${hiDone.filter(flop).length}/${hiDone.length}レースが飛びました。</p>`:'';
+  el.innerHTML=`<div style="display:grid;gap:14px">
+    <div class="panel"><h3>イン飛び（1号艇が4着以下になる確率）</h3>
+      <p class="sub">${fmtDate(dateSel)}の全レース。展示が出たレースは展示・進入・オリジナル展示を入れた確率（小さい数字は展示前）。35%以上（赤）は通知も届きます。全レースの平均は約17%。</p>${sum}
+      <div class="seg" role="group" aria-label="並べ方"><button data-s="p" aria-pressed="${tobuSort==='p'}">飛ぶ確率の高い順</button><button data-s="t" aria-pressed="${tobuSort==='t'}">締切順</button></div></div>
+    <ul class="tobu-list">${rows.map(x=>{const t=x.a.one.tobu,c=tobuOf(t).cls,b1=x.a.boats.find(b=>b.waku===1);
+      const st=x.res&&x.res.order?(flop(x)?`<span class="tb-res flop">飛んだ<small>${x.fin?x.fin+'着':'着外'}</small></span>`:`<span class="tb-res ok">${x.fin}着</span>`):x.hasEx?'<span class="tb-res ex">展示済</span>':'<span class="tb-res pre">展示前</span>';
+      return `<li><button class="tb-row tobu-${c}" data-id="${esc(x.r.id)}">
+        <span class="tb-when"><b>${esc(x.r.deadline||'')}</b>${esc(x.r.venue||VENUES[x.r.jcd])} ${x.r.rno}R</span>
+        <span class="tb-who">${bn(1)}<span>${esc(b1?b1.name:'')}${x.a.one.course!==1?`<small>進入${x.a.one.course}コース</small>`:''}</span></span>
+        <span class="tb-p"><b>${pc(t)}</b>${x.a0?`<small>展示前${pc(x.a0.one.tobu)}</small>`:''}<span class="bar"><span style="width:${Math.min(100,t/0.6*100)}%"></span></span></span>
+        ${st}</button></li>`;}).join('')}</ul></div>`;
+  el.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{tobuSort=b.dataset.s;LS.set('tobuSort',tobuSort);renderTobu();}));
+  el.querySelectorAll('.tb-row').forEach(b=>b.addEventListener('click',()=>{const r=races.find(x=>x.id===b.dataset.id);if(!r)return;
+    jcdSel=r.jcd;LS.set('jcd',jcdSel);raceId=r.id;view='yoso';LS.set('view',view);const s2=$('#venue');if(s2)s2.value=String(jcdSel);renderChips();renderView();window.scrollTo(0,0);}));
+}
 
 // ---------------------------------------------------------------- スリット予測・展開予想
 const KM_DEFAULT={1:{'逃げ':.93,'抜き':.04,'恵まれ':.03},2:{'差し':.55,'まくり':.3,'抜き':.1,'恵まれ':.05},3:{'まくり':.42,'まくり差し':.35,'差し':.13,'抜き':.07,'恵まれ':.03},

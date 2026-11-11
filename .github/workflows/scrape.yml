@@ -47,11 +47,19 @@ jobs:
       - name: 公式サイトから取得して保存（くり返し）
         env:
           APP_PASS: ${{ secrets.APP_PASS }}
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
         run: |
           cd data
           git config user.name "teiyomi-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           cd ..
+          # 1号艇が飛ぶアラート（展示が出そろったレースをアプリと同じ計算で見直して ntfy に通知）
+          alert() {
+            mkdir -p /tmp/plain
+            python scraper/crypt.py decrypt data/enc/model.json /tmp/plain/model.json && \
+            python scraper/crypt.py decrypt data/enc/stats.json /tmp/plain/stats.json && \
+            node scraper/alert.js data /tmp/plain || echo "アラートの処理に失敗"
+          }
           inbox() { python scraper/crypt.py pub data/enc/pub.txt && python scraper/crypt.py inbox data || echo "受け箱の処理に失敗"; }
           save() {
             ( cd data
@@ -72,6 +80,7 @@ jobs:
             T=$(date +%s)
             python scraper/teiyomi_scraper.py $ARGS || echo "取得でエラー（次の回で再挑戦）"
             inbox
+            alert
             save
             H=$(TZ=Asia/Tokyo date +%H)
             # 日本時間 0時〜6時台は止める。1回の実行は5時間半まで（次の予約が引き継ぐ）
