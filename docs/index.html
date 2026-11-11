@@ -242,7 +242,6 @@ table.rec{border-collapse:collapse;width:100%;min-width:560px;font-variant-numer
     <button role="tab" id="tab-yoso" aria-selected="true" data-view="yoso">予想</button>
     <button role="tab" id="tab-tobu" aria-selected="false" data-view="tobu">イン飛び</button>
     <button role="tab" id="tab-self" aria-selected="false" data-view="self">自分で予想</button>
-    <button role="tab" id="tab-calc" aria-selected="false" data-view="calc">買い目計算</button>
     <button role="tab" id="tab-rec" aria-selected="false" data-view="rec">成績</button>
   </nav>
 </div></header>
@@ -261,7 +260,6 @@ table.rec{border-collapse:collapse;width:100%;min-width:560px;font-variant-numer
   <section id="v-yoso"></section>
   <section id="v-tobu" hidden></section>
   <section id="v-self" hidden></section>
-  <section id="v-calc" hidden></section>
   <section id="v-rec" hidden></section>
   <p class="disclaim">確率は公式の出走表・直前情報から計算した推定値で、的中を保証するものではありません。推定オッズは人気を予想したもので、実際のオッズとは異なります。舟券は20歳から、無理のない金額で。データ出典：BOAT RACE オフィシャルウェブサイト。</p>
 </main>
@@ -578,6 +576,7 @@ let picks=LS.get('picks',{}), exMan=LS.get('ex',{}), resMan=LS.get('res',{}), hi
 
 /* ============ 状態とデータ ============ */
 let dates=[], dateSel=null, races=[], jcdSel=null, raceId=null, view=LS.get('view','yoso');
+if(!['yoso','tobu','self','rec'].includes(view))view='yoso';
 const calc={mode:'form',sel:[new Set([1]),new Set([2,3]),new Set([2,3,4])],stake:100};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -638,9 +637,9 @@ function renderChips(){
 }
 const cur=()=>races.find(r=>r.id===raceId)||null;
 function renderView(){
-  ['yoso','tobu','self','calc','rec'].forEach(v=>{$('#v-'+v).hidden=v!==view;$('#tab-'+v).setAttribute('aria-selected',v===view);});
+  ['yoso','tobu','self','rec'].forEach(v=>{$('#v-'+v).hidden=v!==view;$('#tab-'+v).setAttribute('aria-selected',v===view);});
   $('#chips').hidden=view==='rec'||view==='tobu';
-  if(view==='yoso')renderYoso();else if(view==='tobu')renderTobu();else if(view==='self')renderSelf();else if(view==='calc')renderCalc();else renderRec();
+  if(view==='yoso')renderYoso();else if(view==='tobu')renderTobu();else if(view==='self')renderSelf();else renderRec();
 }
 const emptyState=()=>`<div class="empty"><b>この日のレースデータはまだありません。</b><br>毎朝7時ごろに、その日の全場の出走表を自動で取り込みます。</div>`;
 const WIND=['','北','北北東','北東','東北東','東','東南東','南東','南南東','南','南南西','南西','西南西','西','西北西','北西','北北西'];
