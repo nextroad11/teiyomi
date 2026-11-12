@@ -28,7 +28,9 @@ function stub() {
       if (k === 'then') return undefined;
       if (k === 'length') return 0;
       if (k === 'value' || k === 'textContent' || k === 'innerHTML') return '';
-      if (k === 'dataset' || k === 'style') return {};
+      if (k === 'dataset') return {};
+      if (k === 'style') return { setProperty() {}, removeProperty() {}, getPropertyValue() { return ''; } };
+      if (k === 'offsetHeight' || k === 'offsetWidth' || k === 'scrollWidth') return 0;
       if (k === 'classList') return { add() {}, remove() {}, toggle() {}, contains() { return false; } };
       return P;
     },
@@ -65,6 +67,8 @@ const ctx = {
 };
 ctx.window = ctx;
 vm.createContext(ctx);
+// 画面を描く処理で失敗しても、計算（analyze）は使えるので止めない
+process.on('unhandledRejection', e => console.log('（画面処理のエラーは無視）', String(e && e.message || e)));
 const html = fs.readFileSync(path.join(__dirname, '..', 'docs', 'index.html'), 'utf8');
 const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1]);
 vm.runInContext(scripts[scripts.length - 1], ctx, { filename: 'index.html' });

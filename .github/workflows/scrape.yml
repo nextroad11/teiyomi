@@ -78,6 +78,8 @@ jobs:
           START=$(date +%s)
           while :; do
             T=$(date +%s)
+            # 実行中でも最新の取得・通知の仕組みに入れ替える（直しをすぐ反映するため）
+            git fetch -q origin main && git checkout -q FETCH_HEAD -- scraper docs || echo "最新への入れ替えに失敗（今のまま続行）"
             python scraper/teiyomi_scraper.py $ARGS || echo "取得でエラー（次の回で再挑戦）"
             inbox
             alert
