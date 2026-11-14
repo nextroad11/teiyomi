@@ -1,6 +1,6 @@
-name: B級ウォッチ（試験版）
+name: B級ウォッチ
 # 毎朝、前日までの展示から各開催の足の相対評価をつくり、合言葉で暗号化して保存する（enc/bwatch/YYYYMMDD.json）。
-# 試験用ページ（docs/test.html）だけが読む。本番のアプリ・通知には入っていない。
+# アプリの「B級ウォッチ」タブと、勝負候補の通知（scraper/alert.js）が読む。
 
 on:
   schedule:

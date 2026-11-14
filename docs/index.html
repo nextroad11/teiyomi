@@ -278,6 +278,23 @@ table.rec{border-collapse:collapse;width:100%;min-width:560px;font-variant-numer
 .empty b{color:var(--ink)}
 .disclaim{font-size:11px;color:var(--muted);max-width:72ch}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:8px 14px;border-radius:8px;font-size:13px;z-index:20}
+/* ---- B級ウォッチ */
+.bw-grid{display:grid;gap:12px}
+.bw-venue h3{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.bw-venue h3 small{font-weight:400;color:var(--muted);font-size:12px}
+.bw-pl{border-top:1px solid var(--line);padding:10px 0;display:grid;gap:6px;min-width:0}
+.bw-head{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.bw-g{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:7px;font:800 15px var(--f-body);color:#fff}
+.bw-g.S{background:#c2255c}.bw-g.A{background:#d9480f}.bw-g.B{background:#5c636a}.bw-g.C,.bw-g.D{background:#ced4da;color:#222}
+.bw-why{margin:0;padding-left:1.1em;color:var(--muted);font-size:12px}
+.bw-race{display:grid;gap:4px;background:var(--sunk);border-radius:9px;padding:8px 10px;text-align:left;border:0;color:inherit;font:inherit;font-size:13px;width:100%;cursor:pointer;min-width:0}
+.bw-race .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.bw-aim{font-weight:800;padding:1px 8px;border-radius:5px;font-size:12px}
+.bw-aim.go{background:#c2255c;color:#fff}.bw-aim.ok{background:#d9480f;color:#fff}.bw-aim.no{background:var(--line);color:var(--muted)}
+.bw-recs{display:flex;gap:6px;flex-wrap:wrap}
+.bw-recs span{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:12px;white-space:nowrap}
+.bw-recs span.hit{border-color:#c2255c;color:#c2255c;font-weight:800}
+.bw-tbl{font-size:12px;border-collapse:collapse;width:100%;margin:6px 0}.bw-tbl td,.bw-tbl th{padding:3px 6px;border-bottom:1px solid var(--line);text-align:right}.bw-tbl td:first-child,.bw-tbl th:first-child{text-align:left}
 </style>
 </head>
 <body>
@@ -286,6 +303,7 @@ table.rec{border-collapse:collapse;width:100%;min-width:560px;font-variant-numer
   <nav class="tabs" role="tablist">
     <button role="tab" id="tab-yoso" aria-selected="true" data-view="yoso">予想</button>
     <button role="tab" id="tab-tobu" aria-selected="false" data-view="tobu">イン飛び</button>
+    <button role="tab" id="tab-bw" aria-selected="false" data-view="bw">B級ウォッチ</button>
     <button role="tab" id="tab-self" aria-selected="false" data-view="self">自分で予想</button>
     <button role="tab" id="tab-pl" aria-selected="false" data-view="pl">選手</button>
     <button role="tab" id="tab-rec" aria-selected="false" data-view="rec">成績</button>
@@ -305,6 +323,7 @@ table.rec{border-collapse:collapse;width:100%;min-width:560px;font-variant-numer
   <div class="chips" id="chips" role="group" aria-label="レースを選ぶ"></div>
   <section id="v-yoso"></section>
   <section id="v-tobu" hidden></section>
+  <section id="v-bw" hidden></section>
   <section id="v-pl" hidden></section>
   <section id="v-self" hidden></section>
   <section id="v-rec" hidden></section>
@@ -652,6 +671,7 @@ async function loadDay(){
   const note=$('#loadnote');
   if(!dateSel){races=[];note.textContent='';renderAll();return;}
   try{SHARED=(await fetchEnc('picks/'+dateSel+'.json')).races||{};}catch(_){SHARED={};}
+  try{BW=await fetchEnc('bwatch/'+dateSel+'.json');}catch(_){BW=null;}
   try{const d=await fetchJSON(dateSel+'.json');races=d.races||[];
     note.textContent=d.updated?`更新 ${d.updated.slice(11,16)}`:'';
     snapshotAI();
@@ -684,9 +704,9 @@ function renderChips(){
 }
 const cur=()=>races.find(r=>r.id===raceId)||null;
 function renderView(){
-  ['yoso','tobu','self','pl','rec'].forEach(v=>{$('#v-'+v).hidden=v!==view;$('#tab-'+v).setAttribute('aria-selected',v===view);});
-  $('#chips').hidden=view==='rec'||view==='tobu'||view==='pl';
-  if(view==='yoso')renderYoso();else if(view==='tobu')renderTobu();else if(view==='pl')renderPlayers();else if(view==='self')renderSelf();else renderRec();
+  ['yoso','tobu','bw','self','pl','rec'].forEach(v=>{$('#v-'+v).hidden=v!==view;$('#tab-'+v).setAttribute('aria-selected',v===view);});
+  $('#chips').hidden=view==='rec'||view==='tobu'||view==='pl'||view==='bw';
+  if(view==='yoso')renderYoso();else if(view==='tobu')renderTobu();else if(view==='bw')renderBW();else if(view==='pl')renderPlayers();else if(view==='self')renderSelf();else renderRec();
 }
 const emptyState=()=>`<div class="empty"><b>この日のレースデータはまだありません。</b><br>毎朝7時ごろに、その日の全場の出走表を自動で取り込みます。</div>`;
 const WIND=['','北','北北東','北東','東北東','東','東南東','南東','南南東','南','南南西','南西','西南西','西','西北西','北西','北北西'];
@@ -1191,6 +1211,74 @@ function renderCalc(){
   if(a){$('#fill-h').onclick=()=>showList(a.honsen.map(c=>c.k));$('#fill-a').onclick=()=>showList(a.ana.map(c=>c.k));}
   $('#paste').oninput=e=>{const ks=parsePicks(e.target.value);if(ks.length)showList(ks);};
 }
+
+// ---------------------------------------------------------------- B級ウォッチ
+// 毎朝、前日までの足スコアを開催全体でまとめて評価した結果（scraper/bwatch.py）を読み、
+// 今日の各レースでAIの確率に「今節の足」を足して、B級選手を1着・2着に置いた3連単の期待値を出す。
+let BW=null, bwShow=LS.get('bwShow','SA');
+const BW_BETA=0.08;   // 今節の足の評価1あたり、勝ちやすさに足す量（11/14のバックテスト：当日の展示を入れたうえで改善度+19）
+const BW_EV=1.2, BW_MINP=0.004, BW_MAX=6;   // 推奨の条件（期待値1.2以上・確率0.4%以上・最大6点）。オッズの記録で検証中
+function bwRace(r,vmap,w){
+  const a=A(r);if(!a)return null;
+  const bs=a.boats.map(b=>{const e=vmap[b.toban],k=Math.exp(BW_BETA*(e?e.rt:0));return {...b,winW:b.winW*k,plW:b.plW*k};});
+  const P=trifecta(bs,'winW','plW'),odds=Object.fromEntries(a.combos.map(c=>[c.k,c]));
+  const W=sum(bs.map(b=>b.winW)),bb=bs.find(b=>b.waku===w);
+  const p1=bb?bb.winW/W:0;let p2=0,p3=0;const cand=[];
+  for(const k in P){const f=k.split('-').map(Number);if(f[0]===w||f[1]===w)p2+=P[k];if(f.includes(w))p3+=P[k];
+    const c=odds[k];if((f[0]===w||f[1]===w)&&c&&c.real)cand.push({k,p:P[k],odds:c.odds,ev:P[k]*c.odds});}
+  const rec=cand.filter(c=>c.ev>=BW_EV&&c.p>=BW_MINP).sort((x,y)=>y.ev-x.ev).slice(0,BW_MAX);
+  return {a,p1,p2:Math.min(1,p2),p3:Math.min(1,p3),rec,best:cand.length?Math.max(...cand.map(c=>c.ev)):null,real:!!a.real};
+}
+function bwIntro(extra){
+  return `<div class="panel"><h3>B級ウォッチ</h3><p class="hint" style="margin-top:0">「勝負」になったレースは、展示が出そろったあとにスマホへ通知します（オッズの基準は検証中）。</p>
+    <p class="sub">各開催の<b>前日までの足スコア</b>（オリジナル展示＋展示タイム）を開催全体でまとめて評価し、B級選手をS〜Dの5段階にしました。水面・風・時間帯の差はレースごとに差し引いています。今日の展示や結果は評価に使っていません（毎朝決まる評価）。</p>
+    <details><summary class="sub">評価の根拠（過去1年のうち、基準づくりに使っていない後半の期間）</summary>
+    <table class="bw-tbl"><tr><th>評価</th><th>1着</th><th>2連対</th><th>3連対</th><th>1着流しの回収率</th></tr>
+    <tr><td>S（開催の上位10%）</td><td>16.4%</td><td>33.6%</td><td>50.6%</td><td>64%</td></tr>
+    <tr><td>A（上位10〜25%）</td><td>13.6%</td><td>29.6%</td><td>46.7%</td><td>74%</td></tr>
+    <tr><td>B（25〜45%）</td><td>11.8%</td><td>26.2%</td><td>42.4%</td><td>62%</td></tr>
+    <tr><td>C（45〜70%）</td><td>9.1%</td><td>22.8%</td><td>38.6%</td><td>52%</td></tr>
+    <tr><td>D（下位30%）</td><td>7.1%</td><td>18.2%</td><td>31.7%</td><td>48%</td></tr></table>
+    <p class="hint">計測1走だけの選手は1段階下げ、B2は最高A、足の評価が効きにくい場（江戸川・住之江・三国・蒲郡）は最高Bです。評価だけで毎回買うと回収率は100%に届かないので、<b>オッズが割に合うときだけ</b>推奨を出します（期待値${BW_EV}以上。この基準はオッズの記録で検証中）。取得できないデータ：スリットの行き足・1マークの旋回内容・着順に出ない不利。</p></details>
+    ${extra||''}
+    <div class="seg" role="group" aria-label="表示"><button data-s="SA" aria-pressed="${bwShow==='SA'}">S・Aだけ</button><button data-s="SAB" aria-pressed="${bwShow==='SAB'}">Bまで</button></div></div>`;
+}
+function renderBW(){
+  const el=$('#v-bw');
+  if(!races.length){el.innerHTML=emptyState();return;}
+  const pc=v=>Math.round(v*100)+'%';
+  if(!BW){el.innerHTML=`<div class="bw-grid">${bwIntro()}<div class="empty"><b>${fmtDate(dateSel)}のB級ウォッチはまだありません。</b><br>毎朝7時台に、前日までの展示から作ります。</div></div>`;bwSeg(el);return;}
+  const cards=[];let sumN=0,sumIn3=0;
+  for(const [js,v] of Object.entries(BW.venues).sort((x,y)=>+x[0]-+y[0])){
+    const vmap=Object.fromEntries(v.players.map(p=>[p.toban,p]));
+    const list=v.players.filter(p=>p.grade&&bwShow.includes(p.grade)).sort((x,y)=>'SABCD'.indexOf(x.grade)-'SABCD'.indexOf(y.grade)||x.rank-y.rank);
+    const head=`<h3>${esc(v.venue)} <small>${v.day}日目・足の評価の効き目 ${esc(v.reliab)}${v.players.length?'・'+v.players[0].N+'人を評価':''}</small></h3>`;
+    if(!v.players.length){cards.push(`<div class="panel bw-venue">${head}<p class="sub">${esc(v.note||'評価なし')}</p></div>`);continue;}
+    if(!list.length){cards.push(`<div class="panel bw-venue">${head}<p class="sub">この条件の選手はいません${v.reliab==='低'?'（足の評価が効きにくい場なので最高Bです）':''}。</p></div>`);continue;}
+    const pls=list.map(p=>{
+      const rs=(p.today||[]).map(([rno,w])=>{const r=races.find(x=>x.jcd===+js&&x.rno===rno);if(!r)return '';
+        const x=bwRace(r,vmap,w);if(!x)return '';
+        const res=resultOf(r),done=!!(res&&res.order),fin=done?res.order.split('-').map(Number).indexOf(w)+1:0;
+        if(done){sumN++;if(fin>=1&&fin<=3)sumIn3++;}
+        const aim=done?['no','終了']:!x.real?['no','オッズ待ち']:x.rec.length&&'SA'.includes(p.grade)&&x.p2>=0.2?['go','勝負']:x.rec.length?['ok','狙い']:['no','見送り（期待値不足）'];
+        const recs=x.rec.map(c=>`<span class="${done&&res.order===c.k?'hit':''}">${c.k} ${c.odds}倍 <small>期待値${c.ev.toFixed(2)}</small></span>`).join('');
+        return `<button class="bw-race" data-id="${esc(r.id)}"><div class="row"><b>${rno}R</b><span>${esc(r.deadline||'')}</span>${bn(w)}
+          <span>1着 ${pc(x.p1)}・2着以内 ${pc(x.p2)}・3着以内 ${pc(x.p3)}</span><span class="bw-aim ${aim[0]}">${aim[1]}</span>
+          ${done?`<span>結果 ${esc(res.order)}（${fin?fin+'着':'着外'}）</span>`:''}</div>
+          ${recs&&!done?`<div class="bw-recs">${recs}</div><small style="color:var(--muted)">推奨は各100円から。この選手を1着か2着に置いた3連単のうち、期待値の高い順</small>`:x.best!=null&&!done?`<small style="color:var(--muted)">一番良い組でも期待値${x.best.toFixed(2)}</small>`:''}</button>`;}).join('');
+      return `<div class="bw-pl"><div class="bw-head"><span class="bw-g ${p.grade}">${p.grade}</span><b class="pl-link" data-toban="${p.toban}">${esc(p.name||'')}</b><span class="tag">${esc(p.cls)}</span>
+        <span class="tag">勝率${p.nw??'-'}</span><span class="tag">モーター${p.m2??'-'}%</span></div>
+        <ul class="bw-why">${p.why.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>${rs||'<p class="sub">今日の出走なし</p>'}</div>`;}).join('');
+    cards.push(`<div class="panel bw-venue">${head}${pls}</div>`);
+  }
+  const today=sumN?`<p class="sub">今日の結果：表示中の選手は${sumN}走して${sumIn3}回3着以内（${pc(sumIn3/sumN)}）。</p>`:'';
+  el.innerHTML=`<div class="bw-grid">${bwIntro(today)}${cards.join('')}<p class="hint">評価の作成 ${esc(BW.made||'')}・版 ${esc(BW.version||'')}</p></div>`;
+  bwSeg(el);
+  el.querySelectorAll('.bw-race').forEach(b=>b.addEventListener('click',()=>{const r=races.find(x=>x.id===b.dataset.id);if(!r)return;
+    jcdSel=r.jcd;LS.set('jcd',jcdSel);raceId=r.id;view='yoso';LS.set('view',view);const s2=$('#venue');if(s2)s2.value=String(jcdSel);renderChips();renderView();window.scrollTo(0,0);}));
+  el.querySelectorAll('.pl-link').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();openPlayer(+b.dataset.toban);}));
+}
+function bwSeg(el){el.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{bwShow=b.dataset.s;LS.set('bwShow',bwShow);renderBW();}));}
 
 /* ============ 成績（今見ている日付のレース） ============ */
 function learnPanel(){

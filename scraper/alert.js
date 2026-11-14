@@ -10,6 +10,7 @@ const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
 
+const BW_DAY_MAX = 12;         // B級ウォッチ「勝負候補」の通知は1日12件まで（多すぎると見なくなるため）
 const TOBU_TH = 0.35;          // 1号艇が飛ぶ確率の基準（11/5〜11の982Rで、35%以上は実際に46%が飛んだ）
 const APP_URL = 'https://nextroad11.github.io/teiyomi/';
 
@@ -125,4 +126,73 @@ async function notify(title, body, tags) {
   }
   fs.writeFileSync(sentFile, JSON.stringify(sent));
   console.log(`1号艇が飛ぶアラート ${n}件`);
+
+  // ---- B級ウォッチ「勝負候補」：今節の足の評価S・Aの B級選手が出走し、展示後・公式オッズで
+  //      その選手を1着か2着に置いた3連単に期待値の基準を満たす組があり、2着以内の確率が20%以上のとき
+  try {
+    const enc = path.join(dataDir, 'enc', 'bwatch', today + '.json');
+    const plainBW = path.join(plainDir, 'bwatch.json');
+    if (fs.existsSync(enc) && process.env.APP_PASS) {
+      require('child_process').execFileSync('python', [path.join(__dirname, 'crypt.py'), 'decrypt', enc, plainBW], { stdio: 'ignore' });
+    }
+    if (!fs.existsSync(plainBW)) { console.log('B級ウォッチの評価なし'); return; }
+    const BWD = readJSON(plainBW);
+    if (BWD.date !== today) { console.log('B級ウォッチの評価が今日の分ではない'); return; }
+    ctx.__bw = BWD;
+    vm.runInContext('BW=__bw', ctx);
+    sent.bw = sent.bw || [];
+    let m = 0;
+    for (const [js, v] of Object.entries(BWD.venues)) {
+      const vmap = Object.fromEntries(v.players.map(p => [p.toban, p]));
+      for (const p of v.players) {
+        if (!['S', 'A'].includes(p.grade)) continue;
+        for (const [rno, w] of p.today || []) {
+          const r = races.find(x => x.jcd === +js && x.rno === rno);
+          if (!r || !r.before || !r.before.complete || !r.deadline) continue;
+          const key = `${r.id}#${p.toban}`;
+          if (sent.bw.some(e => e.key === key)) continue;
+          if (sent.bw.length >= BW_DAY_MAX) continue;            // 1日の通知は多くても BW_DAY_MAX 件まで
+          const [h, mi] = r.deadline.split(':').map(Number);
+          if (!process.env.ALERT_TEST && (r.result || h * 60 + mi < nowMin)) continue;
+          ctx.__r = r; ctx.__vmap = vmap; ctx.__w = w;
+          const x = vm.runInContext(`(()=>{const x=bwRace(__r,__vmap,__w);if(!x)return null;
+            const mk=Object.fromEntries(x.a.combos.map(c=>[c.k,c.pMk]));
+            return {p1:x.p1,p2:x.p2,real:x.real,rec:x.rec.map(c=>({k:c.k,odds:c.odds,ev:c.ev,p:c.p,mk:mk[c.k]||0}))};})()`, ctx);
+          if (!x || !x.real || !x.rec.length || x.p2 < 0.2) continue;
+          const pc = v2 => Math.round(v2 * 100) + '%';
+          const first = x.rec.filter(c => +c.k.split('-')[0] === w).reduce((a, c) => a + c.ev, 0);
+          const second = x.rec.filter(c => +c.k.split('-')[1] === w).reduce((a, c) => a + c.ev, 0);
+          const aim = first >= second ? '1着' : '2着';
+          const reasons = [];
+          const z = p.z || [];
+          if (z[2] != null && z[2] >= 1) reasons.push('伸び足優秀');
+          if (z[1] != null && z[1] >= 1) reasons.push('回り足優秀');
+          if (z[0] != null && z[0] >= 1) reasons.push('一周が速い');
+          if (z[3] != null && z[3] >= 1) reasons.push('展示が良い');
+          if (!reasons.length) reasons.push(`今節の足 ${p.N}人中${p.rank}位`);
+          if (w <= 3) reasons.push('好枠');
+          const best = x.rec[0];
+          if (best.mk > 0 && best.p / best.mk >= 1.5) reasons.push('人気薄');
+          const title = `B級穴選手・勝負候補 ${r.venue}${r.rno}R（締切${r.deadline}）`;
+          const body = [
+            '【B級穴選手・勝負候補】',
+            `会場：${r.venue}`,
+            `レース：${r.rno}R（締切${r.deadline}）`,
+            `選手：${p.name}（${p.cls}・${w}号艇）`,
+            `今節評価：${p.grade}（今節の足 ${p.N}人中${p.rank}位・計測${p.n}走）`,
+            `狙い：${aim}（1着 ${pc(x.p1)}・2着以内 ${pc(x.p2)}）`,
+            `理由：${reasons.join('・')}`,
+            `推奨3連単：${x.rec.map(c => `${c.k}（${c.odds}倍）`).join(' ')}`,
+            `期待値：${best.ev.toFixed(2)}（最大）`,
+          ].join('\n');
+          if (await notify(title, body, 'dart,speedboat')) {
+            sent.bw.push({ key, toban: p.toban, grade: p.grade, waku: w, p1: x.p1, p2: x.p2, rec: x.rec.map(c => [c.k, c.odds, +c.ev.toFixed(3)]), at: new Date(Date.now() + 9 * 3600e3).toISOString().slice(11, 16) });
+            m++;
+          }
+        }
+      }
+    }
+    fs.writeFileSync(sentFile, JSON.stringify(sent));
+    console.log(`B級ウォッチ 勝負候補の通知 ${m}件`);
+  } catch (e) { console.log('B級ウォッチの通知でエラー（イン飛びアラートには影響なし）', String(e && e.message || e)); }
 })();
