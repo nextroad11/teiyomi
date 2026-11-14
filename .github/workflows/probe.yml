@@ -24,5 +24,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           git diff --cached --quiet && exit 0
-          git commit -q -m "下見: BOATCAST"
+          git commit -q -m "下見: 結果ページ"
           for i in 1 2 3; do git push -q && exit 0; git pull -q --rebase; done
