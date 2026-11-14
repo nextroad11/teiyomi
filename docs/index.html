@@ -188,7 +188,7 @@ td.who{min-width:6.5em}td.who b{white-space:nowrap}td.who span{white-space:nowra
 .oc.ai-hi{background:color-mix(in srgb,var(--good) 20%,transparent)}.oc.ai-hi .ov{color:var(--good);font-weight:700}
 .oc.ai-lo{opacity:.55}.oc.hon{outline:2px solid var(--accent);outline-offset:-2px}.oc.hit{background:var(--good);color:#fff}.oc.hit small,.oc.hit .ov{color:#fff!important}
 .odds h3 small{font-size:12px;color:var(--muted);font-weight:400}.lg-hi{color:var(--good);font-weight:700}.lg-lo{color:var(--muted)}
-.pl-link{cursor:pointer;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.pl-link{cursor:auto}
 .plq{width:100%;box-sizing:border-box;font:16px var(--f-body);padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}
 .pl-list{list-style:none;margin:8px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
 .pl-item{width:100%;text-align:left;font:inherit;color:inherit;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:6px 10px;cursor:pointer;display:grid}
@@ -309,11 +309,10 @@ table.rec{border-collapse:collapse;width:100%;min-width:560px;font-variant-numer
   <h1 class="brand">艇読みAI <small>BOATRACE ANALYZER</small></h1>
   <nav class="tabs" role="tablist">
     <button role="tab" id="tab-yoso" aria-selected="true" data-view="yoso">予想</button>
+    <button role="tab" id="tab-self" aria-selected="false" data-view="self">自分で予想</button>
     <button role="tab" id="tab-tobu" aria-selected="false" data-view="tobu">イン飛び</button>
     <button role="tab" id="tab-bw" aria-selected="false" data-view="bw">B級ウォッチ</button>
     <button role="tab" id="tab-man" aria-selected="false" data-view="man">万舟</button>
-    <button role="tab" id="tab-self" aria-selected="false" data-view="self">自分で予想</button>
-    <button role="tab" id="tab-pl" aria-selected="false" data-view="pl">選手</button>
     <button role="tab" id="tab-rec" aria-selected="false" data-view="rec">成績</button>
   </nav>
 </div></header>
@@ -651,7 +650,7 @@ let picks=LS.get('picks',{}), exMan=LS.get('ex',{}), resMan=LS.get('res',{}), hi
 
 /* ============ 状態とデータ ============ */
 let dates=[], dateSel=null, races=[], jcdSel=null, raceId=null, view=LS.get('view','yoso');
-if(!['yoso','tobu','self','pl','rec'].includes(view))view='yoso';
+if(!['yoso','self','tobu','bw','man','rec'].includes(view))view='yoso';
 const calc={mode:'form',sel:[new Set([1]),new Set([2,3]),new Set([2,3,4])],stake:100};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -713,9 +712,9 @@ function renderChips(){
 }
 const cur=()=>races.find(r=>r.id===raceId)||null;
 function renderView(){
-  ['yoso','tobu','bw','man','self','pl','rec'].forEach(v=>{$('#v-'+v).hidden=v!==view;$('#tab-'+v).setAttribute('aria-selected',v===view);});
+  ['yoso','self','tobu','bw','man','rec'].forEach(v=>{$('#v-'+v).hidden=v!==view;$('#tab-'+v).setAttribute('aria-selected',v===view);});
   $('#chips').hidden=view==='rec'||view==='tobu'||view==='pl'||view==='bw'||view==='man';
-  if(view==='yoso')renderYoso();else if(view==='tobu')renderTobu();else if(view==='bw')renderBW();else if(view==='man')renderMan();else if(view==='pl')renderPlayers();else if(view==='self')renderSelf();else renderRec();
+  if(view==='yoso')renderYoso();else if(view==='tobu')renderTobu();else if(view==='bw')renderBW();else if(view==='man')renderMan();else if(view==='self')renderSelf();else renderRec();
 }
 const emptyState=()=>`<div class="empty"><b>この日のレースデータはまだありません。</b><br>毎朝7時ごろに、その日の全場の出走表を自動で取り込みます。</div>`;
 const WIND=['','北','北北東','北東','東北東','東','東南東','南東','南南東','南','南南西','南西','西南西','西','西北西','北西','北北西'];
@@ -774,7 +773,7 @@ function renderPlayers(){
   inp.addEventListener('search',run);
   plResults();wireProfile();
 }
-function openPlayer(t){plFill();plSel=String(t);LS.set('pls',plSel);const v=STATS&&STATS.p[plSel];if(v&&v.nm){plQuery=v.nm;LS.set('plq',plQuery);}view='pl';LS.set('view',view);renderView();window.scrollTo(0,0);}
+function openPlayer(t){return; /* 選手タブは11/14に廃止。名前を押しても何もしない */plFill();plSel=String(t);LS.set('pls',plSel);const v=STATS&&STATS.p[plSel];if(v&&v.nm){plQuery=v.nm;LS.set('plq',plQuery);}view='pl';LS.set('view',view);renderView();window.scrollTo(0,0);}
 
 // ---------------------------------------------------------------- イン飛び: その日の全レースの「1号艇が飛ぶ確率」
 let tobuSort=LS.get('tobuSort','p');
