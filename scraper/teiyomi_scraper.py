@@ -249,7 +249,21 @@ def parse_result(html: str) -> dict | None:
     txt = text_of(html)
     m = RESULT_RE.search(txt)
     if m:
-        return {"order": f"{m.group(1)}-{m.group(2)}-{m.group(3)}", "payout": int(m.group(4).replace(",", ""))}
+        out = {"order": f"{m.group(1)}-{m.group(2)}-{m.group(3)}", "payout": int(m.group(4).replace(",", ""))}
+        # 万舟の分析用：人気・決まり手・スタート（進入順に「枠 ST」）。読めなくても結果そのものは返す
+        try:
+            pm = re.match(r"\s*(\d+)", txt[m.end():])
+            if pm:
+                out["pop"] = int(pm.group(1))
+            km = re.search(r"決まり手\s+(\S+)", txt)
+            out["km"] = km.group(1) if km and km.group(1) != "備考" else ""
+            seg = re.search(r"スタート情報(.*?)勝式", txt, re.S)
+            if seg:
+                st = re.findall(r"([1-6])\s+(F\s*\.\d+|L|\.\d+|F\d*\.\d+)", seg.group(1))
+                out["st"] = [[int(w), v.replace(" ", "")] for w, v in st]
+        except Exception:
+            pass
+        return out
     if re.search(r"(レース中止|不成立|返還)", txt) and "3連単" in txt:
         return {"order": "", "payout": 0, "note": "中止・返還"}
     return None
@@ -391,7 +405,9 @@ def update_before_and_results(day: dict, now: dt.datetime) -> int:
                     n += 1
                     log(f"  {r['venue']}{rno}R オッズ 合計{p['inv']} ずれ{p['mismatch']}")
         # 結果: 締切8分後〜6時間後
-        if not r.get("result") and dl + dt.timedelta(minutes=8) <= now <= dl + dt.timedelta(hours=6):
+        # 万舟で決まり手をまだ読んでいない結果は一度だけ読み直す（万舟の分析用）
+        redo = bool(r.get("result")) and "km" not in r["result"] and (r["result"].get("payout") or 0) >= 10000
+        if (not r.get("result") or redo) and dl + dt.timedelta(minutes=8) <= now <= dl + dt.timedelta(hours=6):
             html = get(f"{BASE}/raceresult?{q}")
             if html:
                 p = parse_result(html)
@@ -453,7 +469,8 @@ def main():
         if yday:
             ybefore = json.dumps(yday, ensure_ascii=False, sort_keys=True)
             for r in yday["races"]:
-                if not r.get("result"):
+                redo = bool(r.get("result")) and "km" not in r["result"] and (r["result"].get("payout") or 0) >= 10000
+                if not r.get("result") or redo:
                     html = get(f"{BASE}/raceresult?rno={r['rno']}&jcd={r['jcd']:02d}&hd={yd}")
                     p = parse_result(html) if html else None
                     if p:

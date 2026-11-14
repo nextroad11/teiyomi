@@ -295,6 +295,13 @@ table.rec{border-collapse:collapse;width:100%;min-width:560px;font-variant-numer
 .bw-recs span{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:12px;white-space:nowrap}
 .bw-recs span.hit{border-color:#c2255c;color:#c2255c;font-weight:800}
 .bw-tbl{font-size:12px;border-collapse:collapse;width:100%;margin:6px 0}.bw-tbl td,.bw-tbl th{padding:3px 6px;border-bottom:1px solid var(--line);text-align:right}.bw-tbl td:first-child,.bw-tbl th:first-child{text-align:left}
+
+/* ---- 万舟 */
+.man-card{display:grid;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;text-align:left;color:inherit;font:inherit;width:100%;cursor:pointer;min-width:0}
+.man-head{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.man-ord{display:inline-flex;gap:2px;align-items:center}.man-ord i{font-style:normal;color:var(--muted)}
+.man-pay{color:#c2255c;font-size:16px}
+.man-pts{margin:0;padding-left:1.1em;font-size:13px;display:grid;gap:3px}
 </style>
 </head>
 <body>
@@ -304,6 +311,7 @@ table.rec{border-collapse:collapse;width:100%;min-width:560px;font-variant-numer
     <button role="tab" id="tab-yoso" aria-selected="true" data-view="yoso">予想</button>
     <button role="tab" id="tab-tobu" aria-selected="false" data-view="tobu">イン飛び</button>
     <button role="tab" id="tab-bw" aria-selected="false" data-view="bw">B級ウォッチ</button>
+    <button role="tab" id="tab-man" aria-selected="false" data-view="man">万舟</button>
     <button role="tab" id="tab-self" aria-selected="false" data-view="self">自分で予想</button>
     <button role="tab" id="tab-pl" aria-selected="false" data-view="pl">選手</button>
     <button role="tab" id="tab-rec" aria-selected="false" data-view="rec">成績</button>
@@ -324,6 +332,7 @@ table.rec{border-collapse:collapse;width:100%;min-width:560px;font-variant-numer
   <section id="v-yoso"></section>
   <section id="v-tobu" hidden></section>
   <section id="v-bw" hidden></section>
+  <section id="v-man" hidden></section>
   <section id="v-pl" hidden></section>
   <section id="v-self" hidden></section>
   <section id="v-rec" hidden></section>
@@ -704,9 +713,9 @@ function renderChips(){
 }
 const cur=()=>races.find(r=>r.id===raceId)||null;
 function renderView(){
-  ['yoso','tobu','bw','self','pl','rec'].forEach(v=>{$('#v-'+v).hidden=v!==view;$('#tab-'+v).setAttribute('aria-selected',v===view);});
-  $('#chips').hidden=view==='rec'||view==='tobu'||view==='pl'||view==='bw';
-  if(view==='yoso')renderYoso();else if(view==='tobu')renderTobu();else if(view==='bw')renderBW();else if(view==='pl')renderPlayers();else if(view==='self')renderSelf();else renderRec();
+  ['yoso','tobu','bw','man','self','pl','rec'].forEach(v=>{$('#v-'+v).hidden=v!==view;$('#tab-'+v).setAttribute('aria-selected',v===view);});
+  $('#chips').hidden=view==='rec'||view==='tobu'||view==='pl'||view==='bw'||view==='man';
+  if(view==='yoso')renderYoso();else if(view==='tobu')renderTobu();else if(view==='bw')renderBW();else if(view==='man')renderMan();else if(view==='pl')renderPlayers();else if(view==='self')renderSelf();else renderRec();
 }
 const emptyState=()=>`<div class="empty"><b>この日のレースデータはまだありません。</b><br>毎朝7時ごろに、その日の全場の出走表を自動で取り込みます。</div>`;
 const WIND=['','北','北北東','北東','東北東','東','東南東','南東','南南東','南','南南西','南西','西南西','西','西北西','北西','北北西'];
@@ -1279,6 +1288,97 @@ function renderBW(){
   el.querySelectorAll('.pl-link').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();openPlayer(+b.dataset.toban);}));
 }
 function bwSeg(el){el.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{bwShow=b.dataset.s;LS.set('bwShow',bwShow);renderBW();}));}
+
+
+// ---------------------------------------------------------------- 万舟（その日の3連単1万円以上のレースと、なぜ荒れたかの解説）
+// 解説は取得したデータだけから作る（出走表・展示・オリジナル展示・進入・結果・最終オッズ・AIの事前の見立て）。
+// 決まり手・人気・本番のSTは公式の結果ページから（11/15以降の結果。それより前は「取得前」）。
+let manSort=LS.get('manSort','t');
+function manshuOf(r){
+  const res=resultOf(r);if(!res||!res.order||(res.payout||0)<10000)return null;
+  const a=A(r);if(!a)return null;
+  const ord=res.order.split('-').map(Number), B=Object.fromEntries(a.boats.map(b=>[b.waku,b]));
+  const fin=w=>ord.indexOf(w)+1;  // 0なら4着以下
+  const bf=(r.before&&r.before.boats)||{}, corr=ashiCorr(r.jcd);
+  const ce={};a.boats.forEach(b=>{if(b.exTime!=null)ce[b.waku]=b.exTime+corr[b.waku][3];});
+  const exRank=w=>ce[w]==null?null:1+Object.values(ce).filter(v=>v<ce[w]-1e-9).length;
+  const st={};(res.st||[]).forEach(([w,v])=>{st[w]=v;});
+  const stNum=w=>{const v=st[w];if(!v)return null;const m=String(v).match(/F|L/);const n=parseFloat(String(v).replace(/[FL]/g,'')||'NaN');return m?{f:m[0],n}:{f:'',n};};
+  const stRank=w=>{const x=stNum(w);if(!x||x.f)return null;return 1+Object.keys(st).filter(k=>{const y=stNum(+k);return y&&!y.f&&y.n<x.n-1e-9;}).length;};
+  const cmb=a.combos.find(c=>c.k===res.order), aiRank=a.combos.indexOf(cmb)+1;
+  const real=realOdds(r), oddsRank=real?1+Object.values(real.map).filter(v=>v<real.map[res.order]).length:null;
+  const pop=res.pop||oddsRank;
+  const pts=[], tags=[];
+  // 1号艇
+  const b1=B[1], f1=fin(1);
+  if(f1===0||f1>=4){tags.push('イン飛び');
+    const why=[];
+    if(b1.course!==1)why.push(`${b1.course}コースに回った`);
+    if(b1.cls&&/^B/.test(b1.cls))why.push(`${b1.cls}`);
+    const er=exRank(1);if(er&&er>=4)why.push(`補正後の展示は${er}位`);
+    if(b1.ashi&&b1.ashi.rank>=4)why.push(`足スコア${b1.ashi.rank}位`);
+    const sr=stRank(1),sn=stNum(1);if(sn&&sn.f)why.push(`スタート${sn.f}`);else if(sr&&sr>=4)why.push(`本番のSTは${st[1]}で${sr}番目`);
+    pts.push(`1号艇 ${esc(b1.name||'')}（${esc(b1.cls||'')}）は${f1?f1+'着':'4着以下'}${why.length?'。'+why.join('・'):''}。AIの事前の「飛ぶ確率」は${Math.round(a.one.tobu*100)}%${a.one.tobu>=0.35?'（アラート対象）':''}。`);
+  }else pts.push(f1===1?`1号艇 ${esc(b1.name||'')}は1着。荒れたのは2着・3着の組み合わせ。`:`1号艇 ${esc(b1.name||'')}（${esc(b1.cls||'')}）は${f1}着に残った。`);
+  // 勝った艇
+  const w1=ord[0], bw1=B[w1];
+  if(w1!==1){
+    const c=bw1.course, why=[];
+    const er=exRank(w1);if(er&&er<=2)why.push(`補正後の展示${er}位`);
+    if(bw1.ashi&&bw1.ashi.rank<=2)why.push(`足スコア${bw1.ashi.rank}位`);
+    const inner=a.boats.filter(x=>x.course<c&&ce[x.waku]!=null);
+    if(c>1&&ce[w1]!=null&&inner.length){const nb=inner.find(x=>x.course===c-1);
+      if(inner.every(x=>ce[w1]<ce[x.waku]))why.push('内側の全艇より展示が速い');
+      else if(nb&&ce[nb.waku]-ce[w1]>=0.06)why.push('すぐ内側より展示が0.06秒以上速い');}
+    const sr=stRank(w1);if(sr===1)why.push(`STが全体で一番速い（${st[w1]}）`);else if(sr===2)why.push(`STが2番目に速い（${st[w1]}）`);
+    if(c>=4)tags.push('外からの1着');
+    pts.push(`1着は${w1}号艇 ${esc(bw1.name||'')}（${esc(bw1.cls||'')}・勝率${num(bw1.natWin)>0?bw1.natWin:'-'}）が${c}コースから${res.km?'「'+esc(res.km)+'」':''}${why.length?'。'+why.join('・'):''}。`);
+  }
+  // 2・3着の伏兵
+  for(const w of ord.slice(1)){const b=B[w];const weak=(b.cls==='B2')||(num(b.natWin)>0&&num(b.natWin)<4.0);
+    if(weak){tags.push('伏兵が着');pts.push(`${fin(w)}着に${w}号艇 ${esc(b.name||'')}（${esc(b.cls||'')}・勝率${num(b.natWin)>0?b.natWin:'-'}）が残った${b.ashi&&b.ashi.rank<=2?'（足スコアは'+b.ashi.rank+'位で、足は良かった）':''}。`);}}
+  // A級が飛んだ
+  const aOut=a.boats.filter(b=>/^A/.test(b.cls||'')&&!ord.includes(b.waku));
+  if(aOut.length>=2){tags.push('A級総崩れ');pts.push(`A級の${aOut.map(b=>b.waku+'号艇').join('・')}が3着に入れなかった。`);}
+  // 進入・水面
+  const moved=a.boats.filter(b=>b.course!==b.waku);
+  if(moved.length){tags.push('進入変化');pts.push(`進入が変わった（${a.boats.slice().sort((x,y)=>x.course-y.course).map(b=>b.waku).join('')}）。`);}
+  const ws=num(r.before&&r.before.windSpeed),wv=num(r.before&&r.before.wave);
+  if((ws!=null&&ws>=5)||(wv!=null&&wv>=5)){tags.push('風・波');pts.push(`水面は風${ws??'-'}m・波${wv??'-'}cm。`);}
+  // AIの見立て
+  pts.push(`AIの評価：この組は120通り中${aiRank}番目（確率${(cmb.pAi*100).toFixed(1)}%）。レース前の万舟期待は${Math.round(a.manP*100)}%${a.manP>=0.2?'（荒れ狙いの対象）':''}。${a.honsen.some(c=>c.k===res.order)?'本線に入っていた。':a.ana.some(c=>c.k===res.order)?'穴に入っていた。':''}`);
+  if(!res.km)pts.push('決まり手・本番のST：この日の分は公式の結果ページからまだ取得していません。');
+  const kind=tags.includes('イン飛び')?(tags.includes('外からの1着')?'イン飛び＋外の1着':'イン飛び'):f1===1?'2・3着の波乱':'インが負けた';
+  return {r,a,res,ord,pop,aiRank,pAi:cmb.pAi,pts,tags,kind,flagged:a.manP>=0.2};
+}
+function renderMan(){
+  const el=$('#v-man');if(!races.length){el.innerHTML=emptyState();return;}
+  const done=races.filter(r=>{const x=resultOf(r);return x&&x.order&&x.payout>0;});
+  const list=races.map(r=>{try{return manshuOf(r);}catch(_){return null;}}).filter(Boolean);
+  list.sort(manSort==='p'?(x,y)=>y.res.payout-x.res.payout:(x,y)=>(x.r.deadline||'').localeCompare(y.r.deadline||'')||x.r.jcd-y.r.jcd);
+  const pc=v=>Math.round(v*100)+'%';
+  const flagAll=done.filter(r=>{const a=A(r);return a&&a.manP>=0.2;});
+  const flagHit=flagAll.filter(r=>resultOf(r).payout>=10000).length;
+  const cnt=k=>list.filter(x=>x.tags.includes(k)).length;
+  const kmC={};list.forEach(x=>{if(x.res.km)kmC[x.res.km]=(kmC[x.res.km]||0)+1;});
+  const avgPay=list.length?Math.round(sum(list.map(x=>x.res.payout))/list.length):0;
+  el.innerHTML=`<div style="display:grid;gap:12px">
+    <div class="panel"><h3>万舟（3連単1万円以上）</h3>
+      <p class="sub">${fmtDate(dateSel)}：結果が出た${done.length}レース中 <b>${list.length}レース</b>（${done.length?pc(list.length/done.length):'-'}）。平均${yen(avgPay)}。</p>
+      ${list.length?`<p class="sub">荒れ方：1号艇が飛んだ ${cnt('イン飛び')}・4〜6コースが1着 ${cnt('外からの1着')}・B2や勝率4未満が着 ${cnt('伏兵が着')}・A級総崩れ ${cnt('A級総崩れ')}・進入変化 ${cnt('進入変化')}・風波 ${cnt('風・波')}${Object.keys(kmC).length?'。決まり手：'+Object.entries(kmC).map(([k,v])=>k+v).join('・'):''}。</p>
+      <p class="sub">AIの事前の見立て：万舟期待20%以上と見たのは${flagAll.length}レースで、そのうち万舟は${flagHit}レース（${flagAll.length?pc(flagHit/flagAll.length):'-'}）。万舟${list.length}レースのうち、事前に20%以上と見ていたのは${list.filter(x=>x.flagged).length}レース。</p>`:''}
+      <p class="hint">解説は取得したデータから自動で作ります（展示・オリジナル展示・足スコア・進入・本番のST・決まり手・AIの事前の見立て）。1マークの旋回内容や不利は取得できないので書いていません。</p>
+      <div class="seg" role="group" aria-label="並べ方"><button data-s="t" aria-pressed="${manSort==='t'}">締切順</button><button data-s="p" aria-pressed="${manSort==='p'}">配当の高い順</button></div></div>
+    ${list.length?list.map(x=>`<button class="man-card" data-id="${esc(x.r.id)}">
+      <div class="man-head"><b>${esc(x.r.venue||VENUES[x.r.jcd])} ${x.r.rno}R</b><span>${esc(x.r.deadline||'')}</span>
+        <span class="man-ord">${x.ord.map(w=>bn(w)).join('<i>-</i>')}</span><b class="man-pay">${yen(x.res.payout)}</b>
+        ${x.pop?`<span class="tag">${x.pop}番人気${x.res.pop?'':'（最終オッズから）'}</span>`:''}<span class="tag">${esc(x.kind)}</span></div>
+      <ul class="man-pts">${x.pts.map(t=>`<li>${t}</li>`).join('')}</ul></button>`).join(''):`<div class="empty">${done.length?'この日はまだ万舟が出ていません。':'まだ結果の入ったレースがありません。'}</div>`}
+  </div>`;
+  el.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{manSort=b.dataset.s;LS.set('manSort',manSort);renderMan();}));
+  el.querySelectorAll('.man-card').forEach(b=>b.addEventListener('click',()=>{const r=races.find(x=>x.id===b.dataset.id);if(!r)return;
+    jcdSel=r.jcd;LS.set('jcd',jcdSel);raceId=r.id;view='yoso';LS.set('view',view);const s2=$('#venue');if(s2)s2.value=String(jcdSel);renderChips();renderView();window.scrollTo(0,0);}));
+}
 
 /* ============ 成績（今見ている日付のレース） ============ */
 function learnPanel(){
