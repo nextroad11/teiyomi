@@ -28,7 +28,7 @@ jobs:
           print('更新',s.get('updated'),'選手',n)
           for k in ['cw','rf','st','stc','kmy','cy','kon','nm']:
               print(k, sum(1 for v in p.values() if v.get(k)))
-          print('cbase', bool(s.get('cbase')), 'km', bool(s.get('km')), 'stv', bool(s.get('stv')))
+          print('cbase', bool(s.get('cbase')), 'km', bool(s.get('km')), 'stv', bool(s.get('stv')), 'l1base', s.get('l1base'), 'l1あり', sum(1 for v in s['p'].values() if v.get('l1')))
           print('model', m.get('trainedAt'), sorted(m.get('weights',{}).keys()))
           PY
           cat data/debug/check.txt
