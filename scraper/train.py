@@ -332,10 +332,20 @@ def course_year(races):
     base = [[0] * 7 for _ in range(6)]  # 出走, 1着, 2連, 3連, ST合計, ST数, ST順合計
     kon = {}  # toban -> {"jcd", "dates":set, "st":[], "rk":[]}（新しい日から見て同じ場が続く間）
     kidx = {"差し": 7, "まくり": 8, "まくり差し": 9, "逃げ": 10}
+    # 1コースで負けたとき：勝った艇のコース（2〜6）×決まり手（差し・まくり・まくり差し）の回数
+    lidx = {"差し": 0, "まくり": 1, "まくり差し": 2}
+    l1 = defaultdict(lambda: [[0] * 3 for _ in range(5)])
+    l1base = [[0] * 3 for _ in range(5)]
     for r in races:
         if r["date"] < since:
             continue
         km = r.get("kimarite")
+        if km in lidx:
+            win = next((b for b in r["boats"] if b.get("finish") == 1), None)
+            one = next((b for b in r["boats"] if b.get("course") == 1 and b.get("code") not in ("欠", "K0", "K1")), None)
+            if win and one and win is not one and win.get("course") in range(2, 7):
+                l1[one["toban"]][win["course"] - 2][lidx[km]] += 1
+                l1base[win["course"] - 2][lidx[km]] += 1
         sts = sorted(b["st"] for b in r["boats"] if b.get("st") is not None and 0 <= b["st"] <= 0.6 and not b.get("flying"))
         for b in r["boats"]:
             c = b.get("course")
@@ -366,7 +376,7 @@ def course_year(races):
     kn = {t: {"jcd": k["jcd"], "last": max(k["dates"]), "days": len(k["dates"]),
               "st": round(sum(k["st"]) / len(k["st"]), 3), "rk": round(sum(k["rk"]) / len(k["rk"]), 2), "n": len(k["st"])}
           for t, k in kon.items()}
-    return pl, cbase, kn
+    return pl, cbase, kn, dict(l1), l1base
 
 
 def kimarite_stats(races):
@@ -489,14 +499,15 @@ def main():
             if b.get("name"):
                 prof[b["toban"]] = {"nm": b["name"], "br": b.get("branch", ""), "cl": b.get("cls", ""), "ag": b.get("age"), "d": r["date"]}
     kmy = kimarite_year(races)
-    cy, cbase, kon = course_year(races)
+    cy, cbase, kon, l1, l1base = course_year(races)
     stats = {"updated": model["trainedAt"],
              "p": {str(t): {"cw": v, "rf": STATE["recent"].get(t, []), "st": [round(x, 2) for x in STATE["st"].get(t, [])[-20:]],
                               "stc": [[round(x, 2) for x in l] for l in STATE["stc"][t]] if t in STATE["stc"] else None,
-                              "kmy": kmy.get(t), "cy": cy.get(t), "kon": kon.get(t), **prof.get(t, {})}
+                              "kmy": kmy.get(t), "cy": cy.get(t), "kon": kon.get(t), "l1": l1.get(t), **prof.get(t, {})}
                    for t, v in STATE["cw"].items()},
              "km": kimarite_stats(races),
              "cbase": cbase,
+             "l1base": l1base,
              "stv": {k: round(float(np.mean(v)), 4) for k, v in STATE["stv"].items() if len(v) >= 50},
              "m": {k: v for k, v in STATE["motorf"].items()}}
     (root / "stats.json").write_text(json.dumps(stats, separators=(",", ":")), encoding="utf-8")

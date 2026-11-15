@@ -309,6 +309,14 @@ table.rec{border-collapse:collapse;width:100%;min-width:560px;font-variant-numer
 .mk-row small{color:var(--muted);width:100%}
 .mk-lv{font-weight:800;font-size:12px;padding:1px 8px;border-radius:5px;background:#d9480f;color:#fff}
 .mk-strong .mk-lv{background:#c2255c}
+
+/* ---- 1号艇が1コースで負けた相手 */
+.ol-box{margin-top:12px;display:grid;gap:6px}
+.ol-box td small{color:var(--muted);margin-left:1px}
+.ol-box td,.ol-box th{white-space:nowrap}.ol-box td small{display:inline}
+.ol-box td em{display:inline;margin-left:6px;font-style:normal;font-size:11px;color:var(--muted)}
+.ol-box td.cd-hi em,.ol-box td.cd-lo em{color:inherit}
+.cdata .ol-box td.cd-hi{color:var(--ana);background:color-mix(in srgb,var(--ana) 12%,transparent);font-weight:700}.cdata .ol-box td.cd-lo{color:#1c7ed6}
 </style>
 </head>
 <body>
@@ -985,6 +993,29 @@ function changeHtml(r,a){
 }
 
 // ---------------------------------------------------------------- コース別データ（直近1年）: 今日入るコースに絞った成績
+// 1号艇の選手が1コースで負けたとき、何コースの艇に・どの決まり手でやられたか（直近1年。学習時に stats の l1 として集計）
+function oneLossHtml(r,a){
+  const b1=a.boats.find(b=>b.waku===1);if(!b1)return '';
+  const P=STATS&&STATS.p[String(b1.toban)];
+  if(!STATS||!STATS.l1base)return `<div class="ol-box"><b>1号艇が1コースで負けた相手</b><p class="sub">次の学習（2時間ごと）のあとに表示されます。</p></div>`;
+  const n1=P&&P.cy&&P.cy[0]?P.cy[0][0]:0, w1=P&&P.cy&&P.cy[0]?P.cy[0][1]:0;
+  const head=`<b>1号艇 ${esc(b1.name||'')} が1コースで負けた相手（直近1年）</b>`;
+  if(!n1)return `<div class="ol-box">${head}<p class="sub">直近1年に1コースでの出走がありません。</p></div>`;
+  const L=(P.l1)||[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]], NB=STATS.cbase[0].n||1;
+  const pc1=v=>(v*100).toFixed(1)+'%';
+  const cell=(x,c,k)=>{const v=x/n1,base=STATS.l1base[c-2][k]/NB;
+    if(c===2&&k===2)return '<td class="n cd-na">-</td>';
+    const cl=n1>=10&&x>=2&&v>=base*1.3&&v>=base+0.01?'cd-hi':n1>=30&&v<=base*0.5?'cd-lo':'';
+    return `<td class="n ${cl}">${x}<small>回</small><em>${pc1(v)}</em></td>`;};
+  const byC={};a.boats.forEach(b=>{byC[b.course]=b;});
+  const rows=[2,3,4,5,6].map(c=>{const t=byC[c];return `<tr><td class="n"><b>${c}</b></td>${[0,1,2].map(k=>cell(L[c-2][k],c,k)).join('')}<td>${t&&t.waku!==1?bn(t.waku)+' '+esc(t.name||''):'-'}</td></tr>`;}).join('');
+  const tot=[0,1,2].map(k=>L.reduce((s0,row)=>s0+row[k],0));
+  const nat=[0,1,2].map(k=>STATS.l1base.reduce((s0,row)=>s0+row[k],0)/NB);
+  return `<div class="ol-box">${head}
+    <p class="sub">1コースで${n1}走・1着${w1}回（${pc1(w1/n1)}）。表は「何コースの艇に、どの決まり手で1着を取られたか」の回数と、1コース出走に対する割合。全国平均より多い所を赤、少ない所を青にしています。${b1.course!==1?`<b>今日は${b1.course}コース進入</b>なので参考です。`:''}</p>
+    <div class="tablebox"><table class="card"><thead><tr><th>相手のコース</th><th>差された</th><th>まくられた</th><th>まくり差された</th><th>今日のそのコース</th></tr></thead><tbody>${rows}</tbody>
+    <tfoot><tr><td>合計</td>${tot.map((x,k)=>`<td class="n">${x}<small>回</small><em>${pc1(x/n1)}</em></td>`).join('')}<td class="cd-base">全国平均 ${nat.map(pc1).join('・')}</td></tr></tfoot></table></div></div>`;
+}
 function courseHtml(r,a){
   if(!STATS||!STATS.cbase)return '';
   const rd=r.date||String(r.id||'').slice(0,8), dd=(x,y)=>Math.abs((new Date(x.slice(0,4)+'-'+x.slice(4,6)+'-'+x.slice(6))-new Date(y.slice(0,4)+'-'+y.slice(4,6)+'-'+y.slice(6)))/864e5);
@@ -1002,7 +1033,7 @@ function courseHtml(r,a){
   return `<div class="panel cdata"><h3>コース別データ（直近1年）</h3>
     <p class="sub">今日入るコース${r.before&&r.before.complete?'（展示の進入）':'（枠なりの想定）'}での、その選手の直近1年の成績。<span class="cd-hi">緑</span>は全国のそのコースの平均よりはっきり良い、<span class="cd-lo">灰色</span>は悪い。STの「番」は6艇中で何番目に早いか（平均）。決まり手はそのコースで1着になったときの回数。今節は同じ場で続けて走っている日（昨日まで）の平均STと順番。</p>
     <div class="tablebox"><table class="card"><thead><tr><th>コース</th><th>艇</th><th>選手</th><th>走</th><th>1着率</th><th>2連率</th><th>3連率</th><th>平均ST</th><th>決まり手</th><th>今節ST</th></tr></thead><tbody>${rows}</tbody>
-    <tfoot><tr><td colspan="10" class="cd-base">全国平均（1〜6コース）1着率 ${STATS.cbase.map(B=>pc(B.win)).join('・')}</td></tr></tfoot></table></div></div>`;}
+    <tfoot><tr><td colspan="10" class="cd-base">全国平均（1〜6コース）1着率 ${STATS.cbase.map(B=>pc(B.win)).join('・')}</td></tr></tfoot></table></div>${oneLossHtml(r,a)}</div>`;}
 
 // ---------------------------------------------------------------- 自分で予想: 足評価・オリジナル展示
 // まくりアラート：補正後の展示タイムが ①すぐ内側の艇より0.06秒以上速い ②内側の全艇より速い（進入コースで判定）
