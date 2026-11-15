@@ -313,7 +313,8 @@ table.rec{border-collapse:collapse;width:100%;min-width:560px;font-variant-numer
 /* ---- 1号艇が1コースで負けた相手 */
 .ol-box{margin-top:12px;display:grid;gap:6px}
 .ol-box td small{color:var(--muted);margin-left:1px}
-.ol-box td,.ol-box th{white-space:nowrap}.ol-box td small{display:inline}
+.ol-box td,.ol-box th{white-space:nowrap}
+.ol-tbl{width:100%;border-collapse:collapse;font-size:14px}.ol-tbl th{font-size:12px;color:var(--muted);font-weight:600;padding:6px 4px;border-bottom:1px solid var(--line)}.ol-tbl td{padding:7px 4px;border-bottom:1px solid var(--line);text-align:center}.ol-tbl tfoot td{border-bottom:0;font-weight:700}.ol-tbl td.n{font-variant-numeric:tabular-nums}.ol-box td small{display:inline}
 .ol-box td em{display:inline;margin-left:6px;font-style:normal;font-size:11px;color:var(--muted)}
 .ol-box td.cd-hi em,.ol-box td.cd-lo em{color:inherit}
 .cdata .ol-box td.cd-hi{color:var(--ana);background:color-mix(in srgb,var(--ana) 12%,transparent);font-weight:700}.cdata .ol-box td.cd-lo{color:#1c7ed6}
@@ -1006,15 +1007,13 @@ function oneLossHtml(r,a){
   const cell=(x,c,k)=>{const v=x/n1,base=STATS.l1base[c-2][k]/NB;
     if(c===2&&k===2)return '<td class="n cd-na">-</td>';
     const cl=n1>=10&&x>=2&&v>=base*1.3&&v>=base+0.01?'cd-hi':n1>=30&&v<=base*0.5?'cd-lo':'';
-    return `<td class="n ${cl}">${x}<small>回</small><em>${pc1(v)}</em></td>`;};
-  const byC={};a.boats.forEach(b=>{byC[b.course]=b;});
-  const rows=[2,3,4,5,6].map(c=>{const t=byC[c];return `<tr><td class="n"><b>${c}</b></td>${[0,1,2].map(k=>cell(L[c-2][k],c,k)).join('')}<td>${t&&t.waku!==1?bn(t.waku)+' '+esc(t.name||''):'-'}</td></tr>`;}).join('');
+    return `<td class="n ${cl}">${x}<small>回</small></td>`;};
+  const rows=[2,3,4,5,6].map(c=>`<tr><td class="n"><b>${c}</b></td>${[0,1,2].map(k=>cell(L[c-2][k],c,k)).join('')}</tr>`).join('');
   const tot=[0,1,2].map(k=>L.reduce((s0,row)=>s0+row[k],0));
-  const nat=[0,1,2].map(k=>STATS.l1base.reduce((s0,row)=>s0+row[k],0)/NB);
   return `<div class="ol-box">${head}
-    <p class="sub">1コースで${n1}走・1着${w1}回（${pc1(w1/n1)}）。表は「何コースの艇に、どの決まり手で1着を取られたか」の回数と、1コース出走に対する割合。全国平均より多い所を赤、少ない所を青にしています。${b1.course!==1?`<b>今日は${b1.course}コース進入</b>なので参考です。`:''}</p>
-    <div class="tablebox"><table class="card"><thead><tr><th>相手のコース</th><th>差された</th><th>まくられた</th><th>まくり差された</th><th>今日のそのコース</th></tr></thead><tbody>${rows}</tbody>
-    <tfoot><tr><td>合計</td>${tot.map((x,k)=>`<td class="n">${x}<small>回</small><em>${pc1(x/n1)}</em></td>`).join('')}<td class="cd-base">全国平均 ${nat.map(pc1).join('・')}</td></tr></tfoot></table></div></div>`;
+    <p class="sub">1コースで${n1}走・1着${w1}回（${pc1(w1/n1)}）。表は「何コースの艇に、どの決まり手で1着を取られたか」の回数。全国平均より多い所を赤、少ない所を青にしています。${b1.course!==1?`<b>今日は${b1.course}コース進入</b>なので参考です。`:''}</p>
+    <table class="ol-tbl"><thead><tr><th>相手のコース</th><th>差された</th><th>まくられた</th><th>まくり差された</th></tr></thead><tbody>${rows}</tbody>
+    <tfoot><tr><td>合計</td>${tot.map(x=>`<td class="n">${x}<small>回</small></td>`).join('')}</tr></tfoot></table></div>`;
 }
 function courseHtml(r,a){
   if(!STATS||!STATS.cbase)return '';
