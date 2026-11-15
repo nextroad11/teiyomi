@@ -7,5 +7,5 @@ kmy 1658
 cy 1658
 kon 1658
 nm 1623
-cbase True km True stv True
+cbase True km True stv True l1base [[4484, 2056, 0], [800, 2824, 2596], [1014, 2687, 1457], [216, 689, 2054], [111, 318, 445]] l1あり 1552
 model 2026-11-15T16:50:50 ['boat', 'cwin', 'ex', 'fPen', 'form', 'kPlace', 'kWin', 'local', 'mform', 'motor', 'olap', 'ostr', 'oturn', 'skill', 'st']
