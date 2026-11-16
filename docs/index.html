@@ -695,9 +695,11 @@ async function loadIndex(){
 async function loadDay(){
   const note=$('#loadnote');
   if(!dateSel){races=[];note.textContent='';renderAll();return;}
-  try{SHARED=(await fetchEnc('picks/'+dateSel+'.json')).races||{};}catch(_){SHARED={};}
-  try{BW=await fetchEnc('bwatch/'+dateSel+'.json');}catch(_){BW=null;}
-  try{const d=await fetchJSON(dateSel+'.json');races=d.races||[];
+  // 共有の買い目・B級ウォッチ・その日のレースは同時に読む
+  const [sh,bw,day]=await Promise.allSettled([fetchEnc('picks/'+dateSel+'.json'),fetchEnc('bwatch/'+dateSel+'.json'),fetchJSON(dateSel+'.json')]);
+  SHARED=sh.status==='fulfilled'?(sh.value.races||{}):{};
+  BW=bw.status==='fulfilled'?bw.value:null;
+  try{if(day.status!=='fulfilled')throw day.reason;const d=day.value;races=d.races||[];
     note.textContent=d.updated?`更新 ${d.updated.slice(11,16)}`:'';
     snapshotAI();
   }catch(_){note.textContent='データを読み込めませんでした。通信状態を確認してください。';}
@@ -1493,9 +1495,24 @@ async function deriveKey(pw){const base=await crypto.subtle.importKey('raw',new 
 async function openBox(box,key){const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:ub64(box.iv)},key||DKEY,ub64(box.ct));return JSON.parse(new TextDecoder().decode(pt));}
 let PLAIN=false; // 切り替え前（鍵のかかったデータがまだ無い）は今まで通り読む
 async function fetchEnc(path,key){if(PLAIN&&!key)return fetchJSON(path);return openBox(await fetchJSON('enc/'+path),key);}
+// 速く開くための工夫：model.json は1回だけ読む。学習結果（stats、約2.4MB）は学習の時刻が変わったときだけ読み直し、
+// それ以外はこの端末に保存した分（IndexedDB）を使う。保存できない環境ではいつも通り読む。
+let MODEL_BOX=null;
+const idb={db:null,
+  open(){return this.db||(this.db=new Promise((res,rej)=>{try{const q=indexedDB.open('teiyomi',1);q.onupgradeneeded=()=>q.result.createObjectStore('kv');q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error);}catch(e){rej(e);}}));},
+  async get(k){try{const d=await this.open();return await new Promise(res=>{const q=d.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>res(null);});}catch(_){return null;}},
+  async set(k,v){try{const d=await this.open();await new Promise(res=>{const t=d.transaction('kv','readwrite');t.objectStore('kv').put(v,k);t.oncomplete=res;t.onerror=res;});}catch(_){}}};
+async function loadStats(at){
+  if(PLAIN)return fetchJSON('stats.json');
+  const c=at?await idb.get('stats'):null;
+  if(c&&c.at===at&&c.box){try{return await openBox(c.box);}catch(_){}}
+  const box=await fetchJSON('enc/stats.json');const st=await openBox(box);
+  if(at&&st&&st.updated===at)idb.set('stats',{at,box});
+  return st;
+}
 async function unlock(){
-  try{const r=await fetch(DATA_BASE+'enc/model.json?t='+Date.now(),{cache:'no-store'});if(r.status===404){PLAIN=true;return;}}catch(_){}
-  try{const raw=LS.get('k',null);if(raw){const k=await crypto.subtle.importKey('raw',ub64(raw),{name:'AES-GCM'},true,['decrypt']);await fetchEnc('model.json',k);DKEY=k;return;}}catch(_){}
+  try{const r=await fetch(DATA_BASE+'enc/model.json?t='+Date.now(),{cache:'no-store'});if(r.status===404){PLAIN=true;return;}if(r.ok)MODEL_BOX=await r.json();}catch(_){}
+  try{const raw=LS.get('k',null);if(raw){const k=await crypto.subtle.importKey('raw',ub64(raw),{name:'AES-GCM'},true,['decrypt']);await (MODEL_BOX?openBox(MODEL_BOX,k):fetchEnc('model.json',k));DKEY=k;return;}}catch(_){}
   const L=$('#lock');L.hidden=false;$('#lockpw').focus();
   await new Promise(res=>{$('#lockf').onsubmit=async e=>{e.preventDefault();const msg=$('#lockmsg');msg.textContent='確認中…';
     try{const k=await deriveKey($('#lockpw').value.trim().normalize('NFKC'));await fetchEnc('model.json',k);DKEY=k;
@@ -1505,11 +1522,15 @@ async function unlock(){
 (async()=>{
   await unlock();
   let m=null;
-  try{m=await fetchEnc('model.json');}catch(_){}
+  try{m=MODEL_BOX&&!PLAIN?await openBox(MODEL_BOX):await fetchEnc('model.json');}catch(_){}
   if(m)MODEL={...MODEL,...m,weights:{...MODEL.weights,...(m.weights||{})},market:{...MODEL.market,...(m.market||{}),cls:{...MODEL.market.cls,...((m.market||{}).cls||{})}},ana:{...MODEL.ana,...(m.ana||{})}};
-  try{REPORT=await fetchEnc('report.json');}catch(_){}
-  try{STATS=await fetchEnc('stats.json');}catch(_){}
-  await loadIndex();await loadDay();
+  // 成績・学習結果・日付一覧は同時に読む
+  await Promise.all([
+    fetchEnc('report.json').then(x=>{REPORT=x;}).catch(()=>{}),
+    loadStats(m&&m.trainedAt).then(x=>{STATS=x;}).catch(()=>{}),
+    loadIndex().catch(()=>{}),
+  ]);
+  await loadDay();
   setInterval(async()=>{if(document.hidden||/INPUT|TEXTAREA/.test(document.activeElement?.tagName||''))return;const keep=raceId;await loadDay();raceId=keep;renderChips();},30000);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)loadDay();});
 })();
