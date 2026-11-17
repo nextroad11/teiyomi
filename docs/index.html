@@ -1355,23 +1355,22 @@ function renderTable(){
   el.innerHTML=`<div style="display:grid;gap:14px">
     ${raceHead(r,a)}
     <div id="s-table">
-      <p class="card-title">出走表とAI評価 <small>展示タイムは手で入れ直すとその場で計算し直します</small></p>
+      <p class="card-title">出走表</p>
       <div class="tablebox"><table class="card">
-        <thead><tr><th>枠</th><th>選手</th><th>平均ST</th><th>展示</th><th>舟足</th><th>AI 1着率</th><th>ポイント</th></tr></thead>
-        <tbody>${a.boats.map(b=>{const auto=r.before&&r.before.boats&&r.before.boats[b.waku]&&r.before.boats[b.waku].exTime!=null&&!(exMan[r.id]&&exMan[r.id][b.waku]!=null);
+        <thead><tr><th>枠</th><th>選手</th><th>平均ST</th><th>今節ST</th><th>舟足</th><th>ポイント</th></tr></thead>
+        <tbody>${a.boats.map(b=>{const k=STATS&&STATS.p&&(STATS.p[String(b.toban)]||{}).kon, rd=r.date||String(r.id||'').slice(0,8);
+          const konOk=k&&k.jcd===r.jcd&&rd&&k.last<=rd&&(new Date(rd.slice(0,4)+'-'+rd.slice(4,6)+'-'+rd.slice(6))-new Date(k.last.slice(0,4)+'-'+k.last.slice(4,6)+'-'+k.last.slice(6)))/864e5<=2;
+          const kst=konOk?`${k.st.toFixed(2)}<br><span style="color:var(--muted);font-size:11px">${k.rk.toFixed(1)}番・${k.n}走</span>`:'-';
           return `<tr>
           <td>${bn(b.waku,1)}</td>
           <td class="who"><b class="pl-link" data-t="${b.toban}" role="button" tabindex="0">${esc(b.name)}</b><span>${esc(b.cls||'')} ${esc(b.branch||'')}${b.age?' '+b.age+'歳':''}</span></td>
           <td class="n">${num(b.st)?.toFixed(2)??'-'}</td>
-          <td><input id="ex-${b.waku}" class="${auto?'auto':''}" inputmode="decimal" aria-label="${b.waku}号艇の展示タイム" placeholder="6.80" value="${b.exTime??''}"></td>
+          <td class="n">${kst}</td>
           <td class="foot-cell"><b class="fg fg-${b.footGrade==='◎'||b.footGrade==='○'?'up':b.footGrade==='×'||b.footGrade==='▲'?'dn':'mid'}">${b.footGrade}</b>${b.ashi?`<span>足${b.ashi.rank}位</span>`:''}</td>
-          <td><div class="winbar"><span class="track"><span style="width:${b.pWin/maxWin*100}%"></span></span><b>${pct(b.pWin)}</b></div></td>
           <td><div class="tags">${b.tags.map(t=>`<span class="tag ${t[0]}">${esc(t[1])}</span>`).join('')}</div></td></tr>`}).join('')}</tbody></table></div>
-      <p class="hint">${r.before&&r.before.complete?'展示タイム・進入は自動で取得済み（青枠）。':'展示タイムは締切の約20分前から自動で入ります。'}手で入れ直すと、その場で計算し直します。${a.ashi?`舟足は足スコア（${a.ashi.kind==='場別'?'この場で検証した重み'+(a.ashi.sep!=null?'・判別力sep '+a.ashi.sep:''):'未検証の場なので既定の戸田新式'}）の順位：1位◎ 2位○ 3〜5位△ 6位×。`:'舟足は展示タイム・オリジナル展示（一周・まわり足・直線）・モーターから（◎○△▲×）。'}くわしくは下の「足評価」「オリジナル展示」。コース別の成績・ST・決まり手は下の「コース別データ」。</p>
+      <p class="hint">今節STは、同じ場で続けて走っている日（昨日まで）の平均STと、6艇中で何番目に早かったかの平均。${a.ashi?`舟足は足スコア（${a.ashi.kind==='場別'?'この場で検証した重み'+(a.ashi.sep!=null?'・判別力sep '+a.ashi.sep:''):'未検証の場なので既定の戸田新式'}）の順位：1位◎ 2位○ 3〜5位△ 6位×。`:'舟足は展示タイム・オリジナル展示（一周・まわり足・直線）・モーターから（◎○△▲×）。'}展示タイム・足評価・オリジナル展示・コース別データは「自分で予想」タブに。</p>
     </div>
   </div>`;
-  a.boats.forEach(b=>{const inp=$('#ex-'+b.waku);inp.addEventListener('change',()=>{const v=num(inp.value);exMan[r.id]=exMan[r.id]||{};
-    if(v==null)delete exMan[r.id][b.waku];else exMan[r.id][b.waku]=v;LS.set('ex',exMan);renderChips();renderView();});});
   el.querySelectorAll('.pl-link').forEach(x=>x.addEventListener('click',()=>openPlayer(x.dataset.t)));
 }
 function renderOdds(){
