@@ -184,6 +184,27 @@ def load_day(hd: str, day: dict, only_new: bool = True):
     day["loadedAt"] = now_jst().isoformat(timespec="seconds")
 
 
+def refresh_entries(hd: str, day: dict):
+    """直前情報がまだ無いレースの出走表を読み直して、選手・締切を最新にする"""
+    n = 0
+    for r in day["races"]:
+        if r.get("before") or r.get("result"):
+            continue
+        html = get(f"{BASE}/racelist?rno={r['rno']}&jcd={r['jcd']:02d}&hd={hd}")
+        p = parse_racelist(html) if html else None
+        if not p or not p.get("boats"):
+            continue
+        dl = p.get("deadlines") or []
+        old = [b.get("toban") for b in r["boats"]]
+        r["boats"] = p["boats"]
+        if len(dl) >= r["rno"]:
+            r["deadline"] = dl[r["rno"] - 1]
+        if old != [b.get("toban") for b in r["boats"]]:
+            n += 1
+            log(f"  {r['venue']}{r['rno']}R 出走表が変わっていた")
+    log(f"朝の出走表の読み直し: 変更 {n}レース")
+
+
 # ---------------------------------------------------------------- 直前情報
 def parse_beforeinfo(html: str) -> dict | None:
     soup = BeautifulSoup(html, "html.parser")
@@ -489,6 +510,11 @@ def main():
     if a.force_load or not day.get("loadedAt"):
         if now.hour >= 7 or a.date or a.force_load:
             load_day(hd, day)
+    # 前の晩に読み込んだ日は、朝7時以降に一度だけ出走表を読み直す（欠場・選手変更・追加の開催）
+    elif day.get("preloaded") and now.hour >= 7 and not day.get("morningChecked"):
+        refresh_entries(hd, day)
+        load_day(hd, day)
+        day["morningChecked"] = True
     # 朝の取り込み後、昼までに追加で開催が見つかる場合に備えて正午に一度だけ再確認
     elif now.hour >= 12 and not day.get("rechecked"):
         load_day(hd, day)
@@ -513,6 +539,21 @@ def main():
                         r["result"] = p
             if json.dumps(yday, ensure_ascii=False, sort_keys=True) != ybefore:
                 write_json(ypath, yday)
+
+    # 3. 翌日の出走表を前の晩（23時〜）に読み込む。公式に出ていなければ次の回にまた試す
+    if now.hour >= 23 and not a.date:
+        td = (now + dt.timedelta(days=1)).strftime("%Y%m%d")
+        tpath = root / f"{td}.json"
+        tday = read_json(tpath, {"date": td, "races": []})
+        if not tday.get("loadedAt"):
+            load_day(td, tday)
+            if tday["races"]:
+                tday["preloaded"] = True
+                tday["updated"] = now.isoformat(timespec="seconds")
+                write_json(tpath, tday)
+                idx = read_json(root / "index.json", {"dates": []})
+                write_json(root / "index.json", {"dates": sorted(set(idx.get("dates", [])) | {td}, reverse=True), "updated": tday["updated"]})
+                log(f"翌日の出走表: {tpath}（{len(tday['races'])}レース）")
 
     if json.dumps(ODDS_HIST, sort_keys=True) != obefore:
         opath.parent.mkdir(parents=True, exist_ok=True)

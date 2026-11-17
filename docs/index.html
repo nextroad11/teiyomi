@@ -700,7 +700,9 @@ function todayJST(){return new Date(Date.now()+9*3600e3).toISOString().slice(0,1
 
 async function loadIndex(){
   try{const idx=await fetchJSON('index.json');dates=idx.dates||[];}catch(_){dates=[];}
-  if(!dateSel||!dates.includes(dateSel))dateSel=dates.includes(todayJST())?todayJST():dates[0]||null;
+  // 夜23時以降で翌日の出走表がもう入っていれば、最初は翌日を開く
+  const tmr=new Date(Date.now()+33*3600e3).toISOString().slice(0,10).replace(/-/g,''), late=new Date(Date.now()+9*3600e3).getUTCHours()>=23;
+  if(!dateSel||!dates.includes(dateSel))dateSel=late&&dates.includes(tmr)?tmr:dates.includes(todayJST())?todayJST():dates[0]||null;
   $('#date').innerHTML=dates.map(d=>`<option value="${d}"${d===dateSel?' selected':''}>${fmtDate(d)}</option>`).join('');
   $('#date').hidden=!dates.length;
 }

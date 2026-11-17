@@ -6,6 +6,7 @@ on:
   schedule:
     - cron: "23 22 * * *"   # 日本時間 7:23（その日の出走表が入ったあと）
     - cron: "41 23 * * *"   # 日本時間 8:41（取りこぼしたとき用。作成済みなら何もしない）
+    - cron: "43 14 * * *"   # 日本時間 23:43（前の晩に読み込んだ翌日の分。その日の結果まで使える）
   workflow_dispatch:
     inputs:
       date:
@@ -43,7 +44,10 @@ jobs:
         env:
           APP_PASS: ${{ secrets.APP_PASS }}
         run: |
-          D="${{ inputs.date }}"; [ -n "$D" ] || D=$(TZ=Asia/Tokyo date +%Y%m%d)
+          D="${{ inputs.date }}"
+          if [ -z "$D" ]; then
+            if [ "$(TZ=Asia/Tokyo date +%H)" -ge 22 ]; then D=$(TZ=Asia/Tokyo date -d tomorrow +%Y%m%d); else D=$(TZ=Asia/Tokyo date +%Y%m%d); fi
+          fi
           if [ ! -f "data/$D.json" ] && [ ! -f "data/history/$D.json" ]; then echo "$D の出走表がまだありません"; exit 0; fi
           if [ -f "data/enc/bwatch/$D.json" ] && [ "${{ inputs.force }}" != "true" ]; then echo "作成済み"; exit 0; fi
           mkdir -p /tmp/plain
