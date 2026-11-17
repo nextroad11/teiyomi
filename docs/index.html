@@ -1359,6 +1359,14 @@ function konST(r,toban){
     if(k&&k.jcd===r.jcd&&rd&&k.last<=rd&&(new Date(rd.slice(0,4)+'-'+rd.slice(4,6)+'-'+rd.slice(6))-new Date(k.last.slice(0,4)+'-'+k.last.slice(4,6)+'-'+k.last.slice(6)))/864e5<=2)return {st:k.st,rk:k.rk,n:k.n};}
   return null;
 }
+// 前日までの足（今節）：毎朝のB級ウォッチの集計（前日までの展示・オリ展を開催全体でまとめた足スコア）の、開催の全選手の中での順位。
+// 評価は B級ウォッチと同じ区切り（上位10%:S・25%:A・45%:B・70%:C・残りD）。初日は null、データが無い場は undefined
+function konAshi(r,toban){
+  const v=BW&&BW.venues&&BW.venues[String(r.jcd)];if(!v)return undefined;
+  if(!v.players||!v.players.length)return null;
+  const p=v.players.find(x=>x.toban===toban);if(!p)return undefined;
+  const q=(p.rank-1)/p.N;return {g:q<0.10?'S':q<0.25?'A':q<0.45?'B':q<0.70?'C':'D',rank:p.rank,N:p.N,n:p.n};
+}
 function renderTable(){
   const el=$('#v-table'), r=cur();
   if(!r){el.innerHTML=emptyState();return;}
@@ -1373,7 +1381,7 @@ function renderTable(){
     <div id="s-table">
       <p class="card-title">出走表</p>
       <div class="tablebox"><table class="card">
-        <thead><tr><th>枠</th><th>選手</th><th>平均ST</th><th>今節ST</th><th>舟足</th><th>ポイント</th></tr></thead>
+        <thead><tr><th>枠</th><th>選手</th><th>平均ST</th><th>今節ST</th><th>前日までの足</th><th>ポイント</th></tr></thead>
         <tbody>${a.boats.map(b=>{const k=konST(r,b.toban);
           const kst=k?`${k.st.toFixed(2)}<br><span style="color:var(--muted);font-size:11px">${k.rk.toFixed(1)}番・${k.n}走</span>`:'-';
           return `<tr>
@@ -1381,9 +1389,9 @@ function renderTable(){
           <td class="who"><b class="pl-link" data-t="${b.toban}" role="button" tabindex="0">${esc(b.name)}</b><span>${esc(b.cls||'')} ${esc(b.branch||'')}${b.age?' '+b.age+'歳':''}</span></td>
           <td class="n">${num(b.st)?.toFixed(2)??'-'}</td>
           <td class="n">${kst}</td>
-          <td class="foot-cell"><b class="fg fg-${fgCls(b.footGrade)}">${b.footGrade}</b>${b.ashi?`<span>足${b.ashi.rank}位</span>`:''}</td>
+          <td class="foot-cell">${(()=>{const m=konAshi(r,b.toban);return m?`<b class="fg fg-${fgCls(m.g)}">${m.g}</b><span>${m.rank}位/${m.N}人</span>`:`<span>${m===null?'初日':'-'}</span>`;})()}</td>
           <td><div class="tags">${b.tags.map(t=>`<span class="tag ${t[0]}">${esc(t[1])}</span>`).join('')}</div></td></tr>`}).join('')}</tbody></table></div>
-      <p class="hint">今節STは、この開催でここまでに走った本番の平均ST（今日の終わったレースも含む）と、6艇中で何番目に早かったかの平均。${a.ashi?`舟足は足スコア（${a.ashi.kind==='場別'?'この場で検証した重み'+(a.ashi.sep!=null?'・判別力sep '+a.ashi.sep:''):'未検証の場なので既定の戸田新式'}）の順位で S〜D（1位S・2位A・3〜4位B・5位C・6位D、Sが一番良い）。`:'舟足は展示タイム・オリジナル展示（一周・まわり足・直線）・モーターから（S〜D、Sが一番良い）。'}展示タイム・足評価・オリジナル展示・コース別データは「自分で予想」タブに。</p>
+      <p class="hint">今節STは、この開催でここまでに走った本番の平均ST（今日の終わったレースも含む）と、6艇中で何番目に早かったかの平均。前日までの足は、この開催の前日までの展示・オリジナル展示を開催全体でまとめた足スコアの、開催の全選手の中での順位（上位10%がS、25%までA、45%までB、70%までC、残りD）。初日は「初日」と出ます。当日の展示タイム・足評価・オリジナル展示・コース別データは「自分で予想」タブに。</p>
     </div>
   </div>`;
   el.querySelectorAll('.pl-link').forEach(x=>x.addEventListener('click',()=>openPlayer(x.dataset.t)));
