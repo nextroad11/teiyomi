@@ -1,0 +1,491 @@
+https://www.boatrace.jp/static_extra/pc/css/main.css
+
+
+
+.weather1_bodyUnitImage {
+  text-align: center;
+}
+
+
+.weather1_bodyUnitImage.is-direction1:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_direction1_1.png") 0 0 no-repeat;
+  width: 70px;
+  height: 72px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-direction2:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_direction1_2.png") 0 0 no-repeat;
+  width: 70px;
+  height: 72px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-direction3:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_direction1_3.png") 0 0 no-repeat;
+  width: 70px;
+  height: 72px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-direction4:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_direction1_4.png") 0 0 no-repeat;
+  width: 70px;
+  height: 72px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-direction5:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_direction1_5.png") 0 0 no-repeat;
+  width: 70px;
+  height: 72px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-direction6:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_direction1_6.png") 0 0 no-repeat;
+  width: 70px;
+  height: 72px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-direction7:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_direction1_7.png") 0 0 no-repeat;
+  width: 70px;
+  height: 72px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-direction8:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_direction1_8.png") 0 0 no-repeat;
+  width: 70px;
+  height: 72px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-direction9:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_direction1_9.png") 0 0 no-repeat;
+  width: 70px;
+  height: 72px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-direction10:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_direction1_10.png") 0 0 no-repeat;
+  width: 70px;
+  height: 72px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-direction11:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_direction1_11.png") 0 0 no-repeat;
+  width: 70px;
+  height: 72px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-direction12:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_direction1_12.png") 0 0 no-repeat;
+  width: 70px;
+  height: 72px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-direction13:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_direction1_13.png") 0 0 no-repeat;
+  width: 70px;
+  height: 72px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-direction14:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_direction1_14.png") 0 0 no-repeat;
+  width: 70px;
+  height: 72px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-direction15:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_direction1_15.png") 0 0 no-repeat;
+  width: 70px;
+  height: 72px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-direction16:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_direction1_16.png") 0 0 no-repeat;
+  width: 70px;
+  height: 72px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-weather1:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_weather1_1.png") 0 0 no-repeat;
+  width: 70px;
+  height: 72px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-weather2:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_weather1_2.png") 0 0 no-repeat;
+  width: 70px;
+  height: 72px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-weather3:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_weather1_3.png") 0 0 no-repeat;
+  width: 70px;
+  height: 72px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-weather4:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_weather1_4.png") 0 0 no-repeat;
+  width: 70px;
+  height: 72px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-weather5:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_weather1_5.png") 0 0 no-repeat;
+  width: 70px;
+  height: 72px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-weather6:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_weather1_6.png") 0 0 no-repeat;
+  width: 70px;
+  height: 72px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-weather7:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_weather1_7.png") 0 0 no-repeat;
+  width: 70px;
+  height: 72px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-wind1:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_wind1_1.png") 0 0 no-repeat;
+  width: 42px;
+  height: 42px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-wind2:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_wind1_2.png") 0 0 no-repeat;
+  width: 42px;
+  height: 42px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-wind3:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_wind1_3.png") 0 0 no-repeat;
+  width: 42px;
+  height: 42px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-wind4:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_wind1_4.png") 0 0 no-repeat;
+  width: 42px;
+  height: 42px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-wind5:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_wind1_5.png") 0 0 no-repeat;
+  width: 42px;
+  height: 42px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-wind6:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_wind1_6.png") 0 0 no-repeat;
+  width: 42px;
+  height: 42px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-wind7:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_wind1_7.png") 0 0 no-repeat;
+  width: 42px;
+  height: 42px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-wind8:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_wind1_8.png") 0 0 no-repeat;
+  width: 42px;
+  height: 42px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-wind9:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_wind1_9.png") 0 0 no-repeat;
+  width: 42px;
+  height: 42px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-wind10:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_wind1_10.png") 0 0 no-repeat;
+  width: 42px;
+  height: 42px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-wind11:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_wind1_11.png") 0 0 no-repeat;
+  width: 42px;
+  height: 42px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-wind12:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_wind1_12.png") 0 0 no-repeat;
+  width: 42px;
+  height: 42px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-wind13:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_wind1_13.png") 0 0 no-repeat;
+  width: 42px;
+  height: 42px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-wind14:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_wind1_14.png") 0 0 no-repeat;
+  width: 42px;
+  height: 42px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-wind15:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_wind1_15.png") 0 0 no-repeat;
+  width: 42px;
+  height: 42px;
+  margin: auto;
+}
+
+
+.weather1_bodyUnitImage.is-wind16:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_wind1_16.png") 0 0 no-repeat;
+  width: 42px;
+  height: 42px;
+  margin: auto;
+}
+
+
+/* ================================================== *
+ *
+ *    WEATHER
+ *
+ * ================================================== */
+
+/* ------------------------------------------------- *
+ *        weather1
+ * ------------------------------------------------- */
+
+.weather1_bodyUnitImage.is-wind17:before {
+  content: '';
+  display: block;
+  background: url("../images/icon_wind1_17.png") 0 0 no-repeat;
+  width: 42px;
+  height: 42px;
+  margin: auto;
+}
+
+
+/* ================================================== *
+ *
+ *    WEATHER
+ *
+ * ================================================== */
+
+/* ------------------------------------------------- *
+ *        weather1
+ * ------------------------------------------------- */
+.weather1_bodyUnitImage.is-direction1.is-type1__3rdadd:before {
+  background-image: url("../images/icon_direction2_1.png");
+}
+
+.weather1_bodyUnitImage.is-direction2.is-type1__3rdadd:before {
+  background-image: url("../images/icon_direction2_2.png");
+}
+
+.weather1_bodyUnitImage.is-direction3.is-type1__3rdadd:before {
+  background-image: url("../images/icon_direction2_3.png");
+}
+
+.weather1_bodyUnitImage.is-direction4.is-type1__3rdadd:before {
+  background-image: url("../images/icon_direction2_4.png");
+}
+
+.weather1_bodyUnitImage.is-direction5.is-type1__3rdadd:before {
+  background-image: url("../images/icon_direction2_5.png");
+}
+
+.weather1_bodyUnitImage.is-direction6.is-type1__3rdadd:before {
+  background-image: url("../images/icon_direction2_6.png");
+}
+
+.weather1_bodyUnitImage.is-direction7.is-type1__3rdadd:before {
+  background-image: url("../images/icon_direction2_7.png");
+}
+
+.weather1_bodyUnitImage.is-direction8.is-type1__3rdadd:before {
+  background-image: url("../images/icon_direction2_8.png");
+}
+
+.weather1_bodyUnitImage.is-direction9.is-type1__3rdadd:before {
+  background-image: url("../images/icon_direction2_9.png");
+}
+
+.weather1_bodyUnitImage.is-direction10.is-type1__3rdadd:before {
+  background-image: url("../images/icon_direction2_10.png");
+}
+
+.weather1_bodyUnitImage.is-direction11.is-type1__3rdadd:before {
+  background-image: url("../images/icon_direction2_11.png");
+}
+
+.weather1_bodyUnitImage.is-direction12.is-type1__3rdadd:before {
+  background-image: url("../images/icon_direction2_12.png");
+}
+
+.weather1_bodyUnitImage.is-direction13.is-type1__3rdadd:before {
+  background-image: url("../images/icon_direction2_13.png");
+}
+
+.weather1_bodyUnitImage.is-direction14.is-type1__3rdadd:before {
+  background-image: url("../images/icon_direction2_14.png");
+}
+
+.weather1_bodyUnitImage.is-direction15.is-type1__3rdadd:before {
+  background-image: url("../images/icon_direction2_15.png");
+}
+
+.weather1_bodyUnitImage.is-direction16.is-type1__3rdadd:before {
+  background-image: url("../images/icon_direction2_16.png");
+}
