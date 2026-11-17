@@ -325,6 +325,17 @@ table.rec{border-collapse:collapse;width:100%;min-width:560px;font-variant-numer
 /* ---- 風の決まり手 */
 .wind-km{margin:0;font-size:13px;background:var(--sunk);border-radius:10px;padding:8px 12px}.wind-km b.up{color:var(--ana)}.wind-km b.down{color:#1c7ed6}.wind-km small{display:block;color:var(--muted);font-size:11px}
 .card-title small{font-weight:400;color:var(--muted);font-size:12px;margin-left:4px}
+
+/* ---- 穴レース */
+.ana-card{display:grid;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;text-align:left;color:inherit;font:inherit;width:100%;cursor:pointer;min-width:0}
+.ana-card.rise{border-style:dashed}
+.ana-head{display:flex;gap:6px 8px;align-items:center;flex-wrap:wrap}
+.ana-star{color:#d9480f;letter-spacing:1px}
+.ana-res{font-weight:700;font-size:13px}.ana-res.man{color:#c2255c}
+.ana-why{display:grid;gap:2px}.ana-why ul{margin:0;padding-left:1.1em;font-size:13px;display:grid;gap:2px}
+.ana-lbl{margin:0;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.05em}
+.ana-why b.up{color:var(--ana)}.ana-why b.down{color:#1c7ed6}
+.ana-form{margin:0;font-size:12px;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -335,7 +346,7 @@ table.rec{border-collapse:collapse;width:100%;min-width:560px;font-variant-numer
     <button role="tab" id="tab-table" aria-selected="false" data-view="table">出走表</button>
     <button role="tab" id="tab-self" aria-selected="false" data-view="self">自分で予想</button>
     <button role="tab" id="tab-bw" aria-selected="false" data-view="bw">B級ウォッチ</button>
-    <button role="tab" id="tab-tobu" aria-selected="false" data-view="tobu">イン飛び</button>
+    <button role="tab" id="tab-tobu" aria-selected="false" data-view="tobu">穴レース</button>
     <button role="tab" id="tab-man" aria-selected="false" data-view="man">万舟</button>
     <button role="tab" id="tab-pl" aria-selected="false" data-view="pl">選手</button>
     <button role="tab" id="tab-odds" aria-selected="false" data-view="odds">オッズ</button>
@@ -846,31 +857,104 @@ function openPlayer(t){plFill();plSel=String(t);LS.set('pls',plSel);const v=STAT
 
 // ---------------------------------------------------------------- イン飛び: その日の全レースの「1号艇が飛ぶ確率」
 let tobuSort=LS.get('tobuSort','p');
+// ---------------------------------------------------------------- 穴レース（前日に選び、展示で変わったことを書き足す）
+// 選び方：出走表の段階（展示・オッズなし）のAIで「万舟期待」と「1号艇が飛ぶ確率」を出し、その日の全レースの中での順位を足した点数の上位20%。
+// 11/5〜16の使っていない1,725Rで：上位20%は万舟23.2%（全体16.5%）・50倍以上39.4%（28.8%）・1号艇着外27.2%（17.5%）。
+// 展示後の評価で選び直しても万舟の当たりは良くならなかった（展示で下がったレースも万舟28%）ので、選んだレースは外さず、変化を書き足すだけにする。
+const ANA_SHARE=0.20;
+function makuriHits(r,a){
+  const CR=ashiCorr(r.jcd),ce={},byC={};
+  a.boats.forEach(b=>{if(b.exTime!=null)ce[b.waku]=Math.round((b.exTime+CR[b.waku][3])*100)/100;if(b.course)byC[b.course]=b;});
+  if(Object.keys(ce).length<6||Object.keys(byC).length<6)return [];
+  const out=[];
+  for(let c=2;c<=6;c++){const b=byC[c],x=ce[b.waku],nb=byC[c-1];const inner=[1,2,3,4,5,6].filter(k=>k<c).map(k=>byC[k]);
+    const c1=ce[nb.waku]-x>=0.06-1e-9,c2=inner.every(i=>x<ce[i.waku]);if(c1||c2)out.push({b,c,both:c1&&c2});}
+  return out;
+}
+function anaPreWhy(r,a0){
+  const why=[],b1=a0.boats.find(b=>b.waku===1)||{},P=t=>(STATS&&STATS.p[String(t)])||{};
+  const bwv=BW&&BW.venues&&BW.venues[String(r.jcd)], bwp=t=>bwv&&bwv.players?bwv.players.find(p=>p.toban===t):null;
+  const pc=v=>Math.round(v*100)+'%';
+  if(/^B/.test(b1.cls||''))why.push(`1号艇 ${esc(b1.name||'')}は${esc(b1.cls)}（勝率${num(b1.natWin)?num(b1.natWin).toFixed(2):'-'}）`);
+  else if(num(b1.natWin)!=null&&num(b1.natWin)<5.5)why.push(`1号艇 ${esc(b1.name||'')}は勝率${num(b1.natWin).toFixed(2)}と低め`);
+  const cy1=(P(b1.toban).cy||[])[0];
+  if(cy1&&cy1[0]>=8&&STATS.cbase){const w=cy1[1]/cy1[0],B=STATS.cbase[0].win;if(w<=B-0.10)why.push(`1号艇の1コース1着率は${pc(w)}（全国平均${pc(B)}）・${cy1[0]}走`);}
+  const L=P(b1.toban).l1;if(L&&cy1&&cy1[0]>=10){const lost=L.reduce((s,x)=>s+x[0]+x[1]+x[2],0);if(lost/cy1[0]>=0.45)why.push(`1号艇は1コースで差し・まくりに${lost}回やられている`);}
+  if(num(b1.motor2)!=null&&num(b1.motor2)<30)why.push(`1号艇のモーター2連率${num(b1.motor2).toFixed(1)}%`);
+  (b1.tags||[]).forEach(t=>{if(/^F\d+持ち$/.test(t[1]))why.push(`1号艇が${t[1]}（スタートを控えやすい）`);});
+  const p1=bwp(b1.toban);if(p1&&p1.N&&p1.rank/p1.N>=0.7)why.push(`1号艇は今節の足が下位（${p1.N}人中${p1.rank}位）`);
+  // 外の強敵：1号艇より格上（勝率が0.5以上高い、または1号艇がA1でないのにA1）の艇だけ、強い順に2艇まで
+  const w1=num(b1.natWin)||0, threats=[];
+  for(const b of a0.boats.filter(x=>x.waku!==1)){
+    const nw=num(b.natWin)||0;if(!(nw>=w1+0.5||(b.cls==='A1'&&b1.cls!=='A1')))continue;
+    const t=[];if(b.cls==='A1')t.push('A1');if(nw)t.push('勝率'+nw.toFixed(2));
+    if(num(b.motor2)!=null&&num(b.motor2)>=45)t.push('モーター'+num(b.motor2).toFixed(0)+'%');
+    const p=bwp(b.toban);if(p&&p.N&&p.rank/p.N<=0.15)t.push(`今節の足${p.rank}位/${p.N}人`);
+    const cy=(P(b.toban).cy||[])[b.waku-1];if(cy&&b.waku>=2){const k=b.waku===2?cy[7]:Math.max(cy[8],cy[9]);if(k>=4)t.push(`${b.waku}コースで${b.waku===2?'差し':(cy[8]>=cy[9]?'まくり':'まくり差し')}${k}回`);}
+    threats.push({nw,txt:`${b.waku}号艇 ${esc(b.name||'')}（${t.join('・')}）が1号艇より格上`});
+  }
+  threats.sort((x,y)=>y.nw-x.nw).slice(0,2).forEach(x=>why.push(x.txt));
+  if(why.length===0)why.push('目立つ材料は少ないが、AIの総合評価で荒れやすいと判定');
+  why.push(`AIの見立て：1号艇が飛ぶ ${pc(a0.one.tobu)}・万舟期待 ${pc(a0.manP)}`);
+  return why;
+}
+function anaPostWhy(r,a0,a){
+  const why=[],pc=v=>Math.round(v*100)+'%',b1=a.boats.find(b=>b.waku===1)||{},q1=(r.before.boats||{})['1']||{};
+  const dT=a.one.tobu-a0.one.tobu;let note=0;
+  if(Math.abs(dT)>=0.03){why.push(`1号艇が飛ぶ確率 ${pc(a0.one.tobu)}→<b class="${dT>0?'up':'down'}">${pc(a.one.tobu)}</b>`);note++;}
+  if(a.boats.some(b=>b.course!==b.waku)){why.push(`進入が変わった（${a.boats.slice().sort((x,y)=>x.course-y.course).map(b=>b.waku).join('')}）${b1.course!==1?'・1号艇は'+b1.course+'コース':''}`);note++;}
+  if(b1.ashi&&b1.ashi.rank>=5){why.push(`1号艇の足スコアが6艇中${b1.ashi.rank}位（足5位以下の1号艇は過去1年で54.6%が1着を逃す）`);note++;}
+  else if(b1.ashi&&b1.ashi.rank<=2){why.push(`1号艇の足スコアは${b1.ashi.rank}位で、足は良い（荒れにくくなる材料）`);note++;}
+  if(q1.exST!=null&&q1.exST>=0.20){why.push(`1号艇の展示STが.${String(Math.round(q1.exST*100)).padStart(2,'0')}と遅め`);note++;}
+  const mk=makuriHits(r,a);mk.forEach(h=>{why.push(`${h.b.waku}号艇（${h.c}コース）にまくりアラート${h.both?'（強）':''}`);note++;});
+  const w=windVec(r.before);if(w&&w[1]>=5){why.push(`${esc(windTxt(r.before))}（強い風は逃げが減り万舟が増える）`);note++;}
+  if(!note)why.push('展示後も変わりなし');
+  return why;
+}
 function renderTobu(){
   const el=$('#v-tobu');if(!races.length){el.innerHTML=emptyState();return;}
   const pc=v=>Math.round(v*100)+'%';
-  const rows=races.map(r=>{let a=null,a0=null;try{a=analyze(r);}catch(_){}
-    const hasEx=r.before&&r.before.boats&&Object.values(r.before.boats).some(v=>v.exTime!=null);
-    if(a&&hasEx){try{a0=analyze({...r,before:null});}catch(_){}}
-    const res=resultOf(r),fin=res&&res.order?res.order.split('-').indexOf('1')+1:0;
-    return {r,a,a0,hasEx,res,fin};}).filter(x=>x.a);
-  rows.sort(tobuSort==='p'?(x,y)=>y.a.one.tobu-x.a.one.tobu:(x,y)=>(x.r.deadline||'').localeCompare(y.r.deadline||'')||x.r.jcd-y.r.jcd);
-  const done=rows.filter(x=>x.res&&x.res.order),hiDone=done.filter(x=>x.a.one.tobu>=0.35);
-  const flop=x=>x.fin===0||x.fin>=4;
-  const sum=done.length?`<p class="sub">今日の結果：1号艇が飛んだのは${done.filter(flop).length}/${done.length}レース（${pc(done.filter(flop).length/done.length)}）。そのうち飛ぶ確率35%以上と見たレースでは${hiDone.filter(flop).length}/${hiDone.length}レースが飛びました。</p>`:'';
-  el.innerHTML=`<div style="display:grid;gap:14px">
-    <div class="panel"><h3>イン飛び（1号艇が4着以下になる確率）</h3>
-      <p class="sub">${fmtDate(dateSel)}の全レース。展示が出たレースは展示・進入・オリジナル展示を入れた確率（小さい数字は展示前）。35%以上（赤）は通知も届きます。全レースの平均は約17%。</p>${sum}
-      <div class="seg" role="group" aria-label="並べ方"><button data-s="p" aria-pressed="${tobuSort==='p'}">飛ぶ確率の高い順</button><button data-s="t" aria-pressed="${tobuSort==='t'}">締切順</button></div></div>
-    <ul class="tobu-list">${rows.map(x=>{const t=x.a.one.tobu,c=tobuOf(t).cls,b1=x.a.boats.find(b=>b.waku===1);
-      const st=x.res&&x.res.order?(flop(x)?`<span class="tb-res flop">飛んだ<small>${x.fin?x.fin+'着':'着外'}</small></span>`:`<span class="tb-res ok">${x.fin}着</span>`):x.hasEx?'<span class="tb-res ex">展示済</span>':'<span class="tb-res pre">展示前</span>';
-      return `<li><button class="tb-row tobu-${c}" data-id="${esc(x.r.id)}">
-        <span class="tb-when"><b>${esc(x.r.deadline||'')}</b>${esc(x.r.venue||VENUES[x.r.jcd])} ${x.r.rno}R</span>
-        <span class="tb-who">${bn(1)}<span>${esc(b1?b1.name:'')}${x.a.one.course!==1?`<small>進入${x.a.one.course}コース</small>`:''}</span></span>
-        <span class="tb-p"><b>${pc(t)}</b>${x.a0?`<small>展示前${pc(x.a0.one.tobu)}</small>`:''}<span class="bar"><span style="width:${Math.min(100,t/0.6*100)}%"></span></span></span>
-        ${st}</button></li>`;}).join('')}</ul></div>`;
+  const rows=races.map(r=>{let a0=null,a=null;try{a0=analyze({...r,before:null,odds:null});}catch(_){}
+    const hasEx=!!(r.before&&r.before.complete);if(hasEx){try{a=analyze(r);}catch(_){}}
+    return {r,a0,a,hasEx,res:resultOf(r)};}).filter(x=>x.a0);
+  if(!rows.length){el.innerHTML=emptyState();return;}
+  const n=rows.length;
+  const kM=x=>x.a0.manP,kT=x=>x.a0.one.tobu;
+  rows.slice().sort((x,y)=>kM(x)-kM(y)).forEach((x,i)=>x.rm=(i+1)/n);
+  rows.slice().sort((x,y)=>kT(x)-kT(y)).forEach((x,i)=>x.rt=(i+1)/n);
+  rows.forEach(x=>x.sc=x.rm+x.rt);
+  const ord=rows.slice().sort((x,y)=>y.sc-x.sc);ord.forEach((x,i)=>{x.rank=i+1;x.pick=i<Math.max(1,Math.round(n*ANA_SHARE));x.star=i<n*0.05?3:i<n*0.10?2:1;});
+  // 展示で浮上（参考）：前日は選ばれず、展示後の万舟期待と飛ぶ確率が両方高いもの
+  rows.forEach(x=>{x.rise=!x.pick&&x.a&&x.a.one.tobu>=0.35&&x.a.manP>=0.20;});
+  const pick=rows.filter(x=>x.pick), rise=rows.filter(x=>x.rise);
+  const sorter=tobuSort==='p'?(x,y)=>x.rank-y.rank:(x,y)=>(x.r.deadline||'').localeCompare(y.r.deadline||'')||x.r.jcd-y.r.jcd;
+  pick.sort(sorter);rise.sort(sorter);
+  const done=pick.filter(x=>x.res&&x.res.order&&x.res.payout);
+  const man=done.filter(x=>x.res.payout>=10000).length;
+  const card=x=>{const r=x.r,res=x.res,done=res&&res.order;
+    const pre=anaPreWhy(r,x.a0), post=x.hasEx&&x.a?anaPostWhy(r,x.a0,x.a):null;
+    const af=areForm(x.a||x.a0);
+    return `<button class="ana-card${x.rise?' rise':''}" data-id="${esc(r.id)}">
+      <div class="ana-head"><b>${esc(r.venue||VENUES[r.jcd])} ${r.rno}R</b><span>${esc(r.deadline||'')}</span>
+        ${x.pick?`<span class="ana-star">${'★'.repeat(x.star)}${'☆'.repeat(3-x.star)}</span>`:'<span class="tag">展示で浮上</span>'}
+        <span class="tag">1号艇が飛ぶ ${pc(x.a0.one.tobu)}${x.a?'→'+pc(x.a.one.tobu):''}</span>
+        ${done?`<span class="ana-res ${res.payout>=10000?'man':''}">結果 ${esc(res.order)} ${yen(res.payout)}</span>`:''}</div>
+      <div class="ana-why"><p class="ana-lbl">前日の理由</p><ul>${pre.map(t=>`<li>${t}</li>`).join('')}</ul></div>
+      <div class="ana-why"><p class="ana-lbl">展示後</p>${post?`<ul>${post.map(t=>`<li>${t}</li>`).join('')}</ul>`:'<p class="sub">展示が出たら、変わったことをここに書きます。</p>'}</div>
+      ${af&&!done?`<p class="ana-form">狙うなら（参考）：${[af.F,af.S,af.T].map(s=>s.join('')).join('→')}・${af.pts}点</p>`:''}
+    </button>`;};
+  el.innerHTML=`<div style="display:grid;gap:12px">
+    <div class="panel"><h3>穴レース</h3>
+      <p class="sub">${fmtDate(dateSel)}の${n}レースから、<b>前日（出走表の段階）</b>のAIで荒れやすいレース上位20%（${pick.length}レース）を選んでいます。前日23時に出走表が入った時点で決まり、展示が出たら変わったことを書き足します。</p>
+      ${done.length?`<p class="sub">今日の結果：${done.length}レース中 万舟${man}レース（${pc(man/done.length)}）。</p>`:''}
+      <details><summary class="sub">選び方と実績（使っていない期間・11/5〜16の1,725R）</summary>
+        <p class="hint">「万舟期待」と「1号艇が飛ぶ確率」それぞれのその日の順位を足した点数で選びます。上位20%は 万舟23.2%（全体16.5%）・50倍以上39.4%（全体28.8%）・1号艇着外27.2%（全体17.5%）。展示後の評価で選び直しても万舟の当たりは良くならなかったので、選んだレースは展示で外さず、変化を書き足します。★★★は上位5%、★★は上位10%。荒れやすいレースを選ぶ仕組みで、買えばもうかることを保証するものではありません（参考の形は過去の試しで回収率100%未満）。</p></details>
+      <div class="seg" role="group" aria-label="並べ方"><button data-s="p" aria-pressed="${tobuSort==='p'}">穴度の高い順</button><button data-s="t" aria-pressed="${tobuSort==='t'}">締切順</button></div></div>
+    ${pick.map(card).join('')}
+    ${rise.length?`<div class="panel"><h3>展示で浮上（参考）</h3><p class="sub">前日は対象外でしたが、展示後に「1号艇が飛ぶ35%以上」かつ「万舟期待20%以上」になったレースです。11/5〜16の試しでは前日に選んだレースほどは当たっていません。</p></div>${rise.map(card).join('')}`:''}
+  </div>`;
   el.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{tobuSort=b.dataset.s;LS.set('tobuSort',tobuSort);renderTobu();}));
-  el.querySelectorAll('.tb-row').forEach(b=>b.addEventListener('click',()=>{const r=races.find(x=>x.id===b.dataset.id);if(!r)return;
+  el.querySelectorAll('.ana-card').forEach(b=>b.addEventListener('click',()=>{const r=races.find(x=>x.id===b.dataset.id);if(!r)return;
     jcdSel=r.jcd;LS.set('jcd',jcdSel);raceId=r.id;view='yoso';LS.set('view',view);const s2=$('#venue');if(s2)s2.value=String(jcdSel);renderChips();renderView();window.scrollTo(0,0);}));
 }
 
