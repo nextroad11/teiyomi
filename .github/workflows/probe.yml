@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/checkout@v4
         with: { ref: data, path: data }
-      - run: pip install requests
+      - run: pip install -r scraper/requirements.txt
       - run: python scraper/probe.py data/debug/probe
       - working-directory: data
         run: |
@@ -24,5 +24,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           git diff --cached --quiet && exit 0
-          git commit -q -m "下見: 場の向き"
+          git commit -q -m "下見: 翌日の出走表"
           for i in 1 2 3; do git push -q && exit 0; git pull -q --rebase; done
