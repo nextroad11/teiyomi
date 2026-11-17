@@ -988,6 +988,7 @@ const KM_DEFAULT={1:{'逃げ':.93,'抜き':.04,'恵まれ':.03},2:{'差し':.55,
 function kmDist(jcd,c){const K=STATS&&STATS.km;const all=K&&K.all&&K.all[c],v=K&&K.v&&K.v[jcd]&&K.v[jcd][c];
   if(!all)return KM_DEFAULT[c];const na=sum(Object.values(all)),pa={};for(const k in all)pa[k]=all[k]/na;if(!v)return pa;
   const nv=sum(Object.values(v)),out={};for(const k of new Set([...Object.keys(pa),...Object.keys(v)]))out[k]=((v[k]||0)+20*(pa[k]||0))/(nv+20);return out;}
+const SLIT_KON_W=15, SLIT_F1=0.0103, SLIT_F2=0.0333;
 function slitOf(r,a){
   const bf=(r.before&&r.before.boats)||{};
   const rows=a.boats.map(b=>{const q=bf[b.waku]||{},hist=STATS&&STATS.p[String(b.toban)]?.st;
@@ -997,8 +998,13 @@ function slitOf(r,a){
     const adj=base+((vm!=null&&allm!=null)?vm-allm:0), hc=(STATS&&STATS.p[String(b.toban)]?.stc||[])[b.course-1]||[];
     const avgST=(sum(hc)+adj*5)/(hc.length+5);
     // 展示STは本番のSTとほぼ関係がない（11/6〜8の2,395艇で、混ぜるほど誤差が増えた）ので予測には使わず、参考表示だけ
-    const pred=avgST;
-    return {waku:b.waku,course:b.course,name:b.name,avgST,sd,exST:q.exST,pred};}).sort((x,y)=>x.course-y.course);
+    // 11/18 追加（過去1年35万艇、前半で決めて後半で確認：レース内の順位相関 0.297→0.304、のぞきの的中 44.3→45.3%）
+    //  ・今節の本番ST：上の予想に15走分の重みで混ぜる（今節の走数が多いほど今節寄り）
+    //  ・F持ち：本番は控えるので、F1は+0.010秒・F2以上は+0.033秒遅く見る
+    const k=konST(r,b.toban), f=num(b.f)||0;
+    let pred=k&&k.n?(avgST*SLIT_KON_W+k.st*k.n)/(SLIT_KON_W+k.n):avgST;
+    if(f===1)pred+=SLIT_F1;else if(f>=2)pred+=SLIT_F2;
+    return {waku:b.waku,course:b.course,name:b.name,avgST,sd,exST:q.exST,pred,kon:k,f};}).sort((x,y)=>x.course-y.course);
   rows.forEach((x,i)=>{const inn=rows[i-1],out=rows[i+1];
     x.lead=inn?inn.pred-x.pred:0; // 内より早い分（＋ならのぞく）
     const nb=[inn,out].filter(Boolean).map(n=>n.pred);x.dent=nb.length&&x.pred-Math.min(...nb)>=0.03&&nb.every(v=>x.pred-v>=0.015);});
@@ -1034,7 +1040,7 @@ function tenkaiHtml(r,a){
   const T=tenkaiOf(r,a),sl=T.sl;
   const maxP=T.sc[0].p;
   return `<div class="panel tenkai"><h3>スリット予測・展開予想</h3>
-    <p class="sub">予測ST = その選手のこのコースでの平均ST（場のクセで補正）。展示STは本番とほぼ関係がないので予測には使わず、表に参考で出しています。右ほど早いスタート。「凹」は両隣より遅れる予測、「先」は内より早い予測。</p>
+    <p class="sub">予測ST = その選手のこのコースでの平均ST（場のクセで補正）に、今節の本番STを混ぜ、F持ちは遅めに見たもの。展示STは本番とほぼ関係がないので予測には使わず、表に参考で出しています。右ほど早いスタート。「凹」は両隣より遅れる予測、「先」は内より早い予測。</p>
     ${slitSvg(T)}
     <p class="tk-text">${esc(T.text)}</p>
     <ul class="scen">${T.sc.slice(0,6).map(c=>`<li>${bn(c.waku)}<span>${c.km}<span class="bar"><span style="width:${c.p/maxP*100}%"></span></span></span><b>${pct(c.p)}</b></li>`).join('')}</ul>
