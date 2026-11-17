@@ -1357,14 +1357,11 @@ function renderTable(){
     <div id="s-table">
       <p class="card-title">出走表とAI評価 <small>展示タイムは手で入れ直すとその場で計算し直します</small></p>
       <div class="tablebox"><table class="card">
-        <thead><tr><th>枠</th><th>選手</th><th>全国勝率</th><th>当地勝率</th><th>モーター2連</th><th>平均ST</th><th>展示</th><th>舟足</th><th>AI 1着率</th><th>ポイント</th></tr></thead>
+        <thead><tr><th>枠</th><th>選手</th><th>平均ST</th><th>展示</th><th>舟足</th><th>AI 1着率</th><th>ポイント</th></tr></thead>
         <tbody>${a.boats.map(b=>{const auto=r.before&&r.before.boats&&r.before.boats[b.waku]&&r.before.boats[b.waku].exTime!=null&&!(exMan[r.id]&&exMan[r.id][b.waku]!=null);
           return `<tr>
           <td>${bn(b.waku,1)}</td>
           <td class="who"><b class="pl-link" data-t="${b.toban}" role="button" tabindex="0">${esc(b.name)}</b><span>${esc(b.cls||'')} ${esc(b.branch||'')}${b.age?' '+b.age+'歳':''}</span></td>
-          <td class="n">${num(b.natWin)?.toFixed(2)??'-'}</td>
-          <td class="n">${num(b.locWin)?num(b.locWin).toFixed(2):'-'}</td>
-          <td class="n">${num(b.motor2)?.toFixed(1)??'-'}%<br><span style="color:var(--muted);font-size:11px">${b.motor?b.motor+'号機':''}</span></td>
           <td class="n">${num(b.st)?.toFixed(2)??'-'}</td>
           <td><input id="ex-${b.waku}" class="${auto?'auto':''}" inputmode="decimal" aria-label="${b.waku}号艇の展示タイム" placeholder="6.80" value="${b.exTime??''}"></td>
           <td class="foot-cell"><b class="fg fg-${b.footGrade==='◎'||b.footGrade==='○'?'up':b.footGrade==='×'||b.footGrade==='▲'?'dn':'mid'}">${b.footGrade}</b>${b.ashi?`<span>足${b.ashi.rank}位</span>`:''}</td>
