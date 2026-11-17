@@ -510,6 +510,8 @@ def main():
     if a.force_load or not day.get("loadedAt"):
         if now.hour >= 7 or a.date or a.force_load:
             load_day(hd, day)
+            if hd > now.strftime("%Y%m%d"):
+                day["preloaded"] = True   # 前日に読み込んだ日（朝に読み直す）
     # 前の晩に読み込んだ日は、朝7時以降に一度だけ出走表を読み直す（欠場・選手変更・追加の開催）
     elif day.get("preloaded") and now.hour >= 7 and not day.get("morningChecked"):
         refresh_entries(hd, day)
