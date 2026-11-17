@@ -468,11 +468,13 @@ def update_before_and_results(day: dict, now: dt.datetime) -> int:
                     log(f"  {r['venue']}{rno}R オッズ 合計{p['inv']} ずれ{p['mismatch']}")
         # 結果: 締切8分後〜6時間後
         # 払戻が出た直後は、決まり手・本番のSTがまだ載っていないことがある（11/17に確認）。
-        # そろうまで10分おきに読み直す（締切から6時間まで）。今節STや万舟の解説に使う
+        # そろうまで3分おきに読み直す（締切から6時間まで）。今節STや万舟の解説に使う。
+        # 夜22時台は、その日の欠けをすべて読み直す（23時の翌日分の読み込みより前に、その日の分をそろえ終える）
         res = r.get("result") or {}
         last = res.get("at")
-        redo = bool(res) and result_incomplete(res) and (not last or now - dt.datetime.fromisoformat(last) >= dt.timedelta(minutes=10))
-        if (not res or redo) and dl + dt.timedelta(minutes=8) <= now <= dl + dt.timedelta(hours=6):
+        redo = bool(res) and result_incomplete(res) and (not last or now - dt.datetime.fromisoformat(last) >= dt.timedelta(minutes=3))
+        sweep = now.hour == 22 and now.strftime("%Y%m%d") == hd and now >= dl + dt.timedelta(minutes=8)
+        if (not res or redo) and (dl + dt.timedelta(minutes=8) <= now <= dl + dt.timedelta(hours=6) or sweep):
             html = get(f"{BASE}/raceresult?{q}")
             if res:
                 res["at"] = now.isoformat(timespec="seconds")
