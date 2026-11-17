@@ -314,6 +314,7 @@ table.rec{border-collapse:collapse;width:100%;min-width:560px;font-variant-numer
 .ol-box{margin-top:12px;display:grid;gap:6px}
 .ol-box td small{color:var(--muted);margin-left:1px}
 .ol-box td,.ol-box th{white-space:nowrap}
+.ol-tbl td.ol-who{text-align:left;white-space:nowrap;max-width:7.5em;overflow:hidden;text-overflow:ellipsis}.ol-tbl td.ow-top{font-weight:800;color:var(--ink)}
 .ol-tbl{width:100%;border-collapse:collapse;font-size:14px}.ol-tbl th{font-size:12px;color:var(--muted);font-weight:600;padding:6px 4px;border-bottom:1px solid var(--line)}.ol-tbl td{padding:7px 4px;border-bottom:1px solid var(--line);text-align:center}.ol-tbl tfoot td{border-bottom:0;font-weight:700}.ol-tbl td.n{font-variant-numeric:tabular-nums}.ol-box td small{display:inline}
 .ol-box td em{display:inline;margin-left:6px;font-style:normal;font-size:11px;color:var(--muted)}
 .ol-box td.cd-hi em,.ol-box td.cd-lo em{color:inherit}
@@ -1017,6 +1018,19 @@ function oneLossHtml(r,a){
     <table class="ol-tbl"><thead><tr><th>相手のコース</th><th>差された</th><th>まくられた</th><th>まくり差された</th></tr></thead><tbody>${rows}</tbody>
     <tfoot><tr><td>合計</td>${tot.map(x=>`<td class="n">${x}<small>回</small></td>`).join('')}</tr></tfoot></table></div>`;
 }
+// 2〜6コースの艇が、今日入るコースで直近1年に決めた差し・まくり・まくり差しの本数（stats の cy の 差し・まくり・まくり差し）
+function outerWinHtml(r,a){
+  const rows=a.boats.filter(b=>b.course>=2&&b.course<=6).sort((x,y)=>x.course-y.course).map(b=>{
+    const cy=((STATS.p[String(b.toban)]||{}).cy||[])[b.course-1];
+    const who=`<td>${bn(b.waku)}</td><td class="ol-who"><b class="pl-link" data-t="${b.toban}" role="button" tabindex="0">${esc(b.name)}</b></td><td class="n">${b.course}</td>`;
+    if(!cy||!cy[0])return `<tr>${who}<td class="cd-na" colspan="3">このコースの出走なし</td></tr>`;
+    const v=[cy[7],cy[8],cy[9]], mx=Math.max(...v);
+    return `<tr>${who}${v.map((x,k)=>b.course===2&&k===2?'<td class="n cd-na">-</td>':`<td class="n ${x>=2&&x===mx?'ow-top':''}">${x}<small>回</small></td>`).join('')}</tr>`;}).join('');
+  if(!rows)return '';
+  return `<div class="ol-box"><b>2〜6コースの艇がそのコースで決めた本数（直近1年）</b>
+    <p class="sub">今日入るコースで1着になったときの決まり手の回数。各艇で一番多い決まり手（2回以上）を太字にしています。</p>
+    <table class="ol-tbl"><thead><tr><th>艇</th><th>選手</th><th>コース</th><th>差し</th><th>まくり</th><th>まくり差し</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
 function courseHtml(r,a){
   if(!STATS||!STATS.cbase)return '';
   const rd=r.date||String(r.id||'').slice(0,8), dd=(x,y)=>Math.abs((new Date(x.slice(0,4)+'-'+x.slice(4,6)+'-'+x.slice(6))-new Date(y.slice(0,4)+'-'+y.slice(4,6)+'-'+y.slice(6)))/864e5);
@@ -1026,15 +1040,14 @@ function courseHtml(r,a){
     const e=STATS.p[String(b.toban)]||{},cy=(e.cy||[])[b.course-1],B=STATS.cbase[b.course-1];
     const k=e.kon,konOk=k&&k.jcd===r.jcd&&rd&&dd(k.last,rd)<=2;
     const kon=konOk?`<td class="n ${k.rk<=B.rk-0.6?'cd-hi':k.rk>=B.rk+0.6?'cd-lo':''}">${k.st.toFixed(2).slice(1)}<small>${k.rk.toFixed(1)}番・${k.days}日</small></td>`:'<td class="n cd-na">-</td>';
-    if(!cy||!cy[0])return `<tr><td class="n">${b.course}</td><td>${bn(b.waku)}</td><td class="who"><b class="pl-link" data-t="${b.toban}" role="button" tabindex="0">${esc(b.name)}</b></td><td class="n cd-na" colspan="6">このコースの出走なし（直近1年）</td>${kon}</tr>`;
+    if(!cy||!cy[0])return `<tr><td class="n">${b.course}</td><td>${bn(b.waku)}</td><td class="who"><b class="pl-link" data-t="${b.toban}" role="button" tabindex="0">${esc(b.name)}</b></td><td class="n cd-na" colspan="5">このコースの出走なし（直近1年）</td>${kon}</tr>`;
     const [n,w,t2,t3,stS,stN,rkS,sa,ma,mz,ni]=cy, st=stN?stS/stN:null, rk=stN?rkS/stN:null;
     const stc=st==null?'':(st<=B.st-0.015?'cd-hi':st>=B.st+0.015?'cd-lo':''), rkc=rk==null?'':(rk<=B.rk-0.6?'cd-hi':rk>=B.rk+0.6?'cd-lo':'');
-    const km=b.course===1?`<span class="${ni/n>=0.6?'cd-hi':''}">逃げ${ni}</span>`:`<span class="${sa>=2&&sa>=ma&&sa>=mz?'cd-strong':''}">差${sa}</span><span class="${ma>=2&&ma>=sa&&ma>=mz?'cd-strong':''}">捲${ma}</span><span class="${mz>=2&&mz>=sa&&mz>=ma?'cd-strong':''}">捲差${mz}</span>`;
-    return `<tr><td class="n"><b>${b.course}</b></td><td>${bn(b.waku)}</td><td class="who"><b class="pl-link" data-t="${b.toban}" role="button" tabindex="0">${esc(b.name)}</b></td><td class="n">${n}</td>${rate(w,n,B.win)}${rate(t2,n,B.top2)}${rate(t3,n,B.top3)}<td class="n ${stc}">${st!=null?st.toFixed(2).slice(1):'-'}<small class="${rkc}">${rk!=null?rk.toFixed(1)+'番':''}</small></td><td class="cd-km">${km}</td>${kon}</tr>`;}).join('');
+    return `<tr><td class="n"><b>${b.course}</b></td><td>${bn(b.waku)}</td><td class="who"><b class="pl-link" data-t="${b.toban}" role="button" tabindex="0">${esc(b.name)}</b></td><td class="n">${n}</td>${rate(w,n,B.win)}${rate(t2,n,B.top2)}${rate(t3,n,B.top3)}<td class="n ${stc}">${st!=null?st.toFixed(2).slice(1):'-'}<small class="${rkc}">${rk!=null?rk.toFixed(1)+'番':''}</small></td>${kon}</tr>`;}).join('');
   return `<div class="panel cdata"><h3>コース別データ（直近1年）</h3>
-    <p class="sub">今日入るコース${r.before&&r.before.complete?'（展示の進入）':'（枠なりの想定）'}での、その選手の直近1年の成績。<span class="cd-hi">緑</span>は全国のそのコースの平均よりはっきり良い、<span class="cd-lo">灰色</span>は悪い。STの「番」は6艇中で何番目に早いか（平均）。決まり手はそのコースで1着になったときの回数。今節は同じ場で続けて走っている日（昨日まで）の平均STと順番。</p>
-    <div class="tablebox"><table class="card"><thead><tr><th>コース</th><th>艇</th><th>選手</th><th>走</th><th>1着率</th><th>2連率</th><th>3連率</th><th>平均ST</th><th>決まり手</th><th>今節ST</th></tr></thead><tbody>${rows}</tbody>
-    <tfoot><tr><td colspan="10" class="cd-base">全国平均（1〜6コース）1着率 ${STATS.cbase.map(B=>pc(B.win)).join('・')}</td></tr></tfoot></table></div>${oneLossHtml(r,a)}</div>`;}
+    <p class="sub">今日入るコース${r.before&&r.before.complete?'（展示の進入）':'（枠なりの想定）'}での、その選手の直近1年の成績。<span class="cd-hi">緑</span>は全国のそのコースの平均よりはっきり良い、<span class="cd-lo">灰色</span>は悪い。STの「番」は6艇中で何番目に早いか（平均）。今節は同じ場で続けて走っている日（昨日まで）の平均STと順番。</p>
+    <div class="tablebox"><table class="card"><thead><tr><th>コース</th><th>艇</th><th>選手</th><th>走</th><th>1着率</th><th>2連率</th><th>3連率</th><th>平均ST</th><th>今節ST</th></tr></thead><tbody>${rows}</tbody>
+    <tfoot><tr><td colspan="9" class="cd-base">全国平均（1〜6コース）1着率 ${STATS.cbase.map(B=>pc(B.win)).join('・')}</td></tr></tfoot></table></div>${oneLossHtml(r,a)}${outerWinHtml(r,a)}</div>`;}
 
 // ---------------------------------------------------------------- 自分で予想: 足評価・オリジナル展示
 // まくりアラート：補正後の展示タイムが ①すぐ内側の艇より0.06秒以上速い ②内側の全艇より速い（進入コースで判定）
