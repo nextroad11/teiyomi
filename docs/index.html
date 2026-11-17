@@ -336,6 +336,10 @@ table.rec{border-collapse:collapse;width:100%;min-width:560px;font-variant-numer
 .ana-lbl{margin:0;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.05em}
 .ana-why b.up{color:var(--ana)}.ana-why b.down{color:#1c7ed6}
 .ana-form{margin:0;font-size:12px;color:var(--muted)}
+
+/* ---- 足の内訳 */
+.ki{border-collapse:collapse;font-size:13px;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}.ki th{font-size:11px;font-weight:600;color:var(--muted);padding:6px 4px;text-align:center;border-bottom:1px solid var(--line)}.ki td{padding:6px 4px;text-align:center;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}.ki tr:last-child td{border-bottom:0}.ki td small{font-size:10px;margin-left:1px}.ki td.fg-up{color:var(--good);font-weight:700}.ki td.fg-dn{color:var(--ana)}.ki td.ki-na{color:var(--muted)}
+table.card.st-tbl{min-width:0}.st-tbl td,.st-tbl th{padding-left:6px;padding-right:6px}.st-tbl .who span{white-space:nowrap}
 </style>
 </head>
 <body>
@@ -1367,6 +1371,20 @@ function konAshi(r,toban){
   const p=v.players.find(x=>x.toban===toban);if(!p)return undefined;
   const q=(p.rank-1)/p.N;return {g:q<0.10?'S':q<0.25?'A':q<0.45?'B':q<0.70?'C':'D',rank:p.rank,N:p.N,n:p.n};
 }
+// 前日までの足の内訳：一周・まわり足・直線・展示のそれぞれで、開催の全選手の中で何位か（B級ウォッチの z、計測のない項目は「-」）
+function konItemsTable(r,a){
+  const v=BW&&BW.venues&&BW.venues[String(r.jcd)];
+  if(!v||!v.players||!v.players.length)return '';
+  const NM=['一周','まわり足','直線','展示'], N=v.players[0].N;
+  const gr=q=>q<0.10?'S':q<0.25?'A':q<0.45?'B':q<0.70?'C':'D';
+  const zs=NM.map((_,k)=>v.players.map(x=>x.z&&x.z[k]).filter(x=>x!=null));
+  const rows=a.boats.map(b=>{const p=v.players.find(x=>x.toban===b.toban),m=konAshi(r,b.toban);
+    const cells=NM.map((_,k)=>{const z=p&&p.z?p.z[k]:null;if(z==null||!zs[k].length)return '<td class="ki-na">-</td>';
+      const rank=1+zs[k].filter(x=>x>z).length;return `<td class="fg-${fgCls(gr((rank-1)/zs[k].length))}"><b>${rank}</b><small>位</small></td>`;}).join('');
+    return `<tr><td>${bn(b.waku)}</td><td class="fg-${m?fgCls(m.g):'mid'}">${m?`<b>${m.g}</b> ${m.rank}位`:'-'}</td>${cells}</tr>`;}).join('');
+  return `<p class="card-title">前日までの足の内訳 <small>開催の${N}人の中で何位か（色：上位10%・25%は緑、70%より下は赤）</small></p>
+    <table class="ki"><thead><tr><th>艇</th><th>総合</th>${NM.map(n=>`<th>${n}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table>`;
+}
 function renderTable(){
   const el=$('#v-table'), r=cur();
   if(!r){el.innerHTML=emptyState();return;}
@@ -1380,8 +1398,8 @@ function renderTable(){
     ${raceHead(r,a)}
     <div id="s-table">
       <p class="card-title">出走表</p>
-      <div class="tablebox"><table class="card">
-        <thead><tr><th>枠</th><th>選手</th><th>平均ST</th><th>今節ST</th><th>前日までの足</th><th>ポイント</th></tr></thead>
+      <div class="tablebox"><table class="card st-tbl">
+        <thead><tr><th>枠</th><th>選手</th><th>平均ST</th><th>今節ST</th><th>前日までの足</th></tr></thead>
         <tbody>${a.boats.map(b=>{const k=konST(r,b.toban);
           const kst=k?`${k.st.toFixed(2)}<br><span style="color:var(--muted);font-size:11px">${k.rk.toFixed(1)}番・${k.n}走</span>`:'-';
           return `<tr>
@@ -1390,8 +1408,9 @@ function renderTable(){
           <td class="n">${num(b.st)?.toFixed(2)??'-'}</td>
           <td class="n">${kst}</td>
           <td class="foot-cell">${(()=>{const m=konAshi(r,b.toban);return m?`<b class="fg fg-${fgCls(m.g)}">${m.g}</b><span>${m.rank}位/${m.N}人</span>`:`<span>${m===null?'初日':'-'}</span>`;})()}</td>
-          <td><div class="tags">${b.tags.map(t=>`<span class="tag ${t[0]}">${esc(t[1])}</span>`).join('')}</div></td></tr>`}).join('')}</tbody></table></div>
-      <p class="hint">今節STは、この開催でここまでに走った本番の平均ST（今日の終わったレースも含む）と、6艇中で何番目に早かったかの平均。前日までの足は、この開催の前日までの展示・オリジナル展示を開催全体でまとめた足スコアの、開催の全選手の中での順位（上位10%がS、25%までA、45%までB、70%までC、残りD）。初日は「初日」と出ます。当日の展示タイム・足評価・オリジナル展示・コース別データは「自分で予想」タブに。</p>
+          </tr>`}).join('')}</tbody></table></div>
+      ${konItemsTable(r,a)}
+      <p class="hint">今節STは、この開催でここまでに走った本番の平均ST（今日の終わったレースも含む）と、6艇中で何番目に早かったかの平均。前日までの足は、この開催の前日までの展示・オリジナル展示を開催全体でまとめた足スコアの、開催の全選手の中での順位（上位10%がS、25%までA、45%までB、70%までC、残りD）。下の「足の内訳」は、一周・まわり足・直線・展示それぞれの開催内の順位。初日は「初日」と出ます。当日の展示タイム・足評価・オリジナル展示・コース別データは「自分で予想」タブに。</p>
     </div>
   </div>`;
   el.querySelectorAll('.pl-link').forEach(x=>x.addEventListener('click',()=>openPlayer(x.dataset.t)));
