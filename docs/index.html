@@ -51,8 +51,10 @@ main.wrap>*{min-width:0}main.wrap section>div>*{min-width:0}.meetbar select{max-
 .chip span{font-size:11px;color:var(--muted)}
 .chip[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
 .chip .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;vertical-align:1px}
-.racehead{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline}
-.racehead h2{font-family:var(--f-display);font-size:26px;margin:0;font-weight:400;text-wrap:balance}
+.racehead{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center}
+.racehead h2{font-family:var(--f-display);font-size:22px;margin:0 8px 0 0;font-weight:400;text-wrap:balance;width:100%}
+.racehead .meta{width:100%;margin-top:-4px}
+.racehead .pill{font-size:12px;padding:3px 9px}
 .racehead .meta{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
 .pill{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px}
 .pill.kata{background:var(--good-soft);color:var(--good)}
@@ -321,7 +323,8 @@ table.rec{border-collapse:collapse;width:100%;min-width:560px;font-variant-numer
 .cdata .ol-box td.cd-hi{color:var(--ana);background:color-mix(in srgb,var(--ana) 12%,transparent);font-weight:700}.cdata .ol-box td.cd-lo{color:#1c7ed6}
 
 /* ---- 風の決まり手 */
-.wind-km{margin:6px 0 0;font-size:13px}.wind-km b.up{color:var(--ana)}.wind-km b.down{color:#1c7ed6}.wind-km small{display:block;color:var(--muted);font-size:11px}
+.wind-km{margin:0;font-size:13px;background:var(--sunk);border-radius:10px;padding:8px 12px}.wind-km b.up{color:var(--ana)}.wind-km b.down{color:#1c7ed6}.wind-km small{display:block;color:var(--muted);font-size:11px}
+.card-title small{font-weight:400;color:var(--muted);font-size:12px;margin-left:4px}
 </style>
 </head>
 <body>
@@ -329,11 +332,13 @@ table.rec{border-collapse:collapse;width:100%;min-width:560px;font-variant-numer
   <h1 class="brand">艇読みAI <small>BOATRACE ANALYZER</small></h1>
   <nav class="tabs" role="tablist">
     <button role="tab" id="tab-yoso" aria-selected="true" data-view="yoso">予想</button>
+    <button role="tab" id="tab-table" aria-selected="false" data-view="table">出走表</button>
     <button role="tab" id="tab-self" aria-selected="false" data-view="self">自分で予想</button>
-    <button role="tab" id="tab-tobu" aria-selected="false" data-view="tobu">イン飛び</button>
     <button role="tab" id="tab-bw" aria-selected="false" data-view="bw">B級ウォッチ</button>
+    <button role="tab" id="tab-tobu" aria-selected="false" data-view="tobu">イン飛び</button>
     <button role="tab" id="tab-man" aria-selected="false" data-view="man">万舟</button>
     <button role="tab" id="tab-pl" aria-selected="false" data-view="pl">選手</button>
+    <button role="tab" id="tab-odds" aria-selected="false" data-view="odds">オッズ</button>
     <button role="tab" id="tab-rec" aria-selected="false" data-view="rec">成績</button>
   </nav>
 </div></header>
@@ -354,7 +359,9 @@ table.rec{border-collapse:collapse;width:100%;min-width:560px;font-variant-numer
   <section id="v-bw" hidden></section>
   <section id="v-man" hidden></section>
   <section id="v-pl" hidden></section>
+  <section id="v-table" hidden></section>
   <section id="v-self" hidden></section>
+  <section id="v-odds" hidden></section>
   <section id="v-rec" hidden></section>
   <p class="disclaim">確率は公式の出走表・直前情報から計算した推定値で、的中を保証するものではありません。推定オッズは人気を予想したもので、実際のオッズとは異なります。舟券は20歳から、無理のない金額で。データ出典：BOAT RACE オフィシャルウェブサイト。</p>
 </main>
@@ -679,7 +686,7 @@ let picks=LS.get('picks',{}), exMan=LS.get('ex',{}), resMan=LS.get('res',{}), hi
 
 /* ============ 状態とデータ ============ */
 let dates=[], dateSel=null, races=[], jcdSel=null, raceId=null, view=LS.get('view','yoso');
-if(!['yoso','self','tobu','bw','man','pl','rec'].includes(view))view='yoso';
+if(!['yoso','table','self','bw','tobu','man','pl','odds','rec'].includes(view))view='yoso';
 const calc={mode:'form',sel:[new Set([1]),new Set([2,3]),new Set([2,3,4])],stake:100};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -745,9 +752,9 @@ function renderChips(){
 }
 const cur=()=>races.find(r=>r.id===raceId)||null;
 function renderView(){
-  ['yoso','self','tobu','bw','man','pl','rec'].forEach(v=>{$('#v-'+v).hidden=v!==view;$('#tab-'+v).setAttribute('aria-selected',v===view);});
+  ['yoso','table','self','bw','tobu','man','pl','odds','rec'].forEach(v=>{$('#v-'+v).hidden=v!==view;$('#tab-'+v).setAttribute('aria-selected',v===view);});
   $('#chips').hidden=view==='rec'||view==='tobu'||view==='pl'||view==='bw'||view==='man';
-  if(view==='yoso')renderYoso();else if(view==='tobu')renderTobu();else if(view==='bw')renderBW();else if(view==='man')renderMan();else if(view==='pl')renderPlayers();else if(view==='self')renderSelf();else renderRec();
+  if(view==='yoso')renderYoso();else if(view==='tobu')renderTobu();else if(view==='bw')renderBW();else if(view==='man')renderMan();else if(view==='pl')renderPlayers();else if(view==='self')renderSelf();else if(view==='table')renderTable();else if(view==='odds')renderOdds();else renderRec();
 }
 const emptyState=()=>`<div class="empty"><b>この日のレースデータはまだありません。</b><br>毎朝7時ごろに、その日の全場の出走表を自動で取り込みます。</div>`;
 const WIND=['','北','北北東','北東','東北東','東','東南東','南東','南南東','南','南南西','南西','西南西','西','西北西','北西','北北西'];
@@ -1237,17 +1244,11 @@ function renderYoso(){
   const hh=document.querySelector('header.top');if(hh)document.documentElement.style.setProperty('--top-h',hh.offsetHeight+'px');
 }
 
-function renderSelf(){
-  const el=$('#v-self'), r=cur();
-  if(!r){el.innerHTML=emptyState();return;}
-  const a=A(r); if(!a){el.innerHTML=`<div class="empty">このレースは出走データが不完全です。</div>`;return;}
-  const lv=LEVEL[a.level], p=pk(r.id), res=resultOf(r), bf=r.before||{};
-  const maxWin=Math.max(...a.boats.map(b=>b.pWin));
-  const rowC=(c,ana)=>`<li class="combo${res&&res.order===c.k?' hit':''}"><span class="nums">${comboHtml(c.k)}</span><span class="bar"><span style="width:${Math.min(100,c.pAi/a.combos[0].pAi*100)}%"></span></span><span class="val">${pct(c.pAi)}<small>${ana?'人気比×'+c.ratio.toFixed(1)+' / ':''}${c.real?'':'推定'}${odds(c.odds)}倍</small></span></li>`;
-  const anaEV=a.ana.length?avg(a.ana.map(c=>c.ev)):0;
+// 出走表・自分で予想・オッズの3つのタブで共通の見出し（レース名・締切・本線の期待度・1号艇が飛ぶ・風・結果）
+function raceHead(r,a){
+  const lv=LEVEL[a.level], res=resultOf(r), bf=r.before||{};
   const wx=[bf.weather,windTxt(bf),bf.wave!=null?'波'+bf.wave+'cm':null].filter(Boolean).join(' ');
-  el.innerHTML=`<div style="display:grid;gap:18px">
-    <div class="racehead">
+  return `    <div class="racehead">
       <h2>${esc(r.venue||VENUES[r.jcd])} ${r.rno}R ${esc(r.name||'')}</h2>
       <span class="meta">${r.distance?r.distance+'m':''} ・締切 ${esc(r.deadline||'-')}${r.day?' ・'+esc(r.day):''}</span>
       <span class="pill ${a.level}">${lv[0]}</span>
@@ -1256,11 +1257,21 @@ function renderSelf(){
       <span class="pill tobu-${tobuOf(a.one.tobu).cls}">1号艇が飛ぶ ${pct(a.one.tobu)}</span>
       ${wx?`<span class="pill info">${esc(wx)}</span>`:''}
       ${res?`<span class="pill kata">結果 ${esc(res.order||res.note||'')} ${res.payout?yen(res.payout):''}</span>`:''}
-    </div>
-    ${windKmHtml(bf,r.jcd,r.venue||VENUES[r.jcd])}
-    ${jumpNav([['s-table','出走表'],['s-course','コース別'],['s-ashi','足評価'],['s-ori','オリ展'],['s-odds','オッズ'],['s-tenkai','展開']])}
+    </div>`;
+}
+function renderTable(){
+  const el=$('#v-table'), r=cur();
+  if(!r){el.innerHTML=emptyState();return;}
+  const a=A(r); if(!a){el.innerHTML=`<div class="empty">このレースは出走データが不完全です。</div>`;return;}
+  const res=resultOf(r), bf=r.before||{};
+  const maxWin=Math.max(...a.boats.map(b=>b.pWin));
+  const rowC=(c,ana)=>`<li class="combo${res&&res.order===c.k?' hit':''}"><span class="nums">${comboHtml(c.k)}</span><span class="bar"><span style="width:${Math.min(100,c.pAi/a.combos[0].pAi*100)}%"></span></span><span class="val">${pct(c.pAi)}<small>${ana?'人気比×'+c.ratio.toFixed(1)+' / ':''}${c.real?'':'推定'}${odds(c.odds)}倍</small></span></li>`;
+  const anaEV=a.ana.length?avg(a.ana.map(c=>c.ev)):0;
+  const wx=[bf.weather,windTxt(bf),bf.wave!=null?'波'+bf.wave+'cm':null].filter(Boolean).join(' ');
+  el.innerHTML=`<div style="display:grid;gap:14px">
+    ${raceHead(r,a)}
     <div id="s-table">
-      <p class="card-title">出走表とAI評価</p>
+      <p class="card-title">出走表とAI評価 <small>展示タイムは手で入れ直すとその場で計算し直します</small></p>
       <div class="tablebox"><table class="card">
         <thead><tr><th>枠</th><th>選手</th><th>全国勝率</th><th>当地勝率</th><th>モーター2連</th><th>平均ST</th><th>展示</th><th>舟足</th><th>AI 1着率</th><th>ポイント</th></tr></thead>
         <tbody>${a.boats.map(b=>{const auto=r.before&&r.before.boats&&r.before.boats[b.waku]&&r.before.boats[b.waku].exTime!=null&&!(exMan[r.id]&&exMan[r.id][b.waku]!=null);
@@ -1277,18 +1288,38 @@ function renderSelf(){
           <td><div class="tags">${b.tags.map(t=>`<span class="tag ${t[0]}">${esc(t[1])}</span>`).join('')}</div></td></tr>`}).join('')}</tbody></table></div>
       <p class="hint">${r.before&&r.before.complete?'展示タイム・進入は自動で取得済み（青枠）。':'展示タイムは締切の約20分前から自動で入ります。'}手で入れ直すと、その場で計算し直します。${a.ashi?`舟足は足スコア（${a.ashi.kind==='場別'?'この場で検証した重み'+(a.ashi.sep!=null?'・判別力sep '+a.ashi.sep:''):'未検証の場なので既定の戸田新式'}）の順位：1位◎ 2位○ 3〜5位△ 6位×。`:'舟足は展示タイム・オリジナル展示（一周・まわり足・直線）・モーターから（◎○△▲×）。'}くわしくは下の「足評価」「オリジナル展示」。コース別の成績・ST・決まり手は下の「コース別データ」。</p>
     </div>
+  </div>`;
+  a.boats.forEach(b=>{const inp=$('#ex-'+b.waku);inp.addEventListener('change',()=>{const v=num(inp.value);exMan[r.id]=exMan[r.id]||{};
+    if(v==null)delete exMan[r.id][b.waku];else exMan[r.id][b.waku]=v;LS.set('ex',exMan);renderChips();renderView();});});
+  el.querySelectorAll('.pl-link').forEach(x=>x.addEventListener('click',()=>openPlayer(x.dataset.t)));
+}
+function renderOdds(){
+  const el=$('#v-odds'), r=cur();
+  if(!r){el.innerHTML=emptyState();return;}
+  const a=A(r); if(!a){el.innerHTML=`<div class="empty">このレースは出走データが不完全です。</div>`;return;}
+  el.innerHTML=`<div style="display:grid;gap:14px">${raceHead(r,a)}${oddsHtml(r,a)}</div>`;
+}
+function renderSelf(){
+  const el=$('#v-self'), r=cur();
+  if(!r){el.innerHTML=emptyState();return;}
+  const a=A(r); if(!a){el.innerHTML=`<div class="empty">このレースは出走データが不完全です。</div>`;return;}
+  const lv=LEVEL[a.level], p=pk(r.id), res=resultOf(r), bf=r.before||{};
+  const maxWin=Math.max(...a.boats.map(b=>b.pWin));
+  const rowC=(c,ana)=>`<li class="combo${res&&res.order===c.k?' hit':''}"><span class="nums">${comboHtml(c.k)}</span><span class="bar"><span style="width:${Math.min(100,c.pAi/a.combos[0].pAi*100)}%"></span></span><span class="val">${pct(c.pAi)}<small>${ana?'人気比×'+c.ratio.toFixed(1)+' / ':''}${c.real?'':'推定'}${odds(c.odds)}倍</small></span></li>`;
+  const anaEV=a.ana.length?avg(a.ana.map(c=>c.ev)):0;
+  el.innerHTML=`<div style="display:grid;gap:18px">
+    ${raceHead(r,a)}
+    ${windKmHtml(r.before,r.jcd,r.venue||VENUES[r.jcd])}
+    ${jumpNav([['s-course','コース別'],['s-ashi','足評価'],['s-ori','オリ展'],['s-tenkai','展開']])}
     <div id="s-course">${courseHtml(r,a)}</div>
     <div id="s-ashi">${ashiHtml(r,a)}</div>
     <div id="s-ori">${oriHtml(r,a)}</div>
-    ${oddsHtml(r,a)}
     <div id="s-tenkai">${tenkaiHtml(r,a)}</div>
     <div class="comment">
       <p>${esc(commentary(r,a))}</p>
       <button class="btn ghost" id="ask" type="button">Claudeに相談する文をコピー</button>
     </div>
   </div>`;
-  a.boats.forEach(b=>{const inp=$('#ex-'+b.waku);inp.addEventListener('change',()=>{const v=num(inp.value);exMan[r.id]=exMan[r.id]||{};
-    if(v==null)delete exMan[r.id][b.waku];else exMan[r.id][b.waku]=v;LS.set('ex',exMan);renderChips();renderView();});});
   el.querySelectorAll('.pl-link').forEach(x=>x.addEventListener('click',()=>openPlayer(x.dataset.t)));
   el.querySelectorAll('.jump a').forEach(a=>{const t=document.getElementById(a.dataset.jump);if(!t||!t.textContent.trim())a.remove();});
   $('#ask').addEventListener('click',()=>copyForClaude(r,a));
