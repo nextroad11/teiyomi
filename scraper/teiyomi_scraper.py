@@ -280,6 +280,16 @@ def fetch_oriten(hd: str, jcd: int, rno: int) -> dict | None:
     return parse_oriten(txt) if txt else None
 
 
+def ori_filled(o: dict) -> int:
+    """値の入っている数（項目の数も多いほど大きい）"""
+    return sum(1 for vs in o.get("boats", {}).values() for v in vs if v is not None) + 100 * len(o.get("items", []))
+
+
+def ori_incomplete(o: dict) -> bool:
+    """出走している艇（どれかの値がある艇）で、どれかの項目が空いていれば True"""
+    return any(any(v is None for v in vs) for vs in o.get("boats", {}).values() if any(v is not None for v in vs))
+
+
 def parse_oriten(txt: str) -> dict | None:
     lines = [l for l in txt.replace("\r", "").split("\n") if l.strip() and not l.startswith("data=")]
     if len(lines) < 3:
@@ -382,14 +392,22 @@ def update_before_and_results(day: dict, now: dt.datetime) -> int:
                     r["before"] = p
                     n += 1
                     log(f"  {r['venue']}{rno}R 直前情報 {'完了' if p['complete'] else '一部'}")
-        # オリジナル展示: 展示が出そろってから、取れるまで
+        # オリジナル展示: 展示が出そろってから、取れるまで。
+        # 一部の項目だけ先に出る場（桐生は半周ラップが先で、まわり足・直線があとから出る）があるので、
+        # 欠けている項目があるあいだは3分おきに読み直す（その日のうちは）
         b = r.get("before") or {}
-        if b.get("complete") and not b.get("ori") and now <= dl + dt.timedelta(minutes=3):
+        part = bool(b.get("ori")) and ori_incomplete(b["ori"])
+        last = b.get("oriAt")
+        due = not last or now - dt.datetime.fromisoformat(last) >= dt.timedelta(minutes=3)
+        if b.get("complete") and (
+                (not b.get("ori") and now <= dl + dt.timedelta(minutes=3)) or
+                (part and due and now.strftime("%Y%m%d") == hd)):
             o = fetch_oriten(hd, jcd, rno)
-            if o:
+            b["oriAt"] = now.isoformat(timespec="seconds")
+            if o and (not b.get("ori") or ori_filled(o) > ori_filled(b["ori"])):
                 b["ori"] = o
                 n += 1
-                log(f"  {r['venue']}{rno}R オリジナル展示 {'・'.join(o['items'])}")
+                log(f"  {r['venue']}{rno}R オリジナル展示 {'・'.join(o['items'])}{'（一部まだ）' if ori_incomplete(o) else ''}")
         # 3連単オッズ: 締切30分前〜締切1分後。毎回取り直して最新にする（締切時点のものが残る）。途中の値は ODDS_HIST へ
         o = r.get("odds") or {}
         if dl - dt.timedelta(minutes=30) <= now <= dl + dt.timedelta(minutes=1) and not o.get("final"):
