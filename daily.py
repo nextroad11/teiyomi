@@ -17,7 +17,7 @@ UPDATE = '--no-update' not in sys.argv
 ONLY = sys.argv[sys.argv.index('--only') + 1].split(',') if '--only' in sys.argv else None  # 例: --only 15
 CFG = json.load(open(os.path.join(HERE, 'config.json')))
 KEYS = ['一周', 'まわり足', '直線', '展示']
-FORMS = {k: dict(zip(KEYS, v)) for k, v in CFG['forms'].items()}
+FORMS = FORMS0 = {k: dict(zip(KEYS, v)) for k, v in CFG['forms'].items()}
 GR_PATH = os.path.join(HERE, 'data', 'grades.json')
 grades = json.load(open(GR_PATH))
 today = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).strftime('%Y%m%d')
@@ -111,6 +111,8 @@ def est_corr(dd):
     out = {}
     for k in KEYS:
         m = dv[k].notna().values
+        if m.sum() == 0:  # 直線タイムが出ない場など、その項目がない
+            out[k] = {w: 0.0 for w in range(1, 7)}; continue
         coef = np.linalg.lstsq(X.values[m], dv[k].values[m], rcond=None)[0][:6]
         c = -(coef - coef[5])
         out[k] = {w: round(float(c[w - 1]), 2) for w in range(1, 7)}
@@ -185,12 +187,20 @@ def wstr(w): return '/'.join(f"{w[k]:.2g}" for k in KEYS)
 def pct(x): return f"{x*100:.1f}"
 
 GR = list(grid())
-lines = [f"# 足スコア日次レポート（20場） {today[:4]}/{today[4:6]}/{today[6:]}", "",
+lines = [f"# 足スコア日次レポート（23場） {today[:4]}/{today[4:6]}/{today[6:]}", "",
          "式の重みは 一周/まわり足/直線/展示。sep＝同じ進入コース内で足スコア上位3艇と下位3艇の3連対率の差（ポイント）。SG・G1・G2は除外、G3は含む。", ""]
 summary = []
 for jcd_s, v in CFG['venues'].items():
     if ONLY and jcd_s not in ONLY: continue
     jcd = int(jcd_s); path = os.path.join(HERE, v['file'])
+    # 直線タイムが出ない場（住之江・尼崎・徳山）は、各式の直線の重みを0にして使う（同じ形になった式は1つにまとめる）
+    NS = bool(v.get('no_straight'))
+    FORMS = {}
+    for k, w in FORMS0.items():
+        w2 = dict(w, 直線=0) if NS else w
+        if NS and k != v['adopted'] and any(wstr(w2) == wstr(x) for x in FORMS.values()): continue
+        FORMS[k] = w2
+    GRv = [w for w in GR if w['直線'] == 0] if NS else GR
     have = {l.split('|')[0] for l in open(path) if l.strip()}
     added = []
     if UPDATE:
@@ -234,7 +244,7 @@ for jcd_s, v in CFG['venues'].items():
     lab = series_of(d.day.unique()); d['節'] = d.day.map(lab)
     W0 = FORMS[v['adopted']]
     newdays = sorted({l[:8] for l in added})
-    lines += [f"## {v['name']}（採用式: {v['adopted']} {wstr(W0)}・補正: {'場専用（' + v.get('corr_note', '') + '）' if AC else '全場共通'}）", ""]
+    lines += [f"## {v['name']}（採用式: {v['adopted']} {wstr(W0)}・補正: {'場専用（' + v.get('corr_note', '') + '）' if AC else '全場共通'}{'・直線タイムなし' if NS else ''}）", ""]
     if since > '0': lines.append(f"- 対象期間: {since[:4]}/{since[4:6]}/{since[6:]} 以降（{v.get('since_note', '新モーター導入後')}）")
     lines.append(f"- データ: 一般戦 {d.race.nunique()}R・{d['節'].nunique()}節（{d.day.min()}〜{d.day.max()}）。今回追加 {len(added)}R" + (f"（{', '.join(x[4:6]+'/'+x[6:] for x in newdays)}）" if newdays else "（新しい結果なし）"))
     offx = sorted({f"{a[4:6]}/{a[6:]}〜{b[4:6]}/{b[6:]} {t}" for a, b, g, t in CFG.get('official_grade_periods', {}).get(jcd_s, []) if b >= since and a <= today})
@@ -250,7 +260,7 @@ for jcd_s, v in CFG['venues'].items():
         else:
             lines.append("- 追加分はSG・G1等のため分析対象外")
     # 全体
-    allres = best(d, GR); Wb = allres[0][1]
+    allres = best(d, GRv); Wb = allres[0][1]
     names = sorted(d['節'].unique())
     loso_pick = []
     loso = {k: [] for k in list(FORMS) + ['選び直し']}
@@ -258,7 +268,7 @@ for jcd_s, v in CFG['venues'].items():
         for n in names:
             tr = d[d['節'] != n]; te = d[d['節'] == n]
             if te.race.nunique() < 12: continue
-            w = best(tr, GR)[0][1]; loso_pick.append(wstr(w))
+            w = best(tr, GRv)[0][1]; loso_pick.append(wstr(w))
             loso['選び直し'].append(stats(te, w)['sep'])
             for fn, fw in FORMS.items(): loso[fn].append(stats(te, fw)['sep'])
     recent = d[d.day >= (datetime.datetime.strptime(d.day.max(), '%Y%m%d') - datetime.timedelta(days=30)).strftime('%Y%m%d')]
