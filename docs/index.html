@@ -738,6 +738,16 @@ function renderView(){
 }
 const emptyState=()=>`<div class="empty"><b>この日のレースデータはまだありません。</b><br>毎朝7時ごろに、その日の全場の出走表を自動で取り込みます。</div>`;
 const WIND=['','北','北北東','北東','東北東','東','東南東','南東','南南東','南','南南西','南西','西南西','西','西北西','北西','北北西'];
+// 公式の風向き番号（1〜16）は方角ではなく「スタンドが下・1マークが右」の水面図に対する矢印の向き（1が上、時計回りに22.5°ずつ、17は無風）。
+// 矢印が1マーク側（右）へ向く＝追い風、2マーク側（左）＝向かい風、上下＝横風。11/17に公式の画像で確認
+const WIND_REL=['','横風（スタンド→水面）','横風（スタンド→水面）','斜め追い風','追い風','追い風','追い風','斜め追い風','横風（水面→スタンド）','横風（水面→スタンド）','横風（水面→スタンド）','斜め向かい風','向かい風','向かい風','向かい風','斜め向かい風','横風（スタンド→水面）'];
+const WIND_ARW=['','↑','↗','↗','→','→','→','↘','↘','↓','↙','↙','←','←','←','↖','↑'];
+function windTxt(bf){
+  const v=bf&&bf.windSpeed;if(v==null&&!(bf&&bf.windDir))return null;
+  if(v===0||bf.windDir===17)return '無風';
+  const n=bf.windDir;if(!n||!WIND_REL[n])return v!=null?'風'+v+'m':null;
+  return `${WIND_REL[n]}${WIND_ARW[n]}${v!=null?v+'m':''}`;
+}
 
 // ---------------------------------------------------------------- 選手検索
 let plQuery=LS.get('plq',''), plSel=LS.get('pls',null);
@@ -907,7 +917,7 @@ function summaryHtml(r,a,res){
   const mark=w=>{const i=ord.findIndex(b=>b.waku===w);return i<4?MK[i]:'';};
   const exs=a.boats.filter(b=>b.exTime!=null).map(b=>b.exTime).sort((x,y)=>x-y);
   const tags=[];
-  const wx=[bf.weather,bf.windDir?WIND[bf.windDir]+'風':null,bf.windSpeed!=null?bf.windSpeed+'m':null,bf.wave!=null?'波'+bf.wave+'cm':null].filter(Boolean).join(' ');
+  const wx=[bf.weather,windTxt(bf),bf.wave!=null?'波'+bf.wave+'cm':null].filter(Boolean).join(' ');
   if(wx)tags.push(['info',wx]);
   tags.push([a.level,LEVEL[a.level][0]]);
   if(ord[0].pWin<0.35)tags.push(['warn','本命不在']);
@@ -1158,7 +1168,7 @@ function renderYoso(){
   const maxWin=Math.max(...a.boats.map(b=>b.pWin));
   const rowC=(c,ana)=>`<li class="combo${res&&res.order===c.k?' hit':''}"><span class="nums">${comboHtml(c.k)}</span><span class="bar"><span style="width:${Math.min(100,c.pAi/a.combos[0].pAi*100)}%"></span></span><span class="val">${pct(c.pAi)}<small>${ana?'人気比×'+c.ratio.toFixed(1)+' / ':''}${c.real?'':'推定'}${odds(c.odds)}倍</small></span></li>`;
   const anaEV=a.ana.length?avg(a.ana.map(c=>c.ev)):0;
-  const wx=[bf.weather,bf.windDir?WIND[bf.windDir]+'風':null,bf.windSpeed!=null?bf.windSpeed+'m':null,bf.wave!=null?'波'+bf.wave+'cm':null].filter(Boolean).join(' ');
+  const wx=[bf.weather,windTxt(bf),bf.wave!=null?'波'+bf.wave+'cm':null].filter(Boolean).join(' ');
   el.innerHTML=`<div style="display:grid;gap:18px">
     ${resultBanner(r,a,res)}
     ${summaryHtml(r,a,res)}
@@ -1203,7 +1213,7 @@ function renderSelf(){
   const maxWin=Math.max(...a.boats.map(b=>b.pWin));
   const rowC=(c,ana)=>`<li class="combo${res&&res.order===c.k?' hit':''}"><span class="nums">${comboHtml(c.k)}</span><span class="bar"><span style="width:${Math.min(100,c.pAi/a.combos[0].pAi*100)}%"></span></span><span class="val">${pct(c.pAi)}<small>${ana?'人気比×'+c.ratio.toFixed(1)+' / ':''}${c.real?'':'推定'}${odds(c.odds)}倍</small></span></li>`;
   const anaEV=a.ana.length?avg(a.ana.map(c=>c.ev)):0;
-  const wx=[bf.weather,bf.windDir?WIND[bf.windDir]+'風':null,bf.windSpeed!=null?bf.windSpeed+'m':null,bf.wave!=null?'波'+bf.wave+'cm':null].filter(Boolean).join(' ');
+  const wx=[bf.weather,windTxt(bf),bf.wave!=null?'波'+bf.wave+'cm':null].filter(Boolean).join(' ');
   el.innerHTML=`<div style="display:grid;gap:18px">
     <div class="racehead">
       <h2>${esc(r.venue||VENUES[r.jcd])} ${r.rno}R ${esc(r.name||'')}</h2>
@@ -1416,7 +1426,7 @@ function manshuOf(r){
   const moved=a.boats.filter(b=>b.course!==b.waku);
   if(moved.length){tags.push('進入変化');pts.push(`進入が変わった（${a.boats.slice().sort((x,y)=>x.course-y.course).map(b=>b.waku).join('')}）。`);}
   const ws=num(r.before&&r.before.windSpeed),wv=num(r.before&&r.before.wave);
-  if((ws!=null&&ws>=5)||(wv!=null&&wv>=5)){tags.push('風・波');pts.push(`水面は風${ws??'-'}m・波${wv??'-'}cm。`);}
+  if((ws!=null&&ws>=5)||(wv!=null&&wv>=5)){tags.push('風・波');pts.push(`水面は${windTxt(r.before)||'風'+(ws??'-')+'m'}・波${wv??'-'}cm。`);}
   // AIの見立て
   pts.push(`AIの評価：この組は120通り中${aiRank}番目（確率${(cmb.pAi*100).toFixed(1)}%）。レース前の万舟期待は${Math.round(a.manP*100)}%${a.manP>=0.2?'（荒れ狙いの対象）':''}。${a.honsen.some(c=>c.k===res.order)?'本線に入っていた。':a.ana.some(c=>c.k===res.order)?'穴に入っていた。':''}`);
   if(!res.km)pts.push('決まり手・本番のST：この日の分は公式の結果ページからまだ取得していません。');

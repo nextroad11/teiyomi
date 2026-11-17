@@ -232,7 +232,12 @@ def parse_beforeinfo(html: str) -> dict | None:
         out["wave"] = int(m.group(1))
     m = re.search(r"is-wind(\d+)", html)
     if m:
-        out["windDir"] = int(m.group(1))  # 1〜16の方位番号（公式の表記）
+        # 1〜16は方角ではなく「スタンドが下・1マークが右」の水面図に対する矢印の向き（1が上、時計回りに22.5°ずつ）。17は無風。
+        # 矢印が右向き（5）＝追い風、左向き（13）＝向かい風、上下（1・9）＝横風。11/17に公式の画像で確認
+        out["windDir"] = int(m.group(1))
+    m = re.search(r"is-direction(\d+)", html)
+    if m:
+        out["venueDir"] = int(m.group(1))  # 水面図の上が方角でどちらか（場ごとに決まった方位図）
     m = re.search(r"天候\s*(\S+)", txt)
     if m:
         out["weather"] = m.group(1)
@@ -392,6 +397,19 @@ def update_before_and_results(day: dict, now: dt.datetime) -> int:
                     r["before"] = p
                     n += 1
                     log(f"  {r['venue']}{rno}R 直前情報 {'完了' if p['complete'] else '一部'}")
+        # 風・波は展示のあとも変わるので、締切8分前〜締切に一度だけ取り直す（一撃くんなどと同じ「直前」の値にそろえる）
+        b = r.get("before") or {}
+        if b.get("complete") and not b.get("wxAt") and dl - dt.timedelta(minutes=8) <= now <= dl:
+            html = get(f"{BASE}/beforeinfo?{q}")
+            b["wxAt"] = now.isoformat(timespec="seconds")
+            p = parse_beforeinfo(html) if html else None
+            if p:
+                for k in ("windSpeed", "windDir", "wave", "weather", "venueDir"):
+                    if p.get(k) is not None:
+                        if k in ("windSpeed", "windDir", "wave") and b.get(k) is not None and b.get(k) != p[k]:
+                            b.setdefault("wx0", {})[k] = b[k]   # 展示時点の値も残す
+                        b[k] = p[k]
+                n += 1
         # オリジナル展示: 展示が出そろってから、取れるまで。
         # 一部の項目だけ先に出る場（桐生は半周ラップが先で、まわり足・直線があとから出る）があるので、
         # 欠けている項目があるあいだは3分おきに読み直す（その日のうちは）
