@@ -1,18 +1,26 @@
-"""翌日の出走表が前の晩に公式に出ているかを確かめる一回きりの下見。"""
-import sys, datetime as dt
+"""一回きり：11/17 の結果ページを読み直して、決まり手・本番のSTを入れる（払戻だけ先に取れていたため）。"""
+import json, sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 import teiyomi_scraper as t
-out = Path(sys.argv[1]); out.mkdir(parents=True, exist_ok=True)
-now = t.now_jst(); td = (now + dt.timedelta(days=1)).strftime("%Y%m%d")
-lines = [f"今 {now.isoformat()} 翌日 {td}"]
-html = t.get(f"{t.BASE}/index?hd={td}")
-(out / "index_tomorrow.html").write_text(html or "", encoding="utf-8")
-j = t.venues_of_day(td); lines.append(f"開催場 {j}")
-if j:
-    h = t.get(f"{t.BASE}/racelist?rno=1&jcd={j[0]:02d}&hd={td}")
-    (out / "racelist_tomorrow.html").write_text(h or "", encoding="utf-8")
-    p = t.parse_racelist(h) if h else None
-    lines.append(f"1R 読めた {bool(p)} 選手 {len(p['boats']) if p else 0} 締切 {p.get('deadlines') if p else None}")
-(out / "tomorrow.txt").write_text("\n".join(lines), encoding="utf-8")
-print("\n".join(lines))
+root = Path(sys.argv[1]).parent.parent          # data/debug/probe → data
+hd = "20261117"
+path = root / f"{hd}.json"
+day = json.loads(path.read_text(encoding="utf-8"))
+n = 0
+for r in day["races"]:
+    res = r.get("result") or {}
+    if res and not t.result_incomplete(res):
+        continue
+    html = t.get(f"{t.BASE}/raceresult?rno={r['rno']}&jcd={r['jcd']:02d}&hd={hd}")
+    p = t.parse_result(html) if html else None
+    if p:
+        p["redoneY"] = True
+        r["result"] = p
+        n += 1
+t.write_json(path, day)
+left = sum(1 for r in day["races"] if not r.get("result") or t.result_incomplete(r["result"]))
+msg = f"{hd}: 読み直し {n}レース・まだ欠け {left}レース"
+(Path(sys.argv[1])).mkdir(parents=True, exist_ok=True)
+(Path(sys.argv[1]) / "redo.txt").write_text(msg, encoding="utf-8")
+print(msg)
