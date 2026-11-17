@@ -570,6 +570,7 @@ function ashiFor(race,exT,B){const o=race.before&&race.before.ori&&race.before.o
 const MAN_CAL=0.61, MAN_AVG=0.134;
 // 本線の当たる期待度（本線の的中確率から。418Rで予測と実際がほぼ一致していることを確認済み）
 const expectOf=c=>c>=0.40?{st:'★★★',t:'高い',cls:'hi'}:c>=0.33?{st:'★★☆',t:'ふつう',cls:'mid'}:{st:'★☆☆',t:'低め',cls:'lo'};
+const fgCls=g=>g==='S'||g==='A'?'up':g==='C'||g==='D'?'dn':'mid';
 const tobuOf=p=>p>=0.30?{t:'危ない',cls:'hi'}:p>=0.18?{t:'ややあり',cls:'mid'}:{t:'低い',cls:'lo'};
 const manOf=p=>p>=0.20?{t:'高い',cls:'hi'}:p>=0.12?{t:'ふつう',cls:'mid'}:{t:'低い',cls:'lo'};
 function analyze(race,exOverride){
@@ -619,9 +620,9 @@ function analyze(race,exOverride){
   boats.forEach(b=>{const o=OF[b.waku],ww=MODEL.weights;b.foot=(b.parts.ex||0)+(b.parts.motor||0)+(b.parts.mform||0)
     +(ww.olap!=null?b.parts.olap:0.15*o[0])+(ww.oturn!=null?b.parts.oturn:0.15*o[1])+(ww.ostr!=null?b.parts.ostr:0.15*o[2]);});
   const AS=ashiFor(race,exT,B);
-  if(AS){const GR=['◎','○','△','△','△','×']; /* 11/6〜9の538Rで5位は3・4位と同じ成績だったので△に */boats.forEach(b=>{const a=AS.find(x=>x.waku===b.waku);b.ashi=a||null;b.footGrade=a?GR[a.rank-1]:'-';});}
+  if(AS){const GR=['S','A','B','B','C','D']; /* 足評価 S〜D（11/18 殿の指定でSが一番）。過去1年で1号艇が1着を逃す率は足1位32%・2位38%・3位43%・4位47%・5位52%・6位58% */boats.forEach(b=>{const a=AS.find(x=>x.waku===b.waku);b.ashi=a||null;b.footGrade=a?GR[a.rank-1]:'-';});}
   else{const fm=avg(boats.map(b=>b.foot)),ord=boats.slice().sort((x,y)=>y.foot-x.foot);
-    boats.forEach(b=>{const r=ord.indexOf(b),d=b.foot-fm;b.footGrade=d>=0.35&&r===0?'◎':d>=0.15&&r<=1?'○':d<=-0.3?'×':d<=-0.12?'▲':'△';});}
+    boats.forEach(b=>{const r=ord.indexOf(b),d=b.foot-fm;b.footGrade=d>=0.35&&r===0?'S':d>=0.15&&r<=1?'A':d<=-0.3?'D':d<=-0.12?'C':'B';});}
   const W=sum(boats.map(b=>b.winW));
   boats.forEach(b=>{b.pWin=b.winW/W;});
   const oddsK=PAYBACK*Math.exp(MODEL.market.c0||0);
@@ -994,7 +995,7 @@ function tenkaiOf(r,a){
   sl.filter(x=>x.dent).forEach(x=>{const o=sl.find(y=>y.course===x.course+1);
     t.push(o?`${x.course}コース（${x.waku}号艇）がスリットで凹む予測。外の${o.waku}号艇がのぞいて、まくり・まくり差しの形に注意。`:`${x.course}コース（${x.waku}号艇）はスタートで置いていかれる予測。`);});
   sl.filter(x=>x.course>1&&x.lead>=0.03).forEach(x=>t.push(`${x.course}コース（${x.waku}号艇）がスリットで内より${x.lead.toFixed(2).slice(1)}秒早い予測。攻めの展開。`));
-  const f=a.boats.filter(b=>b.footGrade==='◎')[0]; if(f)t.push(`舟足◎は${f.waku}号艇。`);
+  const f=a.boats.filter(b=>b.footGrade==='S')[0]; if(f)t.push(`足評価Sは${f.waku}号艇。`);
   t.push(`一番ありそうな決着の形は「${top.waku}号艇の${top.km}」（${pct(top.p)}）。`);
   return {sl,sc,text:t.join('')};}
 function slitSvg(T){
@@ -1058,7 +1059,7 @@ function summaryHtml(r,a,res){
     <div class="sc-boats">${a.boats.slice().sort((x,y)=>x.waku-y.waku).map(b=>{const er=b.exTime!=null?exs.indexOf(b.exTime)+1:0;
       return `<div class="sb${res&&res.order&&res.order.startsWith(b.waku+'-')?' won':''}"><span class="sb-mark">${mark(b.waku)}</span><span class="bn lg sb-n" data-n="${b.waku}">${b.waku}</span>
         <span class="sb-name">${esc((b.name||'').replace(/\s+/g,''))}</span><span class="sb-cls">${esc(b.cls||'')}${b.course!==b.waku?` <em>${b.course}コ</em>`:''}</span>
-        <b class="sb-p">${pct(b.pWin)}</b><span class="sb-foot fg-${b.footGrade==='◎'||b.footGrade==='○'?'up':b.footGrade==='×'?'dn':'mid'}">足${b.footGrade}</span>
+        <b class="sb-p">${pct(b.pWin)}</b><span class="sb-foot fg-${fgCls(b.footGrade)}">足${b.footGrade}</span>
         <span class="sb-ex${er===1?' r1':er===2?' r2':''}">${b.exTime!=null?b.exTime.toFixed(2):'-'}</span></div>`;}).join('')}</div>
     <p class="sc-note">印はAIの1着率の順（◎○▲△）。足は舟足評価、下の数字は展示タイム（赤が1位・橙が2位）。</p>
   </div>`;}
@@ -1209,12 +1210,12 @@ function ashiHtml(r,a){
     return `<div class="panel ashi"><h3>足評価（足スコア）</h3>
       <p class="sub">枠ごとの計測のクセを補正し、同じレースの中で速いほど＋。${a.ashi.venueCorr?'この場専用の補正':'全場共通の補正'}をかけ、${a.ashi.kind==='場別'?`この場で検証した重み${a.ashi.sep!=null?`（判別力sep ${a.ashi.sep}）`:''}`:'未検証の場なので既定の戸田新式（一周1・まわり足0.5・直線0.5・展示1）'}で合計。${a.ashi.notes.length?'※'+esc(a.ashi.notes.join('・')):''}</p>
       <div class="tablebox"><table class="card"><thead><tr><th>順位</th><th>艇</th><th>一周</th><th>まわり足</th><th>直線</th><th>展示</th><th>足スコア</th><th>評価</th></tr></thead><tbody>
-      ${rows.map(b=>b.ashi?`<tr><td>${b.ashi.rank}位</td><td>${bn(b.waku)}</td>${b.ashi.z.map(z=>`<td class="n ${cls(z)}">${f(z)}</td>`).join('')}<td class="n"><b>${f(b.ashi.score)}</b></td><td><b class="fg fg-${b.footGrade==='◎'||b.footGrade==='○'?'up':b.footGrade==='×'||b.footGrade==='▲'?'dn':'mid'}">${b.footGrade}</b></td></tr>`:`<tr><td>-</td><td>${bn(b.waku)}</td><td colspan="6" class="n">展示なし</td></tr>`).join('')}
+      ${rows.map(b=>b.ashi?`<tr><td>${b.ashi.rank}位</td><td>${bn(b.waku)}</td>${b.ashi.z.map(z=>`<td class="n ${cls(z)}">${f(z)}</td>`).join('')}<td class="n"><b>${f(b.ashi.score)}</b></td><td><b class="fg fg-${fgCls(b.footGrade)}">${b.footGrade}</b></td></tr>`:`<tr><td>-</td><td>${bn(b.waku)}</td><td colspan="6" class="n">展示なし</td></tr>`).join('')}
       </tbody></table></div>${makuriHtml(r,a)}</div>`;}
   const jc=String(r.jcd).padStart(2,'0');
   return `<div class="panel ashi"><h3>足評価</h3><p class="sub">${ASHI_SKIP_NOTE(jc,r)}展示タイム・オリジナル展示・モーターの最近の成績を、AIが学んだ重みで合計した評価です。</p>
     <div class="tablebox"><table class="card"><thead><tr><th>艇</th><th>展示</th><th>オリ展</th><th>モーター</th><th>合計</th><th>評価</th></tr></thead><tbody>
-    ${a.boats.slice().sort((x,y)=>y.foot-x.foot).map(b=>{const o=(b.parts.olap||0)+(b.parts.oturn||0)+(b.parts.ostr||0);return `<tr><td>${bn(b.waku)}</td><td class="n">${f(b.parts.ex||0)}</td><td class="n">${f(o)}</td><td class="n">${f((b.parts.motor||0)+(b.parts.mform||0))}</td><td class="n"><b>${f(b.foot)}</b></td><td><b class="fg fg-${b.footGrade==='◎'||b.footGrade==='○'?'up':b.footGrade==='×'||b.footGrade==='▲'?'dn':'mid'}">${b.footGrade}</b></td></tr>`;}).join('')}
+    ${a.boats.slice().sort((x,y)=>y.foot-x.foot).map(b=>{const o=(b.parts.olap||0)+(b.parts.oturn||0)+(b.parts.ostr||0);return `<tr><td>${bn(b.waku)}</td><td class="n">${f(b.parts.ex||0)}</td><td class="n">${f(o)}</td><td class="n">${f((b.parts.motor||0)+(b.parts.mform||0))}</td><td class="n"><b>${f(b.foot)}</b></td><td><b class="fg fg-${fgCls(b.footGrade)}">${b.footGrade}</b></td></tr>`;}).join('')}
     </tbody></table></div>${makuriHtml(r,a)}</div>`;}
 const ASHI_SKIP_NOTE=(jc,r)=>'展示タイムがまだ無いため、';
 function oriHtml(r,a){
@@ -1380,9 +1381,9 @@ function renderTable(){
           <td class="who"><b class="pl-link" data-t="${b.toban}" role="button" tabindex="0">${esc(b.name)}</b><span>${esc(b.cls||'')} ${esc(b.branch||'')}${b.age?' '+b.age+'歳':''}</span></td>
           <td class="n">${num(b.st)?.toFixed(2)??'-'}</td>
           <td class="n">${kst}</td>
-          <td class="foot-cell"><b class="fg fg-${b.footGrade==='◎'||b.footGrade==='○'?'up':b.footGrade==='×'||b.footGrade==='▲'?'dn':'mid'}">${b.footGrade}</b>${b.ashi?`<span>足${b.ashi.rank}位</span>`:''}</td>
+          <td class="foot-cell"><b class="fg fg-${fgCls(b.footGrade)}">${b.footGrade}</b>${b.ashi?`<span>足${b.ashi.rank}位</span>`:''}</td>
           <td><div class="tags">${b.tags.map(t=>`<span class="tag ${t[0]}">${esc(t[1])}</span>`).join('')}</div></td></tr>`}).join('')}</tbody></table></div>
-      <p class="hint">今節STは、この開催でここまでに走った本番の平均ST（今日の終わったレースも含む）と、6艇中で何番目に早かったかの平均。${a.ashi?`舟足は足スコア（${a.ashi.kind==='場別'?'この場で検証した重み'+(a.ashi.sep!=null?'・判別力sep '+a.ashi.sep:''):'未検証の場なので既定の戸田新式'}）の順位：1位◎ 2位○ 3〜5位△ 6位×。`:'舟足は展示タイム・オリジナル展示（一周・まわり足・直線）・モーターから（◎○△▲×）。'}展示タイム・足評価・オリジナル展示・コース別データは「自分で予想」タブに。</p>
+      <p class="hint">今節STは、この開催でここまでに走った本番の平均ST（今日の終わったレースも含む）と、6艇中で何番目に早かったかの平均。${a.ashi?`舟足は足スコア（${a.ashi.kind==='場別'?'この場で検証した重み'+(a.ashi.sep!=null?'・判別力sep '+a.ashi.sep:''):'未検証の場なので既定の戸田新式'}）の順位で S〜D（1位S・2位A・3〜4位B・5位C・6位D、Sが一番良い）。`:'舟足は展示タイム・オリジナル展示（一周・まわり足・直線）・モーターから（S〜D、Sが一番良い）。'}展示タイム・足評価・オリジナル展示・コース別データは「自分で予想」タブに。</p>
     </div>
   </div>`;
   el.querySelectorAll('.pl-link').forEach(x=>x.addEventListener('click',()=>openPlayer(x.dataset.t)));
