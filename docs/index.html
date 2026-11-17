@@ -319,6 +319,9 @@ table.rec{border-collapse:collapse;width:100%;min-width:560px;font-variant-numer
 .ol-box td em{display:inline;margin-left:6px;font-style:normal;font-size:11px;color:var(--muted)}
 .ol-box td.cd-hi em,.ol-box td.cd-lo em{color:inherit}
 .cdata .ol-box td.cd-hi{color:var(--ana);background:color-mix(in srgb,var(--ana) 12%,transparent);font-weight:700}.cdata .ol-box td.cd-lo{color:#1c7ed6}
+
+/* ---- 風の決まり手 */
+.wind-km{margin:6px 0 0;font-size:13px}.wind-km b.up{color:var(--ana)}.wind-km b.down{color:#1c7ed6}.wind-km small{display:block;color:var(--muted);font-size:11px}
 </style>
 </head>
 <body>
@@ -581,7 +584,7 @@ function analyze(race,exOverride){
     if(exBest!=null&&exT[i]===exBest)tags.push(['plus','展示1位']);
     if(course!==b.waku)tags.push(['',course+'コース進入']);
     return {...b,course,parts,s,exTime:exT[i],tilt:num(ex[b.waku].tilt),tags,
-      winW:Math.exp(Math.log(base[course-1])+w.kWin*(s+fPen)), plW:Math.exp(Math.log(PLACE[course-1])+w.kPlace*s),
+      winW:Math.exp(Math.log(base[course-1])+w.kWin*(s+fPen)+windU(race.before,course)), plW:Math.exp(Math.log(PLACE[course-1])+w.kPlace*s+windU(race.before,course)),
       mWinW:Math.exp(Math.log(base[course-1])+(course===1?mk.inner:0)+sm), mPlW:Math.exp(Math.log(PLACE[course-1])+mk.kPlace*sm)};
   });
   const ai=trifecta(boats,'winW','plW'), mkP=trifecta(boats,'mWinW','mPlW');
@@ -742,6 +745,21 @@ const WIND=['','北','北北東','北東','東北東','東','東南東','南東'
 // 矢印が1マーク側（右）へ向く＝追い風、2マーク側（左）＝向かい風、上下＝横風。11/17に公式の画像で確認
 const WIND_REL=['','横風（スタンド→水面）','横風（スタンド→水面）','斜め追い風','追い風','追い風','追い風','斜め追い風','横風（水面→スタンド）','横風（水面→スタンド）','横風（水面→スタンド）','斜め向かい風','向かい風','向かい風','向かい風','斜め向かい風','横風（スタンド→水面）'];
 const WIND_ARW=['','↑','↗','↗','→','→','→','↘','↘','↓','↙','↙','←','←','←','↖','↑'];
+// 風の補正（11/17 追加）。過去1年5.4万Rで「追い風成分×コース」「風速×コース」を学習（1コースが基準）。
+// 使っていない後半の期間で予測が良くなった（改善度+2.4、偶然ではない確率100%）。追い風は2コース（差し）に、向かい風・強風は外に有利。
+const WIND_TW=[0,0.0122,-0.0065,-0.0167,-0.0246,-0.0281], WIND_SP=[0,0.0482,0.0468,0.0517,0.0528,0.0573];
+function windVec(bf){ // [追い風成分(m、＋追い・−向かい), 風速]
+  if(!bf||bf.windSpeed==null)return null;const v=num(bf.windSpeed);if(!v||bf.windDir===17)return [0,0];
+  const n=bf.windDir;if(!n||n<1||n>16)return [0,v];
+  return [v*Math.sin((n-1)*Math.PI/8),v];
+}
+function windU(bf,course){const w=windVec(bf);if(!w||!course||course<2||course>6)return 0;return WIND_TW[course-1]*w[0]+WIND_SP[course-1]*w[1];}
+// 風の強さ・向き別の決まり手（過去1年。1R=1つの決まり手）
+const WIND_KM=[['向かい風5m以上',[48.1,11.9,19.0,14.6]],['向かい風2〜4m',[52.6,10.1,17.1,14.0]],['弱い・横風',[56.2,11.2,15.2,11.5]],['追い風2〜4m',[52.0,14.7,15.5,11.1]],['追い風5m以上',[44.6,17.7,17.2,11.5]]];
+function windKmHtml(bf){const w=windVec(bf);if(!w)return '';const t=w[0];
+  const i=t<=-4.5?0:t<=-1.5?1:t<1.5?2:t<4.5?3:4, [nm,v]=WIND_KM[i], b=WIND_KM[2][1];
+  const f=(x,y)=>`<b class="${x>=y+2?'up':x<=y-2?'down':''}">${x.toFixed(0)}%</b>`;
+  return `<p class="wind-km">この風（${nm}）の決まり手：逃げ${f(v[0],b[0])}・差し${f(v[1],b[1])}・まくり${f(v[2],b[2])}・まくり差し${f(v[3],b[3])}<small>（弱い風・横風のとき 逃げ${b[0]}%・差し${b[1]}%・まくり${b[2]}%・まくり差し${b[3]}%）</small></p>`;}
 function windTxt(bf){
   const v=bf&&bf.windSpeed;if(v==null&&!(bf&&bf.windDir))return null;
   if(v===0||bf.windDir===17)return '無風';
@@ -1225,6 +1243,7 @@ function renderSelf(){
       ${wx?`<span class="pill info">${esc(wx)}</span>`:''}
       ${res?`<span class="pill kata">結果 ${esc(res.order||res.note||'')} ${res.payout?yen(res.payout):''}</span>`:''}
     </div>
+    ${windKmHtml(bf)}
     ${jumpNav([['s-table','出走表'],['s-course','コース別'],['s-ashi','足評価'],['s-ori','オリ展'],['s-odds','オッズ'],['s-tenkai','展開']])}
     <div id="s-table">
       <p class="card-title">出走表とAI評価</p>
