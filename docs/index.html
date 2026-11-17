@@ -358,6 +358,7 @@ table.card.st-tbl{min-width:0}.st-tbl td,.st-tbl th{padding-left:6px;padding-rig
 .foot-cell span.rb{display:inline-block;width:auto;font-size:13px;font-weight:800;line-height:28px;margin:0}
 .ki td .rb{min-width:3.9em}.ki td:nth-child(2) .rb{min-width:4.9em}
 .rb-legend{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 6px}.rb-legend .rb{min-width:0;height:26px;font-size:12px}
+.st-km{display:grid;gap:4px}.st-km .ol-box:first-child{margin-top:4px}
 </style>
 </head>
 <body>
@@ -1431,6 +1432,7 @@ function renderTable(){
           <td class="foot-cell">${(()=>{const m=konAshi(r,b.toban);return m?`<span class="rb ${rkBand(m.rank)}">${m.g} ${m.rank}位</span><span>/${m.N}人</span>`:`<span>${m===null?'初日':'-'}</span>`;})()}</td>
           </tr>`}).join('')}</tbody></table></div>
       ${konItemsTable(r,a)}
+      ${STATS&&STATS.cbase?`<div class="st-km cdata">${oneLossHtml(r,a)}${outerWinHtml(r,a)}</div>`:''}
       <p class="hint">今節STは、この開催でここまでに走った本番の平均ST（今日の終わったレースも含む）と、6艇中で何番目に早かったかの平均。前日までの足は、この開催の前日までの展示・オリジナル展示を開催全体でまとめた足スコアの、開催の全選手の中での順位（上位10%がS、25%までA、45%までB、70%までC、残りD。色は順位で 1〜10位 青・11〜20位 黄色・21〜35位 ピンク・36位〜 赤）。下の「足の内訳」は、一周・まわり足・直線・展示それぞれの開催内の順位。初日は「初日」と出ます。当日の展示タイム・足評価・オリジナル展示・コース別データは「自分で予想」タブに。</p>
     </div>
   </div>`;
