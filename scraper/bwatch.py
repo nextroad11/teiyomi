@@ -13,6 +13,7 @@
 from __future__ import annotations
 
 import collections
+import re
 import json
 import os
 import sys
@@ -83,13 +84,20 @@ def load_day(root: str, d: str) -> dict:
             t = r.get('tri') or {}
             out[r['jcd']].append(dict(rno=r['rno'], ori=o, order=t.get('order'), pay=t.get('payout'),
                 boats=[dict(toban=b['toban'], waku=b['waku'], cls=b.get('cls'), name=b.get('name'), ex=b.get('exTime'),
-                            fin=b.get('finish'), m2=b.get('motor2'), nw=b.get('natWin')) for b in r['boats']]))
+                            fin=b.get('finish'), m2=b.get('motor2'), nw=b.get('natWin'),
+                            st=None if b.get('flying') else b.get('st')) for b in r['boats']]))
     elif os.path.exists(live):
         for r in json.load(open(live, encoding='utf-8'))['races']:
             bf = r.get('before') or {}
             bb = bf.get('boats') or {}
             res = r.get('result') or {}
             order = res.get('order')
+            stm = {}
+            for w, v in res.get('st') or []:          # 結果ページの本番ST（11/15〜）。F・L は外す
+                try:
+                    stm[int(w)] = None if re.search(r'[FL]', str(v)) else float(v)
+                except (TypeError, ValueError):
+                    pass
             fin = {}
             if order:
                 for i, w in enumerate(order.split('-')):
@@ -98,7 +106,7 @@ def load_day(root: str, d: str) -> dict:
             out[r['jcd']].append(dict(rno=r['rno'], ori=bf.get('ori'), order=order, pay=res.get('payout'),
                 boats=[dict(toban=b['toban'], waku=b['waku'], cls=b.get('cls'), name=b.get('name'),
                             ex=(bb.get(str(b['waku'])) or {}).get('exTime'), fin=fin.get(b['waku']),
-                            m2=b.get('motor2'), nw=b.get('natWin')) for b in r['boats']]))
+                            m2=b.get('motor2'), nw=b.get('natWin'), st=stm.get(b['waku'])) for b in r['boats']]))
     _cache[(root, d)] = dict(out)
     return _cache[(root, d)]
 
@@ -219,10 +227,15 @@ def build(root: str, d: str) -> dict:
         for md in mdays:
             for r in load_day(root, md)[jcd]:
                 its.append(items_of(jcd, r))
+                sts = sorted(b['st'] for b in r['boats'] if b.get('st') is not None and 0 <= b['st'] <= 0.6)
                 for b in r['boats']:
-                    e = info.setdefault(b['toban'], dict(fin=[], name=b.get('name'), cls=b.get('cls')))
+                    e = info.setdefault(b['toban'], dict(fin=[], name=b.get('name'), cls=b.get('cls'), st=[], rk=[]))
                     if b.get('fin'):
                         e['fin'].append(b['fin'])
+                    v = b.get('st')
+                    if v is not None and 0 <= v <= 0.6:   # 今節の本番ST（前日まで）と、6艇中で何番目に早かったか
+                        e['st'].append(v)
+                        e['rk'].append(1 + sum(1 for x in sts if x < v))
         tot, per, cnt = rating(jcd, its)
         ranked = sorted([p for p in tot if cnt.get(p)], key=lambda p: -tot[p])
         N = len(ranked)
@@ -260,7 +273,10 @@ def build(root: str, d: str) -> dict:
                 why.append(f'{VENUES.get(jcd)}は足の評価が効きにくい場（評価を一段階下げています）')
             out.append(dict(toban=p, name=b.get('name') or info[p]['name'], cls=cls, rt=round(tot[p], 3), rank=i + 1, N=N,
                             pct=round(pct, 3), n=cnt[p], z=[None if x is None else round(x, 2) for x in z], grade=g,
-                            fin=f, why=why, today=todays.get(p, []), m2=b.get('m2'), nw=b.get('nw')))
+                            fin=f, why=why, today=todays.get(p, []), m2=b.get('m2'), nw=b.get('nw'),
+                            kst=round(sum(info[p]['st']) / len(info[p]['st']), 3) if info[p]['st'] else None,
+                            krk=round(sum(info[p]['rk']) / len(info[p]['rk']), 2) if info[p]['rk'] else None,
+                            kn=len(info[p]['st'])))
         venues[str(jcd)] = dict(venue=VENUES.get(jcd), day=len(mdays) + 1, start=mdays[0], reliab=rel,
                                 effect=EFFECT.get(jcd), players=out)
     return dict(date=d, version=VERSION, made=datetime.now(timezone(timedelta(hours=9))).strftime('%Y-%m-%d %H:%M'),

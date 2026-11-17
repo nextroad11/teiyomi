@@ -271,6 +271,11 @@ def parse_beforeinfo(html: str) -> dict | None:
 RESULT_RE = re.compile(r"3連単\s*(\d)\s*-\s*(\d)\s*-\s*(\d)\s*¥?\s*([\d,]+)")
 
 
+def result_incomplete(res: dict) -> bool:
+    """決まり手か本番のSTがまだ入っていない結果"""
+    return not res.get("km") or not res.get("st")
+
+
 def parse_result(html: str) -> dict | None:
     txt = text_of(html)
     m = RESULT_RE.search(txt)
@@ -462,13 +467,19 @@ def update_before_and_results(day: dict, now: dt.datetime) -> int:
                     n += 1
                     log(f"  {r['venue']}{rno}R オッズ 合計{p['inv']} ずれ{p['mismatch']}")
         # 結果: 締切8分後〜6時間後
-        # 万舟で決まり手をまだ読んでいない結果は一度だけ読み直す（万舟の分析用）
-        redo = bool(r.get("result")) and "km" not in r["result"] and (r["result"].get("payout") or 0) >= 10000
-        if (not r.get("result") or redo) and dl + dt.timedelta(minutes=8) <= now <= dl + dt.timedelta(hours=6):
+        # 払戻が出た直後は、決まり手・本番のSTがまだ載っていないことがある（11/17に確認）。
+        # そろうまで10分おきに読み直す（締切から6時間まで）。今節STや万舟の解説に使う
+        res = r.get("result") or {}
+        last = res.get("at")
+        redo = bool(res) and result_incomplete(res) and (not last or now - dt.datetime.fromisoformat(last) >= dt.timedelta(minutes=10))
+        if (not res or redo) and dl + dt.timedelta(minutes=8) <= now <= dl + dt.timedelta(hours=6):
             html = get(f"{BASE}/raceresult?{q}")
+            if res:
+                res["at"] = now.isoformat(timespec="seconds")
             if html:
                 p = parse_result(html)
                 if p:
+                    p["at"] = now.isoformat(timespec="seconds")
                     save_debug("raceresult", html)
                     r["result"] = p
                     n += 1
@@ -533,11 +544,12 @@ def main():
         if yday:
             ybefore = json.dumps(yday, ensure_ascii=False, sort_keys=True)
             for r in yday["races"]:
-                redo = bool(r.get("result")) and "km" not in r["result"] and (r["result"].get("payout") or 0) >= 10000
+                redo = bool(r.get("result")) and result_incomplete(r["result"]) and not r["result"].get("redoneY")
                 if not r.get("result") or redo:
                     html = get(f"{BASE}/raceresult?rno={r['rno']}&jcd={r['jcd']:02d}&hd={yd}")
                     p = parse_result(html) if html else None
                     if p:
+                        p["redoneY"] = True
                         r["result"] = p
             if json.dumps(yday, ensure_ascii=False, sort_keys=True) != ybefore:
                 write_json(ypath, yday)

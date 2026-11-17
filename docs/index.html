@@ -1343,6 +1343,21 @@ function raceHead(r,a){
       ${res?`<span class="pill kata">結果 ${esc(res.order||res.note||'')} ${res.payout?yen(res.payout):''}</span>`:''}
     </div>`;
 }
+// 今節ST：前日までの今節の本番ST（毎朝のB級ウォッチの集計 kst・krk・kn）＋今日すでに終わったレースの本番ST。
+// B級ウォッチが無い日は、学習時の集計（stats の kon）を使う
+function konST(r,toban){
+  let s=0,rk=0,n=0;
+  const v=BW&&BW.venues&&BW.venues[String(r.jcd)], p=v&&v.players?v.players.find(x=>x.toban===toban):null;
+  if(p&&p.kn){s+=p.kst*p.kn;rk+=p.krk*p.kn;n+=p.kn;}
+  for(const q of races){if(q.jcd!==r.jcd||q.rno>=r.rno)continue;const res=resultOf(q);if(!res||!res.st)continue;
+    const sts=res.st.map(([w,x])=>/[FL]/.test(String(x))?null:parseFloat(x)).filter(x=>x!=null&&x>=0&&x<=0.6);
+    const bt=q.boats.find(x=>x.toban===toban);if(!bt)continue;const e=res.st.find(([w])=>+w===bt.waku);if(!e||/[FL]/.test(String(e[1])))continue;
+    const x=parseFloat(e[1]);if(!(x>=0&&x<=0.6))continue;s+=x;rk+=1+sts.filter(y=>y<x).length;n++;}
+  if(n)return {st:s/n,rk:rk/n,n};
+  if(!v){const k=STATS&&STATS.p&&(STATS.p[String(toban)]||{}).kon, rd=r.date||String(r.id||'').slice(0,8);
+    if(k&&k.jcd===r.jcd&&rd&&k.last<=rd&&(new Date(rd.slice(0,4)+'-'+rd.slice(4,6)+'-'+rd.slice(6))-new Date(k.last.slice(0,4)+'-'+k.last.slice(4,6)+'-'+k.last.slice(6)))/864e5<=2)return {st:k.st,rk:k.rk,n:k.n};}
+  return null;
+}
 function renderTable(){
   const el=$('#v-table'), r=cur();
   if(!r){el.innerHTML=emptyState();return;}
@@ -1358,9 +1373,8 @@ function renderTable(){
       <p class="card-title">出走表</p>
       <div class="tablebox"><table class="card">
         <thead><tr><th>枠</th><th>選手</th><th>平均ST</th><th>今節ST</th><th>舟足</th><th>ポイント</th></tr></thead>
-        <tbody>${a.boats.map(b=>{const k=STATS&&STATS.p&&(STATS.p[String(b.toban)]||{}).kon, rd=r.date||String(r.id||'').slice(0,8);
-          const konOk=k&&k.jcd===r.jcd&&rd&&k.last<=rd&&(new Date(rd.slice(0,4)+'-'+rd.slice(4,6)+'-'+rd.slice(6))-new Date(k.last.slice(0,4)+'-'+k.last.slice(4,6)+'-'+k.last.slice(6)))/864e5<=2;
-          const kst=konOk?`${k.st.toFixed(2)}<br><span style="color:var(--muted);font-size:11px">${k.rk.toFixed(1)}番・${k.n}走</span>`:'-';
+        <tbody>${a.boats.map(b=>{const k=konST(r,b.toban);
+          const kst=k?`${k.st.toFixed(2)}<br><span style="color:var(--muted);font-size:11px">${k.rk.toFixed(1)}番・${k.n}走</span>`:'-';
           return `<tr>
           <td>${bn(b.waku,1)}</td>
           <td class="who"><b class="pl-link" data-t="${b.toban}" role="button" tabindex="0">${esc(b.name)}</b><span>${esc(b.cls||'')} ${esc(b.branch||'')}${b.age?' '+b.age+'歳':''}</span></td>
@@ -1368,7 +1382,7 @@ function renderTable(){
           <td class="n">${kst}</td>
           <td class="foot-cell"><b class="fg fg-${b.footGrade==='◎'||b.footGrade==='○'?'up':b.footGrade==='×'||b.footGrade==='▲'?'dn':'mid'}">${b.footGrade}</b>${b.ashi?`<span>足${b.ashi.rank}位</span>`:''}</td>
           <td><div class="tags">${b.tags.map(t=>`<span class="tag ${t[0]}">${esc(t[1])}</span>`).join('')}</div></td></tr>`}).join('')}</tbody></table></div>
-      <p class="hint">今節STは、同じ場で続けて走っている日（昨日まで）の平均STと、6艇中で何番目に早かったかの平均。${a.ashi?`舟足は足スコア（${a.ashi.kind==='場別'?'この場で検証した重み'+(a.ashi.sep!=null?'・判別力sep '+a.ashi.sep:''):'未検証の場なので既定の戸田新式'}）の順位：1位◎ 2位○ 3〜5位△ 6位×。`:'舟足は展示タイム・オリジナル展示（一周・まわり足・直線）・モーターから（◎○△▲×）。'}展示タイム・足評価・オリジナル展示・コース別データは「自分で予想」タブに。</p>
+      <p class="hint">今節STは、この開催でここまでに走った本番の平均ST（今日の終わったレースも含む）と、6艇中で何番目に早かったかの平均。${a.ashi?`舟足は足スコア（${a.ashi.kind==='場別'?'この場で検証した重み'+(a.ashi.sep!=null?'・判別力sep '+a.ashi.sep:''):'未検証の場なので既定の戸田新式'}）の順位：1位◎ 2位○ 3〜5位△ 6位×。`:'舟足は展示タイム・オリジナル展示（一周・まわり足・直線）・モーターから（◎○△▲×）。'}展示タイム・足評価・オリジナル展示・コース別データは「自分で予想」タブに。</p>
     </div>
   </div>`;
   el.querySelectorAll('.pl-link').forEach(x=>x.addEventListener('click',()=>openPlayer(x.dataset.t)));

@@ -49,7 +49,8 @@ jobs:
             if [ "$(TZ=Asia/Tokyo date +%H)" -ge 22 ]; then D=$(TZ=Asia/Tokyo date -d tomorrow +%Y%m%d); else D=$(TZ=Asia/Tokyo date +%Y%m%d); fi
           fi
           if [ ! -f "data/$D.json" ] && [ ! -f "data/history/$D.json" ]; then echo "$D の出走表がまだありません"; exit 0; fi
-          if [ -f "data/enc/bwatch/$D.json" ] && [ "${{ inputs.force }}" != "true" ]; then echo "作成済み"; exit 0; fi
+          # 8時台の回は作り直す（朝7時に前日の結果の決まり手・STを読み直したあとなので、今節STがそろう）
+          if [ -f "data/enc/bwatch/$D.json" ] && [ "${{ inputs.force }}" != "true" ] && [ "$(TZ=Asia/Tokyo date +%H)" != "08" ]; then echo "作成済み"; exit 0; fi
           mkdir -p /tmp/plain
           python scraper/bwatch.py data "$D" /tmp/plain/bwatch.json
           python scraper/crypt.py encrypt /tmp/plain/bwatch.json "data/enc/bwatch/$D.json"
