@@ -342,11 +342,22 @@ table.rec{border-collapse:collapse;width:100%;min-width:560px;font-variant-numer
 table.card.st-tbl{min-width:0}.st-tbl td,.st-tbl th{padding-left:6px;padding-right:6px}.st-tbl .who span{white-space:nowrap}
 
 /* ---- 開催内の順位の色（見やすさ優先・赤なし） */
-.rb{display:inline-block;min-width:3.2em;padding:2px 6px;border-radius:6px;font-weight:700;font-variant-numeric:tabular-nums;text-align:center;white-space:nowrap}
-.rb small{font-size:10px;font-weight:400;margin-left:1px}
-.rb1{background:#1c7ed6;color:#fff}.rb2{background:#ffd43b;color:#3d2c00}.rb3{background:#ffdeeb;color:#5c1f36}.rb4{background:#e03131;color:#fff}
-.foot-cell span.rb{font-size:13px;font-weight:700}.foot-cell span.rb1,.foot-cell span.rb4{color:#fff}.foot-cell span.rb2{color:#3d2c00}.foot-cell span.rb3{color:#5c1f36}
-.rb-legend{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 6px;font-size:12px}.rb-legend .rb{min-width:0;font-weight:600}
+:root{ /* 順位の色（ここだけで定義。出走表の「前日までの足」と「足の内訳」の両方が使う） */
+  --rk1-bg:#1565C0;--rk1-fg:#FFFFFF;   /* 1〜10位 */
+  --rk2-bg:#FFD23F;--rk2-fg:#212121;   /* 11〜20位 */
+  --rk3-bg:#AD4775;--rk3-fg:#FFFFFF;   /* 21〜35位 */
+  --rk4-bg:#C62828;--rk4-fg:#FFFFFF;   /* 36位〜 */
+}
+.rb{display:inline-block;box-sizing:border-box;min-width:4.6em;height:28px;line-height:28px;padding:0 6px;border-radius:6px;text-align:center;vertical-align:middle;
+  font-size:13px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap;letter-spacing:.01em}
+.rb small{font-size:11px;font-weight:800;margin-left:1px;vertical-align:baseline}
+.rb1,.foot-cell span.rb1{background:var(--rk1-bg);color:var(--rk1-fg)}
+.rb2,.foot-cell span.rb2{background:var(--rk2-bg);color:var(--rk2-fg)}
+.rb3,.foot-cell span.rb3{background:var(--rk3-bg);color:var(--rk3-fg)}
+.rb4,.foot-cell span.rb4{background:var(--rk4-bg);color:var(--rk4-fg)}
+.foot-cell span.rb{display:inline-block;width:auto;font-size:13px;font-weight:800;line-height:28px;margin:0}
+.ki td .rb{min-width:3.9em}.ki td:nth-child(2) .rb{min-width:4.9em}
+.rb-legend{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 6px}.rb-legend .rb{min-width:0;height:26px;font-size:12px}
 </style>
 </head>
 <body>
@@ -1379,7 +1390,7 @@ function konAshi(r,toban){
   const q=(p.rank-1)/p.N;return {g:q<0.10?'S':q<0.25?'A':q<0.45?'B':q<0.70?'C':'D',rank:p.rank,N:p.N,n:p.n};
 }
 // 前日までの足の内訳：一周・まわり足・直線・展示のそれぞれで、開催の全選手の中で何位か（B級ウォッチの z、計測のない項目は「-」）
-// 開催内の順位の色：1〜10位 青・11〜20位 黄色・21〜35位 薄いピンク・36位〜 赤（11/18 殿の指定）
+// 開催内の順位の色：1〜10位 青・11〜20位 黄色・21〜35位 ピンク・36位〜 赤（11/18 殿の指定。色は :root の --rk1〜4 で定義）
 const rkBand=rank=>rank<=10?'rb1':rank<=20?'rb2':rank<=35?'rb3':'rb4';
 function konItemsTable(r,a){
   const v=BW&&BW.venues&&BW.venues[String(r.jcd)];
@@ -1420,7 +1431,7 @@ function renderTable(){
           <td class="foot-cell">${(()=>{const m=konAshi(r,b.toban);return m?`<span class="rb ${rkBand(m.rank)}">${m.g} ${m.rank}位</span><span>/${m.N}人</span>`:`<span>${m===null?'初日':'-'}</span>`;})()}</td>
           </tr>`}).join('')}</tbody></table></div>
       ${konItemsTable(r,a)}
-      <p class="hint">今節STは、この開催でここまでに走った本番の平均ST（今日の終わったレースも含む）と、6艇中で何番目に早かったかの平均。前日までの足は、この開催の前日までの展示・オリジナル展示を開催全体でまとめた足スコアの、開催の全選手の中での順位（上位10%がS、25%までA、45%までB、70%までC、残りD。色は順位で 1〜10位 青・11〜20位 黄色・21〜35位 薄いピンク・36位〜 赤）。下の「足の内訳」は、一周・まわり足・直線・展示それぞれの開催内の順位。初日は「初日」と出ます。当日の展示タイム・足評価・オリジナル展示・コース別データは「自分で予想」タブに。</p>
+      <p class="hint">今節STは、この開催でここまでに走った本番の平均ST（今日の終わったレースも含む）と、6艇中で何番目に早かったかの平均。前日までの足は、この開催の前日までの展示・オリジナル展示を開催全体でまとめた足スコアの、開催の全選手の中での順位（上位10%がS、25%までA、45%までB、70%までC、残りD。色は順位で 1〜10位 青・11〜20位 黄色・21〜35位 ピンク・36位〜 赤）。下の「足の内訳」は、一周・まわり足・直線・展示それぞれの開催内の順位。初日は「初日」と出ます。当日の展示タイム・足評価・オリジナル展示・コース別データは「自分で予想」タブに。</p>
     </div>
   </div>`;
   el.querySelectorAll('.pl-link').forEach(x=>x.addEventListener('click',()=>openPlayer(x.dataset.t)));
