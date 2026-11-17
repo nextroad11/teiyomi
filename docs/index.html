@@ -219,6 +219,10 @@ td.who{min-width:6.5em}td.who b{white-space:nowrap}td.who span{white-space:nowra
 .bn[data-n="1"]{background:var(--b1);color:var(--b1f)} .bn[data-n="2"]{background:var(--b2);color:var(--b2f)}
 .bn[data-n="3"]{background:var(--b3);color:var(--b3f);border-color:transparent} .bn[data-n="4"]{background:var(--b4);color:var(--b4f);border-color:transparent}
 .bn[data-n="5"]{background:var(--b5);color:var(--b5f);border-color:transparent} .bn[data-n="6"]{background:var(--b6);color:var(--b6f);border-color:transparent}
+.shinnyu{border:2px solid var(--ana)} .shinnyu h3{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sh-ord{display:inline-flex;gap:3px} .sh-why{margin:6px 0 0;padding-left:18px;display:grid;gap:6px;line-height:1.7}
+.sh-warn{margin:6px 0 0;padding:8px 10px;border-radius:8px;background:var(--ana-soft);color:var(--ana);font-weight:700}
+.pill.sh-pill{background:var(--ana-soft);color:var(--ana);font-weight:700}
 .bn.lg{width:30px;height:30px;font-size:16px;border-radius:7px}
 .comment{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:grid;gap:10px}
 .comment p{margin:0;max-width:68ch}
@@ -1326,6 +1330,7 @@ function renderYoso(){
     ${resultBanner(r,a,res)}
     ${summaryHtml(r,a,res)}
     ${jumpNav([['j-picks','本線・穴'],['j-are','荒れ狙い'],['j-slit','スリット'],['j-plan','買い方'],['j-rec','記録']])}
+    ${shinnyuHtml(r,a)}
     ${changeHtml(r,a)}
     <div class="picks" id="j-picks">
       <div class="panel honsen"><h3><span class="mark">本線</span>確率の高い順</h3>
@@ -1359,6 +1364,30 @@ function renderYoso(){
 }
 
 // 出走表・自分で予想・オッズの3つのタブで共通の見出し（レース名・締切・本線の期待度・1号艇が飛ぶ・風・結果）
+// 進入図：枠番（上）から実際の進入コース（下）へ線を引く。動いた艇だけ太い線と矢印
+function shinnyuHtml(r,a){
+  if(!a||!a.boats||a.boats.some(b=>!b.course)||!a.boats.some(b=>b.course!==b.waku))return '';
+  const X=i=>34+i*52, col=w=>`var(--b${w})`, txt=w=>`var(--b${w}f)`;
+  const chip=(x,y,w,hl)=>`<rect x="${x-17}" y="${y}" width="34" height="26" rx="6" fill="${col(w)}" stroke="${hl?'var(--ana)':'var(--line)'}" stroke-width="${hl?2.5:1}"/><text x="${x}" y="${y+18}" text-anchor="middle" font-size="15" font-weight="700" fill="${txt(w)}">${w}</text>`;
+  let lines='',top='',bot='';
+  a.boats.forEach(b=>{const mv=b.course!==b.waku;
+    lines+=`<line x1="${X(b.waku-1)}" y1="50" x2="${X(b.course-1)}" y2="${mv?100:104}" stroke="${mv?'var(--ana)':'var(--line)'}" stroke-width="${mv?4:1.5}" ${mv?'marker-end="url(#shArr)"':'stroke-dasharray="3 3"'}/>`;
+    top+=chip(X(b.waku-1),22,b.waku,mv); bot+=chip(X(b.course-1),106,b.waku,mv);});
+  for(let c=1;c<=6;c++)bot+=`<text x="${X(c-1)}" y="148" text-anchor="middle" font-size="10" fill="currentColor" opacity=".7">${c}コース</text>`;
+  const svg=`<svg viewBox="0 0 330 156" width="100%" style="max-width:420px;display:block;margin:4px auto 0;color:var(--ink)" role="img" aria-label="進入図">
+    <defs><marker id="shArr" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--ana)"/></marker></defs>
+    <text x="4" y="14" font-size="11" fill="currentColor" opacity=".75">枠番（予定）</text>
+    <text x="326" y="14" font-size="11" text-anchor="end" fill="currentColor" opacity=".75">内 ← → 外</text>
+    ${lines}${top}${bot}</svg>`;
+  const ord=a.boats.slice().sort((x,y)=>x.course-y.course), why=[];
+  a.boats.filter(b=>b.course<b.waku).sort((x,y)=>x.course-y.course).forEach(b=>why.push(`<li><b>${bn(b.waku)} が前付け</b>：${b.waku}枠から内に入って <b>${b.course}コース</b> へ（${b.waku-b.course}つ内）</li>`));
+  a.boats.filter(b=>b.course>b.waku).sort((x,y)=>x.course-y.course).forEach(b=>why.push(`<li>${bn(b.waku)} は外に押し出されて <b>${b.course}コース</b>（${b.course-b.waku}つ外）</li>`));
+  const b1=a.boats.find(b=>b.waku===1);
+  const warn=b1.course!==1?`<p class="sh-warn">⚠️ 1号艇がインを取られました（${b1.course}コース）。1コースは${bn(ord[0].waku)}。</p>`:'';
+  return `<div class="panel shinnyu"><h3>🚤 進入が変わりました <span class="sh-ord">${ord.map(b=>bn(b.waku)).join('')}</span></h3>
+    ${warn}${svg}<ul class="sh-why">${why.join('')}</ul>
+    <p class="hint">${r.before&&r.before.complete?'展示（スタート展示）の進入です。本番で変わることもあります。':'展示前の想定です。'}AIの予想・足評価・まくりアラートは、この進入コースで計算しています。</p></div>`;
+}
 function raceHead(r,a){
   const lv=LEVEL[a.level], res=resultOf(r), bf=r.before||{};
   const wx=[bf.weather,windTxt(bf),bf.wave!=null?'波'+bf.wave+'cm':null].filter(Boolean).join(' ');
@@ -1371,7 +1400,8 @@ function raceHead(r,a){
       <span class="pill tobu-${tobuOf(a.one.tobu).cls}">1号艇が飛ぶ ${pct(a.one.tobu)}</span>
       ${wx?`<span class="pill info">${esc(wx)}</span>`:''}
       ${res?`<span class="pill kata">結果 ${esc(res.order||res.note||'')} ${res.payout?yen(res.payout):''}</span>`:''}
-    </div>`;
+      ${a.boats.some(b=>b.course&&b.course!==b.waku)?`<span class="pill sh-pill">進入変化 ${a.boats.slice().sort((x,y)=>x.course-y.course).map(b=>b.waku).join('')}</span>`:''}
+    </div>${shinnyuHtml(r,a)}`;
 }
 // 今節ST：前日までの今節の本番ST（毎朝のB級ウォッチの集計 kst・krk・kn）＋今日すでに終わったレースの本番ST。
 // B級ウォッチが無い日は、学習時の集計（stats の kon）を使う
