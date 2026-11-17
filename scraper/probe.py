@@ -1,31 +1,19 @@
-"""公式ページの風向き・場の向きの画像（is-wind・is-direction）が何を表すかを確かめる一回きりの下見。"""
+"""全24場の「場の向き」（公式の直前情報ページの is-direction）を確かめる一回きりの下見。"""
 import re, sys, time
 from pathlib import Path
-from urllib.parse import urljoin
 import requests
 out = Path(sys.argv[1]); out.mkdir(parents=True, exist_ok=True)
 H = {"User-Agent": "teiyomi-bot/1.0 (personal race analysis; GitHub Actions)"}
-base = "https://www.boatrace.jp/owpc/pc/race/beforeinfo?rno=4&jcd=16&hd=20261114"
-h = requests.get(base, headers=H, timeout=20).text
-(out / "beforeinfo_16_4.html").write_text(h, encoding="utf-8")
-css_urls = [urljoin(base, u) for u in re.findall(r'href="([^"]+\.css[^"]*)"', h)]
-print(css_urls)
-for i, u in enumerate(css_urls):
+V = {"6": ["20261104", 12], "7": ["20261114", 12], "8": ["20261116", 12], "9": ["20261115", 12], "10": ["20261114", 12], "14": ["20261111", 12], "15": ["20261116", 12], "16": ["20261116", 12], "17": ["20261112", 12], "19": ["20261112", 12], "20": ["20261116", 12], "21": ["20261112", 12], "23": ["20261116", 12], "1": ["20261108", 12], "3": ["20261116", 12], "12": ["20261110", 12], "18": ["20261116", 12], "2": ["20261115", 12], "5": ["20261111", 12], "11": ["20261116", 12], "22": ["20261115", 12], "24": ["20261116", 12], "4": ["20261114", 12], "13": ["20261116", 12]}
+lines = []
+for j, (d, rno) in sorted(V.items(), key=lambda x: int(x[0])):
+    u = f"https://www.boatrace.jp/owpc/pc/race/beforeinfo?rno={rno}&jcd={int(j):02d}&hd={d}"
     try:
-        c = requests.get(u, headers=H, timeout=20).text
+        h = requests.get(u, headers=H, timeout=20).text
+        m = re.search(r"is-direction(\d+)", h); w = re.search(r"is-wind(\d+)", h)
+        lines.append(f"{j}\t{d}\t{m.group(1) if m else ''}\t{w.group(1) if w else ''}")
     except Exception as e:
-        print("css fail", u, e); continue
-    hits = [m for m in re.findall(r'[^{}]*weather1_bodyUnitImage[^{}]*\{[^}]*\}', c)]
-    if hits:
-        (out / f"weather_css_{i}.txt").write_text(u + "\n\n" + "\n".join(hits), encoding="utf-8")
-        imgs = set(re.findall(r'url\(["\']?([^"\')]+)["\']?\)', "\n".join(hits)))
-        for im in sorted(imgs)[:80]:
-            iu = urljoin(u, im)
-            try:
-                b = requests.get(iu, headers=H, timeout=20).content
-                (out / ("img_" + re.sub(r"[^A-Za-z0-9_.-]", "_", im.split("/")[-1]))).write_bytes(b)
-            except Exception as e:
-                print("img fail", iu, e)
-            time.sleep(0.3)
-        print("weather css", u, len(hits), "images", len(imgs))
-    time.sleep(0.5)
+        lines.append(f"{j}\t{d}\terror {e}")
+    time.sleep(1)
+(out / "venue_direction.txt").write_text("\n".join(lines), encoding="utf-8")
+print("\n".join(lines))
