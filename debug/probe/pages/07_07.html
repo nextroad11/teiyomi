@@ -1,0 +1,501 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="cache-control" content="no-cache"/>
+    <meta http-equiv="expires" content="0"/>
+    <title>年度スケジュール｜BOAT RACE蒲郡オフィシャルサイト</title>
+    <meta name="Keywords" content="BOAT RACE蒲郡,ボートレース,蒲郡,ナイター,年度スケジュール"/>
+    <meta name="Description" content="BOAT RACE蒲郡が開催するレースの年度スケジュールを掲載しています。"/>
+    <meta name="viewport" content="width=1020px">
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+JP:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Oswald:200,300,400,500,600,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:200,300,400,500,600,700" rel="stylesheet">
+    <link href="https://www.gamagori-kyotei.com/css/reset.css" rel="stylesheet" type="text/css">
+    <link href="https://www.gamagori-kyotei.com/css/common.css" rel="stylesheet" type="text/css">
+    <link href="https://www.gamagori-kyotei.com/css/01race.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="https://www.gamagori-kyotei.com/js/jquery-1.8.3.min.js"></script>
+    <!--角丸-->
+    <script src="https://www.gamagori-kyotei.com/js/jquery.corner.js"></script>
+    <script type="text/javascript">
+        $('#sche_header').corner("top 8px");
+        $('#sub_tv,#sub_bus').corner("top 4px");
+        $('#sub_tv .tv').corner("4px");
+    </script>
+    <!--共通-->
+    <script type="text/javascript" src="https://www.gamagori-kyotei.com/js/common.js"></script>
+    <!--ロールオーバー-->
+    <script type="text/javascript">
+        jQuery(function ($) {
+            $('a img').rollover();
+        });
+    </script>
+    <!--テーブルリンク-->
+    <script type="text/javascript" src="https://www.gamagori-kyotei.com/js/jquery.rowClick.1.0.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#expand').rowClick();
+        });
+    </script>
+    <!-- アコーディオン -->
+    <script type="text/javascript" src="https://www.gamagori-kyotei.com/js/jquery.accordion.js"></script>
+    <!-- headermenujs 呼び出し -->
+    <script type="text/javascript" src="https://www.gamagori-kyotei.com/js/contents_header_menu_live.js"></script>
+    <script type="text/javascript" src="https://www.gamagori-kyotei.com/js/contents_header_menu.js"></script>
+    <!-- sidemenujs 呼び出し -->
+    <script type="text/javascript" src="https://www.gamagori-kyotei.com/js/contents_side_menu_assen.js"></script>
+    <script type="text/javascript" src="https://www.gamagori-kyotei.com/js/contents_side_menu.js"></script>
+    <!-- CSS切り替え -->
+    <link rel="stylesheet" href="https://www.gamagori-kyotei.com/css/design_A.css" id="changeCSS"/>
+    <script type="text/javascript" src="https://www.gamagori-kyotei.com/js/changeCSS.js"></script>
+    <!-- 共通ヘッダー　フッター　読み込み -->
+    <script type="text/javascript" src="https://www.gamagori-kyotei.com/js/commonload.js"></script>
+    <!-- 概要書のURLを取得 -->
+    <script type="text/javascript" src="https://www.gamagori-kyotei.com/js/contents_footer_menu_assengaiyo.js"></script>
+    <script type="text/javascript" src="https://www.gamagori-kyotei.com/js/contents_footer_menu_assengaiyo_load.js"></script>
+    <script>
+        $(function () {
+            //$("#type_sys").hide();
+            $("#type_kyogi_menu").hide();
+            $("#wrapper").addClass($("#h_menu").data('kaisai'));
+        });
+    </script>
+</head>
+<body>
+<div id="wrapper">
+    <!--▼▼▼ヘッダー▼▼▼-->
+    <div id="header_wrapper">
+        <div id="header">
+            <div id="h_menu" data-kaisai="hikaisai">
+    <!--場ロゴ-->
+    <div id="logo">
+        <a href="/">BOAT RACE 蒲郡</a>
+        <!-- 背景切換ボタン-->
+        <div id="design">
+            <ul>
+                <li id="A" onClick="javascript:funcBtnOnClick('1');" class="style01 active"></li>
+                <li id="B" onClick="javascript:funcBtnOnClick('2');" class="style02"></li>
+                <li id="C" onClick="javascript:funcBtnOnClick('3');" class="style03"></li>
+            </ul>
+        </div>
+    </div>
+    <!--日付-->
+    <div id="today">
+        <div class="day1"><p class="month">11/</p><p class="day">19</p><p class="week">木</p></div>
+        <!--開門時間-->
+        <div class="day2"><p class="tit">開門時間</p><p class="time">----</p></div>
+    </div>
+
+    <!---ライブボタン--->
+    <ul class="live_btn ">
+        <!---レースライブ＆情報サイトボタン--->
+        <li class="live off"><a
+                href="https://www.gamagori-kyotei.com/asp/gamagori/kyogi/kyogihtml/index.htm"><i><span></span><span></span><span></span><span></span></i>
+                <p>レースライブ&<br>情報サイト</p></a></li>
+        <!---リプレイ動画＆結果ボタン--->
+        <li class="rep"><a href="https://www.gamagori-kyotei.com/asp/gamagori/kyogi/moviehtml/replay.htm"><i></i>
+                <p>リプレイ動画&<br>レース結果</p></a></li>
+        <!---ネット投票ボタン--->
+        <li class="bet"><a href="https://www.gamagori-kyotei.com/asp/log/gamagori_kyogi.php" target="_blank"><i></i>
+                <p>ネット投票</p></a></li>
+        <!---勝ガマボタン--->
+        <li class="cam"><a href="https://www.gamagori-kyotei.com/g_jump/dento.htm" target="_blank"><i></i>
+                <p>勝ガマ<br>キャッシュ<br>バック</p></a></li>
+        <!--蒲郡ポイントクラブボタン-->
+        <li class="point"><a href="/g_jump/gamapo.htm" target="_blank"><i></i><p>蒲郡<br>ポイント<br>クラブ</p></a></li>
+    </ul>
+
+    <ul id="type_sys" class="sns">
+        <li class="fb"><a href="https://www.gamagori-kyotei.com/g_jump/fb.htm" target="_blank">Facebook</a></li>
+        <li class="twi"><a href="https://www.gamagori-kyotei.com/g_jump/twi.htm" target="_blank">twitter</a></li>
+        <li class="yt"><a href="https://www.gamagori-kyotei.com/g_jump/youtube.htm" target="_blank">YouTube</a></li>
+        <li class="line"><a href="https://www.gamagori-kyotei.com/g_jump/line.htm" target="_blank">LINE@</a></li>
+    </ul>
+
+</div><!--/#h_menu-->
+            <span id="span_menu"></span>
+        </div>
+    </div>
+    <!--▼▼▼コンテンツ▼▼▼-->
+    <div id="contents_wrapper">
+        <div id="contents">
+            <div id="main">
+                <h2 id="sch_mida">年度スケジュール<span>～レースインフォメーションバックナンバー～</span></h2>
+                <div id="sche_header">
+                    <ul>
+                        
+                                                                                    <li class="select">2026年度</li>
+                                                                                                                                            <li><a href="/asp/htmlmade/gamagori/01race/PC/01race_sch2025.htm">2025年度</a></li>
+                                                                                                                                                                                                                                                </ul>
+                </div><!--sche_header end-->
+                <div id="sche_main">
+                    <p id="att">
+                        ※　　のあるレースは展望記事などがご覧いただけます。
+                    </p>
+                    <table id="expand">
+                        <tr>
+                            <th>&nbsp;</th>
+                            <th>開催期間</th>
+                            <th colspan="2">レース名</th>
+                            <th>優勝者</th>
+                        </tr>
+                        <tr>
+    <th rowspan="27" class="category1">2026<br>年</th>
+    <td colspan="4" class="category1_bar">&nbsp;</td>
+</tr>
+                <tr>
+                <td class="date">4/5(日)～11(土)</td>
+            <td class="race_link"><img src="/01race/images/sche_race_link.png" alt="" width="13" height="31"></td>
+        <td class="race"><a href="/asp/gamagori/contents/01race/01race.php?id=418">日本モーターボート選手会会長杯争奪戦</a></td>
+    
+            <td class="winner">
+                                                <img src="/01race/images/sche_win.png" alt="" width="12" height="11">竹井　　貴史<span>(4737)</span>
+                    <br>
+                                                                                                                                                    </td>
+    </tr>
+                <tr>
+                <td class="date">4/18(土)～21(火)</td>
+            <td class="race_link"><img src="/01race/images/sche_race_link.png" alt="" width="13" height="31"></td>
+        <td class="race"><a href="/asp/gamagori/contents/01race/01race.php?id=419">名古屋グランパスCUP</a></td>
+    
+            <td class="winner">
+                                                <img src="/01race/images/sche_win.png" alt="" width="12" height="11">吉田　　一郎<span>(3349)</span>
+                    <br>
+                                                                                                                                                    </td>
+    </tr>
+                <tr>
+                <td class="date">4/24(金)～28(火)</td>
+            <td class="race_link"><img src="/01race/images/sche_race_link.png" alt="" width="13" height="31"></td>
+        <td class="race"><a href="/asp/gamagori/contents/01race/01race.php?id=420">にっぽん未来プロジェクト競走in蒲郡</a></td>
+    
+            <td class="winner">
+                                                <img src="/01race/images/sche_win.png" alt="" width="12" height="11">黒井　　達矢<span>(4528)</span>
+                    <br>
+                                                                                                                                                    </td>
+    </tr>
+                <tr>
+                <td class="date">5/1(金)～6(水)</td>
+            <td class="race_link"><img src="/01race/images/sche_race_link.png" alt="" width="13" height="31"></td>
+        <td class="race"><a href="/asp/gamagori/contents/01race/01race.php?id=421">中日スポーツ賞第55回竹島弁天杯</a></td>
+    
+            <td class="winner">
+                                                <img src="/01race/images/sche_win.png" alt="" width="12" height="11">前田　　　滉<span>(5068)</span>
+                    <br>
+                                                                                                                                                    </td>
+    </tr>
+                <tr>
+                <td class="date">5/12(火)～17(日)</td>
+            <td class="race_link"><img src="/01race/images/sche_race_link.png" alt="" width="13" height="31"></td>
+        <td class="race"><a href="/asp/gamagori/contents/01race/01race.php?id=422">ヴィーナスシリーズ第3戦第18回マンスリーBOATRACE杯争奪ムーンライトプリンセス決定戦</a></td>
+    
+            <td class="winner">
+                                                <img src="/01race/images/sche_win.png" alt="" width="12" height="11">土屋　　　南<span>(4964)</span>
+                    <br>
+                                                                                                                                                    </td>
+    </tr>
+                <tr>
+                <td class="date">5/25(月)～31(日)</td>
+            <td class="race_link"><img src="/01race/images/sche_race_link.png" alt="" width="13" height="31"></td>
+        <td class="race"><a href="/asp/gamagori/contents/01race/01race.php?id=423">サッポロビールカップ</a></td>
+    
+            <td class="winner">
+                                                <img src="/01race/images/sche_win.png" alt="" width="12" height="11">大池　　佑来<span>(4468)</span>
+                    <br>
+                                                                                                                                                    </td>
+    </tr>
+                <tr>
+                <td class="date">6/3(水)～7(日)</td>
+            <td class="race_link"><img src="/01race/images/sche_race_link.png" alt="" width="13" height="31"></td>
+        <td class="race"><a href="/asp/gamagori/contents/01race/01race.php?id=424">やしの実FM 電波もエンジンも全開！「蒲郡UP！」杯争奪戦</a></td>
+    
+            <td class="winner">
+                                                <img src="/01race/images/sche_win.png" alt="" width="12" height="11">長田　　頼宗<span>(4266)</span>
+                    <br>
+                                                                                                                                                    </td>
+    </tr>
+                <tr>
+                <td class="date">6/9(火)～13(土)</td>
+            <td class="race_link"><img src="/01race/images/sche_race_link.png" alt="" width="13" height="31"></td>
+        <td class="race"><a href="/asp/gamagori/contents/01race/01race.php?id=425">中京スポーツ杯争奪蒲郡ボートキング決定戦</a></td>
+    
+            <td class="winner">
+                                                <img src="/01race/images/sche_win.png" alt="" width="12" height="11">板橋　　侑我<span>(4933)</span>
+                    <br>
+                                                                                                                                                    </td>
+    </tr>
+                <tr>
+                <td class="date">6/17(水)～20(土)</td>
+            <td class="race_link"><img src="/01race/images/sche_race_link.png" alt="" width="13" height="31"></td>
+        <td class="race"><a href="/asp/gamagori/contents/01race/01race.php?id=426">トランスワードトロフィー2026</a></td>
+    
+            <td class="winner">
+                                                <img src="/01race/images/sche_win.png" alt="" width="12" height="11">新田　　泰章<span>(4471)</span>
+                    <br>
+                                                                                                                                                    </td>
+    </tr>
+                <tr>
+                <td class="date">6/23(火)～28(日)</td>
+            <td class="race_link"><img src="/01race/images/sche_race_link.png" alt="" width="13" height="31"></td>
+        <td class="race"><a href="/asp/gamagori/contents/01race/01race.php?id=427">スポーツニッポン杯争奪蒲郡ボート大賞</a></td>
+    
+            <td class="winner">
+                                                <img src="/01race/images/sche_win.png" alt="" width="12" height="11">中村　　晃朋<span>(4739)</span>
+                    <br>
+                                                                                                                                                    </td>
+    </tr>
+                <tr>
+                <td class="date">7/1(水)～6(月)</td>
+            <td class="race_link"><img src="/01race/images/sche_race_link.png" alt="" width="13" height="31"></td>
+        <td class="race"><a href="/asp/gamagori/contents/01race/01race.php?id=428">ボートレースレディースVSルーキーズバトル</a></td>
+    
+            <td class="winner">
+                                                <img src="/01race/images/sche_win.png" alt="" width="12" height="11">安河内鈴之介<span>(5330)</span>
+                    <br>
+                                                                                                                                                    </td>
+    </tr>
+                <tr class="g2">
+                <td class="date">7/13(月)～18(土)</td>
+            <td class="race_link"><img src="/01race/images/sche_race_link.png" alt="" width="13" height="31"></td>
+        <td class="race"><a href="/asp/gamagori/contents/01race/01race.php?id=429">G2モーターボート大賞</a></td>
+    
+            <td class="winner">
+                                                <img src="/01race/images/sche_win.png" alt="" width="12" height="11">豊田　健士郎<span>(4856)</span>
+                    <br>
+                                                                                                                                                    </td>
+    </tr>
+                <tr>
+                <td class="date">8/11(火)～16(日)</td>
+            <td class="race_link"><img src="/01race/images/sche_race_link.png" alt="" width="13" height="31"></td>
+        <td class="race"><a href="/asp/gamagori/contents/01race/01race.php?id=430">第10回愛知・名古屋アジア・アジアパラ大会協賛競走</a></td>
+    
+            <td class="winner">
+                                                <img src="/01race/images/sche_win.png" alt="" width="12" height="11">松竹　　大輔<span>(4442)</span>
+                    <br>
+                                                                                                                                                    </td>
+    </tr>
+                <tr>
+                <td class="date">8/21(金)～24(月)</td>
+            <td class="race_link"><img src="/01race/images/sche_race_link.png" alt="" width="13" height="31"></td>
+        <td class="race"><a href="/asp/gamagori/contents/01race/01race.php?id=431">きょうも、あなたと名鉄バス杯争奪戦</a></td>
+    
+            <td class="winner">
+                                                <img src="/01race/images/sche_win.png" alt="" width="12" height="11">松田　大志郎<span>(4544)</span>
+                    <br>
+                                                                                                                                                    </td>
+    </tr>
+                <tr>
+                <td class="date">8/27(木)～9/1(火)</td>
+            <td class="race_link"><img src="/01race/images/sche_race_link.png" alt="" width="13" height="31"></td>
+        <td class="race"><a href="/asp/gamagori/contents/01race/01race.php?id=432">大阪発刊45周年記念日刊ゲンダイ杯争奪蒲郡トトまるナイト特別</a></td>
+    
+            <td class="winner">
+                                                <img src="/01race/images/sche_win.png" alt="" width="12" height="11">栗城　　　匠<span>(4928)</span>
+                    <br>
+                                                                                                                                                    </td>
+    </tr>
+                <tr>
+                <td class="date">9/4(金)～8(火)</td>
+            <td class="race_link"><img src="/01race/images/sche_race_link.png" alt="" width="13" height="31"></td>
+        <td class="race"><a href="/asp/gamagori/contents/01race/01race.php?id=433">一般社団法人蒲郡市観光協会長杯</a></td>
+    
+            <td class="winner">
+                                                <img src="/01race/images/sche_win.png" alt="" width="12" height="11">大峯　　　豊<span>(4237)</span>
+                    <br>
+                                                                                                                                                    </td>
+    </tr>
+                <tr>
+                <td class="date">9/13(日)～18(金)</td>
+            <td class="race_link"><img src="/01race/images/sche_race_link.png" alt="" width="13" height="31"></td>
+        <td class="race"><a href="/asp/gamagori/contents/01race/01race.php?id=434">ルーキーシリーズ第17戦スカパー！・JLC杯</a></td>
+    
+            <td class="winner">
+                                                <img src="/01race/images/sche_win.png" alt="" width="12" height="11">塚越　　海斗<span>(5234)</span>
+                    <br>
+                                                                                                                                                    </td>
+    </tr>
+                <tr class="g3">
+                <td class="date">9/29(火)～10/4(日)</td>
+            <td class="race_link"><img src="/01race/images/sche_race_link.png" alt="" width="13" height="31"></td>
+        <td class="race"><a href="/asp/gamagori/contents/01race/01race.php?id=435">G3「いい風吹け」キリンビール晴れ風賞</a></td>
+    
+            <td class="winner">
+                                                <img src="/01race/images/sche_win.png" alt="" width="12" height="11">新田　　泰章<span>(4471)</span>
+                    <br>
+                                                                                                                                                    </td>
+    </tr>
+                <tr>
+                <td class="date">10/7(水)～10(土)</td>
+            <td class="race_link"><img src="/01race/images/sche_race_link.png" alt="" width="13" height="31"></td>
+        <td class="race"><a href="/asp/gamagori/contents/01race/01race.php?id=436">幸田町長杯争奪秋の美味筆柿レース</a></td>
+    
+            <td class="winner">
+                                                <img src="/01race/images/sche_win.png" alt="" width="12" height="11">池田　　浩二<span>(3941)</span>
+                    <br>
+                                                                                                                                                    </td>
+    </tr>
+                <tr>
+                <td class="date">10/27(火)～11/1(日)</td>
+            <td class="race_link"><img src="/01race/images/sche_race_link.png" alt="" width="13" height="31"></td>
+        <td class="race"><a href="/asp/gamagori/contents/01race/01race.php?id=437">日刊スポーツ杯争奪第56回蒲郡大賞典</a></td>
+    
+            <td class="winner">
+                                                <img src="/01race/images/sche_win.png" alt="" width="12" height="11">西野　　翔太<span>(4302)</span>
+                    <br>
+                                                                                                                                                    </td>
+    </tr>
+                <tr>
+                <td class="date">11/9(月)～14(土)</td>
+            <td class="race_link"><img src="/01race/images/sche_race_link.png" alt="" width="13" height="31"></td>
+        <td class="race"><a href="/asp/gamagori/contents/01race/01race.php?id=438">DMM.com杯争奪『ボートガマ一代』カップ</a></td>
+    
+            <td class="winner">
+                                                <img src="/01race/images/sche_win.png" alt="" width="12" height="11">前田　　篤哉<span>(4983)</span>
+                    <br>
+                                                                                                                                                    </td>
+    </tr>
+                <tr>
+                <td class="date">11/21(土)～24(火)</td>
+            <td class="race_link"><img src="/01race/images/sche_race_link.png" alt="" width="13" height="31"></td>
+        <td class="race"><a href="/asp/gamagori/contents/01race/01race.php?id=439">三遠ネオフェニックス杯</a></td>
+    
+            <td class="winner_no">&nbsp;</td>
+    </tr>
+                <tr>
+                <td class="date">11/27(金)～12/2(水)</td>
+            <td class="race_link"><img src="/01race/images/sche_race_link.png" alt="" width="13" height="31"></td>
+        <td class="race"><a href="/asp/gamagori/contents/01race/01race.php?id=440">マクール杯争奪男女ハーフバトル</a></td>
+    
+            <td class="winner_no">&nbsp;</td>
+    </tr>
+                <tr class="g1">
+                <td class="date">12/6(日)～11(金)</td>
+            <td class="race_link"><img src="/01race/images/sche_race_link.png" alt="" width="13" height="31"></td>
+        <td class="race"><a href="/asp/gamagori/contents/01race/01race.php?id=441">G1オールジャパン竹島特別開設71周年記念競走</a></td>
+    
+            <td class="winner_no">&nbsp;</td>
+    </tr>
+                <tr>
+                <td class="date">12/17(木)～22(火)</td>
+            <td class="race_no">&nbsp;</td>
+        <td class="race_no">蒲郡市長杯蒲郡巧者集結！</td>
+    
+            <td class="winner_no">&nbsp;</td>
+    </tr>
+                <tr>
+                <td class="date">12/25(金)～29(火)</td>
+            <td class="race_no">&nbsp;</td>
+        <td class="race_no">BOATRACE振興会会長賞</td>
+    
+            <td class="winner_no">&nbsp;</td>
+    </tr>
+<tr>
+    <th rowspan="12" class="category2">2027<br>年</th>
+    <td colspan="4" class="category1_bar">&nbsp;</td>
+</tr>
+                <tr>
+                <td class="date">1/1(金)～6(水)</td>
+            <td class="race_no">&nbsp;</td>
+        <td class="race_no">中日スポーツ杯争奪新春特別覇者決定戦</td>
+    
+            <td class="winner_no">&nbsp;</td>
+    </tr>
+                <tr>
+                <td class="date">1/9(土)～13(水)</td>
+            <td class="race_no">&nbsp;</td>
+        <td class="race_no">エフエムEGAO杯第55回家康賞</td>
+    
+            <td class="winner_no">&nbsp;</td>
+    </tr>
+                <tr>
+                <td class="date">1/16(土)～20(水)</td>
+            <td class="race_no">&nbsp;</td>
+        <td class="race_no">auじぶん銀行賞</td>
+    
+            <td class="winner_no">&nbsp;</td>
+    </tr>
+                <tr>
+                <td class="date">1/26(火)～31(日)</td>
+            <td class="race_no">&nbsp;</td>
+        <td class="race_no">スポーツ報知杯争奪第18回ビクトリーカップ</td>
+    
+            <td class="winner_no">&nbsp;</td>
+    </tr>
+                <tr>
+                <td class="date">2/3(水)～8(月)</td>
+            <td class="race_no">&nbsp;</td>
+        <td class="race_no">にっぽん未来プロジェクト競走in蒲郡</td>
+    
+            <td class="winner_no">&nbsp;</td>
+    </tr>
+                <tr>
+                <td class="date">2/16(火)～20(土)</td>
+            <td class="race_no">&nbsp;</td>
+        <td class="race_no">サンベリー蒲郡いちご杯</td>
+    
+            <td class="winner_no">&nbsp;</td>
+    </tr>
+                <tr>
+                <td class="date">2/24(水)～27(土)</td>
+            <td class="race_no">&nbsp;</td>
+        <td class="race_no">愛知バス杯争奪ABCツアーカップ</td>
+    
+            <td class="winner_no">&nbsp;</td>
+    </tr>
+                <tr>
+                <td class="date">3/2(火)～5(金)</td>
+            <td class="race_no">&nbsp;</td>
+        <td class="race_no">ラグーナテンボス杯争奪戦</td>
+    
+            <td class="winner_no">&nbsp;</td>
+    </tr>
+                <tr class="g3">
+                <td class="date">3/8(月)～13(土)</td>
+            <td class="race_no">&nbsp;</td>
+        <td class="race_no">G3オールレディースガマの女王決定戦</td>
+    
+            <td class="winner_no">&nbsp;</td>
+    </tr>
+                <tr>
+                <td class="date">3/16(火)～21(日)</td>
+            <td class="race_no">&nbsp;</td>
+        <td class="race_no">中日スポーツ賞第47回龍神杯</td>
+    
+            <td class="winner_no">&nbsp;</td>
+    </tr>
+                <tr>
+                <td class="date">3/24(水)～28(日)</td>
+            <td class="race_no">&nbsp;</td>
+        <td class="race_no">蒲郡商工会議所会頭杯争奪ガマゴリうどんグランプリ</td>
+    
+            <td class="winner_no">&nbsp;</td>
+    </tr>
+
+                    </table>
+                </div><!--sche_main end-->
+            </div><!--main end-->
+            <!--▼▼▼サイドメニュー▼▼▼-->
+            <div id="sub">
+                <script type="text/javascript">
+                    // サイドメニュー表示
+                    funcContentsSideMenu();
+                </script>
+            </div><!--sub end-->
+            <div class="clear"></div>
+        </div><!--contents end-->
+    </div><!--contents_wrapper end-->
+    <!--▼▼▼フッター▼▼▼-->
+    <!--▼▼▼フッター▼▼▼-->
+<div id="footer" class="anime">
+  <span id="span_footer"></span>
+  <div class="banner_bk"><ul id="banner"><li><a href="http://www.boatrace.jp/" target="_blank"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20170821156.jpg" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://www.gamagori-kyotei.com/asp/gamagori/contents/info/info.php?year=2023#id216" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20221010149.png" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://gamble-shindan.com/?utm_source=sitelink&amp;utm_medium=banner&amp;utm_campaign=boatrace202203" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20221010367.gif" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://boatpoint.jp/" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20230422384.webp" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://www.boatrace.jp/bosyu/pc/" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20191106237.jpg" height="40" width="160" alt="" border="0" /></a></li></ul><ul id="banner"><li><a href="https://www.nta.go.jp/publication/pamph/shotoku/kakuteishinkokukankei/koueikyougi/" target="_blank"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20191129240.jpg" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://boatcast.jp/?utm_source=gamagori&amp;utm_medium=HP/BB&amp;utm_campaign=boatcast&amp;utm_id=banner" target="_blank"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20211005318.jpg" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://www.gaprsc.or.jp/" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20240514394.jpg" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://lp.so-da.jp/about?gamagori" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20230718404.jpg" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://br-racers.jp" target="_blank"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20240104420.png" height="40" width="160" alt="" border="0" /></a></li></ul><ul id="banner"><li><a href="https://www.city.gamagori.lg.jp/" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20250702452.png" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://mbp-sakae.jp/" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20250517453.jpg" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://bts-takahama.com/" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20250517454.png" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://www.boatpierkawasaki.ne.jp/" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20250517455.jpg" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://www.bp-nagoya.com/" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20250702463.jpg" height="40" width="160" alt="" border="0" /></a></li></ul><ul id="banner"><li><a href="https://www.bs-tvtokyo.co.jp/boatracespirits/" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20250410450.jpg" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://www.boatrace.jp/extent/common/en/" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20260116488.png" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://www.marugameboat.jp/toku/26/grades/g1kyogoku/index.htm" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20261029514.gif" height="40" width="160" alt="" border="0" /></a></li></ul><ul id="banner"></ul><ul id="banner"></ul><ul id="banner"></ul><ul id="banner"></ul><ul id="banner"></ul><ul id="banner"></ul></div><!-- end banner -->
+  <div id="bottom">
+    <div id="f_logo"><a href="https://www.gamagori-kyotei.com/">BOAT RACE 蒲郡</a></div>
+    <div id="address">
+      <p>〒443-8503　愛知県蒲郡市竹谷町太田新田1-1<br>TEL:0533-67-6606　FAX:0533-69-0451</p>
+    </div>
+    <p id="copyright">©BOAT RACE GAMAGORI All rights reserved.</p>
+  </div>
+</div></div><!--wrapper end-->
+</body>
+</html>

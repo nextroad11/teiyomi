@@ -1,0 +1,245 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="cache-control" content="no-cache" />
+<meta http-equiv="expires" content="Thu, 01 Dec 1994 16:00:00 GMT" />
+<meta name="viewport" content="width=1200px">
+
+<title>リプレイ動画＆情報サイト｜BOAT RACE蒲郡 Official Site</title>
+<meta name="Keywords" content="BOAT RACE蒲郡,ボートレース,蒲郡,ナイター,リプレイ,優勝戦" />
+<meta name="Description" content="BOAT RACE蒲郡が開催したレースのリプレイ動画がご覧いただけます。" />
+
+<link href="https://fonts.googleapis.com/css?family=Noto+Sans+JP:100,300,400,500,700,900" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Oswald:200,300,400,500,600,700" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Roboto:200,300,400,500,600,700" rel="stylesheet">
+
+<!-- <link rel="stylesheet" href="/kyogi/css/reset.css" /> -->
+<!-- <link rel="stylesheet" href="/css/common.css" /> -->
+<link rel="stylesheet" href="/kyogi/css/replay_index.css" />
+<link href="/kyogi/css/right.css" rel="stylesheet" type="text/css">
+<!-- <link rel="stylesheet" href="/kyogi/css/replay.css" /> -->
+
+<link rel="stylesheet" href="/css/reset.css" />
+<link rel="stylesheet" href="/kyogi/css/replay.css" />
+
+<script type="text/javascript" src="/kyogi/js/jquery-1.8.3.min.js"></script>
+<!--着せ替え-->
+<link rel="stylesheet" href="/css/design_A.css" id="changeCSS" />
+<script type="text/javascript" src="/js/changeCSS.js"></script>
+
+<script src="/js/jquery.inview.js"></script>
+<!-- <script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript" src="js/k_common.js"></script> -->
+
+<!-- アコーディオン -->
+<script type="text/javascript" src="/kyogi/js/jquery.accordion.js"></script>
+
+<!-- タブ -->
+<script type="text/javascript" src="/kyogi/js/jquery.tabs_r_replay.js"></script>
+
+<!--別画面指定-->
+<script type="text/javascript" src="/kyogi/js/MultiOpen.js"></script>
+
+<!-- 共通ヘッダーフッター読み込み -->
+<script type="text/javascript" src="/js/commonload.js"></script>
+<!-- 概要書のURLを取得 -->
+<script type="text/javascript" src="/js/contents_footer_menu_assengaiyo.js"></script>
+<script type="text/javascript" src="/js/contents_footer_menu_assengaiyo_load.js"></script>
+
+<script type="text/javascript">
+
+	// リプレイ出走iframe読み込み完了フラグ
+	var strGlobalReplayFlg = '0';
+
+	//html版 引数取得javascript
+	var Jyocode = "";
+	var racenum = "";
+	var date = "";	
+	var flag = "1";	
+	var URL = location.href;
+	var arg = location.search; //引数を取得
+	var ASXselect = "";
+
+	//URL を ? で分割
+	var aSplit1 = arg.split("?");
+	if( aSplit1.length > 1 ){
+		//URL を &で分割
+		var aSplit2 = aSplit1[1].split("&");
+		var i;
+		var iMax = aSplit2.length;
+
+		// &で分割した物を = で分割
+		for( i = 0; i< iMax; i++ ){
+			if( i < 1 ){
+				aSplit3 = aSplit2[i].split("=");
+				racenum += aSplit3[1];
+				//レース番号に0を追加
+				racenum = ("00" + racenum ).substr( ("00" + racenum ).length -2 , 2 )
+
+			}
+			if( i = 1 ){
+				aSplit3 = aSplit2[i].split("=");
+				date += aSplit3[1];
+
+			}
+			if( iMax > 2 ){
+				if( i = 2 ){
+					aSplit3 = aSplit2[i].split("=");
+					flag = aSplit3[1];
+
+				}
+			}
+		}
+	}
+
+	Jyocode = "07";
+
+	//再生ASX検索
+	ASXselect = date + Jyocode + racenum;
+
+</script>
+
+<script>
+	 $(function(){
+	 	//$("#type_sys").hide();
+	 	$("#wrapper").addClass($("#h_menu").data('kaisai'));
+	 });
+</script>
+<!-- <!-- headermenujs 呼び出し -->
+<!-- <script type="text/javascript" src="/js/contents_header_menu_live.js"></script> -->
+<!-- <script type="text/javascript" src="/js/contents_header_menu.js"></script> -->
+
+<!-- <!-- CSS切り替え -->
+<!-- <link rel="stylesheet" href="/css/design_A_c.css" id="changeCSS" /> -->
+<!-- <script type="text/javascript" src="/js/changeCSS_c.js"></script> -->
+
+</head>
+
+<body>
+
+<div id="wrapper">
+
+<!--▼▼▼ヘッダー▼▼▼-->
+<div id="header_wrapper">
+<div id="header">
+<!-- <script type="text/javascript">
+// リプレイ選択中
+funcContentsHeaderMenu(2);
+</script> -->
+<div id="h_menu" data-kaisai="hikaisai">
+    <!--場ロゴ-->
+    <div id="logo">
+        <a href="/">BOAT RACE 蒲郡</a>
+        <!-- 背景切換ボタン-->
+        <div id="design">
+            <ul>
+                <li id="A" onClick="javascript:funcBtnOnClick('1');" class="style01 active"></li>
+                <li id="B" onClick="javascript:funcBtnOnClick('2');" class="style02"></li>
+                <li id="C" onClick="javascript:funcBtnOnClick('3');" class="style03"></li>
+            </ul>
+        </div>
+    </div>
+    <!--日付-->
+    <div id="today">
+        <div class="day1"><p class="month">11/</p><p class="day">19</p><p class="week">木</p></div>
+        <!--開門時間-->
+        <div class="day2"><p class="tit">開門時間</p><p class="time">----</p></div>
+    </div>
+
+    <!---ライブボタン--->
+    <ul class="live_btn ">
+        <!---レースライブ＆情報サイトボタン--->
+        <li class="live off"><a
+                href="https://www.gamagori-kyotei.com/asp/gamagori/kyogi/kyogihtml/index.htm"><i><span></span><span></span><span></span><span></span></i>
+                <p>レースライブ&<br>情報サイト</p></a></li>
+        <!---リプレイ動画＆結果ボタン--->
+        <li class="rep"><a href="https://www.gamagori-kyotei.com/asp/gamagori/kyogi/moviehtml/replay.htm"><i></i>
+                <p>リプレイ動画&<br>レース結果</p></a></li>
+        <!---ネット投票ボタン--->
+        <li class="bet"><a href="https://www.gamagori-kyotei.com/asp/log/gamagori_kyogi.php" target="_blank"><i></i>
+                <p>ネット投票</p></a></li>
+        <!---勝ガマボタン--->
+        <li class="cam"><a href="https://www.gamagori-kyotei.com/g_jump/dento.htm" target="_blank"><i></i>
+                <p>勝ガマ<br>キャッシュ<br>バック</p></a></li>
+        <!--蒲郡ポイントクラブボタン-->
+        <li class="point"><a href="/g_jump/gamapo.htm" target="_blank"><i></i><p>蒲郡<br>ポイント<br>クラブ</p></a></li>
+    </ul>
+
+    <ul id="type_sys" class="sns">
+        <li class="fb"><a href="https://www.gamagori-kyotei.com/g_jump/fb.htm" target="_blank">Facebook</a></li>
+        <li class="twi"><a href="https://www.gamagori-kyotei.com/g_jump/twi.htm" target="_blank">twitter</a></li>
+        <li class="yt"><a href="https://www.gamagori-kyotei.com/g_jump/youtube.htm" target="_blank">YouTube</a></li>
+        <li class="line"><a href="https://www.gamagori-kyotei.com/g_jump/line.htm" target="_blank">LINE@</a></li>
+    </ul>
+
+</div><!--/#h_menu-->
+
+<span id = "span_menu"></span>
+</div>
+</div>
+
+<!--▼▼▼コンテンツ▼▼▼-->
+<div id="contents_wrapper">
+<div id="contents">
+
+
+<!-----------------------------------
+▼ナビ -->
+<ul id="rep_nav">
+<li id="nav01"><a href="/asp/gamagori/kyogi/moviehtml/replay.htm" class="selected">レースリプレイ</a></li>
+<li id="nav02"><a href="/asp/gamagori/kyogi/moviehtml/replay_tenji.htm">展示リプレイ</a></li>
+<li id="nav03"><a href="/asp/gamagori/kyogi/moviehtml/replay_final.htm">優勝戦リプレイ</a></li>
+<div class="cf"></div>
+</ul>
+
+<script type='text/JavaScript'>
+<!--
+	document.write("<iframe src=\'/asp/gamagori/kyogi/moviehtml/rep_syusso/rep_syusso" + ASXselect + ".htm\' frameborder=\'0\' allowtransparency=\'true\' scrolling=\'no\' id=\'frm_replay\' name=\'frm_replay\' allowfullscreen=\'''\'></iframe>");
+-->
+</script>
+
+<script type='text/JavaScript'>
+<!--
+	document.write("<iframe src=\'/asp/gamagori/kyogi/moviehtml/rep_syusso_select/rep_syusso_select" + date + Jyocode + ".htm\' frameborder=\'0\' allowtransparency=\'true\' scrolling=\'no\' id=\'frm_select\' name=\'frm_select\'></iframe>");
+-->
+</script>
+
+</div><!--コンテンツ end-->
+
+
+
+</div><!--contents end-->
+
+
+
+
+<!--▼▼▼フッター▼▼▼-->
+<!-- <div id="footer_top">
+<div id="footer_btn">
+<a href="/" class="b_home">HOME</a>
+<a href="#wrapper" class="b_top">ページTOP</a>
+</div>
+</div>
+<div id="footer_wrapper">
+<iframe src="/footer.htm" frameborder="0" allowtransparency="true" scrolling="no" id="footer" name="footer"></iframe>
+</div> -->
+<!--footer end-->
+<!--▼▼▼フッター▼▼▼-->
+<div id="footer" class="anime">
+  <span id="span_footer"></span>
+  <div class="banner_bk"><ul id="banner"><li><a href="http://www.boatrace.jp/" target="_blank"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20170821156.jpg" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://www.gamagori-kyotei.com/asp/gamagori/contents/info/info.php?year=2023#id216" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20221010149.png" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://gamble-shindan.com/?utm_source=sitelink&amp;utm_medium=banner&amp;utm_campaign=boatrace202203" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20221010367.gif" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://boatpoint.jp/" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20230422384.webp" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://www.boatrace.jp/bosyu/pc/" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20191106237.jpg" height="40" width="160" alt="" border="0" /></a></li></ul><ul id="banner"><li><a href="https://www.nta.go.jp/publication/pamph/shotoku/kakuteishinkokukankei/koueikyougi/" target="_blank"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20191129240.jpg" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://boatcast.jp/?utm_source=gamagori&amp;utm_medium=HP/BB&amp;utm_campaign=boatcast&amp;utm_id=banner" target="_blank"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20211005318.jpg" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://www.gaprsc.or.jp/" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20240514394.jpg" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://lp.so-da.jp/about?gamagori" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20230718404.jpg" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://br-racers.jp" target="_blank"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20240104420.png" height="40" width="160" alt="" border="0" /></a></li></ul><ul id="banner"><li><a href="https://www.city.gamagori.lg.jp/" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20250702452.png" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://mbp-sakae.jp/" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20250517453.jpg" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://bts-takahama.com/" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20250517454.png" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://www.boatpierkawasaki.ne.jp/" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20250517455.jpg" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://www.bp-nagoya.com/" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20250702463.jpg" height="40" width="160" alt="" border="0" /></a></li></ul><ul id="banner"><li><a href="https://www.bs-tvtokyo.co.jp/boatracespirits/" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20250410450.jpg" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://www.boatrace.jp/extent/common/en/" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20260116488.png" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://www.marugameboat.jp/toku/26/grades/g1kyogoku/index.htm" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20261029514.gif" height="40" width="160" alt="" border="0" /></a></li></ul><ul id="banner"></ul><ul id="banner"></ul><ul id="banner"></ul><ul id="banner"></ul><ul id="banner"></ul><ul id="banner"></ul></div><!-- end banner -->
+  <div id="bottom">
+    <div id="f_logo"><a href="https://www.gamagori-kyotei.com/">BOAT RACE 蒲郡</a></div>
+    <div id="address">
+      <p>〒443-8503　愛知県蒲郡市竹谷町太田新田1-1<br>TEL:0533-67-6606　FAX:0533-69-0451</p>
+    </div>
+    <p id="copyright">©BOAT RACE GAMAGORI All rights reserved.</p>
+  </div>
+</div>
+
+</div>
+
+</body>
+</html>

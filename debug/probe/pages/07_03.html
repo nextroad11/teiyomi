@@ -1,0 +1,365 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    
+    <meta charset="utf-8">
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="expires" content="0" />
+    <title>レースインフォメーション｜BOAT RACE蒲郡オフィシャルサイト</title>
+    <meta name="Keywords" content="BOAT RACE蒲郡,ボートレース,蒲郡,ナイター,レース展望,イベント,ピックアップレーサー" />
+    <meta name="Description" content="BOAT RACE蒲郡が開催するレースごとの展望やイベント情報などを掲載しています。" />
+    <meta name="viewport" content="width=1200px">
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+JP:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Oswald:200,300,400,500,600,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:200,300,400,500,600,700" rel="stylesheet">
+    <link href="https://www.gamagori-kyotei.com/css/reset.css" rel="stylesheet" type="text/css">
+    <link href="https://www.gamagori-kyotei.com/css/common.css" rel="stylesheet" type="text/css">
+    <link href="https://www.gamagori-kyotei.com/css/01race.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="https://www.gamagori-kyotei.com/js/jquery-1.8.3.min.js"></script>
+    <!--角丸-->
+    <script src="https://www.gamagori-kyotei.com/js/jquery.corner.js"></script>
+    <script type="text/javascript">
+        $('#race_main_name span').corner("10px");
+        $('#sub_tv,#sub_bus').corner("top 4px");
+        $('#sub_tv .tv').corner("4px");
+    </script>
+    <!--共通-->
+    <script type="text/javascript" src="https://www.gamagori-kyotei.com/js/common.js"></script>
+    <!--ロールオーバー-->
+    <script type="text/javascript">
+        jQuery(function($) {
+            $('#main a img').rollover();
+        });
+    </script>
+    <!--中央配置-->
+    <script type="text/javascript" src="https://www.gamagori-kyotei.com/js/jquery.center.js"></script>
+    <script type="text/javascript">
+        <!--
+        $(document).ready(function() {
+            $(".race_navi_name,#race_main_name").center({
+                horizontal: false
+            });
+                $("#box3").center({
+                horizontal: false
+            });
+        });
+        -->
+    </script>
+
+    <!-- アコーディオン -->
+    <script type="text/javascript" src="https://www.gamagori-kyotei.com/js/jquery.accordion.js"></script>
+    <!--iframe-auto-height-->
+    <script type="text/javascript" src="https://www.gamagori-kyotei.com/js/jquery.iframe-auto-height.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('iframe.auto-height').iframeAutoHeight({debug: true});
+        });
+    </script>
+    <!-- headermenujs 呼び出し -->
+    <script type="text/javascript" src="https://www.gamagori-kyotei.com/js/contents_header_menu_live.js"></script>
+    <!-- sidemenujs 呼び出し -->
+    <script type="text/javascript" src="https://www.gamagori-kyotei.com/js/contents_side_menu_assen.js"></script>
+    <script type="text/javascript" src="https://www.gamagori-kyotei.com/js/contents_side_menu.js"></script>
+    <!-- CSS切り替え -->
+    <link rel="stylesheet" href="https://www.gamagori-kyotei.com/css/design_A.css" id="changeCSS" />
+    <script type="text/javascript" src="https://www.gamagori-kyotei.com/js/changeCSS.js"></script>
+    <!-- 共通ヘッダー　フッター　読み込み -->
+    <script type="text/javascript" src="https://www.gamagori-kyotei.com/js/commonload.js"></script>
+    <!-- 概要書のURLを取得 -->
+    <script type="text/javascript" src="https://www.gamagori-kyotei.com/js/contents_footer_menu_assengaiyo.js"></script>
+    <script type="text/javascript" src="https://www.gamagori-kyotei.com/js/contents_footer_menu_assengaiyo_load.js"></script>
+    <script>
+        $(function(){
+            $("#type_kyogi_menu").hide();
+            $("#wrapper").addClass($("#h_menu").data('kaisai'));
+        });
+    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-SG021VEQJM"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-SG021VEQJM');
+</script>
+</head>
+<body>
+<div id="wrapper">
+    <div id="header_wrapper">
+        <div id="header">
+            <div id="h_menu" data-kaisai="hikaisai">
+    <!--場ロゴ-->
+    <div id="logo">
+        <a href="/">BOAT RACE 蒲郡</a>
+        <!-- 背景切換ボタン-->
+        <div id="design">
+            <ul>
+                <li id="A" onClick="javascript:funcBtnOnClick('1');" class="style01 active"></li>
+                <li id="B" onClick="javascript:funcBtnOnClick('2');" class="style02"></li>
+                <li id="C" onClick="javascript:funcBtnOnClick('3');" class="style03"></li>
+            </ul>
+        </div>
+    </div>
+    <!--日付-->
+    <div id="today">
+        <div class="day1"><p class="month">11/</p><p class="day">19</p><p class="week">木</p></div>
+        <!--開門時間-->
+        <div class="day2"><p class="tit">開門時間</p><p class="time">----</p></div>
+    </div>
+
+    <!---ライブボタン--->
+    <ul class="live_btn ">
+        <!---レースライブ＆情報サイトボタン--->
+        <li class="live off"><a
+                href="https://www.gamagori-kyotei.com/asp/gamagori/kyogi/kyogihtml/index.htm"><i><span></span><span></span><span></span><span></span></i>
+                <p>レースライブ&<br>情報サイト</p></a></li>
+        <!---リプレイ動画＆結果ボタン--->
+        <li class="rep"><a href="https://www.gamagori-kyotei.com/asp/gamagori/kyogi/moviehtml/replay.htm"><i></i>
+                <p>リプレイ動画&<br>レース結果</p></a></li>
+        <!---ネット投票ボタン--->
+        <li class="bet"><a href="https://www.gamagori-kyotei.com/asp/log/gamagori_kyogi.php" target="_blank"><i></i>
+                <p>ネット投票</p></a></li>
+        <!---勝ガマボタン--->
+        <li class="cam"><a href="https://www.gamagori-kyotei.com/g_jump/dento.htm" target="_blank"><i></i>
+                <p>勝ガマ<br>キャッシュ<br>バック</p></a></li>
+        <!--蒲郡ポイントクラブボタン-->
+        <li class="point"><a href="/g_jump/gamapo.htm" target="_blank"><i></i><p>蒲郡<br>ポイント<br>クラブ</p></a></li>
+    </ul>
+
+    <ul id="type_sys" class="sns">
+        <li class="fb"><a href="https://www.gamagori-kyotei.com/g_jump/fb.htm" target="_blank">Facebook</a></li>
+        <li class="twi"><a href="https://www.gamagori-kyotei.com/g_jump/twi.htm" target="_blank">twitter</a></li>
+        <li class="yt"><a href="https://www.gamagori-kyotei.com/g_jump/youtube.htm" target="_blank">YouTube</a></li>
+        <li class="line"><a href="https://www.gamagori-kyotei.com/g_jump/line.htm" target="_blank">LINE@</a></li>
+    </ul>
+
+</div><!--/#h_menu-->
+            <span id="span_menu"></span>
+        </div>
+    </div>
+    <!--▼▼▼コンテンツ▼▼▼-->
+    <div id="contents_wrapper">
+        <!--▼▼▼コンテンツ▼▼▼-->
+        <div id="contents">
+            <div id="main">
+                <h2>レースインフォメーション</h2>
+                                <!--▼レースナビ▼-->
+                <div id="race_navi">
+                    <div id="race_backnumber"><a href="https://www.gamagori-kyotei.com/asp/htmlmade/gamagori/01race/pc/01race_sch.htm">バックナンバー</a></div>
+                    <div id="race_navi_list">
+                                                                        
+                                                            <div class="box g0 select">
+                                                                                            <div class="race_navi_name"> <span>11/21(土)～24(火)</span> 三遠ネオフェニックス杯 </div>
+                                <ul>
+                                                                        <li class="btn01"><a href="#race_main">展望</a></li>
+                                    
+                                                                            <li class="btn02"><a href="http://www.boatrace.jp/owpc/pc/race/assen?jcd=07&amp;hd=20261121" target="_blank">出場予定選手</a></li>
+                                    
+                                                                            <li class="btn03"><a href="#race_eve">イベント情報</a></li>
+                                    
+                                                                                                                    <li class="btn04"><a href="/asp/htmlmade/gamagori/pdf/10354.pdf" target="_blank">PDF版</a></li>
+                                                                                                            </ul>
+                            </div>
+                                                    
+                                                            <div class="box g0">
+                                                                                            <div class="race_navi_name"> <span>11/27(金)～12/2(水)</span> マクール杯争奪男女ハーフバトル </div>
+                                <ul>
+                                                                        <li class="btn01"><a href="/asp/gamagori/contents/01race/01race.php?id=440">展望</a></li>
+                                    
+                                                                            <li class="btn02"><a href="http://www.boatrace.jp/owpc/pc/race/assen?jcd=07&amp;hd=20261127" target="_blank">出場予定選手</a></li>
+                                    
+                                                                            <li class="btn03"><a href="/asp/gamagori/contents/01race/01race.php?id=440#race_eve">イベント情報</a></li>
+                                    
+                                                                            <li class="btn04">PDF版</li>
+                                                                    </ul>
+                            </div>
+                                                    
+                                                            <div class="box g1">
+                                                                                            <div class="race_navi_name"> <span>12/6(日)～11(金)</span> G1オールジャパン竹島特別開設71周年記念競走 </div>
+                                <ul>
+                                                                        <li class="btn01"><a href="/asp/gamagori/contents/01race/01race.php?id=441">展望</a></li>
+                                    
+                                                                            <li class="btn02"><a href="http://www.boatrace.jp/owpc/pc/race/assen?jcd=07&amp;hd=20261206" target="_blank">出場予定選手</a></li>
+                                    
+                                                                            <li class="btn03"><a href="/asp/gamagori/contents/01race/01race.php?id=441#race_eve">イベント情報</a></li>
+                                    
+                                                                            <li class="btn04">PDF版</li>
+                                                                    </ul>
+                            </div>
+                                                                </div><!--race_navi_list end-->
+                </div><!--race_navi end-->
+                <div id="arrow"></div>
+                
+                                    <!--▼レース記事メイン▼-->
+                                        <div id="race_main" class="g0">
+                    
+                    <div id="race_main_head">
+                        <div id="race_main_name">
+                            <p>
+                                                                11/21(土)～24(火)<span>準優制</span>
+                            </p>
+                            三遠ネオフェニックス杯
+                        </div>
+                        <ul>
+                                                                                                <li class="btn01"><a href="/asp/htmlmade/gamagori/pdf/10354.pdf" target="_blank">PDF版</a></li>
+                                                                                        <li class="btn02"><a href="http://www.boatrace.jp/owpc/pc/race/assen?jcd=07&hd=20261121" target="_blank">出場予定選手</a></li>
+                        </ul>
+                    </div><!--race_main_head end-->
+                    <div id="race_main_txt">
+                        <div id="race_main_memo">
+                            <table>
+                                                                <tr><td class="ttl">開門時間</td><td class="txt01">11/21〜24 14:15</td><td class="ttl">1R<br>スタート<br>展示</td><td class="txt02">15:00</td><td class="ttl">進入固定<br>競走</td><td class="txt02">7R</td></tr>
+                            </table>
+                        </div><!--race_main_memo end-->
+
+                        <div id="race_main_iframe">
+                                                                                    <iframe src="https://www.gamagori-kyotei.com/01race/2026/1121.htm" frameborder="0" allowtransparency="true" scrolling="no" name="tenbo" id="tenbo"></iframe>
+                                                                            <script type="text/javascript">
+                            jQuery('#tenbo').iframeAutoHeight();
+                        </script>
+                        </div><!--race_main_iframe end-->
+
+                                                                                    <div id="up"><a href="#wrapper">UP</a></div>
+                                                                        </div><!--race_main_txt end-->
+
+                                                                        <div id="race_eve">
+                                <div id="race_eve_ttl">イベント&amp;ファンサービス</div>
+                                <div id="schedule">
+                                    <div class="sub_ttl"><img src="https://www.gamagori-kyotei.com/02event/images/sub_ttl.png"></div>
+                                                                        <div id="box"><!--▼日付▼--><div id="sch_date"><div class="date">11/21<span>(</span><span class="day sat">土</span><span>)</span></div></div><div id="fan"><div class="sch_photo"><img src="/asp/htmlmade/gamagori/cms_eve/uploadimages/444_3_1.jpg" width="170"></div><h3><div class="ic"></div><span>ウッキウキ！！選べる未確定舟券抽選会～スポーツ観戦も当たる！～</span></h3><div class="text">場所：1階　ボートステーション前　特設会場　<br/>時間：蒲郡本場第3Ｒスタート展示後　～　第9Ｒ発売締切まで<br/><br/><br/>当日の『ボートレース蒲郡』のレース未確定舟券1,000円分で1回ガラポン抽選会に参加できます。<br/>未確定舟券、またはeーじゃんカードのレシートが対象です。<br/>抽選回数は一度で10回までとして、残りの回数は並び直しをお願いいたします。<br/>※ご希望の賞品が終了している場合があります。<br/>※抽選玉ががなくなりしだい終了いたします。<br/><br/><span class="c_01">三遠ネオフェニックス観戦チケット・蒲郡銘菓</span>・クオカード・蒲郡オリジナルグッズ等いろいろ揃えていますのでお楽しみに！<br/>抽選会場にてご確認ください。<br/><br/><br/>※賞品の詳細と当選本数は当日1階ボートステーション前に掲示。<br/>賞品は変更、追加される場合があります。イベント開催に合わせて当日抽選会場が変更になる場合がありますので未確定舟券抽選会案内掲示板、出走表にてご確認ください。</div><!--/text--></div><!--/eve--></div><!--/box--><div id="box"><!--▼日付▼--><div id="sch_date"><div class="date">11/21<span>(</span><span class="day sat">土</span><span>)</span>・22<span>(</span><span class="day sun">日</span><span>)</span></div></div><div id="fan"><div class="sch_photo"><img src="/asp/htmlmade/gamagori/cms_eve/uploadimages/444_4_1.png" width="170"><img src="/asp/htmlmade/gamagori/cms_eve/uploadimages/444_4_2.png" width="170"></div><h3><div class="ic"></div><span>ＧⅠオールジャパン竹島特別開設71周年記念競走ノベルティ配布！！</span></h3><div class="text"><span class="c_bold">ＧⅠオールジャパン竹島特別開設71周年記念競走ノベルティ配布！！</span><br/>ノベルティ：出場予定選手ネームアンブレラマーカー<br/>　サイズ　：アクリルプレート10㎜×40㎜　2種付き<br/>　配布日　：11/21(土)、11/22(日)<br/>　配布場所：西ゲート、東ゲート、中央ゲート<br/>　配布個数：<span class="c_01">各日300個</span><br/>　配布時間：開門〜<span class="c_01">※無くなり次第終了</span><br/><br/>ＧⅠ周年競走出場予定全52選手のネームアンブレラマーカー。<br/><span class="c_01">どの選手が出るかは開けてからのお楽しみ！</span><br/>※出場選手の変更等により、ノベルティに掲載されている選手が当日出場しない場合がございます。あらかじめご了承ください。</div><!--/text--></div><!--/eve--></div><!--/box--><div id="box"><!--▼日付▼--><div id="sch_date"><div class="date">11/21<span>(</span><span class="day sat">土</span><span>)</span>～24<span>(</span><span>火</span><span>)</span></div></div><div id="fan"><div class="sch_photo"><img src="/asp/htmlmade/gamagori/cms_eve/uploadimages/444_2_1.jpeg" width="170"><img src="/asp/htmlmade/gamagori/cms_eve/uploadimages/444_2_2.png" width="170"></div><h3><div class="ic"></div><span>オリジナル舟券</span></h3><div class="text"><span class="c_bold">オリジナル記念舟券で、感動を思い出に！</span><br/><br/>大好評の<span class="c_01">オリジナル記念舟券発行機</span>を本場スタンドに常設中！<br/>ご来場の思い出に、ぜひゲットしてみてください♪<br/><br/>＊＊＊＊＊＊＊＊＊＊＊＊＊<br/><br/><u>【日時】</u><br/>本場レース開催日の開門～12R発売終了まで<br/><u>【場所】</u><br/>本場スタンド1階　ボートステーション<br/><u>【発行方法】</u><br/>(１)今節の<span class="c_01">オリジナル記念舟券対象選手</span>を予めご確認ください。発行機付近または<a href ="https://www.gamagori-kyotei.com/asp/gamagori/contents/02event/02event.php" target="_blank">イベント＆ファンサービスページ</a>に掲載予定です。<br/>(２)対象選手が含まれる買い目の舟券を<span class="c_01">ｅ－じゃんカード</span>でご購入ください。※現金、テレボートでの購入は対象となりません。<br/>(３)発行機にｅ－じゃんカードをかざし、選手・券面などを選択して発行してください。<br/><u>【発行料】</u><br/><span class="c_01">ｅ－じゃんカード50ポイント</span>で1枚発行できます。<br/>※現金、ｅ－じゃんカード残高、BOATRACEギフト等での発行は行っておりません。<br/><u>【備考】</u><br/>・対象選手はボートレース蒲郡が総合的に判断し決定いたします。<br/>・選手サインは準備中のため、原則として印字できません。<br/>　(データ化が完了した一部選手のみ印字できる場合があります)<br/>・点検・故障等により、予告なく稼働を中止する場合があります。<br/><br/>＊＊＊＊＊＊＊＊＊＊＊＊＊<br/><br/>↓発行方法など、詳しくはオリジナル記念舟券特設サイトをご覧ください。<br/><a href ="https://ss642339.stars.ne.jp/original_commemorative_boat_ticket/" target="_blank">https://ss642339.stars.ne.jp/original_commemorative_boat_ticket/</a></div><!--/text--></div><!--/eve--><div id="eve"><div class="sch_photo"><img src="/asp/htmlmade/gamagori/cms_eve/uploadimages/444_9_1.jpg" width="170"></div><h3><div class="ic"></div><span>e-じゃんライフキャンペーン</span></h3><div class="text"><span class="c_bold">「e-じゃんライフキャンペーン」開催！e-じゃんカードを使って、豪華賞品を当てよう！</span><br/><br/>2026年9月29日(火)から12月29日(火)まで、第1弾「e-じゃんライフキャンペーン」を開催します！<br/>期間中にエントリーのうえ、e-じゃんカードで合計5,000円以上の舟券をご購入いただくと、抽選で71名様に豪華賞品が当たるチャンス！<br/><span class="c_01">さらに、1日5,000円以上の舟券をご購入いただくと、購入日ごとに抽選口数を1口追加します！</span><br/>オーブンレンジやロボクリーナー、松阪牛など、暮らしを彩る豪華賞品をご用意しています。<br/>ぜひ、この機会にご参加ください！<br/><br/>■ キャンペーン期間<br/>2026年9月29日(火)～12月29日(火)<br/><br/>■ 参加方法　<br/>STEP 1：エントリー<br/>キャンペーン専用ページから必要事項を入力し、エントリーしてください。<br/>STEP 2：舟券購入<br/>キャンペーン期間中に、e-じゃんカードを利用してキャッシュレス投票機で合計5,000円以上の舟券をご購入ください。<br/>STEP 3：抽選・賞品発送<br/>抽選で当選された方には、エントリー時にご登録いただいた住所へ賞品を発送いたします。<br/>■ エントリーはこちら<br/><a href ="https://gama-e-jyan-cp.com/" target="_blank">https://gama-e-jyan-cp.com/</a><br/><br/><span class="c_bold">詳しくはキャンペーンポスターをご覧ください。</span><br/><a href ="https://www1.gamagori-kyotei.com/asp/htmlmade/gamagori/cms_eve/uploadimages/442_8_1.jpg" target="_blank">https://www1.gamagori-kyotei.com/asp/htmlmade/gamagori/cms_eve/uploadimages/442_8_1.jpg</a><br/><br/>＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊<br/><br/>↓ｅ－じゃんカードご案内ページ<br/><a href ="https://gama-win.com/card/index.html" target="_blank">https://gama-win.com/card/index.html</a><br/>13<br/>↓スマートフォン投票アプリ「bleble(ブルブル)」<br/><a href ="https://www.totor.co.jp/business/product/bleble" target="_blank">https://www.totor.co.jp/business/product/bleble</a><br/><br/>↓前売り指定席の電話購入について<br/><a href ="https://www.gamagori-kyotei.com/03seat/03seat.htm" target="_blank">https://www.gamagori-kyotei.com/03seat/03seat.htm</a></div><!--/text--></div><!--/eve--></div><!--/box--><div id="box"><!--▼日付▼--><div id="sch_date"><div class="date">11/22<span>(</span><span class="day sun">日</span><span>)</span></div></div><div id="eve"><div class="sch_photo"><img src="/asp/htmlmade/gamagori/cms_eve/uploadimages/444_5_1.jpg" width="170"></div><h3><div class="ic"></div><span>チアグランパスダンスショー</span></h3><div class="text">チアグランパスがボートレース蒲郡に登場！<br/>スポーツの垣根を超えて、ダンスで三遠ネオフェニックス杯を盛り上げます！<br/>チアグランパスはステージ終了後、４階特別ラウンジ「サッカー＆トトまるパーク」にも登場！<br/><br/>・時間　14：30頃〜<br/>・場所　１階センターコート<br/><br/>※上記内容は予告なく変更する場合があります。<br/>※ステージイベント中はセンターコートでのレース映像放映は行いません。</div><!--/text--></div><!--/eve--><div id="eve"><div class="sch_photo"><img src="/asp/htmlmade/gamagori/cms_eve/uploadimages/444_6_1.JPG" width="170"></div><h3><div class="ic"></div><span>名古屋グランパスコラボイベント　サッカー＆トトまるパーク</span></h3><div class="text">キッズ向けの充実イベント！<br/>名古屋グランパスのサッカーパーク、ボートレース蒲郡オリジナルのトトまるパークを開催します。<br/>全４種のアトラクションすべてに参加いただくと、「グランパス×BR蒲郡コラボステッカー」をプレゼント。<br/>今回は三遠ネオフェニックス杯にちなんで、バスケットボールタイプのアトラクションが初登場！<br/>更に各アトラクションで合計得点が100点以上の方には、先着30名様にトトまるプルバックカーをプレゼントします。<br/><br/>・時　間　14：15〜18：00　　<br/>・場　所　４階特別ラウンジ<br/>・参加費　無料<br/>・アトラクション　キックターゲット<br/>　　　　　　　ふわふわグランパスくん<br/>　　　　　　　ナインゴール<br/>　　　　　　　ダンクシュートチャレンジ<br/><br/>※お子様連れのファミリーが対象です。<br/>　お子様おひとりにつき、得点表カードを１枚配布します。<br/><br/>さらに！15:15～15:45と16:35～17:05の2回、サッカーパーク＆トトまるパークにチアグランパスが登場！<br/>チアグランパスとのアトラクション対決に勝利すると、「グランパス×BR蒲郡コラボ缶バッジ」をプレゼント！<br/>ぜひチャレンジしてください！<br/><br/>※中学生以下のお子様限定でご参加いただけます。<br/>※上記内容は予告なく変更する場合があります。</div><!--/text--></div><!--/eve--><div id="eve"><div class="sch_photo"><img src="/asp/htmlmade/gamagori/cms_eve/uploadimages/444_7_1.png" width="170"></div><h3><div class="ic"></div><span>グランパスくん・グランパコちゃんグリーティング</span></h3><div class="text">全３回、１１月２２日(いい夫婦の日に)ボートレース蒲郡場内にグランパスくんとグランパコちゃん夫婦とトトまるが登場します♪<br/><br/>・1回目：14時00分～14時20分(モーヴィーがまごおり付近)<br/>・2回目：16時00分～16時20分(モーヴィーがまごおり)<br/>・3回目：17時30分～17時45分(4階特別ラウンジ)<br/><br/>※上記内容は予告なく変更する場合があります。</div><!--/text--></div><!--/eve--><div id="eve"><h3><div class="ic"></div><span>名古屋グランパス　スペシャルＬＩＮＥキーワード抽選会</span></h3><div class="text">ボートレース蒲郡のＬＩＮＥお友達を対象にキーワード抽選会を実施！<br/><br/>・時間　14：15〜18：00<br/>・場所　4階特別ラウンジ入口前特設ブース<br/>・賞品　1等：12/13(日) グランパスホームゲームペア観戦チケット３階指定席…5本<br/>　　　  <対象試合><br/>　　　　　Ｊ１リーグ　2026年12月13日(日)　15:00キックオフ<br/>　　　　　名古屋グランパス × 水戸ホーリーホック　会場：豊田スタジアム<br/>　　　　2等：グランパス×ＢＲ蒲郡　コラボカカップウォーマー…5本<br/>　　　　3等：ボートレース蒲郡食券500円分…15本<br/>　　　　4等：グランパス×ＢＲ蒲郡　コラボネックウォーマー…30本<br/>　　　　5等：ＧＩ７１周年開催記念カイロ…100本<br/>　　　　<br/>※上記内容は予告なく変更する場合があります。</div><!--/text--></div><!--/eve--></div><!--/box--><div id="box"><!--▼日付▼--><div id="sch_date"><div class="date">11/23<span>(</span><span class="day sun">月</span><span>)</span></div></div><div id="fan"><div class="sch_photo"><img src="/asp/htmlmade/gamagori/cms_eve/uploadimages/444_1_1.jpg" width="170"><img src="/asp/htmlmade/gamagori/cms_eve/uploadimages/444_1_2.jpg" width="170"><img src="/asp/htmlmade/gamagori/cms_eve/uploadimages/444_1_3.jpg" width="170"></div><h3><div class="ic"></div><span>”東北地方物産＂未確定舟券抽選会</span></h3><div class="text">50種200個！の東北地方物産が当たる。<br/>さらに、大盤振る舞い！「青森100％リンゴジュース」を216本<br/>ご用意した未確定舟券抽選会を開催します。<br/><br/>場所：1階ボートステーション前<br/>時間：3Rスタート展示後～9R発売締切<br/>参加条件：ボートレース蒲郡未確定舟券1000円分で1回抽選できます<br/><br/>※抽選回数は一度に10回までとし、残りの回数は並び直していただきます。<br/>※景品が無くなり次第、終了とさせていただきます。</div><!--/text--></div><!--/eve--></div><!--/box-->
+                                </div><!--/schedule-->
+                            </div><!--race event end-->
+                                            
+                    </div><!--race_main end-->
+
+                                                </div><!--main end-->
+            <!--▼▼▼サイドメニュー▼▼▼-->
+            <div id="sub">
+                <script type="text/javascript">
+                    // サイドメニュー表示
+                    funcContentsSideMenu();
+                </script>
+
+                <div id="sub_info">
+                    <a href="https://www.gamagori-kyotei.com/02service/02service.htm"><img src="https://www.gamagori-kyotei.com/01race/images/side_livereplay.png"></a>
+                                                                                            <div id="sub_tv">
+                            <h4>実況中継(有料)</h4>
+                                                        <table><tr><th rowspan="1">11/21〜24</th><td class="time">17:00〜21:00</td><td><span class="tv">684</span></td><tr><td colspan="3" class="border">&nbsp;</td></tr></table>
+                            <h5>チャンネル説明</h5>
+                            <img src="https://www.gamagori-kyotei.com/01race/images/sub_tv_img.png" width="194">
+                        </div><!--sub_tv end-->
+                        
+                        
+                                                    <div id="sub_bus">
+                                <h4><img src="https://www.gamagori-kyotei.com/01race/images/i_bus.png" width="17" height="20">無料送迎バス</h4>
+                                                                    
+                                                                                                                    <h5>蒲郡駅南口発<p>(お帰りは第8R終了後より)</p></h5>
+                                                                                <table>
+                                                                                                                                            <tr>
+                                                    <th>11/21〜24</th>
+                                                    <td>14:00</td>
+                                                </tr>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </table>
+                                                                                                        
+                                                                                                </div><!--sub_bus end-->
+                                            
+                                                                                                                                            <ul id="sub_topics">
+                                
+                                                                    <li>
+                                                                                                                                    <a href="https://www.gamagori-kyotei.com/alljapan71/" target="_blank">
+                                                                                                                            <img src="/asp/htmlmade/gamagori/cms_topic/uploadimages/202611041847.png" width="200">
+                                                                                    </a>
+                                                                            </li>
+                                                                                            
+                                                                    <li>
+                                                                                                                                    <a href="https://www.gamagori.jp/totomaru.html?utm_source=gamagori-kyotei&amp;utm_medium=referral&amp;utm_campaign=totomaru2026" target="_top">
+                                                                                                                            <img src="/asp/htmlmade/gamagori/cms_topic/uploadimages/202611051849.png" width="200">
+                                                                                    </a>
+                                                                            </li>
+                                                                                            
+                                                                    <li>
+                                                                                                                                    <a href="https://www.gamagori-kyotei.com/asp/gamagori/contents/01race/01race.php?id=439" target="_top">
+                                                                                                                            <img src="/asp/htmlmade/gamagori/cms_topic/uploadimages/202611051848.jpg" width="200">
+                                                                                    </a>
+                                                                            </li>
+                                                                                            
+                                                                    <li>
+                                                                                                                                    <a href="https://gamapo.jp" target="_top">
+                                                                                                                            <img src="/asp/htmlmade/gamagori/cms_topic/uploadimages/202504041475.png" width="200">
+                                                                                    </a>
+                                                                            </li>
+                                                                                            
+                                                                    <li>
+                                                                                                                                    <a href="https://gama-mog.com/" target="_top">
+                                                                                                                            <img src="/asp/htmlmade/gamagori/cms_topic/uploadimages/202608101823.jpg" width="200">
+                                                                                    </a>
+                                                                            </li>
+                                                                                            
+                                                                    <li>
+                                                                                                                                    <a href="https://www.gamagori-kyotei.com/free/izon_info.pdf" target="_top">
+                                                                                                                            <img src="/asp/htmlmade/gamagori/cms_topic/uploadimages/202505071498.jpg" width="200">
+                                                                                    </a>
+                                                                            </li>
+                                                                                            
+                                                                    <li>
+                                                                                                                                    <a href="https://www.b-race.jp/nightboatrace/" target="_top">
+                                                                                                                            <img src="/asp/htmlmade/gamagori/cms_topic/uploadimages/202609281834.jpg" width="200">
+                                                                                    </a>
+                                                                            </li>
+                                                                                            
+                                                                    <li>
+                                                                                                                                    <a href="https://www.boatrace.jp/extent/common/en/" target="_top">
+                                                                                                                            <img src="/asp/htmlmade/gamagori/cms_topic/uploadimages/202601161673.png" width="200">
+                                                                                    </a>
+                                                                            </li>
+                                                                                            
+                                                                    <li>
+                                                                                                                                    <a href="https://gama-win.com/card/index.html" target="_blank">
+                                                                                                                            <img src="/asp/htmlmade/gamagori/cms_topic/uploadimages/20251011970.jpg" width="200">
+                                                                                    </a>
+                                                                            </li>
+                                                                                            
+                                                                    <li>
+                                                                                                                                    <a href="https://www.gamagori-kyotei.com/mooovi/" target="_blank">
+                                                                                                                            <img src="/asp/htmlmade/gamagori/cms_topic/uploadimages/202504151209.png" width="200">
+                                                                                    </a>
+                                                                            </li>
+                                                                                            
+                                                                    <li>
+                                                                                                                                    <a href="https://www.mbracer.jp/" target="_top">
+                                                                                                                            <img src="/asp/htmlmade/gamagori/cms_topic/uploadimages/202604231748.jpg" width="200">
+                                                                                    </a>
+                                                                            </li>
+                                                                                            
+                                                                    <li>
+                                                                                                                                    <a href="https://lp.so-da.jp/about?gamagori" target="_top">
+                                                                                                                            <img src="/asp/htmlmade/gamagori/cms_topic/uploadimages/202307181012.jpg" width="200">
+                                                                                    </a>
+                                                                            </li>
+                                                                                            
+                                                                    <li>
+                                                                                                                                    <a href="https://gama-win.com/line/" target="_top">
+                                                                                                                            <img src="/asp/htmlmade/gamagori/cms_topic/uploadimages/20210917512.jpg" width="200">
+                                                                                    </a>
+                                                                            </li>
+                                                                                        </ul><!--sub_topics end-->
+                                                                </div><!--sub_info end-->
+                </div><!--sub end-->
+                <div class="clear"></div>
+            </div><!--contents end-->
+        </div><!--contents_wrapper end-->
+        <!--▼▼▼フッター▼▼▼-->
+<div id="footer" class="anime">
+  <span id="span_footer"></span>
+  <div class="banner_bk"><ul id="banner"><li><a href="http://www.boatrace.jp/" target="_blank"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20170821156.jpg" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://www.gamagori-kyotei.com/asp/gamagori/contents/info/info.php?year=2023#id216" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20221010149.png" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://gamble-shindan.com/?utm_source=sitelink&amp;utm_medium=banner&amp;utm_campaign=boatrace202203" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20221010367.gif" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://boatpoint.jp/" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20230422384.webp" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://www.boatrace.jp/bosyu/pc/" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20191106237.jpg" height="40" width="160" alt="" border="0" /></a></li></ul><ul id="banner"><li><a href="https://www.nta.go.jp/publication/pamph/shotoku/kakuteishinkokukankei/koueikyougi/" target="_blank"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20191129240.jpg" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://boatcast.jp/?utm_source=gamagori&amp;utm_medium=HP/BB&amp;utm_campaign=boatcast&amp;utm_id=banner" target="_blank"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20211005318.jpg" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://www.gaprsc.or.jp/" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20240514394.jpg" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://lp.so-da.jp/about?gamagori" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20230718404.jpg" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://br-racers.jp" target="_blank"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20240104420.png" height="40" width="160" alt="" border="0" /></a></li></ul><ul id="banner"><li><a href="https://www.city.gamagori.lg.jp/" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20250702452.png" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://mbp-sakae.jp/" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20250517453.jpg" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://bts-takahama.com/" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20250517454.png" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://www.boatpierkawasaki.ne.jp/" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20250517455.jpg" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://www.bp-nagoya.com/" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20250702463.jpg" height="40" width="160" alt="" border="0" /></a></li></ul><ul id="banner"><li><a href="https://www.bs-tvtokyo.co.jp/boatracespirits/" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20250410450.jpg" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://www.boatrace.jp/extent/common/en/" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20260116488.png" height="40" width="160" alt="" border="0" /></a></li><li><a href="https://www.marugameboat.jp/toku/26/grades/g1kyogoku/index.htm" target="_top"><img src="/asp/htmlmade/gamagori/cms_banner/uploadimages/20261029514.gif" height="40" width="160" alt="" border="0" /></a></li></ul><ul id="banner"></ul><ul id="banner"></ul><ul id="banner"></ul><ul id="banner"></ul><ul id="banner"></ul><ul id="banner"></ul></div><!-- end banner -->
+  <div id="bottom">
+    <div id="f_logo"><a href="https://www.gamagori-kyotei.com/">BOAT RACE 蒲郡</a></div>
+    <div id="address">
+      <p>〒443-8503　愛知県蒲郡市竹谷町太田新田1-1<br>TEL:0533-67-6606　FAX:0533-69-0451</p>
+    </div>
+    <p id="copyright">©BOAT RACE GAMAGORI All rights reserved.</p>
+  </div>
+</div>    </div><!--wrapper end-->
+</body>
+</html>

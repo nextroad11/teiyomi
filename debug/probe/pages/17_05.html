@@ -1,0 +1,2106 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8"/>
+    <title>レース結果一覧 | レース情報 | ボートレース宮島</title>
+    <meta name="description" content="ボートレース宮島のオフィシャルサイトです。">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="css/reset.css?1234">
+    <link rel="stylesheet" href="css/style.css?2">
+    <link rel="stylesheet" href="css/sp800.css?1234">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="js/jquery.bxslider.js"></script>
+    <link rel="stylesheet" href="css/swiper.css?1234">
+    <link rel="stylesheet" href="css/jquery.fancybox.css?1234">
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" href="images/favicon.png" />
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NLGHRFZD');</script>
+<!-- End Google Tag Manager -->
+	<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-K8QB3256T2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-K8QB3256T2');
+</script>
+    <script src="js/analytics.js"></script>
+    <script>
+        $(function () {
+            $(window).scroll(function () {
+                var s = $(this).scrollTop();
+                var m = 500;
+                if (s > m) {
+                    $(".fexed").fadeIn('slow');
+                } else if (s < m) {
+                    $(".fexed").fadeOut('slow');
+                }
+            });
+            $('#drawer-check, #drawer-check2').click(function(){
+                if($(this).prop('checked')){
+                    $('html').addClass('fixed');
+                }else{
+                    $('html').removeClass('fixed');
+                }
+            });
+        });
+        $(function(){
+            var style = '<link rel="stylesheet" href="css/marquee.css">';
+            $('head link:last').after(style);
+        });
+    </script>
+
+
+   <script>
+    function marquee() {
+	$.ajax({
+		type: "POST",
+		url: "./pages_php/marquee.php",
+		success:function(data){
+			$('.marquee').html(data);
+		}
+	});
+    }
+
+    //画面読み込み時、実行
+    window.onload = function(){
+    }
+
+    //定期更新
+    setInterval(function(){
+	marquee();
+    },60000);
+
+    </script>
+
+
+
+<script>
+$(function(){
+
+var date = new Date() ;
+var a = date.getTime() ;
+var unixtime = Math.floor( a / 1000 ) ;
+var time  = $.cookie( 'time' );
+var count = $.cookie( 'count' );
+if (time == "") {
+	time = unixtime;
+}
+if (count == "") {
+	count = 0;
+}
+
+var limit = unixtime - time;
+
+if ( limit <= 5 ) {
+	count = count + 1;
+	$.cookie( 'count', count );
+	$.cookie( 'time', unixtime );
+} else {
+	$.cookie( 'count', 0 );
+	$.cookie( 'time', unixtime );
+	count = 0;
+}
+
+if (count >= 3) {
+	alert('短時間のリロードはご遠慮ください');
+}
+
+});
+</script>
+
+</head>
+
+
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NLGHRFZD"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<header>
+    <div class="up">
+        <div class="inner">
+            <div class="pc">
+                <div class="left">
+                    <h1><a href="index.html"><img src="images/header_logo.png?1" alt="BOATRACE宮島"></a></h1>
+                    <time>11/19<i class="">木</i></time>
+                    <div class="kaisai">開催中</div>                    <p class="open">開門時間：<b>9:30</b></p>					<p class="br_notice">ボートレースは適度に楽しみましょう。<br>舟券の購入は20歳になってから。</p>
+                </div>
+            </div>
+            <!--<div class="right">
+                <a href="covid.html" class="caution pc">新型コロナウイルス感染症対策について</a>
+
+                <div id="google_translate_element"></div><script type="text/javascript">
+                function googleTranslateElementInit() {
+                    new google.translate.TranslateElement({pageLanguage: 'ja', includedLanguages: 'en,ja,ko,zh-CN,zh-TW,fr,es,ar,ru,de,pt,hi', layout: google.translate.TranslateElement.InlineLayout.HORIZONTAL}, 'google_translate_element');
+                }
+            </script><script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+            </div>-->
+        </div>
+    </div>
+
+    <div class="bottompart pc">
+        <div class="middle">
+            <div class="race">
+                <div class="tit"><p>場外発売(本場①②)</p></div>
+                <ul><li>戸田<img src="images/icon_racetype/g3.png" alt="G3"><img src="images/icon_racetype/lady.png" alt="レディース"></li><li>びわこ<img src="images/icon_racetype/g1.png" alt="G1"></li></ul>
+            </div>
+
+            <div class="race">
+                <div class="tit"><p>パルボート宮島(外向発売所)<br><i>開門時間</i><b>7:15</b></p></div>
+
+                <ul><li>宮島<img src="images/icon_racetype/ippan.png" alt="一般"></li><li>鳴門<img src="images/icon_racetype/ippan.png" alt="一般"><img src="images/icon_racetype/sun.png" alt="モーニング"></li><li>徳山<img src="images/icon_racetype/ippan.png" alt="一般"><img src="images/icon_racetype/sun.png" alt="モーニング"></li><li>津<img src="images/icon_racetype/ippan.png" alt="一般"></li><li>びわこ<img src="images/icon_racetype/g1.png" alt="G1"></li><li>戸田<img src="images/icon_racetype/g3.png" alt="G3"><img src="images/icon_racetype/lady.png" alt="レディース"></li><li>平和島<img src="images/icon_racetype/ippan.png" alt="一般"></li><li>福岡<img src="images/icon_racetype/ippan.png" alt="一般"></li><li>丸亀<img src="images/icon_racetype/g1.png" alt="G1"><img src="images/icon_racetype/moon.png" alt="ナイター"></li><li>大村<img src="images/icon_racetype/ippan.png" alt="一般"><img src="images/icon_racetype/moon.png" alt="ナイター"></li><li>桐生<img src="images/icon_racetype/ippan.png" alt="一般"><img src="images/icon_racetype/moon.png" alt="ナイター"></li></ul>            </div>
+
+        </div>
+        <div class="gnv">
+            <nav class="global_menu">
+                <div class="inner">
+                    <ul>
+                        <li>
+                            <a href="racer_list.html" class="gnvlink">レース情報</a>
+                            <div class="megamenu">
+                                <ul class="megamenu-inner main-wrapper">
+                                    <li><a href="racer_list.html">出場予定選手一覧</a></li>
+                                    <li><a href="prospect.html">レース展望</a></li>
+                                    <li><a href="racecard.html">出走表</a></li>
+                                    <li><a href="racedata.html">競走データ</a></li>
+                                    <li><a href="raceinfo_timerank.html">モーターボート抽選結果・<br>前検タイムランキング<br></a></li>
+                                    <li><a href="yosen_point_rank.html">予選得点率ランキング</a></li>
+                                    <li><a href="results.html">レース結果一覧</a></li>
+                                    <li><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17" class="betsu" target="_blank">レースリプレイ</a></li>
+                                    <li><a href="race_tenbou.html">専属記者レース展望動画・<br>優出選手インタビュー動画</a></li>
+                                    <li><a href="paper.html">無料専門予想紙</a></li>
+                                    <li><a href="photo_gallery.html">フォトギャラリー</a></li>
+                                </ul><!-- .megamenu-inner -->
+                            </div><!-- .megamenu -->
+                        </li>
+                        <li><a href="surface.html" class="gnvlink">データファイル</a>
+                            <div class="megamenu">
+                                <ul class="megamenu-inner main-wrapper">
+                                    <li><a href="surface.html">競走水面・進入コース別情報</a></li>
+                                    <li><a href="articles.html">レーサー紹介記事一覧</a></li>
+                                    <li><a href="ranking.html">賞金ランキング</a></li>
+                                    <!--<li><a href="https://sp.macour.jp/s/kyotei-info/miyajima/br17book2021/pc/" class="betsu" target="_blank">舟券傾向と対策</a></li>-->
+
+                                </ul><!-- .megamenu-inner -->
+                            </div><!-- .megamenu -->
+                        </li>
+                        <li><a href="schedule.html" class="gnvlink">開催・発売日程</a>
+                            <div class="megamenu">
+                                <ul class="megamenu-inner main-wrapper">
+                                    <li><a href="schedule.html">宮島本場＆PALBOAT宮島</a></li>
+                                    <li><a href="https://palboat-miyajima.com/" class="betsu" target="_blank">PALBOAT宮島</a></li>
+                                    <li><a href="https://www.bp-kure.com/" class="betsu" target="_blank">BTS呉</a></li>
+                                    <li><a href="https://br-akitakata.com/" class="betsu" target="_blank">BTS安芸高田</a></li>
+                                    <li><a href="https://bts-onomichi.biho.jp/" class="betsu" target="_blank">BTS尾道</a></li>
+                                </ul><!-- .megamenu-inner -->
+                            </div><!-- .megamenu -->
+
+                        </li>
+                        <li><a href="hiroshima_racer.html" class="gnvlink">広島支部選手</a>
+                            <div class="megamenu">
+                                <ul class="megamenu-inner main-wrapper">
+                                    <li><a href="hiroshima_racer.html">広島支部選手一覧</a></li>
+                                    <li><a href="hiroshima_racer.html#under_base_winners">広島支部選手優勝情報</a></li>
+                                    <li><a href="hiroshima_racer.html#under_base_lookie">スター候補選手・新人選手紹介</a></li>
+                                    <li><a href="diary_movie.html">広島支部日記動画</a></li>
+                                    <li><a href="monta_channel.html">モンタチャンネル</a></li>
+                                </ul><!-- .megamenu-inner -->
+                            </div><!-- .megamenu -->
+
+                        </li>
+                        <li><a href="news.html" class="gnvlink">新着情報・サービス案内</a>
+                            <div class="megamenu">
+                                <ul class="megamenu-inner main-wrapper">
+                                    <li><a href="news.html">新着情報</a></li>
+                                    <li><a href="event.html">場内イベント</a></li>
+									<li><a href="fanservice.html">場内ファンサービス</a></li>
+                                    <li><a href="youtube_schedule.html">公式YouTube番組配信予定</a></li>
+                                    <li><a href="televoting.html">各種キャンペーン</a></li>
+                                    <li><a href="goods.html">宮島オリジナルグッズ</a></li>
+                                    <li><a href="momiji_card.html">キャッシュレス投票『モミジカード』</a></li>
+                                    <li><a href="app.html">公式SNS・スマホ専用アプリ</a></li>
+                                    <li><a href="beginners.html">初心者ガイド</a></li>
+                                    <li><a href="banners.html">横断幕について</a></li>
+                                    <li><a href="panorama.html">パノラマムービー</a></li>
+									<li><a href="https://www.boatrace-miyajima.com/pdf/vr_schedule.pdf" class="betsu" target="_blank">ＶＲスプラッシュバトル実施予定日</a></li>
+                                    <li><a href="https://www.boatrace-miyajima.com/pdf/kutsurogi_r8.pdf" class="betsu" target="_blank">3Fくつろぎルームご利用案内&開放予定日</a></li>
+									<li><a href="ga-info.html">ギャンブル依存症関連</a></li>
+									<li><a href="https://gamble-shindan.com/?utm_source=sitelink&utm_medium=banner&utm_campaign=boatrace202203" class="betsu" target="_blank">ギャンブル依存症セルフチェック</a></li>
+									<li><a href="jalert-info.html">Jアラート関連</a></li>
+                                </ul><!-- .megamenu-inner -->
+                            </div><!-- .megamenu -->
+
+                        </li>
+                        <li><a href="facility.html" class="gnvlink">施設・アクセス</a>
+                            <div class="megamenu">
+                                <ul class="megamenu-inner main-wrapper">
+                                    <li><a href="facility.html">フロアガイド</a></li>
+                                    <li><a href="gourmet.html">グルメガイド</a></li>
+                                    <li><a href="reserved_seat.html">指定席</a></li>
+                                    <li><span><a href="seat_availability.html">指定席発売状況(当日)</a></span></li>
+                                    <li><a href="access.html">交通アクセス</a></li>
+                                    <li><a href="parking.html">専用駐車場</a></li>
+                                    <li><a href="rokumiyajima.html">ROKU宮島</a></li>
+                                    <li><a href="spot.html">周辺の観光情報・宮島カメラ</a></li>
+                                </ul><!-- .megamenu-inner -->
+                            </div><!-- .megamenu -->
+                        </li>
+                        <li><a href="https://ib.mbrace.or.jp/" class="vote gnvlink" target="_blank"><div class="vote"><p>投票</p></div></a></li>
+
+                    </ul> </div>
+            </nav>
+
+        </div>
+    </div>
+
+    <div class="header_bottompart_sp sp">
+
+        <div class="int">
+            <div class="up">
+                <h1><a href="index.html"><img src="images/sp_head_logo.png?1" alt="BOATRACE宮島"></a></h1>
+
+
+                <!-- ハンバーガーメニュー部分 -->
+                <div class="drawer">
+                    <!-- ハンバーガーメニューの表示・非表示を切り替えるチェックボックス -->
+                    <input type="checkbox" id="drawer-check" class="drawer-hidden" >
+
+                    <!-- ハンバーガーアイコン -->
+                    <label for="drawer-check" class="drawer-open"><span></span><p>MENU</p></label>
+
+                    <!-- メニュー -->
+                    <nav class="drawer-content">
+                        <dl class="panel_footer">
+                            <a href="index.html" class="top">TOP</a>
+                            <dt>レース情報</dt>
+                            <dd>
+                                <ul>
+                                    <li><a href="racer_list.html">出場予定選手一覧</a></li>
+                                    <li><a href="prospect.html">レース展望</a></li>
+                                    <li><a href="racecard.html">出走表</a></li>
+                                    <li><a href="racedata.html">競走データ</a></li>
+                                    <li><a href="raceinfo_timerank.html">モーターボート抽選結果・<br>前検タイムランキング<br></a></li>
+                                    <li><a href="yosen_point_rank.html">予選得点率ランキング</a></li>
+                                    <li><a href="results.html">レース結果一覧</a></li>
+                                    <li><a href="https://livebb.jlc.ne.jp/bb_top/sp_bb/vod_17.php" class="betsu" target="_blank">レースリプレイ</a></li>
+                                    <li><a href="race_tenbou.html">専属記者レース展望動画・<br>優出選手インタビュー動画</a></li>
+                                    <li><a href="paper.html">無料専門予想紙</a></li>
+                                    <li><a href="photo_gallery.html">フォトギャラリー</a></li>
+                                </ul>
+                            </dd>
+                        </dl>
+                        <dl class="panel_footer">
+
+                            <dt>データファイル</dt>
+                            <dd>
+                                <ul>
+                                    <li><a href="surface.html">競走水面・進入コース別情報</a></li>
+                                    <li><a href="articles.html">レーサー紹介記事一覧</a></li>
+                                    <li><a href="ranking.html">賞金ランキング</a></li>
+                                    <!--<li><a href="https://sp.macour.jp/s/kyotei-info/miyajima/br17book2021/sp/" class="betsu" target="_blank">舟券傾向と対策</a></li>-->
+                                </ul>
+                            </dd>
+                        </dl>
+                        <dl class="panel_footer">
+
+                            <dt>開催・発売日程</dt>
+                            <dd>
+                                <ul>
+                                    <li><a href="schedule.html">宮島本場＆PALBOAT宮島</a></li>
+                                    <li><a href="https://palboat-miyajima.com/" class="betsu" target="_blank">PALBOAT宮島</a></li>
+                                    <li><a href="https://www.bp-kure.com/" class="betsu" target="_blank">BTS呉</a></li>
+                                    <li><a href="https://br-akitakata.com/" class="betsu" target="_blank">BTS安芸高田</a></li>
+                                    <li><a href="https://bts-onomichi.biho.jp/" class="betsu" target="_blank">BTS尾道</a></li>
+                                </ul>
+                            </dd>
+                        </dl>
+
+                        <dl class="panel_footer">
+
+                            <dt>広島支部選手</dt>
+                            <dd>
+                                <ul>
+                                    <li><a href="hiroshima_racer.html">広島支部選手一覧</a></li>
+                                    <li><a href="hiroshima_racer.html#under_base_winners">広島支部選手優勝情報</a></li>
+                                    <li><a href="hiroshima_racer.html#under_base_lookie">スター候補選手・新人選手紹介</a></li>
+                                    <li><a href="diary_movie.html">広島支部日記動画</a></li>
+                                    <li><a href="monta_channel.html">モンタチャンネル</a></li>
+                                </ul>
+                            </dd>
+                        </dl>
+                        <dl class="panel_footer">
+
+                            <dt>新着情報・サービス案内</dt>
+                            <dd>
+                                <ul>
+                                    <li><a href="news.html">新着情報</a></li>
+                                    <li><a href="event.html">場内イベント</a></li>
+									<li><a href="fanservice.html">場内ファンサービス</a></li>
+                                    <li><a href="youtube_schedule.html">公式YouTube番組配信予定</a></li>
+                                    <li><a href="televoting.html">各種キャンペーン</a></li>
+                                    <li><a href="goods.html">宮島オリジナルグッズ</a></li>
+                                    <li><a href="momiji_card.html">キャッシュレス投票『モミジカード』</a></li>
+                                    <li><a href="app.html">公式SNS・スマホ専用アプリ</a></li>
+                                    <li><a href="beginners.html">初心者ガイド</a></li>
+                                    <li><a href="banners.html">横断幕について</a></li>
+                                    <li><a href="panorama.html">パノラマムービー</a></li>
+									<li><a href="https://www.boatrace-miyajima.com/pdf/vr_schedule.pdf" class="betsu" target="_blank">ＶＲスプラッシュバトル実施予定日</a></li>
+                                    <li><a href="https://www.boatrace-miyajima.com/pdf/kutsurogi_r8.pdf" class="betsu" target="_blank">3Fくつろぎルームご利用案内&開放予定日</a></li>
+									<li><a href="ga-info.html">ギャンブル依存症関連</a></li>
+									<li><a href="https://gamble-shindan.com/?utm_source=sitelink&utm_medium=banner&utm_campaign=boatrace202203" class="betsu" target="_blank">ギャンブル依存症セルフチェック</a></li>
+									<li><a href="jalert-info.html">Jアラート関連</a></li>
+                                </ul>
+                            </dd>
+                        </dl>
+                        <dl class="panel_footer">
+
+                            <dt>施設・アクセス</dt>
+                            <dd>
+                                <ul>
+                                    <li><a href="facility.html">フロアガイド</a></li>
+                                    <li><a href="gourmet.html">グルメガイド</a></li>
+                                    <li><a href="reserved_seat.html">指定席</a></li>
+                                    <li><span><a href="seat_availability.html">指定席発売状況(当日)</a></span></li>
+                                    <li><a href="access.html">交通アクセス</a></li>
+                                    <li><a href="parking.html">専用駐車場</a></li>
+                                    <li><a href="rokumiyajima.html">ROKU宮島</a></li>
+                                    <li><a href="spot.html">周辺の観光情報・宮島カメラ</a></li>
+                                </ul>
+                            </dd>
+                        </dl>
+                        <dl class="panel_footer panel_footer_bottom">
+
+                            <dt>お問い合わせ・その他</dt>
+                            <dd>
+                                <ul>
+                                    <li><a href="contact.html">ご意見・ご要望</a></li>
+                                    <li><a href="faq.html">よくある質問</a></li>
+                                    <li><a href="req.html">サイトポリシー</a></li>
+                                    <li><a href="privacy.html">プライバシーポリシー</a></li>
+                                    <li><a href="links.html">リンク集</a></li>
+                                    <li><a href="groupinfo.html" style="font-size: 1.15em; font-weight: bold;">宮島ボートレース企業団からのお知らせ（事業者向け）</a></li>
+                                </ul>
+                            </dd>
+                        </dl>
+
+                    </nav>
+                </div>
+
+            </div>
+
+
+            <div class="bottomin">
+                <time>11/19<i class="">木</i></time>
+                <div class="kaisai">開催中</div>                <p class="open">開門時間：<b>9:30</b></p>            </div>
+        </div>
+    </div>
+
+</header>
+
+<span style="display:none;">off</span>
+<section class="content">
+
+    <div class="newshead">
+        <p class="tit">NEWS</p>
+        <div class="txtline">
+        <p class="marquee">本日のレースは終了しました。<font color="red"><b>今節のﾚｰｽ進行時間 ●1Rｽﾀｰﾄ展示開始･･･9:55 ●12R締切予定･･･15:28〜32頃</b></font>　　　　　　　　</p>
+        </div>
+    </div>
+    <div class="monta_run">
+        <img src="images/monta_run.png">
+    </div>
+
+    <section class="pagetitle">
+        <h2>レース結果一覧</h2>
+        <ul>
+            <li><a href="index.html">Top</a></li>
+            <li><a href="racer_list.html">レース情報</a></li>
+            <li>レース結果一覧</li>
+        </ul>
+    </section>
+
+    <section id="under_base_raceinfo">
+
+
+        <div class="titblock_raceinfo">
+            <div class="int">
+                <div class="left"><i class="grade ">一般</i><b>第5回ﾎﾞｰﾄﾚｰｽ宮島直前予想杯</b></div>
+
+                <ul class="right">
+		<li class="month">9/</li><li class='day '>30<i class="">水</i></li>
+<li class="month">10/</li><li class='day '>1<i class="">木</i></li>
+<li class='day '>2<i class="">金</i></li>
+<li class='day '>3<i class="saturday">土</i></li>
+                </ul>
+            </div>
+
+        </div>
+
+
+        <!--タブ6-->
+        <ul class="tab6 tab-top6 race_result_tab">
+	<li class="tablist6"><b class="stg">初日</b><i class="dow">9月30日(水)</i></li><li class="tablist6"><b class="stg">2日目</b><i class="dow">10月1日(木)</i></li><li class="tablist6"><b class="stg">3日目</b><i class="dow">10月2日(金)</i></li><li class="tablist6"><b class="stg">最終日</b><i class="dow">10月3日(土)</i></li>        </ul>
+
+	
+        <div class="tabcontents6">
+            <div class="tabcontents-list6">
+                <table class="raceinfotable">
+                    <tbody>
+                    <tr class="lightblue">
+                        <td rowspan="2" class="small">レース</td>
+                        <td colspan="2">3連勝単式</td>
+                        <td colspan="2">2連勝単式</td>
+                        <td rowspan="2">備考</td>
+                        <td rowspan="2" class="small">リプレイ</td>
+                    </tr>
+                    <tr class="lightblue">
+                        <td class="small">組番</td>
+                        <td class="small">払戻金</td>
+                        <td class="small">組番</td>
+                        <td class="small">払戻金</td>
+                    </tr>
+		    
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=1&jcd=17&hd=20200930">1R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥920</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥300</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20200930&jyo=17&race=1&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=2&jcd=17&hd=20200930">2R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/6_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price"><font color="red">¥21,770</font></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/6_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥9,310</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20200930&jyo=17&race=2&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=3&jcd=17&hd=20200930">3R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥1,010</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥510</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20200930&jyo=17&race=3&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=4&jcd=17&hd=20200930">4R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/4_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥5,100</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/4_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥2,240</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20200930&jyo=17&race=4&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=5&jcd=17&hd=20200930">5R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/2_f.png" class="numimg">-<img src="images/game/results/boat/4_f.png" class="numimg">-<img src="images/game/results/boat/6_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥5,790</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/2_f.png" class="numimg">-<img src="images/game/results/boat/4_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥560</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20200930&jyo=17&race=5&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=6&jcd=17&hd=20200930">6R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">-<img src="images/game/results/boat/5_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥760</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥300</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20200930&jyo=17&race=6&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=7&jcd=17&hd=20200930">7R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/6_f.png" class="numimg">-<img src="images/game/results/boat/5_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price"><font color="red">¥68,160</font></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/6_f.png" class="numimg">-<img src="images/game/results/boat/5_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price"><font color="red">¥19,000</font></td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20200930&jyo=17&race=7&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=8&jcd=17&hd=20200930">8R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/3_f.png" class="numimg">-<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥5,620</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/3_f.png" class="numimg">-<img src="images/game/results/boat/1_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥2,990</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20200930&jyo=17&race=8&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=9&jcd=17&hd=20200930">9R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/5_f.png" class="numimg">-<img src="images/game/results/boat/4_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥2,220</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/5_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥1,100</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20200930&jyo=17&race=9&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=10&jcd=17&hd=20200930">10R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/4_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥2,190</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/4_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥530</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20200930&jyo=17&race=10&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=11&jcd=17&hd=20200930">11R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/6_f.png" class="numimg">-<img src="images/game/results/boat/4_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥6,330</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/6_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥880</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20200930&jyo=17&race=11&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=12&jcd=17&hd=20200930">12R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/4_f.png" class="numimg">-<img src="images/game/results/boat/6_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price"><font color="red">¥28,120</font></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/4_f.png" class="numimg">-<img src="images/game/results/boat/6_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥4,780</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20200930&jyo=17&race=12&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="tabcontents6">
+            <div class="tabcontents-list6">
+                <table class="raceinfotable">
+                    <tbody>
+                    <tr class="lightblue">
+                        <td rowspan="2" class="small">レース</td>
+                        <td colspan="2">3連勝単式</td>
+                        <td colspan="2">2連勝単式</td>
+                        <td rowspan="2">備考</td>
+                        <td rowspan="2" class="small">リプレイ</td>
+                    </tr>
+                    <tr class="lightblue">
+                        <td class="small">組番</td>
+                        <td class="small">払戻金</td>
+                        <td class="small">組番</td>
+                        <td class="small">払戻金</td>
+                    </tr>
+		    
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=1&jcd=17&hd=20201001">1R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/3_f.png" class="numimg">-<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥8,890</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/3_f.png" class="numimg">-<img src="images/game/results/boat/1_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥5,320</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201001&jyo=17&race=1&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=2&jcd=17&hd=20201001">2R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥1,970</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥850</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201001&jyo=17&race=2&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=3&jcd=17&hd=20201001">3R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/3_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">-<img src="images/game/results/boat/5_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥7,210</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/3_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥1,890</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201001&jyo=17&race=3&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=4&jcd=17&hd=20201001">4R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/6_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥3,560</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/6_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥1,480</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201001&jyo=17&race=4&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=5&jcd=17&hd=20201001">5R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/2_f.png" class="numimg">-<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/6_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥1,010</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/2_f.png" class="numimg">-<img src="images/game/results/boat/1_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥540</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201001&jyo=17&race=5&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=6&jcd=17&hd=20201001">6R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/6_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥1,020</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/6_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥640</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201001&jyo=17&race=6&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=7&jcd=17&hd=20201001">7R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/6_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥8,770</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/6_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥1,900</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201001&jyo=17&race=7&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=8&jcd=17&hd=20201001">8R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/2_f.png" class="numimg">-<img src="images/game/results/boat/5_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥3,810</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/2_f.png" class="numimg">-<img src="images/game/results/boat/5_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥630</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201001&jyo=17&race=8&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=9&jcd=17&hd=20201001">9R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/3_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">-<img src="images/game/results/boat/4_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price"><font color="red">¥15,630</font></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/3_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥5,670</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201001&jyo=17&race=9&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=10&jcd=17&hd=20201001">10R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/3_f.png" class="numimg">-<img src="images/game/results/boat/6_f.png" class="numimg">-<img src="images/game/results/boat/1_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price"><font color="red">¥33,440</font></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/3_f.png" class="numimg">-<img src="images/game/results/boat/6_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price"><font color="red">¥11,100</font></td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201001&jyo=17&race=10&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=11&jcd=17&hd=20201001">11R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">-<img src="images/game/results/boat/4_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥1,110</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥240</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201001&jyo=17&race=11&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=12&jcd=17&hd=20201001">12R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/3_f.png" class="numimg">-<img src="images/game/results/boat/4_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price"><font color="red">¥34,550</font></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/3_f.png" class="numimg">-<img src="images/game/results/boat/4_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥8,600</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201001&jyo=17&race=12&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="tabcontents6">
+            <div class="tabcontents-list6">
+                <table class="raceinfotable">
+                    <tbody>
+                    <tr class="lightblue">
+                        <td rowspan="2" class="small">レース</td>
+                        <td colspan="2">3連勝単式</td>
+                        <td colspan="2">2連勝単式</td>
+                        <td rowspan="2">備考</td>
+                        <td rowspan="2" class="small">リプレイ</td>
+                    </tr>
+                    <tr class="lightblue">
+                        <td class="small">組番</td>
+                        <td class="small">払戻金</td>
+                        <td class="small">組番</td>
+                        <td class="small">払戻金</td>
+                    </tr>
+		    
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=1&jcd=17&hd=20201002">1R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/5_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥1,060</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/5_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥400</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201002&jyo=17&race=1&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=2&jcd=17&hd=20201002">2R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">-<img src="images/game/results/boat/4_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥2,360</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥370</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201002&jyo=17&race=2&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=3&jcd=17&hd=20201002">3R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/6_f.png" class="numimg">-<img src="images/game/results/boat/4_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥3,760</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/6_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥850</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201002&jyo=17&race=3&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=4&jcd=17&hd=20201002">4R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/4_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">-<img src="images/game/results/boat/1_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥2,890</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/4_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥950</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201002&jyo=17&race=4&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=5&jcd=17&hd=20201002">5R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/6_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥790</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/6_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥430</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201002&jyo=17&race=5&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=6&jcd=17&hd=20201002">6R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">-<img src="images/game/results/boat/4_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥530</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥300</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201002&jyo=17&race=6&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=7&jcd=17&hd=20201002">7R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">-<img src="images/game/results/boat/5_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥6,870</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥470</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201002&jyo=17&race=7&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=8&jcd=17&hd=20201002">8R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">-<img src="images/game/results/boat/5_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥1,740</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥630</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201002&jyo=17&race=8&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=9&jcd=17&hd=20201002">9R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/4_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">-<img src="images/game/results/boat/1_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price"><font color="red">¥10,240</font></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/4_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥6,120</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201002&jyo=17&race=9&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=10&jcd=17&hd=20201002">10R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/3_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">-<img src="images/game/results/boat/1_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥8,270</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/3_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥3,450</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201002&jyo=17&race=10&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=11&jcd=17&hd=20201002">11R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥540</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥240</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201002&jyo=17&race=11&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=12&jcd=17&hd=20201002">12R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/2_f.png" class="numimg">-<img src="images/game/results/boat/4_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price"><font color="red">¥12,340</font></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/2_f.png" class="numimg">-<img src="images/game/results/boat/4_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥3,720</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201002&jyo=17&race=12&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="tabcontents6">
+            <div class="tabcontents-list6">
+                <table class="raceinfotable">
+                    <tbody>
+                    <tr class="lightblue">
+                        <td rowspan="2" class="small">レース</td>
+                        <td colspan="2">3連勝単式</td>
+                        <td colspan="2">2連勝単式</td>
+                        <td rowspan="2">備考</td>
+                        <td rowspan="2" class="small">リプレイ</td>
+                    </tr>
+                    <tr class="lightblue">
+                        <td class="small">組番</td>
+                        <td class="small">払戻金</td>
+                        <td class="small">組番</td>
+                        <td class="small">払戻金</td>
+                    </tr>
+		    
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=1&jcd=17&hd=20201003">1R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/4_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price"><font color="red">¥26,370</font></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/4_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥5,460</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201003&jyo=17&race=1&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=2&jcd=17&hd=20201003">2R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/6_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price"><font color="red">¥29,490</font></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/6_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥7,780</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201003&jyo=17&race=2&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=3&jcd=17&hd=20201003">3R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">-<img src="images/game/results/boat/5_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥5,540</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥600</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201003&jyo=17&race=3&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=4&jcd=17&hd=20201003">4R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/2_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">-<img src="images/game/results/boat/1_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥9,850</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/2_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥1,260</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201003&jyo=17&race=4&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=5&jcd=17&hd=20201003">5R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">-<img src="images/game/results/boat/4_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥1,870</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥410</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201003&jyo=17&race=5&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=6&jcd=17&hd=20201003">6R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">-<img src="images/game/results/boat/4_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥420</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥230</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201003&jyo=17&race=6&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=7&jcd=17&hd=20201003">7R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">-<img src="images/game/results/boat/6_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥1,520</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥490</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201003&jyo=17&race=7&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=8&jcd=17&hd=20201003">8R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">-<img src="images/game/results/boat/6_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥1,950</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥280</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201003&jyo=17&race=8&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=9&jcd=17&hd=20201003">9R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">-<img src="images/game/results/boat/5_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥900</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥310</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201003&jyo=17&race=9&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=10&jcd=17&hd=20201003">10R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥470</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/2_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥200</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201003&jyo=17&race=10&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=11&jcd=17&hd=20201003">11R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/4_f.png" class="numimg">-<img src="images/game/results/boat/1_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥2,390</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/4_f.png" class="numimg">-<img src="images/game/results/boat/1_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥910</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201003&jyo=17&race=11&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    <tr>
+                        <td><a href="https://www.boatrace.jp/owpc/pc/race/raceresult?rno=12&jcd=17&hd=20201003">12R</a></td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/2_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">-<img src="images/game/results/boat/5_f.png" class="numimg">
+                            </div>
+
+                        </td>
+                        <td><i class="price">¥5,720</td>
+                        <td>
+                            <div class="int">
+				<img src="images/game/results/boat/2_f.png" class="numimg">-<img src="images/game/results/boat/3_f.png" class="numimg">
+                            </div>
+                        </td>
+                        <td><i class="price">¥1,390</td>
+                        <td class="bikou"> </td>
+                        <td><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17&ymd=20201003&jyo=17&race=12&md=V" target="_blank" class="replay"><img src="images/race_result/play.png" alt=""></a></td>
+                    </tr>
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div>
+
+
+        </div>
+    </section>
+
+<script>
+    $(function() {
+        $('.tab6>li').click(function() {
+            var num = $(this).parent().children('li').index(this);
+            $('.tab6').each(function(){
+                $('>li',this).removeClass('active').eq(num).addClass('active');
+            });
+            $('.tabcontents-list6').hide().eq(num).show();
+        }).first().click();
+    });
+</script>
+
+</section>
+
+
+<footer>
+    <div class="inner">
+
+        <div class="sns">
+            <p>公式SNS</p>
+            <a href="https://twitter.com/br_miyajima?ref_src=twsrc%5Etfw" class="sns_twitter" target="_blank"><img src="images/sns_icon_twitter.png" alt="X（旧ツイッター）"></a>
+            <a href="https://www.instagram.com/boatrace_miyajima/" class="sns_insta" target="_blank"><img src="images/sns_icon_ins.png" alt="instagram"></a>
+            <a href="https://page.line.me/543xapcn?openQrModal=true" class="sns_line" target="_blank"><img src="images/sns_icon_line.png?2" alt="line"></a>
+			<a href="https://www.facebook.com/boatrace.miyajima.jp/" class="sns_facebook" target="_blank"><img src="images/sns_icon_facebook.png" alt="facebook"></a>
+            <a href="https://www.youtube.com/channel/UCxvYC6PPCsy2_p0tGuvIv5w" class="sns_youtube" target="_blank"><img src="images/sns_icon_youtube.png" alt="youtube"></a>
+        </div>
+		<p class="br_notice_ft sp">ボートレースは適度に楽しみましょう。<br>舟券の購入は20歳になってから。</p>
+
+        <ul class="link_new sp">
+            <li><a href="boatrace-contribution.html">ボートレースの地域貢献<br>「ボートの力を、みんなの力に。」</a></li>
+        </ul>
+        <div class="up">
+            <ul class="pc">
+                <li><b><a href="racer_list.html">レース情報</a></b></li>
+                <li><a href="racer_list.html">出場予定選手一覧</a></li>
+                <li><a href="prospect.html">レース展望</a></li>
+                <li><a href="racecard.html">出走表</a></li>
+                <li><a href="racedata.html">競走データ</a></li>
+                <li><a href="raceinfo_timerank.html">モーターボート抽選結果・<br>前検タイムランキング<br></a></li>
+                <li><a href="yosen_point_rank.html">予選得点率ランキング</a></li>
+                <li><a href="results.html">レース結果一覧</a></li>
+                <li><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17" class="betsu" target="_blank">レースリプレイ</a></li>
+                <li><a href="race_tenbou.html">専属記者レース展望動画・<br>優出選手インタビュー動画</a></li>
+                <li><a href="paper.html">無料専門予想紙</a></li>
+                <li><a href="photo_gallery.html">フォトギャラリー</a></li>
+            </ul>
+            <ul class="pc">
+                <li><b><a href="surface.html">データファイル</a></b></li>
+                <li><a href="surface.html">競走水面・進入コース別情報</a></li>
+                <li><a href="articles.html">レーサー紹介記事一覧</a></li>
+                <li><a href="ranking.html">賞金ランキング</a></li>
+                <!--<li><a href="https://sp.macour.jp/s/kyotei-info/miyajima/br17book2021/pc/" class="betsu" target="_blank">舟券傾向と対策</a></li>-->
+
+                <li class="kaisai"><b><a href="schedule.html">開催・発売日程</a></b></li>
+                <li><a href="schedule.html">宮島本場＆PALBOAT宮島</a></li>
+                <li><a href="https://palboat-miyajima.com/" class="betsu" target="_blank">PALBOAT宮島</a></li>
+                <li><a href="https://www.bp-kure.com/" class="betsu" target="_blank">BTS呉</a></li>
+                <li><a href="https://br-akitakata.com/" class="betsu" target="_blank">BTS安芸高田</a></li>
+                <li><a href="https://bts-onomichi.biho.jp/" class="betsu" target="_blank">BTS尾道</a></li>
+            </ul>
+            <ul class="pc">
+                <li><b><a href="hiroshima_racer.html">広島支部選手</a></b></li>
+                <li><a href="hiroshima_racer.html">広島支部選手一覧</a></li>
+				<li><a href="hiroshima_racer.html#under_base_winners">広島支部選手優勝情報</a></li>
+                <li><a href="hiroshima_racer.html#under_base_lookie">スター候補選手・新人選手紹介</a></li>
+                <li><a href="diary_movie.html">広島支部日記動画</a></li>
+                <li><a href="monta_channel.html">モンタチャンネル</a></li>
+            </ul>
+            <ul class="pc">
+                <li><b><a href="news.html">新着情報・サービス案内</a></b></li>
+                <li><a href="news.html">新着情報</a></li>
+                <li><a href="event.html">場内イベント</a></li>
+				<li><a href="fanservice.html">場内ファンサービス</a></li>
+                <li><a href="youtube_schedule.html">公式YouTube番組配信予定</a></li>
+                <li><a href="televoting.html">各種キャンペーン</a></li>
+                <li><a href="goods.html">宮島オリジナルグッズ</a></li>
+                <li><a href="momiji_card.html">キャッシュレス投票『モミジカード』</a></li>
+                <li><a href="app.html">公式SNS・スマホ専用アプリ</a></li>
+                <li><a href="beginners.html">初心者ガイド</a></li>
+                <li><a href="banners.html">横断幕について</a></li>
+                <li><a href="panorama.html">パノラマムービー</a></li>
+				<li><a href="https://www.boatrace-miyajima.com/pdf/vr_schedule.pdf" class="betsu" target="_blank">ＶＲスプラッシュバトル実施予定日</a></li>
+                <li><a href="https://www.boatrace-miyajima.com/pdf/kutsurogi_r8.pdf" class="betsu" target="_blank">3Fくつろぎルームご利用案内<br>&開放予定日</a></li>
+				<li><a href="ga-info.html">ギャンブル依存症関連</a></li>
+				<li><a href="https://gamble-shindan.com/?utm_source=sitelink&utm_medium=banner&utm_campaign=boatrace202203" class="betsu" target="_blank">ギャンブル依存症セルフチェック</a></li>
+				<li><a href="jalert-info.html">Jアラート関連</a></li>
+
+            </ul>
+            <ul class="pc">
+                <li><b><a href="facility.html">施設・アクセス</a></b></li>
+                <li><a href="facility.html">フロアガイド</a></li>
+                <li><a href="gourmet.html">グルメガイド</a></li>
+                <li><a href="reserved_seat.html">指定席</a></li>
+                <li><span><a href="seat_availability.html">指定席発売状況(当日)</a></span></li>
+                <li><a href="access.html">交通アクセス</a></li>
+                <li><a href="parking.html">専用駐車場</a></li>
+                <li><a href="rokumiyajima.html">ROKU宮島</a></li>
+                <li><a href="spot.html">周辺の観光情報・宮島カメラ</a></li>
+            </ul>
+            <ul class="sp">
+                <li><a href="contact.html">ご意見・ご要望</a></li>
+                <li><a href="faq.html">よくある質問</a></li>
+                <li><a href="req.html">サイトポリシー</a></li>
+            </ul>
+            <ul class="sp">
+                <li><a href="privacy.html">プライバシーポリシー</a></li>
+                <li><a href="links.html">リンク集</a></li>
+                <li><a href="groupinfo.html" style="font-size: 1.1em; font-weight: bold;">宮島ボートレース企業団からのお知らせ（事業者向け）</a></li>
+            </ul>
+        </div>
+
+        <div class="mid link_new pc">
+            <ul>
+                <li><a href="boatrace-contribution.html">ボートレースの地域貢献「ボートの力を、みんなの力に。」</a></li>
+            </ul>
+        </div>
+
+        <div class="mid pc">
+            <ul>
+                <li><a href="contact.html">ご意見・ご要望</a></li>
+                <li><a href="faq.html">よくある質問</a></li>
+                <li><a href="req.html">サイトポリシー</a></li>
+                <li><a href="privacy.html">プライバシーポリシー</a></li>
+                <li><a href="links.html">リンク集</a></li>
+                <li><a href="groupinfo.html" style="font-size: 1.15em; font-weight: bold;">宮島ボートレース企業団からのお知らせ（事業者向け）</a></li>
+            </ul>
+        </div>
+
+        <div class="bottom">
+            <div class="left">
+                <div class="thum pc">
+                    <p>スマホ</p>
+                    <img src="images/qr_sp.png" alt="QR">
+                </div>
+
+                <div class="addbox">
+                    <p class="tit">宮島ボートレース企業団</p>
+                    <p class="add">〒739-0411 広島県廿日市市宮島口1-15-60</p>
+                    <p class="add">TEL/0829-56-1122</p>
+                </div>
+            </div>
+
+            <div class="right">
+                <a href="index.html"><img src="images/bottom_logo.png" alt="BOATRACE 宮島"></a>
+                <p class="copy">Copyright © boatrace-miyajima. All Rights Reserved.</p>
+
+            </div>
+        </div>
+
+    </div>
+</footer>
+
+
+<p id="page-top"><a href="#wrap">
+
+    <img src="images/gotop.png" alt="上に戻る" class="pc"/>
+    <img src="images/gotop_sp.png" alt="上に戻る" class="sp"/>
+
+</a></p><script type="text/javascript" src="js/anime.min.js"></script>
+<script type="text/javascript" src="js/anime.detail.js"></script>
+
+<script src="js/ScrollTrigger.min.js"></script>
+<script>
+    window.counter = function () {
+        // this refers to the html element with the data-scroll-showCallback tag
+        var span = this.querySelector('span');
+        var current = parseInt(span.textContent);
+
+        span.textContent = current + 1;
+    };
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var trigger = new ScrollTrigger({
+            addHeight: true
+        });
+    });
+</script>
+
+<!-- 上に戻るボタン -->
+
+<script>
+    $(function () {
+        var topBtn = $('#page-top');
+        topBtn.hide();
+//スクロールが100に達したらボタン表示
+        $(window).scroll(function () {
+            if ($(this).scrollTop() > 290) {
+                topBtn.fadeIn();
+                $('.sns').addClass('fixed');
+            } else {
+                topBtn.fadeOut();
+                $('.sns').removeClass('fixed');
+            }
+        });
+//スクロールしてトップ
+        topBtn.click(function () {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 500);
+            return false;
+        });
+    });
+</script>
+
+</div>
+
+
+<!--固定ヘッダ-->
+<div id="fixfoot" class="fexed">
+    <div class="gnv pc">
+        <nav class="global_menu">
+            <div class="inner">
+                <ul>
+                    <li>
+						<a href="racer_list.html" class="gnvlink">レース情報</a>
+                        <div class="megamenu">
+                            <ul class="megamenu-inner main-wrapper">
+                                <li><a href="racer_list.html">出場予定選手一覧</a></li>
+                                <li><a href="prospect.html">レース展望</a></li>
+                                <li><a href="racecard.html">出走表</a></li>
+                                <li><a href="racedata.html">競走データ</a></li>
+                                <li><a href="raceinfo_timerank.html">モーターボート抽選結果・<br>前検タイムランキング<br></a></li>
+                                <li><a href="yosen_point_rank.html">予選得点率ランキング</a></li>
+                                <li><a href="results.html">レース結果一覧</a></li>
+                                <li><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17" class="betsu" target="_blank">レースリプレイ</a></li>
+                                <li><a href="race_tenbou.html">専属記者レース展望動画・<br>優出選手インタビュー動画</a></li>
+                                <li><a href="paper.html">無料専門予想紙</a></li>
+                                <li><a href="photo_gallery.html">フォトギャラリー</a></li>
+                            </ul><!-- .megamenu-inner -->
+                        </div><!-- .megamenu -->
+                    </li>
+                    <li><a href="surface.html" class="gnvlink">データファイル</a>
+                        <div class="megamenu">
+                            <ul class="megamenu-inner main-wrapper">
+                                <li><a href="surface.html">競走水面・進入コース別情報</a></li>
+                                <li><a href="articles.html">レーサー紹介記事一覧</a></li>
+                                <li><a href="ranking.html">賞金ランキング</a></li>
+                                <!--<li><a href="https://sp.macour.jp/s/kyotei-info/miyajima/br17book2021/pc/" class="betsu" target="_blank">舟券傾向と対策</a></li>-->
+
+                            </ul><!-- .megamenu-inner -->
+                        </div><!-- .megamenu -->
+                    </li>
+                    <li><a href="schedule.html" class="gnvlink">開催・発売日程</a>
+                        <div class="megamenu">
+                            <ul class="megamenu-inner main-wrapper">
+                                <li><a href="schedule.html">宮島本場＆PALBOAT宮島</a></li>
+                                <li><a href="https://palboat-miyajima.com/" class="betsu" target="_blank">PALBOAT宮島</a></li>
+                                <li><a href="https://www.bp-kure.com/" class="betsu" target="_blank">BTS呉</a></li>
+                                <li><a href="https://br-akitakata.com/" class="betsu" target="_blank">BTS安芸高田</a></li>
+                                <li><a href="https://bts-onomichi.biho.jp/" class="betsu" target="_blank">BTS尾道</a></li>
+                            </ul><!-- .megamenu-inner -->
+                        </div><!-- .megamenu -->
+
+                    </li>
+                    <li><a href="hiroshima_racer.html" class="gnvlink">広島支部選手</a>
+                        <div class="megamenu">
+                            <ul class="megamenu-inner main-wrapper">
+                                <li><a href="hiroshima_racer.html">広島支部選手一覧</a></li>
+                                <li><a href="hiroshima_racer.html#under_base_winners">広島支部選手優勝情報</a></li>
+                                <li><a href="hiroshima_racer.html#under_base_lookie">スター候補選手・新人選手紹介</a></li>
+                                <li><a href="diary_movie.html">広島支部日記動画</a></li>
+                                <li><a href="monta_channel.html">モンタチャンネル</a></li>
+                            </ul><!-- .megamenu-inner -->
+                        </div><!-- .megamenu -->
+
+                    </li>
+                    <li><a href="news.html" class="gnvlink">新着情報・サービス案内</a>
+                        <div class="megamenu">
+                            <ul class="megamenu-inner main-wrapper">
+                                <li><a href="news.html">新着情報</a></li>
+                                <li><a href="event.html">場内イベント</a></li>
+								<li><a href="fanservice.html">場内ファンサービス</a></li>
+                                <li><a href="youtube_schedule.html">公式YouTube番組配信予定</a></li>
+                                <li><a href="televoting.html">各種キャンペーン</a></li>
+                                <li><a href="goods.html">宮島オリジナルグッズ</a></li>
+                                <li><a href="momiji_card.html">キャッシュレス投票『モミジカード』</a></li>
+                                <li><a href="app.html">公式SNS・スマホ専用アプリ</a></li>
+                                <li><a href="beginners.html">初心者ガイド</a></li>
+                                <li><a href="banners.html">横断幕について</a></li>
+                                <li><a href="panorama.html">パノラマムービー</a></li>
+								<li><a href="https://www.boatrace-miyajima.com/pdf/vr_schedule.pdf" class="betsu" target="_blank">ＶＲスプラッシュバトル実施予定日</a></li>
+                                <li><a href="https://www.boatrace-miyajima.com/pdf/kutsurogi_r8.pdf" class="betsu" target="_blank">3Fくつろぎルームご利用案内&開放予定日</a></li>
+								<li><a href="ga-info.html">ギャンブル依存症関連</a></li>
+								<li><a href="https://gamble-shindan.com/?utm_source=sitelink&utm_medium=banner&utm_campaign=boatrace202203" class="betsu" target="_blank">ギャンブル依存症セルフチェック</a></li>
+								<li><a href="jalert-info.html">Jアラート関連</a></li>
+                            </ul><!-- .megamenu-inner -->
+                        </div><!-- .megamenu -->
+
+                    </li>
+                    <li><a href="facility.html" class="gnvlink">施設・アクセス</a>
+                        <div class="megamenu">
+                            <ul class="megamenu-inner main-wrapper">
+                                <li><a href="facility.html">フロアガイド</a></li>
+                                <li><a href="gourmet.html">グルメガイド</a></li>
+                                <li><a href="reserved_seat.html">指定席</a></li>
+                                <li><span><a href="seat_availability.html">指定席発売状況(当日)</a></span></li>
+                                <li><a href="access.html">交通アクセス</a></li>
+                                <li><a href="parking.html">専用駐車場</a></li>
+                                <li><a href="rokumiyajima.html">ROKU宮島</a></li>
+                                <li><a href="spot.html">周辺の観光情報・宮島カメラ</a></li>
+                            </ul><!-- .megamenu-inner -->
+                        </div><!-- .megamenu -->
+                    </li>
+                    <li><a href="https://ib.mbrace.or.jp/" class="vote gnvlink" target="_blank"><div class="vote"><p>投票</p></div></a></li>
+
+                </ul> </div>
+        </nav>
+    </div>
+
+
+    <div class="fix_sp sp">
+        <div class="int">
+            <h1><a href="index.html"><img src="images/sp_head_logo.png?1" alt="BOATRACE宮島"></a></h1>
+
+            <!-- ハンバーガーメニュー部分 -->
+            <div class="drawer">
+                <!-- ハンバーガーメニューの表示・非表示を切り替えるチェックボックス -->
+                <input type="checkbox" id="drawer-check2" class="drawer-hidden2" >
+
+                <!-- ハンバーガーアイコン -->
+                <label for="drawer-check2" class="drawer-open2"><span></span><p>MENU</p></label>
+
+                <!-- メニュー -->
+                <nav class="drawer-content2">
+                    <dl class="panel_footer">
+                        <a href="index.html" class="top">TOP</a>
+                        <dt>レース情報</dt>
+                        <dd>
+                            <ul>
+                                <li><a href="racer_list.html">出場予定選手一覧</a></li>
+                                <li><a href="prospect.html">レース展望</a></li>
+                                <li><a href="racecard.html">出走表</a></li>
+                                <li><a href="racedata.html">競走データ</a></li>
+                                <li><a href="raceinfo_timerank.html">モーターボート抽選結果・<br>前検タイムランキング<br></a></li>
+                                <li><a href="yosen_point_rank.html">予選得点率ランキング</a></li>
+                                <li><a href="results.html">レース結果一覧</a></li>
+                                <li><a href="https://livebb.jlc.ne.jp/bb_top/sp_bb/vod_17.php" class="betsu" target="_blank">レースリプレイ</a></li>
+                                <li><a href="race_tenbou.html">専属記者レース展望動画・<br>優出選手インタビュー動画</a></li>
+                                <li><a href="paper.html">無料専門予想紙</a></li>
+                                <li><a href="photo_gallery.html">フォトギャラリー</a></li>
+                            </ul>
+                        </dd>
+                    </dl>
+                    <dl class="panel_footer">
+                        <dt>データファイル</dt>
+                        <dd>
+                            <ul>
+                                <li><a href="surface.html">競走水面・進入コース別情報</a></li>
+                                <li><a href="articles.html">レーサー紹介記事一覧</a></li>
+                                <li><a href="ranking.html">賞金ランキング</a></li>
+                                <!--<li><a href="https://sp.macour.jp/s/kyotei-info/miyajima/br17book2021/sp/" class="betsu" target="_blank">舟券傾向と対策</a></li>-->
+                            </ul>
+                        </dd>
+                    </dl>
+                    <dl class="panel_footer">
+                        <dt>開催・発売日程</dt>
+                        <dd>
+                            <ul>
+                                <li><a href="schedule.html">宮島本場＆PALBOAT宮島</a></li>
+                                <li><a href="https://palboat-miyajima.com/" class="betsu" target="_blank">PALBOAT宮島</a></li>
+                                <li><a href="https://www.bp-kure.com/" class="betsu" target="_blank">BTS呉</a></li>
+                                <li><a href="https://br-akitakata.com/" class="betsu" target="_blank">BTS安芸高田</a></li>
+                                <li><a href="https://bts-onomichi.biho.jp/" class="betsu" target="_blank">BTS尾道</a></li>
+                            </ul>
+                        </dd>
+                    </dl>
+                    <dl class="panel_footer">
+                        <dt>広島支部選手</dt>
+                        <dd>
+                            <ul>
+                                <li><a href="hiroshima_racer.html">広島支部選手一覧</a></li>
+                                <li><a href="hiroshima_racer.html#under_base_winners">広島支部選手優勝情報</a></li>
+                                <li><a href="hiroshima_racer.html#under_base_lookie">スター候補選手・新人選手紹介</a></li>
+                                <li><a href="diary_movie.html">広島支部日記動画</a></li>
+                                <li><a href="monta_channel.html">モンタチャンネル</a></li>
+                            </ul>
+                        </dd>
+                    </dl>
+                    <dl class="panel_footer">
+                        <dt>新着情報・サービス案内</dt>
+                        <dd>
+                            <ul>
+                                <li><a href="news.html">新着情報</a></li>
+                                <li><a href="event.html">場内イベント</a></li>
+								<li><a href="fanservice.html">場内ファンサービス</a></li>
+                                <li><a href="youtube_schedule.html">公式YouTube番組配信予定</a></li>
+                                <li><a href="televoting.html">各種キャンペーン</a></li>
+                                <li><a href="goods.html">宮島オリジナルグッズ</a></li>
+                                <li><a href="momiji_card.html">キャッシュレス投票『モミジカード』</a></li>
+                                <li><a href="app.html">公式SNS・スマホ専用アプリ</a></li>
+                                <li><a href="beginners.html">初心者ガイド</a></li>
+                                <li><a href="banners.html">横断幕について</a></li>
+                                <li><a href="panorama.html">パノラマムービー</a></li>
+								<li><a href="https://www.boatrace-miyajima.com/pdf/vr_schedule.pdf" class="betsu" target="_blank">ＶＲスプラッシュバトル実施予定日</a></li>
+                                <li><a href="https://www.boatrace-miyajima.com/pdf/kutsurogi_r8.pdf" class="betsu" target="_blank">3Fくつろぎルームご利用案内&開放予定日</a></li>
+								<li><a href="ga-info.html">ギャンブル依存症関連</a></li>
+								<li><a href="https://gamble-shindan.com/?utm_source=sitelink&utm_medium=banner&utm_campaign=boatrace202203" class="betsu" target="_blank">ギャンブル依存症セルフチェック</a></li>
+								<li><a href="jalert-info.html">Jアラート関連</a></li>
+                            </ul>
+                        </dd>
+                    </dl>
+                    <dl class="panel_footer">
+                        <dt>施設・アクセス</dt>
+                        <dd>
+                            <ul>
+                                <li><a href="facility.html">フロアガイド</a></li>
+                                <li><a href="gourmet.html">グルメガイド</a></li>
+                                <li><a href="reserved_seat.html">指定席</a></li>
+                                <li><span><a href="seat_availability.html">指定席発売状況(当日)</a></span></li>
+                                <li><a href="access.html">交通アクセス</a></li>
+                                <li><a href="parking.html">専用駐車場</a></li>
+                                <li><a href="rokumiyajima.html">ROKU宮島</a></li>
+                                <li><a href="spot.html">周辺の観光情報・宮島カメラ</a></li>
+                            </ul>
+                        </dd>
+                    </dl>
+                    <dl class="panel_footer panel_footer_bottom">
+                        <dt>お問い合わせ・その他</dt>
+                        <dd>
+                            <ul>
+                                <li><a href="contact.html">ご意見・ご要望</a></li>
+                                <li><a href="faq.html">よくある質問</a></li>
+                                <li><a href="req.html">サイトポリシー</a></li>
+                                <li><a href="privacy.html">プライバシーポリシー</a></li>
+                                <li><a href="links.html">リンク集</a></li>
+                                <li class="panel_footer_bottom"><a href="groupinfo.html" style="font-size: 1.15em; font-weight: bold;">宮島ボートレース企業団からのお知らせ（事業者向け）</a></li>
+                            </ul>
+                        </dd>
+                    </dl>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+</div>
+
+
+<script src="js/swiper.min.js"></script>
+<script>
+    var swiper = new Swiper('.swiper-container', {
+        speed:800,
+        pagination: '.swiper-pagination',
+        slidesPerView: 1,
+        autoplay:4000,
+        loop: true,
+        paginationClickable: true,
+        spaceBetween: 0,
+        keyboardControl: true,
+        nextButton: '.swiper-button-next',
+        prevButton: '.swiper-button-prev',
+    });
+</script>
+
+<script>
+    var swiper = new Swiper('.swiper-container2', {
+        speed:800,
+        pagination: '.swiper-pagination2',
+        slidesPerView: 1,
+        autoplay:false,
+        loop: true,
+        paginationClickable: true,
+        spaceBetween: 0,
+        keyboardControl: true,
+        nextButton: '.swiper-button-next',
+        prevButton: '.swiper-button-prev',
+    });
+</script>
+
+<script>
+    $(function() {
+        $('.tab>li').click(function() {
+            var num = $(this).parent().children('li').index(this);
+            $('.tab').each(function(){
+                $('>li',this).removeClass('active').eq(num).addClass('active');
+            });
+            $('.tabcontents-list').hide().eq(num).show();
+        }).first().click();
+    });
+</script>
+<script>
+    $(function() {
+        $('.tab2>li').click(function() {
+            var num = $(this).parent().children('li').index(this);
+            $('.tab2').each(function(){
+                $('>li',this).removeClass('active').eq(num).addClass('active');
+            });
+            $('.tabcontents-list2').hide().eq(num).show();
+        }).first().click();
+    });
+</script>
+<script>
+    $(function() {
+        $('.tab3>li').click(function() {
+            var num = $(this).parent().children('li').index(this);
+            $('.tab3').each(function(){
+                $('>li',this).removeClass('active').eq(num).addClass('active');
+            });
+            $('.tabcontents-list3').hide().eq(num).show();
+        }).first().click();
+    });
+</script>
+<script>
+    $(function() {
+        $('.tab4>li').click(function() {
+            var num = $(this).parent().children('li').index(this);
+            $('.tab4').each(function(){
+                $('>li',this).removeClass('active').eq(num).addClass('active');
+            });
+            $('.tabcontents-list4').hide().eq(num).show();
+        }).first().click();
+    });
+</script>
+<script>
+    $(function() {
+        $('.tab5>li').click(function() {
+            var num = $(this).parent().children('li').index(this);
+            $('.tab5').each(function(){
+                $('>li',this).removeClass('active').eq(num).addClass('active');
+            });
+            $('.tabcontents-list5').hide().eq(num).show();
+        }).first().click();
+    });
+</script>
+
+<script>
+    $(function() {
+        $('.tab_comment>li').click(function() {
+            var num = $(this).parent().children('li').index(this);
+            $('.tab_comment').each(function(){
+                $('>li',this).removeClass('active').eq(num).addClass('active');
+            });
+            $('.tabcontents-list_comment').hide().eq(num).show();
+        }).first().click();
+    });
+</script>
+<script>
+    $(function() {
+        $('.tab_start>li').click(function() {
+            var num = $(this).parent().children('li').index(this);
+            $('.tab_start').each(function(){
+                $('>li',this).removeClass('active').eq(num).addClass('active');
+            });
+            $('.tabcontents-list_start').hide().eq(num).show();
+        }).first().click();
+    });
+</script>
+<script>
+    $(function() {
+        $('.tab_odds>li').click(function() {
+            var num = $(this).parent().children('li').index(this);
+            $('.tab_odds').each(function(){
+                $('>li',this).removeClass('active').eq(num).addClass('active');
+            });
+            $('.tabcontents-list_odds').hide().eq(num).show();
+        }).first().click();
+    });
+</script>
+<script>
+    $(function(){
+        $('.panel_footer a').click(function(){
+          $('#drawer-check').prop('checked',false);
+          $('#drawer-check2').prop('checked',false);
+          $('html').removeClass('fixed'); 
+        });
+    });
+</script>
+
+<!--アコーディオン-->
+<script>
+    $(function () {
+        //最初は全てのパネルを非表示に
+        $('.panel_footer > dd').hide();
+        $('.panel_footer > dt')
+            .click(function (e) {
+                //選択したパネルを開く
+                $('+dd', this).slideToggle(500);
+                $(this).toggleClass("active");//追加部分
+            })
+
+    });
+</script>
+<script src="js/fout.js"></script>
+<script type="text/javascript">
+(function(s,m,n,l,o,g,i,c,a,d){c=(s[o]||(s[o]={}))[g]||(s[o][g]={});if(c[i])return;c[i]=function(){(c[i+"_queue"]||(c[i+"_queue"]=[])).push(arguments)};a=m.createElement(n);a.charset="utf-8";a.async=true;a.src=l;d=m.getElementsByTagName(n)[0];d.parentNode.insertBefore(a,d)})(window,document,"script","https://cd.ladsp.com/script/pixel2.js","Smn","Logicad","pixel");
+Smn.Logicad.pixel({
+"f":"1",
+"smnAdvertiserId":"00028148"
+});
+</script>
+</body>
+                                                       
+</html>

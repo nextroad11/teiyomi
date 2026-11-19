@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8"/>
+    <title>レース結果一覧 | レース情報 | ボートレース宮島</title>
+    <meta name="description" content="ボートレース宮島のオフィシャルサイトです。">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="css/reset.css?1234">
+    <link rel="stylesheet" href="css/style.css?2">
+    <link rel="stylesheet" href="css/sp800.css?1234">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="js/jquery.bxslider.js"></script>
+    <link rel="stylesheet" href="css/swiper.css?1234">
+    <link rel="stylesheet" href="css/jquery.fancybox.css?1234">
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" href="images/favicon.png" />
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NLGHRFZD');</script>
+<!-- End Google Tag Manager -->
+	<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-K8QB3256T2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-K8QB3256T2');
+</script>
+    <script src="js/analytics.js"></script>
+    <script>
+        $(function () {
+            $(window).scroll(function () {
+                var s = $(this).scrollTop();
+                var m = 500;
+                if (s > m) {
+                    $(".fexed").fadeIn('slow');
+                } else if (s < m) {
+                    $(".fexed").fadeOut('slow');
+                }
+            });
+            $('#drawer-check, #drawer-check2').click(function(){
+                if($(this).prop('checked')){
+                    $('html').addClass('fixed');
+                }else{
+                    $('html').removeClass('fixed');
+                }
+            });
+        });
+        $(function(){
+            var style = '<link rel="stylesheet" href="css/marquee.css">';
+            $('head link:last').after(style);
+        });
+    </script>
+
+
+   <script>
+    function marquee() {
+	$.ajax({
+		type: "POST",
+		url: "./pages_php/marquee.php",
+		success:function(data){
+			$('.marquee').html(data);
+		}
+	});
+    }
+
+    //画面読み込み時、実行
+    window.onload = function(){
+    }
+
+    //定期更新
+    setInterval(function(){
+	marquee();
+    },60000);
+
+    </script>
+
+
+
+<script>
+$(function(){
+
+var date = new Date() ;
+var a = date.getTime() ;
+var unixtime = Math.floor( a / 1000 ) ;
+var time  = $.cookie( 'time' );
+var count = $.cookie( 'count' );
+if (time == "") {
+	time = unixtime;
+}
+if (count == "") {
+	count = 0;
+}
+
+var limit = unixtime - time;
+
+if ( limit <= 5 ) {
+	count = count + 1;
+	$.cookie( 'count', count );
+	$.cookie( 'time', unixtime );
+} else {
+	$.cookie( 'count', 0 );
+	$.cookie( 'time', unixtime );
+	count = 0;
+}
+
+if (count >= 3) {
+	alert('短時間のリロードはご遠慮ください');
+}
+
+});
+</script>
+
+</head>
+
+
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NLGHRFZD"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<header>
+    <div class="up">
+        <div class="inner">
+            <div class="pc">
+                <div class="left">
+                    <h1><a href="index.html"><img src="images/header_logo.png?1" alt="BOATRACE宮島"></a></h1>
+                    <time>11/19<i class="">木</i></time>
+                    <div class="kaisai">開催中</div>                    <p class="open">開門時間：<b>9:30</b></p>					<p class="br_notice">ボートレースは適度に楽しみましょう。<br>舟券の購入は20歳になってから。</p>
+                </div>
+            </div>
+            <!--<div class="right">
+                <a href="covid.html" class="caution pc">新型コロナウイルス感染症対策について</a>
+
+                <div id="google_translate_element"></div><script type="text/javascript">
+                function googleTranslateElementInit() {
+                    new google.translate.TranslateElement({pageLanguage: 'ja', includedLanguages: 'en,ja,ko,zh-CN,zh-TW,fr,es,ar,ru,de,pt,hi', layout: google.translate.TranslateElement.InlineLayout.HORIZONTAL}, 'google_translate_element');
+                }
+            </script><script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+            </div>-->
+        </div>
+    </div>
+
+    <div class="bottompart pc">
+        <div class="middle">
+            <div class="race">
+                <div class="tit"><p>場外発売(本場①②)</p></div>
+                <ul><li>戸田<img src="images/icon_racetype/g3.png" alt="G3"><img src="images/icon_racetype/lady.png" alt="レディース"></li><li>びわこ<img src="images/icon_racetype/g1.png" alt="G1"></li></ul>
+            </div>
+
+            <div class="race">
+                <div class="tit"><p>パルボート宮島(外向発売所)<br><i>開門時間</i><b>7:15</b></p></div>
+
+                <ul><li>宮島<img src="images/icon_racetype/ippan.png" alt="一般"></li><li>鳴門<img src="images/icon_racetype/ippan.png" alt="一般"><img src="images/icon_racetype/sun.png" alt="モーニング"></li><li>徳山<img src="images/icon_racetype/ippan.png" alt="一般"><img src="images/icon_racetype/sun.png" alt="モーニング"></li><li>津<img src="images/icon_racetype/ippan.png" alt="一般"></li><li>びわこ<img src="images/icon_racetype/g1.png" alt="G1"></li><li>戸田<img src="images/icon_racetype/g3.png" alt="G3"><img src="images/icon_racetype/lady.png" alt="レディース"></li><li>平和島<img src="images/icon_racetype/ippan.png" alt="一般"></li><li>福岡<img src="images/icon_racetype/ippan.png" alt="一般"></li><li>丸亀<img src="images/icon_racetype/g1.png" alt="G1"><img src="images/icon_racetype/moon.png" alt="ナイター"></li><li>大村<img src="images/icon_racetype/ippan.png" alt="一般"><img src="images/icon_racetype/moon.png" alt="ナイター"></li><li>桐生<img src="images/icon_racetype/ippan.png" alt="一般"><img src="images/icon_racetype/moon.png" alt="ナイター"></li></ul>            </div>
+
+        </div>
+        <div class="gnv">
+            <nav class="global_menu">
+                <div class="inner">
+                    <ul>
+                        <li>
+                            <a href="racer_list.html" class="gnvlink">レース情報</a>
+                            <div class="megamenu">
+                                <ul class="megamenu-inner main-wrapper">
+                                    <li><a href="racer_list.html">出場予定選手一覧</a></li>
+                                    <li><a href="prospect.html">レース展望</a></li>
+                                    <li><a href="racecard.html">出走表</a></li>
+                                    <li><a href="racedata.html">競走データ</a></li>
+                                    <li><a href="raceinfo_timerank.html">モーターボート抽選結果・<br>前検タイムランキング<br></a></li>
+                                    <li><a href="yosen_point_rank.html">予選得点率ランキング</a></li>
+                                    <li><a href="results.html">レース結果一覧</a></li>
+                                    <li><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17" class="betsu" target="_blank">レースリプレイ</a></li>
+                                    <li><a href="race_tenbou.html">専属記者レース展望動画・<br>優出選手インタビュー動画</a></li>
+                                    <li><a href="paper.html">無料専門予想紙</a></li>
+                                    <li><a href="photo_gallery.html">フォトギャラリー</a></li>
+                                </ul><!-- .megamenu-inner -->
+                            </div><!-- .megamenu -->
+                        </li>
+                        <li><a href="surface.html" class="gnvlink">データファイル</a>
+                            <div class="megamenu">
+                                <ul class="megamenu-inner main-wrapper">
+                                    <li><a href="surface.html">競走水面・進入コース別情報</a></li>
+                                    <li><a href="articles.html">レーサー紹介記事一覧</a></li>
+                                    <li><a href="ranking.html">賞金ランキング</a></li>
+                                    <!--<li><a href="https://sp.macour.jp/s/kyotei-info/miyajima/br17book2021/pc/" class="betsu" target="_blank">舟券傾向と対策</a></li>-->
+
+                                </ul><!-- .megamenu-inner -->
+                            </div><!-- .megamenu -->
+                        </li>
+                        <li><a href="schedule.html" class="gnvlink">開催・発売日程</a>
+                            <div class="megamenu">
+                                <ul class="megamenu-inner main-wrapper">
+                                    <li><a href="schedule.html">宮島本場＆PALBOAT宮島</a></li>
+                                    <li><a href="https://palboat-miyajima.com/" class="betsu" target="_blank">PALBOAT宮島</a></li>
+                                    <li><a href="https://www.bp-kure.com/" class="betsu" target="_blank">BTS呉</a></li>
+                                    <li><a href="https://br-akitakata.com/" class="betsu" target="_blank">BTS安芸高田</a></li>
+                                    <li><a href="https://bts-onomichi.biho.jp/" class="betsu" target="_blank">BTS尾道</a></li>
+                                </ul><!-- .megamenu-inner -->
+                            </div><!-- .megamenu -->
+
+                        </li>
+                        <li><a href="hiroshima_racer.html" class="gnvlink">広島支部選手</a>
+                            <div class="megamenu">
+                                <ul class="megamenu-inner main-wrapper">
+                                    <li><a href="hiroshima_racer.html">広島支部選手一覧</a></li>
+                                    <li><a href="hiroshima_racer.html#under_base_winners">広島支部選手優勝情報</a></li>
+                                    <li><a href="hiroshima_racer.html#under_base_lookie">スター候補選手・新人選手紹介</a></li>
+                                    <li><a href="diary_movie.html">広島支部日記動画</a></li>
+                                    <li><a href="monta_channel.html">モンタチャンネル</a></li>
+                                </ul><!-- .megamenu-inner -->
+                            </div><!-- .megamenu -->
+
+                        </li>
+                        <li><a href="news.html" class="gnvlink">新着情報・サービス案内</a>
+                            <div class="megamenu">
+                                <ul class="megamenu-inner main-wrapper">
+                                    <li><a href="news.html">新着情報</a></li>
+                                    <li><a href="event.html">場内イベント</a></li>
+									<li><a href="fanservice.html">場内ファンサービス</a></li>
+                                    <li><a href="youtube_schedule.html">公式YouTube番組配信予定</a></li>
+                                    <li><a href="televoting.html">各種キャンペーン</a></li>
+                                    <li><a href="goods.html">宮島オリジナルグッズ</a></li>
+                                    <li><a href="momiji_card.html">キャッシュレス投票『モミジカード』</a></li>
+                                    <li><a href="app.html">公式SNS・スマホ専用アプリ</a></li>
+                                    <li><a href="beginners.html">初心者ガイド</a></li>
+                                    <li><a href="banners.html">横断幕について</a></li>
+                                    <li><a href="panorama.html">パノラマムービー</a></li>
+									<li><a href="https://www.boatrace-miyajima.com/pdf/vr_schedule.pdf" class="betsu" target="_blank">ＶＲスプラッシュバトル実施予定日</a></li>
+                                    <li><a href="https://www.boatrace-miyajima.com/pdf/kutsurogi_r8.pdf" class="betsu" target="_blank">3Fくつろぎルームご利用案内&開放予定日</a></li>
+									<li><a href="ga-info.html">ギャンブル依存症関連</a></li>
+									<li><a href="https://gamble-shindan.com/?utm_source=sitelink&utm_medium=banner&utm_campaign=boatrace202203" class="betsu" target="_blank">ギャンブル依存症セルフチェック</a></li>
+									<li><a href="jalert-info.html">Jアラート関連</a></li>
+                                </ul><!-- .megamenu-inner -->
+                            </div><!-- .megamenu -->
+
+                        </li>
+                        <li><a href="facility.html" class="gnvlink">施設・アクセス</a>
+                            <div class="megamenu">
+                                <ul class="megamenu-inner main-wrapper">
+                                    <li><a href="facility.html">フロアガイド</a></li>
+                                    <li><a href="gourmet.html">グルメガイド</a></li>
+                                    <li><a href="reserved_seat.html">指定席</a></li>
+                                    <li><span><a href="seat_availability.html">指定席発売状況(当日)</a></span></li>
+                                    <li><a href="access.html">交通アクセス</a></li>
+                                    <li><a href="parking.html">専用駐車場</a></li>
+                                    <li><a href="rokumiyajima.html">ROKU宮島</a></li>
+                                    <li><a href="spot.html">周辺の観光情報・宮島カメラ</a></li>
+                                </ul><!-- .megamenu-inner -->
+                            </div><!-- .megamenu -->
+                        </li>
+                        <li><a href="https://ib.mbrace.or.jp/" class="vote gnvlink" target="_blank"><div class="vote"><p>投票</p></div></a></li>
+
+                    </ul> </div>
+            </nav>
+
+        </div>
+    </div>
+
+    <div class="header_bottompart_sp sp">
+
+        <div class="int">
+            <div class="up">
+                <h1><a href="index.html"><img src="images/sp_head_logo.png?1" alt="BOATRACE宮島"></a></h1>
+
+
+                <!-- ハンバーガーメニュー部分 -->
+                <div class="drawer">
+                    <!-- ハンバーガーメニューの表示・非表示を切り替えるチェックボックス -->
+                    <input type="checkbox" id="drawer-check" class="drawer-hidden" >
+
+                    <!-- ハンバーガーアイコン -->
+                    <label for="drawer-check" class="drawer-open"><span></span><p>MENU</p></label>
+
+                    <!-- メニュー -->
+                    <nav class="drawer-content">
+                        <dl class="panel_footer">
+                            <a href="index.html" class="top">TOP</a>
+                            <dt>レース情報</dt>
+                            <dd>
+                                <ul>
+                                    <li><a href="racer_list.html">出場予定選手一覧</a></li>
+                                    <li><a href="prospect.html">レース展望</a></li>
+                                    <li><a href="racecard.html">出走表</a></li>
+                                    <li><a href="racedata.html">競走データ</a></li>
+                                    <li><a href="raceinfo_timerank.html">モーターボート抽選結果・<br>前検タイムランキング<br></a></li>
+                                    <li><a href="yosen_point_rank.html">予選得点率ランキング</a></li>
+                                    <li><a href="results.html">レース結果一覧</a></li>
+                                    <li><a href="https://livebb.jlc.ne.jp/bb_top/sp_bb/vod_17.php" class="betsu" target="_blank">レースリプレイ</a></li>
+                                    <li><a href="race_tenbou.html">専属記者レース展望動画・<br>優出選手インタビュー動画</a></li>
+                                    <li><a href="paper.html">無料専門予想紙</a></li>
+                                    <li><a href="photo_gallery.html">フォトギャラリー</a></li>
+                                </ul>
+                            </dd>
+                        </dl>
+                        <dl class="panel_footer">
+
+                            <dt>データファイル</dt>
+                            <dd>
+                                <ul>
+                                    <li><a href="surface.html">競走水面・進入コース別情報</a></li>
+                                    <li><a href="articles.html">レーサー紹介記事一覧</a></li>
+                                    <li><a href="ranking.html">賞金ランキング</a></li>
+                                    <!--<li><a href="https://sp.macour.jp/s/kyotei-info/miyajima/br17book2021/sp/" class="betsu" target="_blank">舟券傾向と対策</a></li>-->
+                                </ul>
+                            </dd>
+                        </dl>
+                        <dl class="panel_footer">
+
+                            <dt>開催・発売日程</dt>
+                            <dd>
+                                <ul>
+                                    <li><a href="schedule.html">宮島本場＆PALBOAT宮島</a></li>
+                                    <li><a href="https://palboat-miyajima.com/" class="betsu" target="_blank">PALBOAT宮島</a></li>
+                                    <li><a href="https://www.bp-kure.com/" class="betsu" target="_blank">BTS呉</a></li>
+                                    <li><a href="https://br-akitakata.com/" class="betsu" target="_blank">BTS安芸高田</a></li>
+                                    <li><a href="https://bts-onomichi.biho.jp/" class="betsu" target="_blank">BTS尾道</a></li>
+                                </ul>
+                            </dd>
+                        </dl>
+
+                        <dl class="panel_footer">
+
+                            <dt>広島支部選手</dt>
+                            <dd>
+                                <ul>
+                                    <li><a href="hiroshima_racer.html">広島支部選手一覧</a></li>
+                                    <li><a href="hiroshima_racer.html#under_base_winners">広島支部選手優勝情報</a></li>
+                                    <li><a href="hiroshima_racer.html#under_base_lookie">スター候補選手・新人選手紹介</a></li>
+                                    <li><a href="diary_movie.html">広島支部日記動画</a></li>
+                                    <li><a href="monta_channel.html">モンタチャンネル</a></li>
+                                </ul>
+                            </dd>
+                        </dl>
+                        <dl class="panel_footer">
+
+                            <dt>新着情報・サービス案内</dt>
+                            <dd>
+                                <ul>
+                                    <li><a href="news.html">新着情報</a></li>
+                                    <li><a href="event.html">場内イベント</a></li>
+									<li><a href="fanservice.html">場内ファンサービス</a></li>
+                                    <li><a href="youtube_schedule.html">公式YouTube番組配信予定</a></li>
+                                    <li><a href="televoting.html">各種キャンペーン</a></li>
+                                    <li><a href="goods.html">宮島オリジナルグッズ</a></li>
+                                    <li><a href="momiji_card.html">キャッシュレス投票『モミジカード』</a></li>
+                                    <li><a href="app.html">公式SNS・スマホ専用アプリ</a></li>
+                                    <li><a href="beginners.html">初心者ガイド</a></li>
+                                    <li><a href="banners.html">横断幕について</a></li>
+                                    <li><a href="panorama.html">パノラマムービー</a></li>
+									<li><a href="https://www.boatrace-miyajima.com/pdf/vr_schedule.pdf" class="betsu" target="_blank">ＶＲスプラッシュバトル実施予定日</a></li>
+                                    <li><a href="https://www.boatrace-miyajima.com/pdf/kutsurogi_r8.pdf" class="betsu" target="_blank">3Fくつろぎルームご利用案内&開放予定日</a></li>
+									<li><a href="ga-info.html">ギャンブル依存症関連</a></li>
+									<li><a href="https://gamble-shindan.com/?utm_source=sitelink&utm_medium=banner&utm_campaign=boatrace202203" class="betsu" target="_blank">ギャンブル依存症セルフチェック</a></li>
+									<li><a href="jalert-info.html">Jアラート関連</a></li>
+                                </ul>
+                            </dd>
+                        </dl>
+                        <dl class="panel_footer">
+
+                            <dt>施設・アクセス</dt>
+                            <dd>
+                                <ul>
+                                    <li><a href="facility.html">フロアガイド</a></li>
+                                    <li><a href="gourmet.html">グルメガイド</a></li>
+                                    <li><a href="reserved_seat.html">指定席</a></li>
+                                    <li><span><a href="seat_availability.html">指定席発売状況(当日)</a></span></li>
+                                    <li><a href="access.html">交通アクセス</a></li>
+                                    <li><a href="parking.html">専用駐車場</a></li>
+                                    <li><a href="rokumiyajima.html">ROKU宮島</a></li>
+                                    <li><a href="spot.html">周辺の観光情報・宮島カメラ</a></li>
+                                </ul>
+                            </dd>
+                        </dl>
+                        <dl class="panel_footer panel_footer_bottom">
+
+                            <dt>お問い合わせ・その他</dt>
+                            <dd>
+                                <ul>
+                                    <li><a href="contact.html">ご意見・ご要望</a></li>
+                                    <li><a href="faq.html">よくある質問</a></li>
+                                    <li><a href="req.html">サイトポリシー</a></li>
+                                    <li><a href="privacy.html">プライバシーポリシー</a></li>
+                                    <li><a href="links.html">リンク集</a></li>
+                                    <li><a href="groupinfo.html" style="font-size: 1.15em; font-weight: bold;">宮島ボートレース企業団からのお知らせ（事業者向け）</a></li>
+                                </ul>
+                            </dd>
+                        </dl>
+
+                    </nav>
+                </div>
+
+            </div>
+
+
+            <div class="bottomin">
+                <time>11/19<i class="">木</i></time>
+                <div class="kaisai">開催中</div>                <p class="open">開門時間：<b>9:30</b></p>            </div>
+        </div>
+    </div>
+
+</header>
+
+<span style="display:none;">off</span>
+<section class="content">
+
+    <div class="newshead">
+        <p class="tit">NEWS</p>
+        <div class="txtline">
+        <p class="marquee">本日のレースは終了しました。<font color="red"><b>今節のﾚｰｽ進行時間 ●1Rｽﾀｰﾄ展示開始･･･9:55 ●12R締切予定･･･15:28〜32頃</b></font>　　　　　　　　</p>
+        </div>
+    </div>
+    <div class="monta_run">
+        <img src="images/monta_run.png">
+    </div>
+
+    <section class="pagetitle">
+        <h2>レース結果一覧</h2>
+        <ul>
+            <li><a href="index.html">Top</a></li>
+            <li><a href="racer_list.html">レース情報</a></li>
+            <li>レース結果一覧</li>
+        </ul>
+    </section>
+
+    <section id="under_base_gallery">
+
+        <dl id="acMenu_race">
+            <dt>2026<i>のレース</i></dt><dd><ul class="past_race"><li><a href="result_detail.html?day=20261112">宮島オータムカップ [2026/11/09 - 2026/11/12]</a></li>
+<li><a href="result_detail.html?day=20261106">ルーキーシリーズ第２１戦スカパー！・ＪＬＣ杯 [2026/11/01 - 2026/11/06]</a></li>
+<li><a href="result_detail.html?day=20261025">第４７回報知エキサイトカップＢＴＳ尾道開設６周年 [2026/10/20 - 2026/10/25]</a></li>
+<li><a href="result_detail.html?day=20260923">マンスリーＢＯＡＴＲＡＣＥ杯宮島プリンセスカップ [2026/09/18 - 2026/09/23]</a></li>
+<li><a href="result_detail.html?day=20260913">ＢＯＡＴＲＡＣＥ振興会会長賞 [2026/09/09 - 2026/09/13]</a></li>
+<li><a href="result_detail.html?day=20260906">第１７回ＰａｙＰａｙ銀行賞 [2026/09/02 - 2026/09/06]</a></li>
+<li><a href="result_detail.html?day=20260830">第５３回岩田杯 [2026/08/25 - 2026/08/30]</a></li>
+<li><a href="result_detail.html?day=20260819">第５６回スポーツニッポン杯 [2026/08/14 - 2026/08/19]</a></li>
+<li><a href="result_detail.html?day=20260808">第１１回ポカリスエットカップ [2026/08/03 - 2026/08/08]</a></li>
+<li><a href="result_detail.html?day=20260729">第１６回みやじマリンカップ [2026/07/24 - 2026/07/29]</a></li>
+<li><a href="result_detail.html?day=20260719">ばんえい十勝杯 [2026/07/15 - 2026/07/19]</a></li>
+<li><a href="result_detail.html?day=20260701">第１４回サッポロビール杯 [2026/06/26 - 2026/07/01]</a></li>
+<li><a href="result_detail.html?day=20260622">マスターズリーグ第２戦デイリースポーツ杯 [2026/06/17 - 2026/06/22]</a></li>
+<li><a href="result_detail.html?day=20260609">宮島チャンピオンカップ開設７２周年記念 [2026/06/04 - 2026/06/09]</a></li>
+<li><a href="result_detail.html?day=20260530">第２０回日本トーター賞ＢＴＳ安芸高田開設７周年記念 [2026/05/25 - 2026/05/30]</a></li>
+<li><a href="result_detail.html?day=20260521">サントリー杯 [2026/05/16 - 2026/05/21]</a></li>
+<li><a href="result_detail.html?day=20260505">第５５回サンケイスポーツ若葉賞 [2026/04/30 - 2026/05/05]</a></li>
+<li><a href="result_detail.html?day=20260426">第２７回マスターズチャンピオン [2026/04/21 - 2026/04/26]</a></li>
+<li><a href="result_detail.html?day=20260415">にっぽん未来プロジェクト競走ｉｎ宮島 [2026/04/10 - 2026/04/15]</a></li>
+<li><a href="result_detail.html?day=20260407">広島ホームテレビプレゼンツういちの大ブッちぎりィ祭 [2026/04/03 - 2026/04/07]</a></li>
+<li><a href="result_detail.html?day=20260331">中日スポーツ賞 [2026/03/26 - 2026/03/31]</a></li>
+<li><a href="result_detail.html?day=20260322">ヴィーナスシリーズ第２４戦第１１回マクール杯 [2026/03/17 - 2026/03/22]</a></li>
+<li><a href="result_detail.html?day=20260311">にっぽん未来プロジェクト競走ｉｎ宮島 [2026/03/06 - 2026/03/11]</a></li>
+<li><a href="result_detail.html?day=20260225">ＰＡＬＢＯＡＴ宮島開設１１周年記念第６回週刊大衆杯 [2026/02/20 - 2026/02/25]</a></li>
+<li><a href="result_detail.html?day=20260217">第１３回トータリゼータエンジニアリング杯 [2026/02/12 - 2026/02/17]</a></li>
+<li><a href="result_detail.html?day=20260208">第１５回やまだ屋「桐葉菓」杯 [2026/02/03 - 2026/02/08]</a></li>
+<li><a href="result_detail.html?day=20260125">九州スポーツ杯 [2026/01/20 - 2026/01/25]</a></li>
+<li><a href="result_detail.html?day=20260113">第２２回日本モーターボート選手会会長賞 [2026/01/09 - 2026/01/13]</a></li>
+</ul>
+</dd>
+<dt>2025<i>のレース</i></dt><dd><ul class="past_race"><li><a href="result_detail.html?day=20260104">第５２回日刊スポーツ栄光楯新春広島ダービー [2025/12/30 - 2026/01/04]</a></li>
+<li><a href="result_detail.html?day=20251225">２０２５ハッピークリスマスカップ [2025/12/20 - 2025/12/25]</a></li>
+<li><a href="result_detail.html?day=20251215">ＢＴＳ呉開設３３周年記念富士通フロンテックカップ [2025/12/10 - 2025/12/15]</a></li>
+<li><a href="result_detail.html?day=20251206">ＢＯＡＴＢｏｙカップ [2025/12/01 - 2025/12/06]</a></li>
+<li><a href="result_detail.html?day=20251126">瀬戸内オーシャンズＸ第３２回日本財団会長杯 [2025/11/21 - 2025/11/26]</a></li>
+<li><a href="result_detail.html?day=20251118">第１６回ＰａｙＰａｙ銀行賞 [2025/11/13 - 2025/11/18]</a></li>
+<li><a href="result_detail.html?day=20251110">マンスリーＢＯＡＴＲＡＣＥ杯宮島プリンセスカップ [2025/11/05 - 2025/11/10]</a></li>
+<li><a href="result_detail.html?day=20251102">ＢＴＳ尾道開設５周年第４６回報知エキサイトカップ [2025/10/28 - 2025/11/02]</a></li>
+<li><a href="result_detail.html?day=20251024">第１６回サクラオＢ＆Ｄ杯 [2025/10/19 - 2025/10/24]</a></li>
+<li><a href="result_detail.html?day=20250928">第１２回ヤングダービー [2025/09/23 - 2025/09/28]</a></li>
+<li><a href="result_detail.html?day=20250919">ルーキーシリーズ第１６戦第１１回スカパーＪＬＣ杯 [2025/09/14 - 2025/09/19]</a></li>
+<li><a href="result_detail.html?day=20250910">第１９回日本トーター賞 [2025/09/05 - 2025/09/10]</a></li>
+<li><a href="result_detail.html?day=20250831">第１３回サッポロビール杯 [2025/08/26 - 2025/08/31]</a></li>
+<li><a href="result_detail.html?day=20250817">第５５回スポーツニッポン杯 [2025/08/12 - 2025/08/17]</a></li>
+<li><a href="result_detail.html?day=20250808">第１０回ポカリスエットカップ [2025/08/03 - 2025/08/08]</a></li>
+<li><a href="result_detail.html?day=20250730">第１５回みやじマリンカップ [2025/07/25 - 2025/07/30]</a></li>
+<li><a href="result_detail.html?day=20250721">デイリースポーツ杯争奪男女Ｗ優勝戦 [2025/07/16 - 2025/07/21]</a></li>
+<li><a href="result_detail.html?day=20250710">第１９回ヤクルトカップ [2025/07/07 - 2025/07/10]</a></li>
+<li><a href="result_detail.html?day=20250623">第１８回楽天銀行賞 [2025/06/20 - 2025/06/23]</a></li>
+<li><a href="result_detail.html?day=20250615">第４回エフ・ディミニッシュバトルシリーズ [2025/06/12 - 2025/06/15]</a></li>
+<li><a href="result_detail.html?day=20250601">ＢＴＳ安芸高田開設６周年サンフレッチェ広島カップ [2025/05/28 - 2025/06/01]</a></li>
+<li><a href="result_detail.html?day=20250525">第１３回東洋観光グループ杯 [2025/05/21 - 2025/05/25]</a></li>
+<li><a href="result_detail.html?day=20250517">にっぽん未来プロジェクト競走ｉｎ宮島 [2025/05/12 - 2025/05/17]</a></li>
+<li><a href="result_detail.html?day=20250505">創刊７０周年記念第５４回サンケイスポーツ若葉賞 [2025/04/30 - 2025/05/05]</a></li>
+<li><a href="result_detail.html?day=20250427">第５２回岩田杯 [2025/04/22 - 2025/04/27]</a></li>
+<li><a href="result_detail.html?day=20250417">広島ホームテレビプレゼンツういちの大ブッちぎりィ祭 [2025/04/12 - 2025/04/17]</a></li>
+<li><a href="result_detail.html?day=20250408">宮島チャンピオンカップ開設７１周年記念 [2025/04/03 - 2025/04/08]</a></li>
+<li><a href="result_detail.html?day=20250331">にっぽん未来プロジェクト競走ｉｎ宮島 [2025/03/26 - 2025/03/31]</a></li>
+<li><a href="result_detail.html?day=20250317">ヴィーナスシリーズ第２３戦第１０回マクール杯 [2025/03/12 - 2025/03/17]</a></li>
+<li><a href="result_detail.html?day=20250309">ＰＡＬＢＯＡＴ宮島開設１０周年記念第５１回岩田杯 [2025/03/04 - 2025/03/09]</a></li>
+<li><a href="result_detail.html?day=20250301">第１７回楽天銀行賞 [2025/02/25 - 2025/03/01]</a></li>
+<li><a href="result_detail.html?day=20250216">第１４回やまだ屋「桐葉菓」杯 [2025/02/12 - 2025/02/16]</a></li>
+<li><a href="result_detail.html?day=20250209">中日スポーツ賞 [2025/02/05 - 2025/02/09]</a></li>
+<li><a href="result_detail.html?day=20250128">九州スポーツ杯 [2025/01/23 - 2025/01/28]</a></li>
+<li><a href="result_detail.html?day=20250116">第５回週刊大衆杯 [2025/01/11 - 2025/01/16]</a></li>
+</ul>
+</dd>
+<dt>2024<i>のレース</i></dt><dd><ul class="past_race"><li><a href="result_detail.html?day=20250105">第５１回日刊スポーツ栄光楯新春広島ダービー [2024/12/31 - 2025/01/05]</a></li>
+<li><a href="result_detail.html?day=20241228">ハッピークリスマスＢＯＡＴＢｏｙカップ２０２４ [2024/12/25 - 2024/12/28]</a></li>
+<li><a href="result_detail.html?day=20241222">第１５回サクラオＢ＆Ｄ杯 [2024/12/18 - 2024/12/22]</a></li>
+<li><a href="result_detail.html?day=20241215">デイリースポーツ杯 [2024/12/10 - 2024/12/15]</a></li>
+<li><a href="result_detail.html?day=20241206">第１４回富士通フロンテックカップ [2024/12/01 - 2024/12/06]</a></li>
+<li><a href="result_detail.html?day=20241128">第１８回日本トーター賞 [2024/11/23 - 2024/11/28]</a></li>
+<li><a href="result_detail.html?day=20241119">ルーキーシリーズ第１９戦第１０回スカパー・ＪＬＣ杯 [2024/11/14 - 2024/11/19]</a></li>
+<li><a href="result_detail.html?day=20241110">ボートレース宮島７０年ありがとうカップ [2024/11/05 - 2024/11/10]</a></li>
+<li><a href="result_detail.html?day=20241025">瀬戸内オーシャンズＸ第３１回日本財団会長杯 [2024/10/20 - 2024/10/25]</a></li>
+<li><a href="result_detail.html?day=20240925">ＢＴＳ尾道開設４周年第４５回報知エキサイトカップ [2024/09/20 - 2024/09/25]</a></li>
+<li><a href="result_detail.html?day=20240917">マンスリーＢＯＡＴＲＡＣＥ杯宮島プリンセスカップ [2024/09/12 - 2024/09/17]</a></li>
+<li><a href="result_detail.html?day=20240909">第１５回ＰａｙＰａｙ銀行賞 [2024/09/04 - 2024/09/09]</a></li>
+<li><a href="result_detail.html?day=20240902">第１２回サッポロビール杯 [2024/08/27 - 2024/09/02]</a></li>
+<li><a href="result_detail.html?day=20240820">第５４回スポーツニッポン杯 [2024/08/15 - 2024/08/20]</a></li>
+<li><a href="result_detail.html?day=20240808">第３回エフ・ディミニッシュバトルシリーズ [2024/08/03 - 2024/08/08]</a></li>
+<li><a href="result_detail.html?day=20240730">第１４回みやじマリンカップ [2024/07/25 - 2024/07/30]</a></li>
+<li><a href="result_detail.html?day=20240715">第１２回東洋観光グループ杯 [2024/07/10 - 2024/07/15]</a></li>
+<li><a href="result_detail.html?day=20240704">第９回ポカリスエットカップ [2024/06/30 - 2024/07/04]</a></li>
+<li><a href="result_detail.html?day=20240625">ＢＴＳ安芸高田開設５周年サンフレッチェ広島カップ [2024/06/20 - 2024/06/25]</a></li>
+<li><a href="result_detail.html?day=20240614">宮島チャンピオンカップ開設７０周年記念 [2024/06/09 - 2024/06/14]</a></li>
+<li><a href="result_detail.html?day=20240601">第１８回ヤクルトカップ [2024/05/27 - 2024/06/01]</a></li>
+<li><a href="result_detail.html?day=20240522">にっぽん未来プロジェクト競走ｉｎ宮島 [2024/05/17 - 2024/05/22]</a></li>
+<li><a href="result_detail.html?day=20240512">第９回レディースオールスター [2024/05/07 - 2024/05/12]</a></li>
+<li><a href="result_detail.html?day=20240503">第５３回サンケイスポーツ若葉賞 [2024/04/28 - 2024/05/03]</a></li>
+<li><a href="result_detail.html?day=20240422">第２１回日本モーターボート選手会会長賞 [2024/04/18 - 2024/04/22]</a></li>
+<li><a href="result_detail.html?day=20240415">ういちの大ブッちぎりィ！！祭 [2024/04/10 - 2024/04/15]</a></li>
+<li><a href="result_detail.html?day=20240407">第１２回トータリゼータエンジニアリング杯 [2024/04/03 - 2024/04/07]</a></li>
+<li><a href="result_detail.html?day=20240331">第２０回日本モーターボート選手会会長賞 [2024/03/26 - 2024/03/31]</a></li>
+<li><a href="result_detail.html?day=20240323">九州スポーツ杯 [2024/03/18 - 2024/03/23]</a></li>
+<li><a href="result_detail.html?day=20240314">モーターボート大賞 [2024/03/09 - 2024/03/14]</a></li>
+<li><a href="result_detail.html?day=20240303">ヴィーナスシリーズ第２１戦第９回マクール杯 [2024/02/27 - 2024/03/03]</a></li>
+<li><a href="result_detail.html?day=20240224">ＰＡＬＢＯＡＴ宮島開設９周年記念第５０回岩田杯 [2024/02/19 - 2024/02/24]</a></li>
+<li><a href="result_detail.html?day=20240215">第６７回中国地区選手権 [2024/02/10 - 2024/02/15]</a></li>
+<li><a href="result_detail.html?day=20240128">にっぽん未来プロジェクト競走ｉｎ宮島 [2024/01/23 - 2024/01/28]</a></li>
+<li><a href="result_detail.html?day=20240115">第４回週刊大衆杯 [2024/01/10 - 2024/01/15]</a></li>
+</ul>
+</dd>
+<dt>2023<i>のレース</i></dt><dd><ul class="past_race"><li><a href="result_detail.html?day=20240104">第５０回日刊スポーツ栄光楯新春広島ダービー [2023/12/30 - 2024/01/04]</a></li>
+<li><a href="result_detail.html?day=20231227">第１７回日本トーター賞クリスマスカップ [2023/12/24 - 2023/12/27]</a></li>
+<li><a href="result_detail.html?day=20231221">中日スポーツ賞 [2023/12/16 - 2023/12/21]</a></li>
+<li><a href="result_detail.html?day=20231212">第１３回富士通フロンテックカップ [2023/12/07 - 2023/12/12]</a></li>
+<li><a href="result_detail.html?day=20231203">第１０回住信ＳＢＩネット銀行賞 [2023/11/29 - 2023/12/03]</a></li>
+<li><a href="result_detail.html?day=20231126">第２回エフ・ディミニッシュバトルシリーズ [2023/11/22 - 2023/11/26]</a></li>
+<li><a href="result_detail.html?day=20231119">第１６回楽天銀行賞 [2023/11/15 - 2023/11/19]</a></li>
+<li><a href="result_detail.html?day=20231112">第１３回やまだ屋「桐葉菓」杯 [2023/11/07 - 2023/11/12]</a></li>
+<li><a href="result_detail.html?day=20231031">ＢＴＳ尾道開設３周年記念第３０回日本財団会長杯 [2023/10/26 - 2023/10/31]</a></li>
+<li><a href="result_detail.html?day=20231022">第１１回東洋観光グループ杯 [2023/10/17 - 2023/10/22]</a></li>
+<li><a href="result_detail.html?day=20230923">マンスリーＢＯＡＴＲＡＣＥ杯宮島プリンセスカップ [2023/09/18 - 2023/09/23]</a></li>
+<li><a href="result_detail.html?day=20230915">第１４回ＰａｙＰａｙ銀行賞 [2023/09/11 - 2023/09/15]</a></li>
+<li><a href="result_detail.html?day=20230908">第４４回報知エキサイトカップ [2023/09/03 - 2023/09/08]</a></li>
+<li><a href="result_detail.html?day=20230830">第１１回トータリゼータエンジニアリング杯 [2023/08/25 - 2023/08/30]</a></li>
+<li><a href="result_detail.html?day=20230818">創刊７５周年記念第５３回スポーツニッポン杯 [2023/08/13 - 2023/08/18]</a></li>
+<li><a href="result_detail.html?day=20230806">第１１回サッポロビール杯 [2023/08/01 - 2023/08/06]</a></li>
+<li><a href="result_detail.html?day=20230729">にっぽん未来プロジェクト競走ｉｎ宮島 [2023/07/24 - 2023/07/29]</a></li>
+<li><a href="result_detail.html?day=20230717">ルーキーシリーズ第１１戦第９回スカパー！・ＪＬＣ杯 [2023/07/12 - 2023/07/17]</a></li>
+<li><a href="result_detail.html?day=20230709">第１３回みやじマリンカップ [2023/07/04 - 2023/07/09]</a></li>
+<li><a href="result_detail.html?day=20230628">ＢＴＳ安芸高田開設４周年サンフレッチェ広島カップ [2023/06/24 - 2023/06/28]</a></li>
+<li><a href="result_detail.html?day=20230621">マスターズリーグ第３戦デイリースポーツ杯 [2023/06/16 - 2023/06/21]</a></li>
+<li><a href="result_detail.html?day=20230611">第８回ポカリスエットカップ [2023/06/06 - 2023/06/11]</a></li>
+<li><a href="result_detail.html?day=20230603">第１７回ヤクルトカップ [2023/05/29 - 2023/06/03]</a></li>
+<li><a href="result_detail.html?day=20230505">第５２回サンケイスポーツ若葉賞 [2023/04/30 - 2023/05/05]</a></li>
+<li><a href="result_detail.html?day=20230425">第１４回サクラオＢ＆Ｄ杯 [2023/04/22 - 2023/04/25]</a></li>
+<li><a href="result_detail.html?day=20230419">ういちの大ブッちぎりィ！！祭 [2023/04/14 - 2023/04/19]</a></li>
+<li><a href="result_detail.html?day=20230410">宮島チャンピオンカップ開設６９周年記念 [2023/04/04 - 2023/04/10]</a></li>
+<li><a href="result_detail.html?day=20230331">ルーキーシリーズ第６戦第８回スカパー！・ＪＬＣ杯 [2023/03/26 - 2023/03/31]</a></li>
+<li><a href="result_detail.html?day=20230319">第３回週刊大衆杯 [2023/03/14 - 2023/03/19]</a></li>
+<li><a href="result_detail.html?day=20230311">九スポプレゼンツ１３代目ヘビー級王決定戦 [2023/03/06 - 2023/03/11]</a></li>
+<li><a href="result_detail.html?day=20230226">ＰＡＬＢＯＡＴ宮島開設８周年記念第４９回岩田杯 [2023/02/21 - 2023/02/26]</a></li>
+<li><a href="result_detail.html?day=20230218">第９回住信ＳＢＩネット銀行賞 [2023/02/15 - 2023/02/18]</a></li>
+<li><a href="result_detail.html?day=20230212">第１３回サクラオＢ＆Ｄ杯 [2023/02/07 - 2023/02/12]</a></li>
+<li><a href="result_detail.html?day=20230203">第２回ＹｏｕＴｕｂｅ「ブッちぎりィ！！」カップ [2023/01/30 - 2023/02/03]</a></li>
+<li><a href="result_detail.html?day=20230127">ヴィーナスシリーズ第１９戦第８回マクール杯 [2023/01/22 - 2023/01/27]</a></li>
+<li><a href="result_detail.html?day=20230114">第４３回報知エキサイトカップ [2023/01/09 - 2023/01/14]</a></li>
+</ul>
+</dd>
+<dt>2022<i>のレース</i></dt><dd><ul class="past_race"><li><a href="result_detail.html?day=20230104">第４９回日刊スポーツ栄光楯広島ダービー [2022/12/30 - 2023/01/04]</a></li>
+<li><a href="result_detail.html?day=20221227">第１０回新東通信杯 [2022/12/24 - 2022/12/27]</a></li>
+<li><a href="result_detail.html?day=20221221">デイリースポーツ杯争奪男女Ｗ優勝戦 [2022/12/16 - 2022/12/21]</a></li>
+<li><a href="result_detail.html?day=20221213">第１０回トータリゼータエンジニアリング杯 [2022/12/09 - 2022/12/13]</a></li>
+<li><a href="result_detail.html?day=20221130">第１２回やまだ屋「桐葉菓」杯 [2022/11/25 - 2022/11/30]</a></li>
+<li><a href="result_detail.html?day=20221119">ＢＴＳ尾道開設２周年第５回東京スポーツグループ杯 [2022/11/14 - 2022/11/19]</a></li>
+<li><a href="result_detail.html?day=20221111">第１３回ＰａｙＰａｙ銀行賞 [2022/11/06 - 2022/11/11]</a></li>
+<li><a href="result_detail.html?day=20221006">マンスリーＢＯＡＴＲＡＣＥ杯宮島プリンセスカップ [2022/10/01 - 2022/10/06]</a></li>
+<li><a href="result_detail.html?day=20220925">第１０回東洋観光グループ杯 [2022/09/20 - 2022/09/25]</a></li>
+<li><a href="result_detail.html?day=20220915">第１９回日本モーターボート選手会会長賞 [2022/09/10 - 2022/09/15]</a></li>
+<li><a href="result_detail.html?day=20220908">第１５回楽天銀行賞 [2022/09/02 - 2022/09/08]</a></li>
+<li><a href="result_detail.html?day=20220829">第８回西日本スポーツ杯 [2022/08/24 - 2022/08/29]</a></li>
+<li><a href="result_detail.html?day=20220819">第５２回スポーツニッポン杯 [2022/08/14 - 2022/08/19]</a></li>
+<li><a href="result_detail.html?day=20220807">第１０回サッポロビール杯 [2022/08/02 - 2022/08/07]</a></li>
+<li><a href="result_detail.html?day=20220727">第１２回みやじマリンカップ [2022/07/22 - 2022/07/27]</a></li>
+<li><a href="result_detail.html?day=20220719">第７回ポカリスエットカップ [2022/07/14 - 2022/07/19]</a></li>
+<li><a href="result_detail.html?day=20220710">第１回エフ・ディミニッシュバトルシリーズ [2022/07/06 - 2022/07/10]</a></li>
+<li><a href="result_detail.html?day=20220626">第５回道新スポーツ杯 [2022/06/22 - 2022/06/26]</a></li>
+<li><a href="result_detail.html?day=20220619">中日スポーツ賞　中国ＶＳ東海ＶＳ九州３地区対抗戦 [2022/06/14 - 2022/06/19]</a></li>
+<li><a href="result_detail.html?day=20220608">第１６回ヤクルトカップ [2022/06/03 - 2022/06/08]</a></li>
+<li><a href="result_detail.html?day=20220529">第４９回ボートレースオールスター [2022/05/24 - 2022/05/29]</a></li>
+<li><a href="result_detail.html?day=20220519">第１６回日本トーター賞 [2022/05/14 - 2022/05/19]</a></li>
+<li><a href="result_detail.html?day=20220511">第２９回日本財団会長杯 [2022/05/06 - 2022/05/11]</a></li>
+<li><a href="result_detail.html?day=20220503">第５１回サンケイスポーツ若葉賞 [2022/04/28 - 2022/05/03]</a></li>
+<li><a href="result_detail.html?day=20220424">第１２回富士通フロンテックカップ [2022/04/20 - 2022/04/24]</a></li>
+<li><a href="result_detail.html?day=20220417">第１回ＹｏｕＴｕｂｅ「ブッちぎりィ！！」カップ [2022/04/13 - 2022/04/17]</a></li>
+<li><a href="result_detail.html?day=20220409">宮島チャンピオンカップ開設６８周年記念 [2022/04/04 - 2022/04/09]</a></li>
+<li><a href="result_detail.html?day=20220328">九スポプレゼンツ１２代目ヘビー級王決定戦 [2022/03/23 - 2022/03/28]</a></li>
+<li><a href="result_detail.html?day=20220318">ヴィーナスシリーズ第２３戦第７回マクール杯 [2022/03/13 - 2022/03/18]</a></li>
+<li><a href="result_detail.html?day=20220308">ルーキーシリーズ第４戦第７回スカパー！ＪＬＣ杯 [2022/03/03 - 2022/03/08]</a></li>
+<li><a href="result_detail.html?day=20220227">ＰＡＬＢＯＡＴ宮島開設７周年記念第４８回岩田杯 [2022/02/22 - 2022/02/27]</a></li>
+<li><a href="result_detail.html?day=20220218">第９回トータリゼータエンジニアリング杯 [2022/02/14 - 2022/02/18]</a></li>
+<li><a href="result_detail.html?day=20220211">第７回西日本スポーツ杯 [2022/02/08 - 2022/02/11]</a></li>
+<li><a href="result_detail.html?day=20220204">第４回道新スポーツ杯 [2022/02/01 - 2022/02/04]</a></li>
+<li><a href="result_detail.html?day=20220120">第９回新東通信杯 [2022/01/17 - 2022/01/20]</a></li>
+<li><a href="result_detail.html?day=20220112">第１２回サクラオＢ＆Ｄ杯 [2022/01/09 - 2022/01/12]</a></li>
+</ul>
+</dd>
+<dt>2021<i>のレース</i></dt><dd><ul class="past_race"><li><a href="result_detail.html?day=20220103">第４８回日刊スポーツ栄光楯広島ダービー [2021/12/30 - 2022/01/03]</a></li>
+<li><a href="result_detail.html?day=20211227">第６回中国新聞販売センター杯 [2021/12/24 - 2021/12/27]</a></li>
+<li><a href="result_detail.html?day=20211219">第９回東洋観光グループ杯 [2021/12/14 - 2021/12/19]</a></li>
+<li><a href="result_detail.html?day=20211211">第１５回日本トーター賞 [2021/12/08 - 2021/12/11]</a></li>
+<li><a href="result_detail.html?day=20211130">第１１回やまだ屋「桐葉菓」杯 [2021/11/25 - 2021/11/30]</a></li>
+<li><a href="result_detail.html?day=20211121">第２回週刊大衆杯 [2021/11/16 - 2021/11/21]</a></li>
+<li><a href="result_detail.html?day=20211018">第４２回報知エキサイトカップ [2021/10/13 - 2021/10/18]</a></li>
+<li><a href="result_detail.html?day=20211010">ＢＴＳ尾道開設１周年記念 [2021/10/05 - 2021/10/10]</a></li>
+<li><a href="result_detail.html?day=20211002">第４回東京スポーツグループ杯 [2021/09/27 - 2021/10/02]</a></li>
+<li><a href="result_detail.html?day=20210919">第１２回ＰａｙＰａｙ銀行賞 [2021/09/14 - 2021/09/19]</a></li>
+<li><a href="result_detail.html?day=20210910">宮島チャンピオンカップ開設６７周年 [2021/09/05 - 2021/09/10]</a></li>
+<li><a href="result_detail.html?day=20210901">第１８回日本モーターボート選手会会長賞 [2021/08/27 - 2021/09/01]</a></li>
+<li><a href="result_detail.html?day=20210824">マンスリーＢＯＡＴＲＡＣＥ杯宮島プリンセスカップ [2021/08/19 - 2021/08/24]</a></li>
+<li><a href="result_detail.html?day=20210812">第５１回スポーツニッポン杯 [2021/08/07 - 2021/08/12]</a></li>
+<li><a href="result_detail.html?day=20210803">第９回サッポロビール杯 [2021/07/29 - 2021/08/03]</a></li>
+<li><a href="result_detail.html?day=20210722">第１１回みやじマリンカップ [2021/07/19 - 2021/07/22]</a></li>
+<li><a href="result_detail.html?day=20210715">第６回ポカリスエットカップ [2021/07/09 - 2021/07/15]</a></li>
+<li><a href="result_detail.html?day=20210704">中日スポーツ賞中国ＶＳ近畿ＶＳ九州３地区対抗戦 [2021/06/29 - 2021/07/04]</a></li>
+<li><a href="result_detail.html?day=20210626">第１１回富士通フロンテックカップ [2021/06/23 - 2021/06/26]</a></li>
+<li><a href="result_detail.html?day=20210618">第８回ウエスタンヤング [2021/06/13 - 2021/06/18]</a></li>
+<li><a href="result_detail.html?day=20210608">第２８回日本財団会長杯 [2021/06/03 - 2021/06/08]</a></li>
+<li><a href="result_detail.html?day=20210531">第１５回ヤクルトカップ [2021/05/26 - 2021/05/31]</a></li>
+<li><a href="result_detail.html?day=20210523">第８回住信ＳＢＩネット銀行賞 [2021/05/18 - 2021/05/23]</a></li>
+<li><a href="result_detail.html?day=20210510">デイリースポーツ杯争奪レディースＶＳルーキーズ [2021/05/05 - 2021/05/10]</a></li>
+<li><a href="result_detail.html?day=20210428">第５０回サンケイスポーツ若葉賞 [2021/04/22 - 2021/04/28]</a></li>
+<li><a href="result_detail.html?day=20210417">第１４回楽天銀行賞 [2021/04/14 - 2021/04/17]</a></li>
+<li><a href="result_detail.html?day=20210410">宮島ダイヤモンドカップ [2021/04/04 - 2021/04/10]</a></li>
+<li><a href="result_detail.html?day=20210331">第１０回やまだ屋「桐葉菓」杯 [2021/03/26 - 2021/03/31]</a></li>
+<li><a href="result_detail.html?day=20210322">デイリースポーツ杯争奪宮島神速王決定戦 [2021/03/17 - 2021/03/22]</a></li>
+<li><a href="result_detail.html?day=20210314">週刊大衆杯 [2021/03/11 - 2021/03/14]</a></li>
+<li><a href="result_detail.html?day=20210308">第７回住信ＳＢＩネット銀行賞 [2021/03/02 - 2021/03/08]</a></li>
+<li><a href="result_detail.html?day=20210226">ＰＡＬＢＯＡＴ宮島開設６周年記念第４７回岩田杯 [2021/02/21 - 2021/02/26]</a></li>
+<li><a href="result_detail.html?day=20210218">第１３回楽天銀行賞 [2021/02/15 - 2021/02/18]</a></li>
+<li><a href="result_detail.html?day=20210212">第８回新東通信杯 [2021/02/08 - 2021/02/12]</a></li>
+<li><a href="result_detail.html?day=20210131">九スポプレゼンツ１１代目ヘビー級王決定戦 [2021/01/27 - 2021/01/31]</a></li>
+<li><a href="result_detail.html?day=20210122">第３回東京スポーツグループ杯 [2021/01/18 - 2021/01/22]</a></li>
+<li><a href="result_detail.html?day=20210115">第８回東洋観光グループ杯 [2021/01/10 - 2021/01/15]</a></li>
+</ul>
+</dd>
+<dt>2020<i>のレース</i></dt><dd><ul class="past_race"><li><a href="result_detail.html?day=20210103">第４７回日刊スポーツ栄光楯広島ダービー [2020/12/29 - 2021/01/03]</a></li>
+<li><a href="result_detail.html?day=20201225">第５回中国新聞販売センター杯 [2020/12/20 - 2020/12/25]</a></li>
+<li><a href="result_detail.html?day=20201213">第１１回中国醸造杯中国ＶＳ近畿ＶＳ九州３地区対抗戦 [2020/12/08 - 2020/12/13]</a></li>
+<li><a href="result_detail.html?day=20201130">ＢＴＳ尾道開設記念第３回道新スポーツ杯 [2020/11/25 - 2020/11/30]</a></li>
+<li><a href="result_detail.html?day=20201021">第４１回報知エキサイトカップ [2020/10/16 - 2020/10/21]</a></li>
+<li><a href="result_detail.html?day=20201011">第６回西日本スポーツ杯 [2020/10/06 - 2020/10/11]</a></li>
+<li><a href="result_detail.html?day=20201003">第５回ボートレース宮島直前予想杯 [2020/09/30 - 2020/10/03]</a></li>
+<li><a href="result_detail.html?day=20200927">第５回ポカリスエットカップ [2020/09/23 - 2020/09/27]</a></li>
+<li><a href="result_detail.html?day=20200915">宮島チャンピオンカップ開設６６周年 [2020/09/10 - 2020/09/15]</a></li>
+<li><a href="result_detail.html?day=20200908">第８回トータリゼータエンジニアリング杯 [2020/09/03 - 2020/09/08]</a></li>
+<li><a href="result_detail.html?day=20200831">ヴィーナスシリーズ第１１戦第６回マクール杯 [2020/08/26 - 2020/08/31]</a></li>
+<li><a href="result_detail.html?day=20200823">第１０回みやじマリンカップ [2020/08/20 - 2020/08/23]</a></li>
+<li><a href="result_detail.html?day=20200816">第５０回スポーツニッポン杯 [2020/08/12 - 2020/08/16]</a></li>
+<li><a href="result_detail.html?day=20200808">第３回東京スポーツグループ杯 [2020/08/03 - 2020/08/08]</a></li>
+<li><a href="result_detail.html?day=20200727">ルーキーシリーズ第１３戦第６回スカパー！・ＪＬＣ杯 [2020/07/22 - 2020/07/27]</a></li>
+<li><a href="result_detail.html?day=20200719">第８回サッポロビール杯 [2020/07/16 - 2020/07/19]</a></li>
+<li><a href="result_detail.html?day=20200713">第１０回富士通フロンテックカップ [2020/07/09 - 2020/07/13]</a></li>
+<li><a href="result_detail.html?day=20200706">第１１回ジャパンネット銀行賞 [2020/07/02 - 2020/07/06]</a></li>
+<li><a href="result_detail.html?day=20200628">第３０回グランドチャンピオン [2020/06/23 - 2020/06/28]</a></li>
+<li><a href="result_detail.html?day=20200618">第５回ＢＯＡＴＢｏｙカップ [2020/06/13 - 2020/06/18]</a></li>
+<li><a href="result_detail.html?day=20200608">ＢＴＳ安芸高田開設１周年記念第２７回日本財団会長杯 [2020/06/03 - 2020/06/08]</a></li>
+<li><a href="result_detail.html?day=20200529">第１４回日本トーター賞 [2020/05/24 - 2020/05/29]</a></li>
+<li><a href="result_detail.html?day=20200519">第１７回日本モーターボート選手会会長賞 [2020/05/13 - 2020/05/19]</a></li>
+<li><a href="result_detail.html?day=20200510">第１４回ヤクルトカップ [2020/05/07 - 2020/05/10]</a></li>
+<li><a href="result_detail.html?day=20200429">第４９回サンケイスポーツ若葉賞 [2020/04/23 - 2020/04/29]</a></li>
+<li><a href="result_detail.html?day=20200419">マンスリーＢＯＡＴＲＡＣＥ杯宮島プリンセスカップ [2020/04/14 - 2020/04/19]</a></li>
+<li><a href="result_detail.html?day=20200406">中日スポーツ賞中国ＶＳ東海ＶＳ九州３地区対抗戦 [2020/04/02 - 2020/04/06]</a></li>
+<li><a href="result_detail.html?day=20200326">第２回道新スポーツ杯 [2020/03/21 - 2020/03/26]</a></li>
+<li><a href="result_detail.html?day=20200318">第５回スカパー！・ＪＬＣ杯 [2020/03/13 - 2020/03/18]</a></li>
+<li><a href="result_detail.html?day=20200309">東スポグループ杯中国ＶＳ関東ＶＳ関西３地区対抗戦 [2020/03/04 - 2020/03/09]</a></li>
+<li><a href="result_detail.html?day=20200301">九スポプレゼンツ１０代目ヘビー級王決定戦 [2020/02/25 - 2020/03/01]</a></li>
+<li><a href="result_detail.html?day=20200217">第６３回中国地区選手権 [2020/02/12 - 2020/02/17]</a></li>
+<li><a href="result_detail.html?day=20200207">第１２回楽天銀行賞 [2020/02/03 - 2020/02/07]</a></li>
+<li><a href="result_detail.html?day=20200131">第７回トータリゼータエンジニアリング杯 [2020/01/27 - 2020/01/31]</a></li>
+<li><a href="result_detail.html?day=20200118">第６回住信ＳＢＩネット銀行賞 [2020/01/14 - 2020/01/18]</a></li>
+<li><a href="result_detail.html?day=20200110">デイリースポーツ杯争奪男女Ｗ優勝戦 [2020/01/05 - 2020/01/10]</a></li>
+</ul>
+</dd>
+<dt>2019<i>のレース</i></dt><dd><ul class="past_race"><li><a href="result_detail.html?day=20200102">第４６回日刊スポーツ栄光楯広島ダービー [2019/12/28 - 2020/01/02]</a></li>
+<li><a href="result_detail.html?day=20191224">第１０回中国醸造杯 [2019/12/19 - 2019/12/24]</a></li>
+<li><a href="result_detail.html?day=20191215">第５回西日本スポーツ杯グレートおやじ決定戦 [2019/12/10 - 2019/12/15]</a></li>
+<li><a href="result_detail.html?day=20191204">第４０回報知エキサイトカップ [2019/11/29 - 2019/12/04]</a></li>
+<li><a href="result_detail.html?day=20191124">第９回やまだ屋「桐葉菓」杯 [2019/11/19 - 2019/11/24]</a></li>
+<li><a href="result_detail.html?day=20191111">第４回ボートレース宮島直前予想杯 [2019/11/06 - 2019/11/11]</a></li>
+<li><a href="result_detail.html?day=20191102">マンスリーＢＯＡＴＲＡＣＥ杯宮島プリンセスカップ [2019/10/28 - 2019/11/02]</a></li>
+<li><a href="result_detail.html?day=20191024">第４回ＢＯＡＴＢｏｙカップ [2019/10/19 - 2019/10/24]</a></li>
+<li><a href="result_detail.html?day=20190920">Ｇ３マスターズリーグ第５戦第５回マクール杯競走 [2019/09/15 - 2019/09/20]</a></li>
+<li><a href="result_detail.html?day=20190910">第２６回日本財団会長杯 [2019/09/05 - 2019/09/10]</a></li>
+<li><a href="result_detail.html?day=20190902">第４回中国新聞販売センター杯 [2019/08/28 - 2019/09/02]</a></li>
+<li><a href="result_detail.html?day=20190825">第４回ポカリスエットカップ [2019/08/22 - 2019/08/25]</a></li>
+<li><a href="result_detail.html?day=20190820">第４９回スポーツニッポン杯 [2019/08/14 - 2019/08/20]</a></li>
+<li><a href="result_detail.html?day=20190810">第１３回日本トーター賞 [2019/08/06 - 2019/08/10]</a></li>
+<li><a href="result_detail.html?day=20190728">第９回みやじマリンカップ [2019/07/25 - 2019/07/28]</a></li>
+<li><a href="result_detail.html?day=20190723">ヴィーナスシリーズ第６戦第７回サッポロビール杯 [2019/07/17 - 2019/07/23]</a></li>
+<li><a href="result_detail.html?day=20190713">第１３回ヤクルトカップ [2019/07/09 - 2019/07/13]</a></li>
+<li><a href="result_detail.html?day=20190706">第４６回岩田杯 [2019/07/01 - 2019/07/06]</a></li>
+<li><a href="result_detail.html?day=20190627">第１０回ジャパンネット銀行賞 [2019/06/24 - 2019/06/27]</a></li>
+<li><a href="result_detail.html?day=20190621">第９回富士通フロンテックカップ [2019/06/17 - 2019/06/21]</a></li>
+<li><a href="result_detail.html?day=20190613">Ｇ１宮島チャンピオンカップ開設６５周年 [2019/06/08 - 2019/06/13]</a></li>
+<li><a href="result_detail.html?day=20190602">ＢＴＳ安芸高田オープン記念第７回東洋観光グループ杯 [2019/05/28 - 2019/06/02]</a></li>
+<li><a href="result_detail.html?day=20190524">中日スポーツ賞中国ＶＳ東海ＶＳ九州３地区対抗戦 [2019/05/19 - 2019/05/24]</a></li>
+<li><a href="result_detail.html?day=20190512">第１６回日本モーターボート選手会会長賞 [2019/05/07 - 2019/05/12]</a></li>
+<li><a href="result_detail.html?day=20190501">第４８回サンケイスポーツ若葉賞 [2019/04/26 - 2019/05/01]</a></li>
+<li><a href="result_detail.html?day=20190421">第２０回マスターズチャンピオン [2019/04/16 - 2019/04/21]</a></li>
+<li><a href="result_detail.html?day=20190331">第５回住信ＳＢＩネット銀行賞 [2019/03/27 - 2019/03/31]</a></li>
+<li><a href="result_detail.html?day=20190317">中日スポーツ賞中国ＶＳ関東ＶＳ東海３地区対抗戦 [2019/03/12 - 2019/03/17]</a></li>
+<li><a href="result_detail.html?day=20190308">第４５回岩田杯 [2019/03/03 - 2019/03/08]</a></li>
+<li><a href="result_detail.html?day=20190227">ＰＡＬＢＯＡＴ宮島開設記念第１２回日本トーター賞 [2019/02/22 - 2019/02/27]</a></li>
+<li><a href="result_detail.html?day=20190218">第３回ボートレース宮島直前予想杯 [2019/02/13 - 2019/02/18]</a></li>
+<li><a href="result_detail.html?day=20190208">デイリースポーツ杯争奪男女Ｗ優勝戦 [2019/02/03 - 2019/02/08]</a></li>
+<li><a href="result_detail.html?day=20190127">九スポプレゼンツ９代目ヘビー級王決定戦 [2019/01/22 - 2019/01/27]</a></li>
+<li><a href="result_detail.html?day=20190119">第６回西広島タイムス宮島街道杯 [2019/01/16 - 2019/01/19]</a></li>
+<li><a href="result_detail.html?day=20190111">Ｇ３第８回やまだ屋「桐葉菓」杯 [2019/01/06 - 2019/01/11]</a></li>
+</ul>
+</dd>
+<dt>2018<i>のレース</i></dt><dd><ul class="past_race"><li><a href="result_detail.html?day=20190103">第４５回日刊スポーツ栄光楯広島ダービー [2018/12/29 - 2019/01/03]</a></li>
+<li><a href="result_detail.html?day=20181223">第６回東洋観光グループ杯 [2018/12/20 - 2018/12/23]</a></li>
+<li><a href="result_detail.html?day=20181216">第３回ＢＯＡＴＢｏｙカップ [2018/12/11 - 2018/12/16]</a></li>
+<li><a href="result_detail.html?day=20181206">第３回中国新聞販売センター杯 [2018/12/03 - 2018/12/06]</a></li>
+<li><a href="result_detail.html?day=20181129">第９回中国醸造杯 [2018/11/25 - 2018/11/29]</a></li>
+<li><a href="result_detail.html?day=20181119">第４回マクール杯争奪グレートおやじ決定戦 [2018/11/14 - 2018/11/19]</a></li>
+<li><a href="result_detail.html?day=20181104">第４回西日本スポーツ杯 [2018/10/30 - 2018/11/04]</a></li>
+<li><a href="result_detail.html?day=20181026">Ｇ３マンスリーＢＯＡＴＲＡＣＥ杯プリンセスカップ [2018/10/21 - 2018/10/26]</a></li>
+<li><a href="result_detail.html?day=20181018">第３９回報知エキサイトカップ [2018/10/13 - 2018/10/18]</a></li>
+<li><a href="result_detail.html?day=20181010">道新スポーツ杯 [2018/10/07 - 2018/10/10]</a></li>
+<li><a href="result_detail.html?day=20181001">第３回ポカリスエットカップ [2018/09/27 - 2018/10/01]</a></li>
+<li><a href="result_detail.html?day=20180908">第６回トータリゼータエンジニアリング杯 [2018/09/03 - 2018/09/08]</a></li>
+<li><a href="result_detail.html?day=20180830">第６回サッポロビール杯中国・近畿・九州３地区対抗戦 [2018/08/25 - 2018/08/30]</a></li>
+<li><a href="result_detail.html?day=20180812">創刊７０周年記念第４８回スポーツニッポン杯 [2018/08/07 - 2018/08/12]</a></li>
+<li><a href="result_detail.html?day=20180804">東京スポーツグループ杯 [2018/07/30 - 2018/08/04]</a></li>
+<li><a href="result_detail.html?day=20180726">第８回富士通フロンテックカップ [2018/07/21 - 2018/07/26]</a></li>
+<li><a href="result_detail.html?day=20180716">第８回みやじマリンカップ [2018/07/11 - 2018/07/16]</a></li>
+<li><a href="result_detail.html?day=20180707">第１１回楽天銀行賞 [2018/07/04 - 2018/07/07]</a></li>
+<li><a href="result_detail.html?day=20180630">第２５回日本財団会長杯 [2018/06/25 - 2018/06/30]</a></li>
+<li><a href="result_detail.html?day=20180617">Ｇ２モーターボート大賞 [2018/06/12 - 2018/06/17]</a></li>
+<li><a href="result_detail.html?day=20180609">第１２回ヤクルトカップ [2018/06/06 - 2018/06/09]</a></li>
+<li><a href="result_detail.html?day=20180601">第１５回日本モーターボート選手会会長賞 [2018/05/27 - 2018/06/01]</a></li>
+<li><a href="result_detail.html?day=20180524">第７回新東通信杯 [2018/05/21 - 2018/05/24]</a></li>
+<li><a href="result_detail.html?day=20180515">Ｇ１宮島チャンピオンカップ開設６４周年 [2018/05/10 - 2018/05/15]</a></li>
+<li><a href="result_detail.html?day=20180501">第４７回サンケイスポーツ若葉賞 [2018/04/26 - 2018/05/01]</a></li>
+<li><a href="result_detail.html?day=20180417">第９回ジャパンネット銀行賞 [2018/04/12 - 2018/04/17]</a></li>
+<li><a href="result_detail.html?day=20180407">ルーキーシリーズ第５戦第４回スカパー！・ＪＬＣ杯 [2018/04/02 - 2018/04/07]</a></li>
+<li><a href="result_detail.html?day=20180329">ヴィーナスシリーズ第１２戦 [2018/03/24 - 2018/03/29]</a></li>
+<li><a href="result_detail.html?day=20180315">中日スポーツ賞中国ＶＳ近畿ＶＳ東海３地区決戦 [2018/03/10 - 2018/03/15]</a></li>
+<li><a href="result_detail.html?day=20180307">第４４回岩田杯 [2018/03/02 - 2018/03/07]</a></li>
+<li><a href="result_detail.html?day=20180225">第４回住信ＳＢＩネット銀行賞 [2018/02/20 - 2018/02/25]</a></li>
+<li><a href="result_detail.html?day=20180217">第５回東洋観光グループ杯 [2018/02/13 - 2018/02/17]</a></li>
+<li><a href="result_detail.html?day=20180209">第３回スカパー！・ＪＬＣ杯 [2018/02/04 - 2018/02/09]</a></li>
+<li><a href="result_detail.html?day=20180128">九スポプレゼンツ８代目ヘビー級王決定戦 [2018/01/23 - 2018/01/28]</a></li>
+<li><a href="result_detail.html?day=20180118">第５回西広島タイムス宮島街道杯 [2018/01/14 - 2018/01/18]</a></li>
+<li><a href="result_detail.html?day=20180111">デイリースポーツ杯争奪男女Ｗ優勝戦 [2018/01/06 - 2018/01/11]</a></li>
+</ul>
+</dd>
+<dt>2017<i>のレース</i></dt><dd><ul class="past_race"><li><a href="result_detail.html?day=20180101">第４４回日刊スポーツ栄光楯広島ダービー [2017/12/27 - 2018/01/01]</a></li>
+<li><a href="result_detail.html?day=20171224">第７回やまだ屋「桐葉菓」杯 [2017/12/21 - 2017/12/24]</a></li>
+<li><a href="result_detail.html?day=20171215">第８回中国醸造杯 [2017/12/12 - 2017/12/15]</a></li>
+<li><a href="result_detail.html?day=20171208">第３回マクール杯争奪グレートおやじ決定戦 [2017/12/03 - 2017/12/08]</a></li>
+<li><a href="result_detail.html?day=20171129">Ｇ３マンスリーＢＯＡＴＲＡＣＥ杯 [2017/11/24 - 2017/11/29]</a></li>
+<li><a href="result_detail.html?day=20171110">Ｇ３ジャパンネット銀行賞宮島プリンセスカップ [2017/11/05 - 2017/11/10]</a></li>
+<li><a href="result_detail.html?day=20171102">第２回中国新聞販売センター杯 [2017/10/30 - 2017/11/02]</a></li>
+<li><a href="result_detail.html?day=20171025">第２回ボートレース宮島直前予想杯 [2017/10/21 - 2017/10/25]</a></li>
+<li><a href="result_detail.html?day=20171016">第３８回報知エキサイトカップ [2017/10/11 - 2017/10/16]</a></li>
+<li><a href="result_detail.html?day=20171006">第７回富士通フロンテックカップ [2017/10/03 - 2017/10/06]</a></li>
+<li><a href="result_detail.html?day=20170928">第５回トータリゼータエンジニアリング杯 [2017/09/25 - 2017/09/28]</a></li>
+<li><a href="result_detail.html?day=20170922">中国ＶＳ関東ＶＳ九州３地区対抗戦 [2017/09/16 - 2017/09/22]</a></li>
+<li><a href="result_detail.html?day=20170911">ＢＯＡＴ　Ｂｏｙ　ＣＵＰ [2017/09/11 - 2017/09/11]</a></li>
+<li><a href="result_detail.html?day=20170908">夜王Ｓ第２戦九州スポーツ杯若松メモリアル王決定戦 [2017/09/08 - 2017/09/08]</a></li>
+<li><a href="result_detail.html?day=20170830">ＧⅢマスターズリーグ第５戦第５回サッポロビール杯 [2017/08/25 - 2017/08/30]</a></li>
+<li><a href="result_detail.html?day=20170821">第11回日本トーター賞 [2017/08/16 - 2017/08/21]</a></li>
+<li><a href="result_detail.html?day=20170811">第47回スポーツニッポン杯 [2017/08/06 - 2017/08/11]</a></li>
+<li><a href="result_detail.html?day=20170731">第２回ポカリスエットカップ [2017/07/27 - 2017/07/31]</a></li>
+<li><a href="result_detail.html?day=20170723">第７回みやじマリンカップ [2017/07/18 - 2017/07/23]</a></li>
+<li><a href="result_detail.html?day=20170714">第６回新東通信杯 [2017/07/11 - 2017/07/14]</a></li>
+<li><a href="result_detail.html?day=20170704">ＧⅢ第４回ウエスタンヤング [2017/06/29 - 2017/07/04]</a></li>
+<li><a href="result_detail.html?day=20170619">第11回ヤクルトカップ [2017/06/16 - 2017/06/19]</a></li>
+<li><a href="result_detail.html?day=20170612">第３回西日本スポーツ杯 [2017/06/07 - 2017/06/12]</a></li>
+<li><a href="result_detail.html?day=20170602">第14回日本モーターボート選手会会長賞 [2017/05/28 - 2017/06/02]</a></li>
+<li><a href="result_detail.html?day=20170516">GI宮島チャンピオンカップ開設63周年記念 [2017/05/11 - 2017/05/16]</a></li>
+<li><a href="result_detail.html?day=20170507">第46回サンケイスポーツ若葉賞 [2017/05/02 - 2017/05/07]</a></li>
+<li><a href="result_detail.html?day=20170429">第24回日本財団会長杯 [2017/04/24 - 2017/04/29]</a></li>
+<li><a href="result_detail.html?day=20170418">第２回ＢＯＡＴＢｏｙカップ [2017/04/13 - 2017/04/18]</a></li>
+<li><a href="result_detail.html?day=20170407">ルーキーシリーズ第１戦楽天銀行クリスタルカップ [2017/04/02 - 2017/04/07]</a></li>
+<li><a href="result_detail.html?day=20170331">第35回日本モーターボート選手会会長賞 [2017/03/28 - 2017/03/31]</a></li>
+<li><a href="result_detail.html?day=20170327">ヴィーナスシリーズ第12戦 [2017/03/22 - 2017/03/27]</a></li>
+<li><a href="result_detail.html?day=20170321">ＢＰ勝山オープン23周年記念ほぼヤング戦 [2017/03/21 - 2017/03/21]</a></li>
+<li><a href="result_detail.html?day=20170320">SG第52回ボートレースクラシック [2017/03/18 - 2017/03/20]</a></li>
+<li><a href="result_detail.html?day=20170317">日本財団会長杯争奪戦 [2017/03/17 - 2017/03/17]</a></li>
+<li><a href="result_detail.html?day=20170316">東北応援競走 [2017/03/15 - 2017/03/16]</a></li>
+</ul>
+</dd>
+        </dl>
+
+    </section>
+
+<script src="js/jquery.fancybox.js"></script>
+<script>
+    $('[data-fancybox]').fancybox();
+</script>
+
+
+<script>
+    $(function(){
+        $("#acMenu_race dt").on("click", function() {
+            $(this).next().slideToggle();
+            $(this).toggleClass("active");//追加部分
+        });
+    });
+</script>
+
+</section>
+
+
+<footer>
+    <div class="inner">
+
+        <div class="sns">
+            <p>公式SNS</p>
+            <a href="https://twitter.com/br_miyajima?ref_src=twsrc%5Etfw" class="sns_twitter" target="_blank"><img src="images/sns_icon_twitter.png" alt="X（旧ツイッター）"></a>
+            <a href="https://www.instagram.com/boatrace_miyajima/" class="sns_insta" target="_blank"><img src="images/sns_icon_ins.png" alt="instagram"></a>
+            <a href="https://page.line.me/543xapcn?openQrModal=true" class="sns_line" target="_blank"><img src="images/sns_icon_line.png?2" alt="line"></a>
+			<a href="https://www.facebook.com/boatrace.miyajima.jp/" class="sns_facebook" target="_blank"><img src="images/sns_icon_facebook.png" alt="facebook"></a>
+            <a href="https://www.youtube.com/channel/UCxvYC6PPCsy2_p0tGuvIv5w" class="sns_youtube" target="_blank"><img src="images/sns_icon_youtube.png" alt="youtube"></a>
+        </div>
+		<p class="br_notice_ft sp">ボートレースは適度に楽しみましょう。<br>舟券の購入は20歳になってから。</p>
+
+        <ul class="link_new sp">
+            <li><a href="boatrace-contribution.html">ボートレースの地域貢献<br>「ボートの力を、みんなの力に。」</a></li>
+        </ul>
+        <div class="up">
+            <ul class="pc">
+                <li><b><a href="racer_list.html">レース情報</a></b></li>
+                <li><a href="racer_list.html">出場予定選手一覧</a></li>
+                <li><a href="prospect.html">レース展望</a></li>
+                <li><a href="racecard.html">出走表</a></li>
+                <li><a href="racedata.html">競走データ</a></li>
+                <li><a href="raceinfo_timerank.html">モーターボート抽選結果・<br>前検タイムランキング<br></a></li>
+                <li><a href="yosen_point_rank.html">予選得点率ランキング</a></li>
+                <li><a href="results.html">レース結果一覧</a></li>
+                <li><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17" class="betsu" target="_blank">レースリプレイ</a></li>
+                <li><a href="race_tenbou.html">専属記者レース展望動画・<br>優出選手インタビュー動画</a></li>
+                <li><a href="paper.html">無料専門予想紙</a></li>
+                <li><a href="photo_gallery.html">フォトギャラリー</a></li>
+            </ul>
+            <ul class="pc">
+                <li><b><a href="surface.html">データファイル</a></b></li>
+                <li><a href="surface.html">競走水面・進入コース別情報</a></li>
+                <li><a href="articles.html">レーサー紹介記事一覧</a></li>
+                <li><a href="ranking.html">賞金ランキング</a></li>
+                <!--<li><a href="https://sp.macour.jp/s/kyotei-info/miyajima/br17book2021/pc/" class="betsu" target="_blank">舟券傾向と対策</a></li>-->
+
+                <li class="kaisai"><b><a href="schedule.html">開催・発売日程</a></b></li>
+                <li><a href="schedule.html">宮島本場＆PALBOAT宮島</a></li>
+                <li><a href="https://palboat-miyajima.com/" class="betsu" target="_blank">PALBOAT宮島</a></li>
+                <li><a href="https://www.bp-kure.com/" class="betsu" target="_blank">BTS呉</a></li>
+                <li><a href="https://br-akitakata.com/" class="betsu" target="_blank">BTS安芸高田</a></li>
+                <li><a href="https://bts-onomichi.biho.jp/" class="betsu" target="_blank">BTS尾道</a></li>
+            </ul>
+            <ul class="pc">
+                <li><b><a href="hiroshima_racer.html">広島支部選手</a></b></li>
+                <li><a href="hiroshima_racer.html">広島支部選手一覧</a></li>
+				<li><a href="hiroshima_racer.html#under_base_winners">広島支部選手優勝情報</a></li>
+                <li><a href="hiroshima_racer.html#under_base_lookie">スター候補選手・新人選手紹介</a></li>
+                <li><a href="diary_movie.html">広島支部日記動画</a></li>
+                <li><a href="monta_channel.html">モンタチャンネル</a></li>
+            </ul>
+            <ul class="pc">
+                <li><b><a href="news.html">新着情報・サービス案内</a></b></li>
+                <li><a href="news.html">新着情報</a></li>
+                <li><a href="event.html">場内イベント</a></li>
+				<li><a href="fanservice.html">場内ファンサービス</a></li>
+                <li><a href="youtube_schedule.html">公式YouTube番組配信予定</a></li>
+                <li><a href="televoting.html">各種キャンペーン</a></li>
+                <li><a href="goods.html">宮島オリジナルグッズ</a></li>
+                <li><a href="momiji_card.html">キャッシュレス投票『モミジカード』</a></li>
+                <li><a href="app.html">公式SNS・スマホ専用アプリ</a></li>
+                <li><a href="beginners.html">初心者ガイド</a></li>
+                <li><a href="banners.html">横断幕について</a></li>
+                <li><a href="panorama.html">パノラマムービー</a></li>
+				<li><a href="https://www.boatrace-miyajima.com/pdf/vr_schedule.pdf" class="betsu" target="_blank">ＶＲスプラッシュバトル実施予定日</a></li>
+                <li><a href="https://www.boatrace-miyajima.com/pdf/kutsurogi_r8.pdf" class="betsu" target="_blank">3Fくつろぎルームご利用案内<br>&開放予定日</a></li>
+				<li><a href="ga-info.html">ギャンブル依存症関連</a></li>
+				<li><a href="https://gamble-shindan.com/?utm_source=sitelink&utm_medium=banner&utm_campaign=boatrace202203" class="betsu" target="_blank">ギャンブル依存症セルフチェック</a></li>
+				<li><a href="jalert-info.html">Jアラート関連</a></li>
+
+            </ul>
+            <ul class="pc">
+                <li><b><a href="facility.html">施設・アクセス</a></b></li>
+                <li><a href="facility.html">フロアガイド</a></li>
+                <li><a href="gourmet.html">グルメガイド</a></li>
+                <li><a href="reserved_seat.html">指定席</a></li>
+                <li><span><a href="seat_availability.html">指定席発売状況(当日)</a></span></li>
+                <li><a href="access.html">交通アクセス</a></li>
+                <li><a href="parking.html">専用駐車場</a></li>
+                <li><a href="rokumiyajima.html">ROKU宮島</a></li>
+                <li><a href="spot.html">周辺の観光情報・宮島カメラ</a></li>
+            </ul>
+            <ul class="sp">
+                <li><a href="contact.html">ご意見・ご要望</a></li>
+                <li><a href="faq.html">よくある質問</a></li>
+                <li><a href="req.html">サイトポリシー</a></li>
+            </ul>
+            <ul class="sp">
+                <li><a href="privacy.html">プライバシーポリシー</a></li>
+                <li><a href="links.html">リンク集</a></li>
+                <li><a href="groupinfo.html" style="font-size: 1.1em; font-weight: bold;">宮島ボートレース企業団からのお知らせ（事業者向け）</a></li>
+            </ul>
+        </div>
+
+        <div class="mid link_new pc">
+            <ul>
+                <li><a href="boatrace-contribution.html">ボートレースの地域貢献「ボートの力を、みんなの力に。」</a></li>
+            </ul>
+        </div>
+
+        <div class="mid pc">
+            <ul>
+                <li><a href="contact.html">ご意見・ご要望</a></li>
+                <li><a href="faq.html">よくある質問</a></li>
+                <li><a href="req.html">サイトポリシー</a></li>
+                <li><a href="privacy.html">プライバシーポリシー</a></li>
+                <li><a href="links.html">リンク集</a></li>
+                <li><a href="groupinfo.html" style="font-size: 1.15em; font-weight: bold;">宮島ボートレース企業団からのお知らせ（事業者向け）</a></li>
+            </ul>
+        </div>
+
+        <div class="bottom">
+            <div class="left">
+                <div class="thum pc">
+                    <p>スマホ</p>
+                    <img src="images/qr_sp.png" alt="QR">
+                </div>
+
+                <div class="addbox">
+                    <p class="tit">宮島ボートレース企業団</p>
+                    <p class="add">〒739-0411 広島県廿日市市宮島口1-15-60</p>
+                    <p class="add">TEL/0829-56-1122</p>
+                </div>
+            </div>
+
+            <div class="right">
+                <a href="index.html"><img src="images/bottom_logo.png" alt="BOATRACE 宮島"></a>
+                <p class="copy">Copyright © boatrace-miyajima. All Rights Reserved.</p>
+
+            </div>
+        </div>
+
+    </div>
+</footer>
+
+
+<p id="page-top"><a href="#wrap">
+
+    <img src="images/gotop.png" alt="上に戻る" class="pc"/>
+    <img src="images/gotop_sp.png" alt="上に戻る" class="sp"/>
+
+</a></p><script type="text/javascript" src="js/anime.min.js"></script>
+<script type="text/javascript" src="js/anime.detail.js"></script>
+
+<script src="js/ScrollTrigger.min.js"></script>
+<script>
+    window.counter = function () {
+        // this refers to the html element with the data-scroll-showCallback tag
+        var span = this.querySelector('span');
+        var current = parseInt(span.textContent);
+
+        span.textContent = current + 1;
+    };
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var trigger = new ScrollTrigger({
+            addHeight: true
+        });
+    });
+</script>
+
+<!-- 上に戻るボタン -->
+
+<script>
+    $(function () {
+        var topBtn = $('#page-top');
+        topBtn.hide();
+//スクロールが100に達したらボタン表示
+        $(window).scroll(function () {
+            if ($(this).scrollTop() > 290) {
+                topBtn.fadeIn();
+                $('.sns').addClass('fixed');
+            } else {
+                topBtn.fadeOut();
+                $('.sns').removeClass('fixed');
+            }
+        });
+//スクロールしてトップ
+        topBtn.click(function () {
+            $('body,html').animate({
+                scrollTop: 0
+            }, 500);
+            return false;
+        });
+    });
+</script>
+
+</div>
+
+
+<!--固定ヘッダ-->
+<div id="fixfoot" class="fexed">
+    <div class="gnv pc">
+        <nav class="global_menu">
+            <div class="inner">
+                <ul>
+                    <li>
+						<a href="racer_list.html" class="gnvlink">レース情報</a>
+                        <div class="megamenu">
+                            <ul class="megamenu-inner main-wrapper">
+                                <li><a href="racer_list.html">出場予定選手一覧</a></li>
+                                <li><a href="prospect.html">レース展望</a></li>
+                                <li><a href="racecard.html">出走表</a></li>
+                                <li><a href="racedata.html">競走データ</a></li>
+                                <li><a href="raceinfo_timerank.html">モーターボート抽選結果・<br>前検タイムランキング<br></a></li>
+                                <li><a href="yosen_point_rank.html">予選得点率ランキング</a></li>
+                                <li><a href="results.html">レース結果一覧</a></li>
+                                <li><a href="https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17" class="betsu" target="_blank">レースリプレイ</a></li>
+                                <li><a href="race_tenbou.html">専属記者レース展望動画・<br>優出選手インタビュー動画</a></li>
+                                <li><a href="paper.html">無料専門予想紙</a></li>
+                                <li><a href="photo_gallery.html">フォトギャラリー</a></li>
+                            </ul><!-- .megamenu-inner -->
+                        </div><!-- .megamenu -->
+                    </li>
+                    <li><a href="surface.html" class="gnvlink">データファイル</a>
+                        <div class="megamenu">
+                            <ul class="megamenu-inner main-wrapper">
+                                <li><a href="surface.html">競走水面・進入コース別情報</a></li>
+                                <li><a href="articles.html">レーサー紹介記事一覧</a></li>
+                                <li><a href="ranking.html">賞金ランキング</a></li>
+                                <!--<li><a href="https://sp.macour.jp/s/kyotei-info/miyajima/br17book2021/pc/" class="betsu" target="_blank">舟券傾向と対策</a></li>-->
+
+                            </ul><!-- .megamenu-inner -->
+                        </div><!-- .megamenu -->
+                    </li>
+                    <li><a href="schedule.html" class="gnvlink">開催・発売日程</a>
+                        <div class="megamenu">
+                            <ul class="megamenu-inner main-wrapper">
+                                <li><a href="schedule.html">宮島本場＆PALBOAT宮島</a></li>
+                                <li><a href="https://palboat-miyajima.com/" class="betsu" target="_blank">PALBOAT宮島</a></li>
+                                <li><a href="https://www.bp-kure.com/" class="betsu" target="_blank">BTS呉</a></li>
+                                <li><a href="https://br-akitakata.com/" class="betsu" target="_blank">BTS安芸高田</a></li>
+                                <li><a href="https://bts-onomichi.biho.jp/" class="betsu" target="_blank">BTS尾道</a></li>
+                            </ul><!-- .megamenu-inner -->
+                        </div><!-- .megamenu -->
+
+                    </li>
+                    <li><a href="hiroshima_racer.html" class="gnvlink">広島支部選手</a>
+                        <div class="megamenu">
+                            <ul class="megamenu-inner main-wrapper">
+                                <li><a href="hiroshima_racer.html">広島支部選手一覧</a></li>
+                                <li><a href="hiroshima_racer.html#under_base_winners">広島支部選手優勝情報</a></li>
+                                <li><a href="hiroshima_racer.html#under_base_lookie">スター候補選手・新人選手紹介</a></li>
+                                <li><a href="diary_movie.html">広島支部日記動画</a></li>
+                                <li><a href="monta_channel.html">モンタチャンネル</a></li>
+                            </ul><!-- .megamenu-inner -->
+                        </div><!-- .megamenu -->
+
+                    </li>
+                    <li><a href="news.html" class="gnvlink">新着情報・サービス案内</a>
+                        <div class="megamenu">
+                            <ul class="megamenu-inner main-wrapper">
+                                <li><a href="news.html">新着情報</a></li>
+                                <li><a href="event.html">場内イベント</a></li>
+								<li><a href="fanservice.html">場内ファンサービス</a></li>
+                                <li><a href="youtube_schedule.html">公式YouTube番組配信予定</a></li>
+                                <li><a href="televoting.html">各種キャンペーン</a></li>
+                                <li><a href="goods.html">宮島オリジナルグッズ</a></li>
+                                <li><a href="momiji_card.html">キャッシュレス投票『モミジカード』</a></li>
+                                <li><a href="app.html">公式SNS・スマホ専用アプリ</a></li>
+                                <li><a href="beginners.html">初心者ガイド</a></li>
+                                <li><a href="banners.html">横断幕について</a></li>
+                                <li><a href="panorama.html">パノラマムービー</a></li>
+								<li><a href="https://www.boatrace-miyajima.com/pdf/vr_schedule.pdf" class="betsu" target="_blank">ＶＲスプラッシュバトル実施予定日</a></li>
+                                <li><a href="https://www.boatrace-miyajima.com/pdf/kutsurogi_r8.pdf" class="betsu" target="_blank">3Fくつろぎルームご利用案内&開放予定日</a></li>
+								<li><a href="ga-info.html">ギャンブル依存症関連</a></li>
+								<li><a href="https://gamble-shindan.com/?utm_source=sitelink&utm_medium=banner&utm_campaign=boatrace202203" class="betsu" target="_blank">ギャンブル依存症セルフチェック</a></li>
+								<li><a href="jalert-info.html">Jアラート関連</a></li>
+                            </ul><!-- .megamenu-inner -->
+                        </div><!-- .megamenu -->
+
+                    </li>
+                    <li><a href="facility.html" class="gnvlink">施設・アクセス</a>
+                        <div class="megamenu">
+                            <ul class="megamenu-inner main-wrapper">
+                                <li><a href="facility.html">フロアガイド</a></li>
+                                <li><a href="gourmet.html">グルメガイド</a></li>
+                                <li><a href="reserved_seat.html">指定席</a></li>
+                                <li><span><a href="seat_availability.html">指定席発売状況(当日)</a></span></li>
+                                <li><a href="access.html">交通アクセス</a></li>
+                                <li><a href="parking.html">専用駐車場</a></li>
+                                <li><a href="rokumiyajima.html">ROKU宮島</a></li>
+                                <li><a href="spot.html">周辺の観光情報・宮島カメラ</a></li>
+                            </ul><!-- .megamenu-inner -->
+                        </div><!-- .megamenu -->
+                    </li>
+                    <li><a href="https://ib.mbrace.or.jp/" class="vote gnvlink" target="_blank"><div class="vote"><p>投票</p></div></a></li>
+
+                </ul> </div>
+        </nav>
+    </div>
+
+
+    <div class="fix_sp sp">
+        <div class="int">
+            <h1><a href="index.html"><img src="images/sp_head_logo.png?1" alt="BOATRACE宮島"></a></h1>
+
+            <!-- ハンバーガーメニュー部分 -->
+            <div class="drawer">
+                <!-- ハンバーガーメニューの表示・非表示を切り替えるチェックボックス -->
+                <input type="checkbox" id="drawer-check2" class="drawer-hidden2" >
+
+                <!-- ハンバーガーアイコン -->
+                <label for="drawer-check2" class="drawer-open2"><span></span><p>MENU</p></label>
+
+                <!-- メニュー -->
+                <nav class="drawer-content2">
+                    <dl class="panel_footer">
+                        <a href="index.html" class="top">TOP</a>
+                        <dt>レース情報</dt>
+                        <dd>
+                            <ul>
+                                <li><a href="racer_list.html">出場予定選手一覧</a></li>
+                                <li><a href="prospect.html">レース展望</a></li>
+                                <li><a href="racecard.html">出走表</a></li>
+                                <li><a href="racedata.html">競走データ</a></li>
+                                <li><a href="raceinfo_timerank.html">モーターボート抽選結果・<br>前検タイムランキング<br></a></li>
+                                <li><a href="yosen_point_rank.html">予選得点率ランキング</a></li>
+                                <li><a href="results.html">レース結果一覧</a></li>
+                                <li><a href="https://livebb.jlc.ne.jp/bb_top/sp_bb/vod_17.php" class="betsu" target="_blank">レースリプレイ</a></li>
+                                <li><a href="race_tenbou.html">専属記者レース展望動画・<br>優出選手インタビュー動画</a></li>
+                                <li><a href="paper.html">無料専門予想紙</a></li>
+                                <li><a href="photo_gallery.html">フォトギャラリー</a></li>
+                            </ul>
+                        </dd>
+                    </dl>
+                    <dl class="panel_footer">
+                        <dt>データファイル</dt>
+                        <dd>
+                            <ul>
+                                <li><a href="surface.html">競走水面・進入コース別情報</a></li>
+                                <li><a href="articles.html">レーサー紹介記事一覧</a></li>
+                                <li><a href="ranking.html">賞金ランキング</a></li>
+                                <!--<li><a href="https://sp.macour.jp/s/kyotei-info/miyajima/br17book2021/sp/" class="betsu" target="_blank">舟券傾向と対策</a></li>-->
+                            </ul>
+                        </dd>
+                    </dl>
+                    <dl class="panel_footer">
+                        <dt>開催・発売日程</dt>
+                        <dd>
+                            <ul>
+                                <li><a href="schedule.html">宮島本場＆PALBOAT宮島</a></li>
+                                <li><a href="https://palboat-miyajima.com/" class="betsu" target="_blank">PALBOAT宮島</a></li>
+                                <li><a href="https://www.bp-kure.com/" class="betsu" target="_blank">BTS呉</a></li>
+                                <li><a href="https://br-akitakata.com/" class="betsu" target="_blank">BTS安芸高田</a></li>
+                                <li><a href="https://bts-onomichi.biho.jp/" class="betsu" target="_blank">BTS尾道</a></li>
+                            </ul>
+                        </dd>
+                    </dl>
+                    <dl class="panel_footer">
+                        <dt>広島支部選手</dt>
+                        <dd>
+                            <ul>
+                                <li><a href="hiroshima_racer.html">広島支部選手一覧</a></li>
+                                <li><a href="hiroshima_racer.html#under_base_winners">広島支部選手優勝情報</a></li>
+                                <li><a href="hiroshima_racer.html#under_base_lookie">スター候補選手・新人選手紹介</a></li>
+                                <li><a href="diary_movie.html">広島支部日記動画</a></li>
+                                <li><a href="monta_channel.html">モンタチャンネル</a></li>
+                            </ul>
+                        </dd>
+                    </dl>
+                    <dl class="panel_footer">
+                        <dt>新着情報・サービス案内</dt>
+                        <dd>
+                            <ul>
+                                <li><a href="news.html">新着情報</a></li>
+                                <li><a href="event.html">場内イベント</a></li>
+								<li><a href="fanservice.html">場内ファンサービス</a></li>
+                                <li><a href="youtube_schedule.html">公式YouTube番組配信予定</a></li>
+                                <li><a href="televoting.html">各種キャンペーン</a></li>
+                                <li><a href="goods.html">宮島オリジナルグッズ</a></li>
+                                <li><a href="momiji_card.html">キャッシュレス投票『モミジカード』</a></li>
+                                <li><a href="app.html">公式SNS・スマホ専用アプリ</a></li>
+                                <li><a href="beginners.html">初心者ガイド</a></li>
+                                <li><a href="banners.html">横断幕について</a></li>
+                                <li><a href="panorama.html">パノラマムービー</a></li>
+								<li><a href="https://www.boatrace-miyajima.com/pdf/vr_schedule.pdf" class="betsu" target="_blank">ＶＲスプラッシュバトル実施予定日</a></li>
+                                <li><a href="https://www.boatrace-miyajima.com/pdf/kutsurogi_r8.pdf" class="betsu" target="_blank">3Fくつろぎルームご利用案内&開放予定日</a></li>
+								<li><a href="ga-info.html">ギャンブル依存症関連</a></li>
+								<li><a href="https://gamble-shindan.com/?utm_source=sitelink&utm_medium=banner&utm_campaign=boatrace202203" class="betsu" target="_blank">ギャンブル依存症セルフチェック</a></li>
+								<li><a href="jalert-info.html">Jアラート関連</a></li>
+                            </ul>
+                        </dd>
+                    </dl>
+                    <dl class="panel_footer">
+                        <dt>施設・アクセス</dt>
+                        <dd>
+                            <ul>
+                                <li><a href="facility.html">フロアガイド</a></li>
+                                <li><a href="gourmet.html">グルメガイド</a></li>
+                                <li><a href="reserved_seat.html">指定席</a></li>
+                                <li><span><a href="seat_availability.html">指定席発売状況(当日)</a></span></li>
+                                <li><a href="access.html">交通アクセス</a></li>
+                                <li><a href="parking.html">専用駐車場</a></li>
+                                <li><a href="rokumiyajima.html">ROKU宮島</a></li>
+                                <li><a href="spot.html">周辺の観光情報・宮島カメラ</a></li>
+                            </ul>
+                        </dd>
+                    </dl>
+                    <dl class="panel_footer panel_footer_bottom">
+                        <dt>お問い合わせ・その他</dt>
+                        <dd>
+                            <ul>
+                                <li><a href="contact.html">ご意見・ご要望</a></li>
+                                <li><a href="faq.html">よくある質問</a></li>
+                                <li><a href="req.html">サイトポリシー</a></li>
+                                <li><a href="privacy.html">プライバシーポリシー</a></li>
+                                <li><a href="links.html">リンク集</a></li>
+                                <li class="panel_footer_bottom"><a href="groupinfo.html" style="font-size: 1.15em; font-weight: bold;">宮島ボートレース企業団からのお知らせ（事業者向け）</a></li>
+                            </ul>
+                        </dd>
+                    </dl>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+</div>
+
+
+<script src="js/swiper.min.js"></script>
+<script>
+    var swiper = new Swiper('.swiper-container', {
+        speed:800,
+        pagination: '.swiper-pagination',
+        slidesPerView: 1,
+        autoplay:4000,
+        loop: true,
+        paginationClickable: true,
+        spaceBetween: 0,
+        keyboardControl: true,
+        nextButton: '.swiper-button-next',
+        prevButton: '.swiper-button-prev',
+    });
+</script>
+
+<script>
+    var swiper = new Swiper('.swiper-container2', {
+        speed:800,
+        pagination: '.swiper-pagination2',
+        slidesPerView: 1,
+        autoplay:false,
+        loop: true,
+        paginationClickable: true,
+        spaceBetween: 0,
+        keyboardControl: true,
+        nextButton: '.swiper-button-next',
+        prevButton: '.swiper-button-prev',
+    });
+</script>
+
+<script>
+    $(function() {
+        $('.tab>li').click(function() {
+            var num = $(this).parent().children('li').index(this);
+            $('.tab').each(function(){
+                $('>li',this).removeClass('active').eq(num).addClass('active');
+            });
+            $('.tabcontents-list').hide().eq(num).show();
+        }).first().click();
+    });
+</script>
+<script>
+    $(function() {
+        $('.tab2>li').click(function() {
+            var num = $(this).parent().children('li').index(this);
+            $('.tab2').each(function(){
+                $('>li',this).removeClass('active').eq(num).addClass('active');
+            });
+            $('.tabcontents-list2').hide().eq(num).show();
+        }).first().click();
+    });
+</script>
+<script>
+    $(function() {
+        $('.tab3>li').click(function() {
+            var num = $(this).parent().children('li').index(this);
+            $('.tab3').each(function(){
+                $('>li',this).removeClass('active').eq(num).addClass('active');
+            });
+            $('.tabcontents-list3').hide().eq(num).show();
+        }).first().click();
+    });
+</script>
+<script>
+    $(function() {
+        $('.tab4>li').click(function() {
+            var num = $(this).parent().children('li').index(this);
+            $('.tab4').each(function(){
+                $('>li',this).removeClass('active').eq(num).addClass('active');
+            });
+            $('.tabcontents-list4').hide().eq(num).show();
+        }).first().click();
+    });
+</script>
+<script>
+    $(function() {
+        $('.tab5>li').click(function() {
+            var num = $(this).parent().children('li').index(this);
+            $('.tab5').each(function(){
+                $('>li',this).removeClass('active').eq(num).addClass('active');
+            });
+            $('.tabcontents-list5').hide().eq(num).show();
+        }).first().click();
+    });
+</script>
+
+<script>
+    $(function() {
+        $('.tab_comment>li').click(function() {
+            var num = $(this).parent().children('li').index(this);
+            $('.tab_comment').each(function(){
+                $('>li',this).removeClass('active').eq(num).addClass('active');
+            });
+            $('.tabcontents-list_comment').hide().eq(num).show();
+        }).first().click();
+    });
+</script>
+<script>
+    $(function() {
+        $('.tab_start>li').click(function() {
+            var num = $(this).parent().children('li').index(this);
+            $('.tab_start').each(function(){
+                $('>li',this).removeClass('active').eq(num).addClass('active');
+            });
+            $('.tabcontents-list_start').hide().eq(num).show();
+        }).first().click();
+    });
+</script>
+<script>
+    $(function() {
+        $('.tab_odds>li').click(function() {
+            var num = $(this).parent().children('li').index(this);
+            $('.tab_odds').each(function(){
+                $('>li',this).removeClass('active').eq(num).addClass('active');
+            });
+            $('.tabcontents-list_odds').hide().eq(num).show();
+        }).first().click();
+    });
+</script>
+<script>
+    $(function(){
+        $('.panel_footer a').click(function(){
+          $('#drawer-check').prop('checked',false);
+          $('#drawer-check2').prop('checked',false);
+          $('html').removeClass('fixed'); 
+        });
+    });
+</script>
+
+<!--アコーディオン-->
+<script>
+    $(function () {
+        //最初は全てのパネルを非表示に
+        $('.panel_footer > dd').hide();
+        $('.panel_footer > dt')
+            .click(function (e) {
+                //選択したパネルを開く
+                $('+dd', this).slideToggle(500);
+                $(this).toggleClass("active");//追加部分
+            })
+
+    });
+</script>
+<script src="js/fout.js"></script>
+<script type="text/javascript">
+(function(s,m,n,l,o,g,i,c,a,d){c=(s[o]||(s[o]={}))[g]||(s[o][g]={});if(c[i])return;c[i]=function(){(c[i+"_queue"]||(c[i+"_queue"]=[])).push(arguments)};a=m.createElement(n);a.charset="utf-8";a.async=true;a.src=l;d=m.getElementsByTagName(n)[0];d.parentNode.insertBefore(a,d)})(window,document,"script","https://cd.ladsp.com/script/pixel2.js","Smn","Logicad","pixel");
+Smn.Logicad.pixel({
+"f":"1",
+"smnAdvertiserId":"00028148"
+});
+</script>
+</body>
+                                                       
+</html>

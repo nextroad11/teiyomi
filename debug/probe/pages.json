@@ -1,0 +1,5476 @@
+{
+ "1": [
+  {
+   "url": "https://www.kiryu-kyotei.com/modules/pdf/?page=index_syussoupdf",
+   "status": 200,
+   "final": "https://www.kiryu-kyotei.com/modules/pdf/?page=index_syussoupdf",
+   "len": 16087,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-5DD52DD"
+   ],
+   "ext_js": [
+    "www.googletagmanager.com",
+    "www.kiryu-kyotei.com"
+   ],
+   "ajax": [],
+   "file": "01_01.html"
+  },
+  {
+   "url": "https://www.kiryu-kyotei.com/modules/raceinfo/",
+   "status": 200,
+   "final": "https://www.kiryu-kyotei.com/modules/raceinfo/",
+   "len": 15291,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-5DD52DD"
+   ],
+   "ext_js": [
+    "www.googletagmanager.com",
+    "www.kiryu-kyotei.com"
+   ],
+   "ajax": [],
+   "file": "01_02.html"
+  },
+  {
+   "url": "https://www.kiryu-kyotei.com/modules/raceinfo/?page=index_timedata",
+   "status": 200,
+   "final": "https://www.kiryu-kyotei.com/modules/raceinfo/?page=index_timedata",
+   "len": 93909,
+   "展示": 46,
+   "展示タイム": 46,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-5DD52DD"
+   ],
+   "ext_js": [
+    "www.googletagmanager.com",
+    "www.kiryu-kyotei.com"
+   ],
+   "ajax": [],
+   "file": "01_03.html"
+  },
+  {
+   "url": "https://www.kiryu-kyotei.com/modules/raceinfo/?page=index_timerank",
+   "status": 200,
+   "final": "https://www.kiryu-kyotei.com/modules/raceinfo/?page=index_timerank",
+   "len": 37699,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-5DD52DD"
+   ],
+   "ext_js": [
+    "www.googletagmanager.com",
+    "www.kiryu-kyotei.com"
+   ],
+   "ajax": [],
+   "file": "01_04.html"
+  },
+  {
+   "url": "https://www.kiryu-kyotei.com/modules/raceinfo/?page=index_tokuten",
+   "status": 200,
+   "final": "https://www.kiryu-kyotei.com/modules/raceinfo/?page=index_tokuten",
+   "len": 38886,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-5DD52DD"
+   ],
+   "ext_js": [
+    "www.googletagmanager.com",
+    "www.kiryu-kyotei.com"
+   ],
+   "ajax": [],
+   "file": "01_05.html"
+  }
+ ],
+ "2": [],
+ "3": [
+  {
+   "url": "https://www.boatrace-edogawa.com/modules/kako/race_result.php",
+   "status": 200,
+   "final": "https://www.boatrace-edogawa.com/modules/kako/race_result.php",
+   "len": 26469,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 1,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-TW46PTL"
+   ],
+   "ext_js": [
+    "www.boatrace-edogawa.com",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "03_01.html"
+  },
+  {
+   "url": "https://www.boatrace-edogawa.com/modules/kouryaku/motor_cyusen.php",
+   "status": 200,
+   "final": "https://www.boatrace-edogawa.com/modules/kouryaku/motor_cyusen.php",
+   "len": 12256,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 1,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-TW46PTL"
+   ],
+   "ext_js": [
+    "www.boatrace-edogawa.com",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "03_02.html"
+  },
+  {
+   "url": "https://www.boatrace-edogawa.com/modules/pdf/syussou_pdf.php",
+   "status": 200,
+   "final": "https://www.boatrace-edogawa.com/modules/pdf/syussou_pdf.php",
+   "len": 49566,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 1,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-TW46PTL"
+   ],
+   "ext_js": [
+    "www.boatrace-edogawa.com",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "03_03.html"
+  },
+  {
+   "url": "https://www.boatrace-edogawa.com/modules/pdf/yosoushi_pdf.php",
+   "status": 200,
+   "final": "https://www.boatrace-edogawa.com/modules/pdf/yosoushi_pdf.php",
+   "len": 13719,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 1,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-TW46PTL"
+   ],
+   "ext_js": [
+    "www.boatrace-edogawa.com",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "03_04.html"
+  }
+ ],
+ "4": [],
+ "5": [
+  {
+   "url": "https://www.boatrace-tamagawa.com/modules/raceinfo/",
+   "status": 200,
+   "final": "https://www.boatrace-tamagawa.com/modules/raceinfo/",
+   "len": 24218,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-WLGCNLZ"
+   ],
+   "ext_js": [
+    "code.jquery.com"
+   ],
+   "ajax": [],
+   "file": "05_01.html"
+  },
+  {
+   "url": "https://www.boatrace-tamagawa.com/modules/raceinfo/?page=index_assen",
+   "status": 200,
+   "final": "https://www.boatrace-tamagawa.com/modules/raceinfo/?page=index_assen",
+   "len": 33414,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-WLGCNLZ"
+   ],
+   "ext_js": [
+    "code.jquery.com"
+   ],
+   "ajax": [],
+   "file": "05_02.html"
+  },
+  {
+   "url": "https://www.boatrace-tamagawa.com/modules/raceinfo/?page=index_pdf",
+   "status": 200,
+   "final": "https://www.boatrace-tamagawa.com/modules/raceinfo/?page=index_pdf",
+   "len": 20944,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-WLGCNLZ"
+   ],
+   "ext_js": [
+    "code.jquery.com"
+   ],
+   "ajax": [],
+   "file": "05_03.html"
+  },
+  {
+   "url": "https://www.boatrace-tamagawa.com/modules/raceinfo/?page=index_racecourse",
+   "status": 200,
+   "final": "https://www.boatrace-tamagawa.com/modules/raceinfo/?page=index_racecourse",
+   "len": 16703,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 7,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-WLGCNLZ"
+   ],
+   "ext_js": [
+    "code.jquery.com"
+   ],
+   "ajax": [],
+   "file": "05_04.html"
+  },
+  {
+   "url": "https://www.boatrace-tamagawa.com/modules/raceinfo/?page=index_resultlist",
+   "status": 200,
+   "final": "https://www.boatrace-tamagawa.com/modules/raceinfo/?page=index_resultlist",
+   "len": 32362,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-WLGCNLZ"
+   ],
+   "ext_js": [
+    "code.jquery.com"
+   ],
+   "ajax": [],
+   "file": "05_05.html"
+  },
+  {
+   "url": "https://www.boatrace-tamagawa.com/modules/raceinfo/?page=index_tenbo",
+   "status": 200,
+   "final": "https://www.boatrace-tamagawa.com/modules/raceinfo/?page=index_tenbo",
+   "len": 22604,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-WLGCNLZ"
+   ],
+   "ext_js": [
+    "code.jquery.com"
+   ],
+   "ajax": [],
+   "file": "05_06.html"
+  },
+  {
+   "url": "https://www.boatrace-tamagawa.com/modules/raceinfo/?page=index_tenbo&targetday=20261121",
+   "status": 200,
+   "final": "https://www.boatrace-tamagawa.com/modules/raceinfo/?page=index_tenbo&targetday=20261121",
+   "len": 22623,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-WLGCNLZ"
+   ],
+   "ext_js": [
+    "code.jquery.com"
+   ],
+   "ajax": [],
+   "file": "05_07.html"
+  },
+  {
+   "url": "https://www.boatrace-tamagawa.com/modules/raceinfo/?page=index_timerank",
+   "status": 200,
+   "final": "https://www.boatrace-tamagawa.com/modules/raceinfo/?page=index_timerank",
+   "len": 16785,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-WLGCNLZ"
+   ],
+   "ext_js": [
+    "code.jquery.com"
+   ],
+   "ajax": [],
+   "file": "05_08.html"
+  },
+  {
+   "url": "https://www.boatrace-tamagawa.com/modules/raceinfo/?page=index_tokutenrank",
+   "status": 200,
+   "final": "https://www.boatrace-tamagawa.com/modules/raceinfo/?page=index_tokutenrank",
+   "len": 16692,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-WLGCNLZ"
+   ],
+   "ext_js": [
+    "code.jquery.com"
+   ],
+   "ajax": [],
+   "file": "05_09.html"
+  },
+  {
+   "url": "https://www.boatrace-tamagawa.com/modules/raceinfo/?page=index_resultlist&resultday=20261111",
+   "status": 200,
+   "final": "https://www.boatrace-tamagawa.com/modules/raceinfo/?page=index_resultlist&resultday=20261111",
+   "len": 32362,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-WLGCNLZ"
+   ],
+   "ext_js": [
+    "code.jquery.com"
+   ],
+   "ajax": [],
+   "file": "05_10.html"
+  },
+  {
+   "url": "https://www.boatrace-tamagawa.com/modules/raceinfo/?page=index_resultlist&resultday=20261027",
+   "status": 200,
+   "final": "https://www.boatrace-tamagawa.com/modules/raceinfo/?page=index_resultlist&resultday=20261027",
+   "len": 32373,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-WLGCNLZ"
+   ],
+   "ext_js": [
+    "code.jquery.com"
+   ],
+   "ajax": [],
+   "file": "05_11.html"
+  },
+  {
+   "url": "https://www.boatrace-tamagawa.com/modules/raceinfo/?page=index_resultlist&resultday=20261009",
+   "status": 200,
+   "final": "https://www.boatrace-tamagawa.com/modules/raceinfo/?page=index_resultlist&resultday=20261009",
+   "len": 32388,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-WLGCNLZ"
+   ],
+   "ext_js": [
+    "code.jquery.com"
+   ],
+   "ajax": [],
+   "file": "05_12.html"
+  },
+  {
+   "url": "https://www.boatrace-tamagawa.com/modules/raceinfo/?page=index_resultlist&resultday=20260930",
+   "status": 200,
+   "final": "https://www.boatrace-tamagawa.com/modules/raceinfo/?page=index_resultlist&resultday=20260930",
+   "len": 32366,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-WLGCNLZ"
+   ],
+   "ext_js": [
+    "code.jquery.com"
+   ],
+   "ajax": [],
+   "file": "05_13.html"
+  },
+  {
+   "url": "https://www.boatrace-tamagawa.com/modules/raceinfo/?page=index_resultlist&resultday=20260921",
+   "status": 200,
+   "final": "https://www.boatrace-tamagawa.com/modules/raceinfo/?page=index_resultlist&resultday=20260921",
+   "len": 32364,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-WLGCNLZ"
+   ],
+   "ext_js": [
+    "code.jquery.com"
+   ],
+   "ajax": [],
+   "file": "05_14.html"
+  }
+ ],
+ "6": [
+  {
+   "url": "https://www.boatrace-hamanako.jp/modules/raceinfo/",
+   "status": 200,
+   "final": "https://www.boatrace-hamanako.jp/modules/raceinfo/",
+   "len": 48958,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-MZDHGXS7"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "06_01.html"
+  },
+  {
+   "url": "https://www.boatrace-hamanako.jp/modules/raceinfo/?page=index_assen",
+   "status": 200,
+   "final": "https://www.boatrace-hamanako.jp/modules/raceinfo/?page=index_assen",
+   "len": 57883,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 1,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-MZDHGXS7"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "06_02.html"
+  },
+  {
+   "url": "https://www.boatrace-hamanako.jp/modules/raceinfo/?page=index_assen&targetday=20261128",
+   "status": 200,
+   "final": "https://www.boatrace-hamanako.jp/modules/raceinfo/?page=index_assen&targetday=20261128",
+   "len": 57883,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 1,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-MZDHGXS7"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "06_03.html"
+  },
+  {
+   "url": "https://www.boatrace-hamanako.jp/modules/raceinfo/?page=index_konsetsu",
+   "status": 200,
+   "final": "https://www.boatrace-hamanako.jp/modules/raceinfo/?page=index_konsetsu",
+   "len": 31854,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-MZDHGXS7"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "06_04.html"
+  },
+  {
+   "url": "https://www.boatrace-hamanako.jp/modules/raceinfo/?page=index_pdf",
+   "status": 200,
+   "final": "https://www.boatrace-hamanako.jp/modules/raceinfo/?page=index_pdf",
+   "len": 33602,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-MZDHGXS7"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "06_05.html"
+  },
+  {
+   "url": "https://www.boatrace-hamanako.jp/modules/raceinfo/?page=index_racecourse",
+   "status": 200,
+   "final": "https://www.boatrace-hamanako.jp/modules/raceinfo/?page=index_racecourse",
+   "len": 31878,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-MZDHGXS7"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "06_06.html"
+  },
+  {
+   "url": "https://www.boatrace-hamanako.jp/modules/raceinfo/?page=index_resultlist",
+   "status": 200,
+   "final": "https://www.boatrace-hamanako.jp/modules/raceinfo/?page=index_resultlist",
+   "len": 50188,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-MZDHGXS7"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "06_07.html"
+  },
+  {
+   "url": "https://www.boatrace-hamanako.jp/modules/raceinfo/?page=index_tenbo",
+   "status": 200,
+   "final": "https://www.boatrace-hamanako.jp/modules/raceinfo/?page=index_tenbo",
+   "len": 44092,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-MZDHGXS7"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "06_08.html"
+  },
+  {
+   "url": "https://www.boatrace-hamanako.jp/modules/raceinfo/?page=index_tenbo&targetday=20261128",
+   "status": 200,
+   "final": "https://www.boatrace-hamanako.jp/modules/raceinfo/?page=index_tenbo&targetday=20261128",
+   "len": 44092,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-MZDHGXS7"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "06_09.html"
+  },
+  {
+   "url": "https://www.boatrace-hamanako.jp/modules/raceinfo/?page=index_timerank",
+   "status": 200,
+   "final": "https://www.boatrace-hamanako.jp/modules/raceinfo/?page=index_timerank",
+   "len": 32037,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-MZDHGXS7"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "06_10.html"
+  },
+  {
+   "url": "https://www.boatrace-hamanako.jp/modules/raceinfo/?page=index_resultlist&resultday=20261104",
+   "status": 200,
+   "final": "https://www.boatrace-hamanako.jp/modules/raceinfo/?page=index_resultlist&resultday=20261104",
+   "len": 50188,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-MZDHGXS7"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "06_11.html"
+  },
+  {
+   "url": "https://www.boatrace-hamanako.jp/modules/raceinfo/?page=index_resultlist&resultday=20261026",
+   "status": 200,
+   "final": "https://www.boatrace-hamanako.jp/modules/raceinfo/?page=index_resultlist&resultday=20261026",
+   "len": 50084,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-MZDHGXS7"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "06_12.html"
+  },
+  {
+   "url": "https://www.boatrace-hamanako.jp/modules/raceinfo/?page=index_resultlist&resultday=20261015",
+   "status": 200,
+   "final": "https://www.boatrace-hamanako.jp/modules/raceinfo/?page=index_resultlist&resultday=20261015",
+   "len": 50085,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-MZDHGXS7"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "06_13.html"
+  },
+  {
+   "url": "https://www.boatrace-hamanako.jp/modules/raceinfo/?page=index_resultlist&resultday=20261004",
+   "status": 200,
+   "final": "https://www.boatrace-hamanako.jp/modules/raceinfo/?page=index_resultlist&resultday=20261004",
+   "len": 49836,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-MZDHGXS7"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "06_14.html"
+  }
+ ],
+ "7": [
+  {
+   "url": "https://www.gamagori-kyotei.com/asp/gamagori/contents/01race/01race.php?id=437",
+   "status": 200,
+   "final": "https://www.gamagori-kyotei.com/asp/gamagori/contents/01race/01race.php?id=437",
+   "len": 37674,
+   "展示": 4,
+   "展示タイム": 0,
+   "進入": 1,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.gamagori-kyotei.com/01race/2026/1027.htm"
+   ],
+   "ext_js": [
+    "www.gamagori-kyotei.com",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css?family=Noto+Sans+JP:100,300,400,500,700,900",
+    "https://fonts.googleapis.com/css?family=Oswald:200,300,400,500,600,700",
+    "https://fonts.googleapis.com/css?family=Roboto:200,300,400,500,600,700"
+   ],
+   "file": "07_01.html"
+  },
+  {
+   "url": "https://www.gamagori-kyotei.com/asp/gamagori/contents/01race/01race.php?id=438",
+   "status": 200,
+   "final": "https://www.gamagori-kyotei.com/asp/gamagori/contents/01race/01race.php?id=438",
+   "len": 37528,
+   "展示": 2,
+   "展示タイム": 0,
+   "進入": 1,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.gamagori-kyotei.com/01race/2026/1109.htm"
+   ],
+   "ext_js": [
+    "www.gamagori-kyotei.com",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css?family=Noto+Sans+JP:100,300,400,500,700,900",
+    "https://fonts.googleapis.com/css?family=Oswald:200,300,400,500,600,700",
+    "https://fonts.googleapis.com/css?family=Roboto:200,300,400,500,600,700"
+   ],
+   "file": "07_02.html"
+  },
+  {
+   "url": "https://www.gamagori-kyotei.com/asp/gamagori/contents/01race/01race.php?id=439",
+   "status": 200,
+   "final": "https://www.gamagori-kyotei.com/asp/gamagori/contents/01race/01race.php?id=439",
+   "len": 39735,
+   "展示": 3,
+   "展示タイム": 0,
+   "進入": 1,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.gamagori-kyotei.com/01race/2026/1121.htm"
+   ],
+   "ext_js": [
+    "www.gamagori-kyotei.com",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css?family=Noto+Sans+JP:100,300,400,500,700,900",
+    "https://fonts.googleapis.com/css?family=Oswald:200,300,400,500,600,700",
+    "https://fonts.googleapis.com/css?family=Roboto:200,300,400,500,600,700"
+   ],
+   "file": "07_03.html"
+  },
+  {
+   "url": "https://www.gamagori-kyotei.com/asp/gamagori/contents/01race/01race.php?id=440",
+   "status": 200,
+   "final": "https://www.gamagori-kyotei.com/asp/gamagori/contents/01race/01race.php?id=440",
+   "len": 40319,
+   "展示": 2,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.gamagori-kyotei.com/01race/2026/1127.htm"
+   ],
+   "ext_js": [
+    "www.gamagori-kyotei.com",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css?family=Noto+Sans+JP:100,300,400,500,700,900",
+    "https://fonts.googleapis.com/css?family=Oswald:200,300,400,500,600,700",
+    "https://fonts.googleapis.com/css?family=Roboto:200,300,400,500,600,700"
+   ],
+   "file": "07_04.html"
+  },
+  {
+   "url": "https://www.gamagori-kyotei.com/asp/gamagori/contents/01race/01race.php?id=441",
+   "status": 200,
+   "final": "https://www.gamagori-kyotei.com/asp/gamagori/contents/01race/01race.php?id=441",
+   "len": 43643,
+   "展示": 2,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.gamagori-kyotei.com/01race/nodata.htm"
+   ],
+   "ext_js": [
+    "www.gamagori-kyotei.com",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css?family=Noto+Sans+JP:100,300,400,500,700,900",
+    "https://fonts.googleapis.com/css?family=Oswald:200,300,400,500,600,700",
+    "https://fonts.googleapis.com/css?family=Roboto:200,300,400,500,600,700"
+   ],
+   "file": "07_05.html"
+  },
+  {
+   "url": "https://www.gamagori-kyotei.com/asp/gamagori/kyogi/moviehtml/replay.htm",
+   "status": 200,
+   "final": "https://www.gamagori-kyotei.com/asp/gamagori/kyogi/moviehtml/replay.htm",
+   "len": 191348,
+   "展示": 1,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [
+    "www.gamagori-kyotei.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css?family=Noto+Sans+JP:100,300,400,500,700,900",
+    "https://fonts.googleapis.com/css?family=Oswald:200,300,400,500,600,700",
+    "https://fonts.googleapis.com/css?family=Roboto:200,300,400,500,600,700"
+   ],
+   "file": "07_06.html"
+  },
+  {
+   "url": "https://www.gamagori-kyotei.com/asp/htmlmade/gamagori/01race/pc/01race_sch.htm",
+   "status": 200,
+   "final": "https://www.gamagori-kyotei.com:443/asp/htmlmade/gamagori/01race/PC/01race_sch.htm",
+   "len": 30456,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [
+    "www.gamagori-kyotei.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css?family=Noto+Sans+JP:100,300,400,500,700,900",
+    "https://fonts.googleapis.com/css?family=Oswald:200,300,400,500,600,700",
+    "https://fonts.googleapis.com/css?family=Roboto:200,300,400,500,600,700"
+   ],
+   "file": "07_07.html"
+  },
+  {
+   "url": "https://www.gamagori-kyotei.com/asp/gamagori/kyogi/moviehtml/replay_tenji.htm",
+   "status": 200,
+   "final": "https://www.gamagori-kyotei.com/asp/gamagori/kyogi/moviehtml/replay_tenji.htm",
+   "len": 78282,
+   "展示": 1,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [
+    "www.gamagori-kyotei.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css?family=Noto+Sans+JP:100,300,400,500,700,900",
+    "https://fonts.googleapis.com/css?family=Oswald:200,300,400,500,600,700",
+    "https://fonts.googleapis.com/css?family=Roboto:200,300,400,500,600,700"
+   ],
+   "file": "07_08.html"
+  },
+  {
+   "url": "https://www.gamagori-kyotei.com/asp/gamagori/kyogi/moviehtml/replay_on.htm?racenum=1&amp;date=20261114",
+   "status": 200,
+   "final": "https://www.gamagori-kyotei.com/asp/gamagori/kyogi/moviehtml/replay_on.htm?racenum=1&amp;date=20261114",
+   "len": 12052,
+   "展示": 1,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "/footer.htm"
+   ],
+   "ext_js": [],
+   "ajax": [
+    "https://fonts.googleapis.com/css?family=Noto+Sans+JP:100,300,400,500,700,900",
+    "https://fonts.googleapis.com/css?family=Oswald:200,300,400,500,600,700",
+    "https://fonts.googleapis.com/css?family=Roboto:200,300,400,500,600,700"
+   ],
+   "file": "07_09.html"
+  },
+  {
+   "url": "https://www.gamagori-kyotei.com/asp/gamagori/kyogi/moviehtml/replay_on.htm?racenum=2&amp;date=20261114",
+   "status": 200,
+   "final": "https://www.gamagori-kyotei.com/asp/gamagori/kyogi/moviehtml/replay_on.htm?racenum=2&amp;date=20261114",
+   "len": 12052,
+   "展示": 1,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "/footer.htm"
+   ],
+   "ext_js": [],
+   "ajax": [
+    "https://fonts.googleapis.com/css?family=Noto+Sans+JP:100,300,400,500,700,900",
+    "https://fonts.googleapis.com/css?family=Oswald:200,300,400,500,600,700",
+    "https://fonts.googleapis.com/css?family=Roboto:200,300,400,500,600,700"
+   ],
+   "file": "07_10.html"
+  },
+  {
+   "url": "https://www.gamagori-kyotei.com/asp/gamagori/kyogi/moviehtml/replay_on.htm?racenum=3&amp;date=20261114",
+   "status": 200,
+   "final": "https://www.gamagori-kyotei.com/asp/gamagori/kyogi/moviehtml/replay_on.htm?racenum=3&amp;date=20261114",
+   "len": 12052,
+   "展示": 1,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "/footer.htm"
+   ],
+   "ext_js": [],
+   "ajax": [
+    "https://fonts.googleapis.com/css?family=Noto+Sans+JP:100,300,400,500,700,900",
+    "https://fonts.googleapis.com/css?family=Oswald:200,300,400,500,600,700",
+    "https://fonts.googleapis.com/css?family=Roboto:200,300,400,500,600,700"
+   ],
+   "file": "07_11.html"
+  },
+  {
+   "url": "https://www.gamagori-kyotei.com/asp/gamagori/kyogi/moviehtml/replay_on.htm?racenum=4&amp;date=20261114",
+   "status": 200,
+   "final": "https://www.gamagori-kyotei.com/asp/gamagori/kyogi/moviehtml/replay_on.htm?racenum=4&amp;date=20261114",
+   "len": 12052,
+   "展示": 1,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "/footer.htm"
+   ],
+   "ext_js": [],
+   "ajax": [
+    "https://fonts.googleapis.com/css?family=Noto+Sans+JP:100,300,400,500,700,900",
+    "https://fonts.googleapis.com/css?family=Oswald:200,300,400,500,600,700",
+    "https://fonts.googleapis.com/css?family=Roboto:200,300,400,500,600,700"
+   ],
+   "file": "07_12.html"
+  },
+  {
+   "url": "https://www.gamagori-kyotei.com/asp/gamagori/kyogi/moviehtml/replay_on.htm?racenum=5&amp;date=20261114",
+   "status": 200,
+   "final": "https://www.gamagori-kyotei.com/asp/gamagori/kyogi/moviehtml/replay_on.htm?racenum=5&amp;date=20261114",
+   "len": 12052,
+   "展示": 1,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "/footer.htm"
+   ],
+   "ext_js": [],
+   "ajax": [
+    "https://fonts.googleapis.com/css?family=Noto+Sans+JP:100,300,400,500,700,900",
+    "https://fonts.googleapis.com/css?family=Oswald:200,300,400,500,600,700",
+    "https://fonts.googleapis.com/css?family=Roboto:200,300,400,500,600,700"
+   ],
+   "file": "07_13.html"
+  },
+  {
+   "url": "https://www.gamagori-kyotei.com/asp/gamagori/kyogi/moviehtml/replay_on.htm?racenum=6&amp;date=20261114",
+   "status": 200,
+   "final": "https://www.gamagori-kyotei.com/asp/gamagori/kyogi/moviehtml/replay_on.htm?racenum=6&amp;date=20261114",
+   "len": 12052,
+   "展示": 1,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "/footer.htm"
+   ],
+   "ext_js": [],
+   "ajax": [
+    "https://fonts.googleapis.com/css?family=Noto+Sans+JP:100,300,400,500,700,900",
+    "https://fonts.googleapis.com/css?family=Oswald:200,300,400,500,600,700",
+    "https://fonts.googleapis.com/css?family=Roboto:200,300,400,500,600,700"
+   ],
+   "file": "07_14.html"
+  },
+  {
+   "url": "https://www.gamagori-kyotei.com/asp/gamagori/kyogi/moviehtml/replay_on.htm?racenum=7&amp;date=20261114",
+   "status": 200,
+   "final": "https://www.gamagori-kyotei.com/asp/gamagori/kyogi/moviehtml/replay_on.htm?racenum=7&amp;date=20261114",
+   "len": 12052,
+   "展示": 1,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "/footer.htm"
+   ],
+   "ext_js": [],
+   "ajax": [
+    "https://fonts.googleapis.com/css?family=Noto+Sans+JP:100,300,400,500,700,900",
+    "https://fonts.googleapis.com/css?family=Oswald:200,300,400,500,600,700",
+    "https://fonts.googleapis.com/css?family=Roboto:200,300,400,500,600,700"
+   ],
+   "file": "07_15.html"
+  },
+  {
+   "url": "https://www.gamagori-kyotei.com/asp/gamagori/kyogi/moviehtml/replay_on.htm?racenum=8&amp;date=20261114",
+   "status": 200,
+   "final": "https://www.gamagori-kyotei.com/asp/gamagori/kyogi/moviehtml/replay_on.htm?racenum=8&amp;date=20261114",
+   "len": 12052,
+   "展示": 1,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "/footer.htm"
+   ],
+   "ext_js": [],
+   "ajax": [
+    "https://fonts.googleapis.com/css?family=Noto+Sans+JP:100,300,400,500,700,900",
+    "https://fonts.googleapis.com/css?family=Oswald:200,300,400,500,600,700",
+    "https://fonts.googleapis.com/css?family=Roboto:200,300,400,500,600,700"
+   ],
+   "file": "07_16.html"
+  }
+ ],
+ "8": [
+  {
+   "url": "https://www.boatrace-tokoname.jp/modules/raceinfo/",
+   "status": 200,
+   "final": "https://www.boatrace-tokoname.jp/modules/raceinfo/",
+   "len": 34143,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NWMTMH3Q"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "08_01.html"
+  },
+  {
+   "url": "https://www.boatrace-tokoname.jp/modules/raceinfo/?page=index_assen",
+   "status": 200,
+   "final": "https://www.boatrace-tokoname.jp/modules/raceinfo/?page=index_assen",
+   "len": 61168,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 1,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NWMTMH3Q"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "08_02.html"
+  },
+  {
+   "url": "https://www.boatrace-tokoname.jp/modules/raceinfo/?page=index_assen&targetday=20261124",
+   "status": 200,
+   "final": "https://www.boatrace-tokoname.jp/modules/raceinfo/?page=index_assen&targetday=20261124",
+   "len": 61168,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 1,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NWMTMH3Q"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "08_03.html"
+  },
+  {
+   "url": "https://www.boatrace-tokoname.jp/modules/raceinfo/?page=index_kikaku",
+   "status": 200,
+   "final": "https://www.boatrace-tokoname.jp/modules/raceinfo/?page=index_kikaku",
+   "len": 34655,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NWMTMH3Q"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "08_04.html"
+  },
+  {
+   "url": "https://www.boatrace-tokoname.jp/modules/raceinfo/?page=index_konsetsu",
+   "status": 200,
+   "final": "https://www.boatrace-tokoname.jp/modules/raceinfo/?page=index_konsetsu",
+   "len": 26277,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NWMTMH3Q"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "08_05.html"
+  },
+  {
+   "url": "https://www.boatrace-tokoname.jp/modules/raceinfo/?page=index_pdf",
+   "status": 200,
+   "final": "https://www.boatrace-tokoname.jp/modules/raceinfo/?page=index_pdf",
+   "len": 28031,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NWMTMH3Q"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "08_06.html"
+  },
+  {
+   "url": "https://www.boatrace-tokoname.jp/modules/raceinfo/?page=index_racecourse",
+   "status": 200,
+   "final": "https://www.boatrace-tokoname.jp/modules/raceinfo/?page=index_racecourse",
+   "len": 26295,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NWMTMH3Q"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "08_07.html"
+  },
+  {
+   "url": "https://www.boatrace-tokoname.jp/modules/raceinfo/?page=index_resultlist",
+   "status": 200,
+   "final": "https://www.boatrace-tokoname.jp/modules/raceinfo/?page=index_resultlist",
+   "len": 45168,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NWMTMH3Q"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "08_08.html"
+  },
+  {
+   "url": "https://www.boatrace-tokoname.jp/modules/raceinfo/?page=index_series_index_archive",
+   "status": 200,
+   "final": "https://www.boatrace-tokoname.jp/modules/raceinfo/?page=index_series_index_archive",
+   "len": 36825,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NWMTMH3Q"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "08_09.html"
+  },
+  {
+   "url": "https://www.boatrace-tokoname.jp/modules/raceinfo/?page=index_timerank",
+   "status": 200,
+   "final": "https://www.boatrace-tokoname.jp/modules/raceinfo/?page=index_timerank",
+   "len": 26454,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NWMTMH3Q"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "08_10.html"
+  },
+  {
+   "url": "https://www.boatrace-tokoname.jp/modules/raceinfo/?page=index_resultlist&resultday=20261118",
+   "status": 200,
+   "final": "https://www.boatrace-tokoname.jp/modules/raceinfo/?page=index_resultlist&resultday=20261118",
+   "len": 45168,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NWMTMH3Q"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "08_11.html"
+  },
+  {
+   "url": "https://www.boatrace-tokoname.jp/modules/raceinfo/?page=index_resultlist&resultday=20261110",
+   "status": 200,
+   "final": "https://www.boatrace-tokoname.jp/modules/raceinfo/?page=index_resultlist&resultday=20261110",
+   "len": 45363,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NWMTMH3Q"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "08_12.html"
+  },
+  {
+   "url": "https://www.boatrace-tokoname.jp/modules/raceinfo/?page=index_resultlist&resultday=20261030",
+   "status": 200,
+   "final": "https://www.boatrace-tokoname.jp/modules/raceinfo/?page=index_resultlist&resultday=20261030",
+   "len": 45212,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NWMTMH3Q"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "08_13.html"
+  },
+  {
+   "url": "https://www.boatrace-tokoname.jp/modules/raceinfo/?page=index_resultlist&resultday=20261020",
+   "status": 200,
+   "final": "https://www.boatrace-tokoname.jp/modules/raceinfo/?page=index_resultlist&resultday=20261020",
+   "len": 44803,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NWMTMH3Q"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "08_14.html"
+  },
+  {
+   "url": "https://www.boatrace-tokoname.jp/modules/raceinfo/?page=index_resultlist&resultday=20261011",
+   "status": 200,
+   "final": "https://www.boatrace-tokoname.jp/modules/raceinfo/?page=index_resultlist&resultday=20261011",
+   "len": 45198,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NWMTMH3Q"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "08_15.html"
+  }
+ ],
+ "9": [
+  {
+   "url": "https://www.boatrace-tsu.com/modules/raceinfo/",
+   "status": 200,
+   "final": "https://www.boatrace-tsu.com/modules/raceinfo/",
+   "len": 152394,
+   "展示": 1,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-TZB8XMRZ",
+    "https://www.googletagmanager.com/ns.html?id=GTM-MC7LWN9R",
+    "https://www.googletagmanager.com/ns.html?id=GTM-MRQXPG95",
+    "https://jlcapi.jlc.ne.jp/new_bb/Streamer/GetBoatraceReplay.php?VODType=2&HoldingDay=' + dDate + '&StudiumNo=09&RaceNo='+ dRace + '&NoVODImgURL='+ http_host +'/cdn/pc/images/yosou/img_replaypreview--none.png",
+    "https://front.player.boatrace-cdn.jp/player/vod?service=jyohp&stadium=09tsu&raceType=race&raceDate=' + dDate + '&raceNumber='+ dRace + '&coverImage='+ http_host +'/cdn/pc/images/yosou/img_replaypreview--none.png"
+   ],
+   "ext_js": [],
+   "ajax": [
+    "https://jlcapi.jlc.ne.jp/new_bb/Streamer/GetBoatraceReplay.php?VODType=2&HoldingDay="
+   ],
+   "file": "09_01.html"
+  },
+  {
+   "url": "https://www.boatrace-tsu.com/modules/raceinfo/?page=index_pdf",
+   "status": 200,
+   "final": "https://www.boatrace-tsu.com/modules/raceinfo/?page=index_pdf",
+   "len": 22434,
+   "展示": 1,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-TZB8XMRZ",
+    "https://www.googletagmanager.com/ns.html?id=GTM-MC7LWN9R",
+    "https://www.googletagmanager.com/ns.html?id=GTM-MRQXPG95"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "09_02.html"
+  },
+  {
+   "url": "https://www.boatrace-tsu.com/modules/raceinfo/?page=index_racejoho",
+   "status": 200,
+   "final": "https://www.boatrace-tsu.com/modules/raceinfo/?page=index_racejoho",
+   "len": 35791,
+   "展示": 1,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 1,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-TZB8XMRZ",
+    "https://www.googletagmanager.com/ns.html?id=GTM-MC7LWN9R",
+    "https://www.googletagmanager.com/ns.html?id=GTM-MRQXPG95"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "09_03.html"
+  },
+  {
+   "url": "https://www.boatrace-tsu.com/modules/raceinfo/?page=index_resultlist",
+   "status": 200,
+   "final": "https://www.boatrace-tsu.com/modules/raceinfo/?page=index_resultlist",
+   "len": 152394,
+   "展示": 1,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-TZB8XMRZ",
+    "https://www.googletagmanager.com/ns.html?id=GTM-MC7LWN9R",
+    "https://www.googletagmanager.com/ns.html?id=GTM-MRQXPG95",
+    "https://jlcapi.jlc.ne.jp/new_bb/Streamer/GetBoatraceReplay.php?VODType=2&HoldingDay=' + dDate + '&StudiumNo=09&RaceNo='+ dRace + '&NoVODImgURL='+ http_host +'/cdn/pc/images/yosou/img_replaypreview--none.png",
+    "https://front.player.boatrace-cdn.jp/player/vod?service=jyohp&stadium=09tsu&raceType=race&raceDate=' + dDate + '&raceNumber='+ dRace + '&coverImage='+ http_host +'/cdn/pc/images/yosou/img_replaypreview--none.png"
+   ],
+   "ext_js": [],
+   "ajax": [
+    "https://jlcapi.jlc.ne.jp/new_bb/Streamer/GetBoatraceReplay.php?VODType=2&HoldingDay="
+   ],
+   "file": "09_04.html"
+  },
+  {
+   "url": "https://www.boatrace-tsu.com/modules/raceinfo/?page=index_timerank",
+   "status": 200,
+   "final": "https://www.boatrace-tsu.com/modules/raceinfo/?page=index_timerank",
+   "len": 34469,
+   "展示": 1,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-TZB8XMRZ",
+    "https://www.googletagmanager.com/ns.html?id=GTM-MC7LWN9R",
+    "https://www.googletagmanager.com/ns.html?id=GTM-MRQXPG95"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "09_05.html"
+  },
+  {
+   "url": "https://www.boatrace-tsu.com/modules/raceinfo/?page=index_tokutenrank",
+   "status": 200,
+   "final": "https://www.boatrace-tsu.com/modules/raceinfo/?page=index_tokutenrank",
+   "len": 44330,
+   "展示": 1,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-TZB8XMRZ",
+    "https://www.googletagmanager.com/ns.html?id=GTM-MC7LWN9R",
+    "https://www.googletagmanager.com/ns.html?id=GTM-MRQXPG95"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "09_06.html"
+  },
+  {
+   "url": "https://www.boatrace-tsu.com/uploads/cdn/pdf/syussou/09_20261120_2.pdf?d=20261119151022",
+   "status": 200,
+   "final": "https://www.boatrace-tsu.com/uploads/cdn/pdf/syussou/09_20261120_2.pdf?d=20261119151022",
+   "len": 1369004,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [],
+   "ajax": [],
+   "file": "09_07.html"
+  },
+  {
+   "url": "https://www.boatrace-tsu.com/uploads/cdn/pdf/syussou/09_20261120_3.pdf?d=20261119151022",
+   "status": 200,
+   "final": "https://www.boatrace-tsu.com/uploads/cdn/pdf/syussou/09_20261120_3.pdf?d=20261119151022",
+   "len": 1442770,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [],
+   "ajax": [],
+   "file": "09_08.html"
+  }
+ ],
+ "10": [
+  {
+   "url": "https://www.boatrace-mikuni.jp/modules/raceinfo/",
+   "status": 200,
+   "final": "https://www.boatrace-mikuni.jp/modules/raceinfo/",
+   "len": 41124,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [],
+   "ajax": [],
+   "file": "10_01.html"
+  },
+  {
+   "url": "https://www.boatrace-mikuni.jp/modules/raceinfo/?page=index_assen",
+   "status": 200,
+   "final": "https://www.boatrace-mikuni.jp/modules/raceinfo/?page=index_assen",
+   "len": 44673,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 1,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [],
+   "ajax": [],
+   "file": "10_02.html"
+  },
+  {
+   "url": "https://www.boatrace-mikuni.jp/modules/raceinfo/?page=index_konsetsu",
+   "status": 200,
+   "final": "https://www.boatrace-mikuni.jp/modules/raceinfo/?page=index_konsetsu",
+   "len": 17535,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 9,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 5,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [],
+   "ajax": [],
+   "file": "10_03.html"
+  },
+  {
+   "url": "https://www.boatrace-mikuni.jp/modules/raceinfo/?page=index_pdf",
+   "status": 200,
+   "final": "https://www.boatrace-mikuni.jp/modules/raceinfo/?page=index_pdf",
+   "len": 18961,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [],
+   "ajax": [],
+   "file": "10_04.html"
+  },
+  {
+   "url": "https://www.boatrace-mikuni.jp/modules/raceinfo/?page=index_racecourse",
+   "status": 200,
+   "final": "https://www.boatrace-mikuni.jp/modules/raceinfo/?page=index_racecourse",
+   "len": 17525,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 9,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [],
+   "ajax": [],
+   "file": "10_05.html"
+  },
+  {
+   "url": "https://www.boatrace-mikuni.jp/modules/raceinfo/?page=index_raceindex",
+   "status": 200,
+   "final": "https://www.boatrace-mikuni.jp/modules/raceinfo/?page=index_raceindex",
+   "len": 43544,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [],
+   "ajax": [],
+   "file": "10_06.html"
+  },
+  {
+   "url": "https://www.boatrace-mikuni.jp/modules/raceinfo/?page=index_resultlist",
+   "status": 200,
+   "final": "https://www.boatrace-mikuni.jp/modules/raceinfo/?page=index_resultlist",
+   "len": 35247,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [],
+   "ajax": [],
+   "file": "10_07.html"
+  },
+  {
+   "url": "https://www.boatrace-mikuni.jp/modules/raceinfo/?page=index_tenbo",
+   "status": 200,
+   "final": "https://www.boatrace-mikuni.jp/modules/raceinfo/?page=index_tenbo",
+   "len": 27561,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [],
+   "ajax": [],
+   "file": "10_08.html"
+  },
+  {
+   "url": "https://www.boatrace-mikuni.jp/modules/raceinfo/?page=index_tenbo&targetday=20261121",
+   "status": 200,
+   "final": "https://www.boatrace-mikuni.jp/modules/raceinfo/?page=index_tenbo&targetday=20261121",
+   "len": 27561,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [],
+   "ajax": [],
+   "file": "10_09.html"
+  },
+  {
+   "url": "https://www.boatrace-mikuni.jp/modules/raceinfo/?page=index_timerank",
+   "status": 200,
+   "final": "https://www.boatrace-mikuni.jp/modules/raceinfo/?page=index_timerank",
+   "len": 17693,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [],
+   "ajax": [],
+   "file": "10_10.html"
+  },
+  {
+   "url": "https://www.boatrace-mikuni.jp/modules/raceinfo/?page=index_resultlist&resultday=20261114",
+   "status": 200,
+   "final": "https://www.boatrace-mikuni.jp/modules/raceinfo/?page=index_resultlist&resultday=20261114",
+   "len": 35247,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [],
+   "ajax": [],
+   "file": "10_11.html"
+  },
+  {
+   "url": "https://www.boatrace-mikuni.jp/modules/raceinfo/?page=index_resultlist&resultday=20261107",
+   "status": 200,
+   "final": "https://www.boatrace-mikuni.jp/modules/raceinfo/?page=index_resultlist&resultday=20261107",
+   "len": 35170,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [],
+   "ajax": [],
+   "file": "10_12.html"
+  },
+  {
+   "url": "https://www.boatrace-mikuni.jp/modules/raceinfo/?page=index_resultlist&resultday=20261028",
+   "status": 200,
+   "final": "https://www.boatrace-mikuni.jp/modules/raceinfo/?page=index_resultlist&resultday=20261028",
+   "len": 35222,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [],
+   "ajax": [],
+   "file": "10_13.html"
+  },
+  {
+   "url": "https://www.boatrace-mikuni.jp/modules/raceinfo/?page=index_resultlist&resultday=20261020",
+   "status": 200,
+   "final": "https://www.boatrace-mikuni.jp/modules/raceinfo/?page=index_resultlist&resultday=20261020",
+   "len": 35579,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [],
+   "ajax": [],
+   "file": "10_14.html"
+  },
+  {
+   "url": "https://www.boatrace-mikuni.jp/modules/raceinfo/?page=index_resultlist&resultday=20261009",
+   "status": 200,
+   "final": "https://www.boatrace-mikuni.jp/modules/raceinfo/?page=index_resultlist&resultday=20261009",
+   "len": 35551,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [],
+   "ajax": [],
+   "file": "10_15.html"
+  },
+  {
+   "url": "https://www.boatrace-mikuni.jp/modules/raceinfo/?page=index_resultlist&resultday=20260925",
+   "status": 200,
+   "final": "https://www.boatrace-mikuni.jp/modules/raceinfo/?page=index_resultlist&resultday=20260925",
+   "len": 35559,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [],
+   "ajax": [],
+   "file": "10_16.html"
+  }
+ ],
+ "11": [
+  {
+   "url": "https://www.boatrace-biwako.jp/modules/datafile/",
+   "status": 200,
+   "final": "https://www.boatrace-biwako.jp/modules/datafile/",
+   "len": 29112,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 3,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 1,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-M5H4WHZ"
+   ],
+   "ext_js": [
+    "www.boatrace-biwako.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "11_01.html"
+  },
+  {
+   "url": "https://www.boatrace-biwako.jp/modules/datafile/?page=index_resultlist",
+   "status": 200,
+   "final": "https://www.boatrace-biwako.jp/modules/datafile/?page=index_resultlist",
+   "len": 30582,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 3,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 1,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-M5H4WHZ"
+   ],
+   "ext_js": [
+    "www.boatrace-biwako.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "11_02.html"
+  },
+  {
+   "url": "https://www.boatrace-biwako.jp/modules/raceinfo/?page=index_timerank",
+   "status": 200,
+   "final": "https://www.boatrace-biwako.jp/modules/raceinfo/?page=index_timerank",
+   "len": 20263,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 3,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 1,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-M5H4WHZ"
+   ],
+   "ext_js": [
+    "www.boatrace-biwako.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "11_03.html"
+  }
+ ],
+ "12": [
+  {
+   "url": "https://www.boatrace-suminoe.jp/asp/htmlmade/Race/Syutujo/12/PC/jumper.htm",
+   "status": 200,
+   "final": "https://www.boatrace-suminoe.jp/asp/htmlmade/Race/Syutujo/12/PC/jumper.htm",
+   "len": 501,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [],
+   "ajax": [],
+   "file": "12_01.html"
+  },
+  {
+   "url": "https://www.boatrace-suminoe.jp/asp/htmlmade/Race/Tenbo/12/PC/jumper.htm",
+   "status": 200,
+   "final": "https://www.boatrace-suminoe.jp/asp/htmlmade/Race/Tenbo/12/PC/jumper.htm",
+   "len": 499,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [],
+   "ajax": [],
+   "file": "12_02.html"
+  },
+  {
+   "url": "https://www.boatrace-suminoe.jp/asp/htmlmade/Race/Tenbo/12/PC/t204.htm",
+   "status": 200,
+   "final": "https://www.boatrace-suminoe.jp/asp/htmlmade/Race/Tenbo/12/PC/t204.htm",
+   "len": 33888,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 1,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-5ZTTGDG",
+    "https://www.googletagmanager.com/ns.html?id=GTM-K2SX29F"
+   ],
+   "ext_js": [
+    "www.boatrace-suminoe.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com",
+    "https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@100;300;400;500;700;900&family=Noto+Serif+JP:wght@200;300;400;500;600;700;900&family=Oswald:wght@200;300;400;500;600;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+   ],
+   "file": "12_03.html"
+  },
+  {
+   "url": "https://www.boatrace-suminoe.jp/asp/suminoe/02kekka/kekka.php",
+   "status": 200,
+   "final": "https://www.boatrace-suminoe.jp/asp/suminoe/02kekka/kekka.php",
+   "len": 44127,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 1,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-5ZTTGDG",
+    "https://www.googletagmanager.com/ns.html?id=GTM-K2SX29F",
+    "/asp/suminoe/02kekka/kekka_list.php?jyo=12&yd=20261105"
+   ],
+   "ext_js": [
+    "www.boatrace-suminoe.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com",
+    "https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@100;300;400;500;700;900&family=Noto+Serif+JP:wght@200;300;400;500;600;700;900&family=Oswald:wght@200;300;400;500;600;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+   ],
+   "file": "12_04.html"
+  },
+  {
+   "url": "https://www.boatrace-suminoe.jp/asp/suminoe/kyogi/kyogihtml/zenken/zenken1205.htm",
+   "status": 200,
+   "final": "https://www.boatrace-suminoe.jp/asp/suminoe/kyogi/kyogihtml/zenken/zenken1205.htm",
+   "len": 25321,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 1,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-5ZTTGDG",
+    "https://www.googletagmanager.com/ns.html?id=GTM-K2SX29F"
+   ],
+   "ext_js": [
+    "www.boatrace-suminoe.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com",
+    "https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@100;300;400;500;700;900&family=Noto+Serif+JP:wght@200;300;400;500;600;700;900&family=Oswald:wght@200;300;400;500;600;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+   ],
+   "file": "12_05.html"
+  },
+  {
+   "url": "https://www.boatrace-suminoe.jp/s_pdf/s_pdf.htm",
+   "status": 200,
+   "final": "https://www.boatrace-suminoe.jp/s_pdf/s_pdf.htm",
+   "len": 25253,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 1,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-5ZTTGDG",
+    "https://www.googletagmanager.com/ns.html?id=GTM-K2SX29F"
+   ],
+   "ext_js": [
+    "www.boatrace-suminoe.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com",
+    "https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@100;300;400;500;700;900&family=Noto+Serif+JP:wght@200;300;400;500;600;700;900&family=Oswald:wght@200;300;400;500;600;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+   ],
+   "file": "12_06.html"
+  },
+  {
+   "url": "https://www.boatrace-suminoe.jp/asp/suminoe/02kekka/kekka_list.php?jyo=12&yd=20261105",
+   "status": 200,
+   "final": "https://www.boatrace-suminoe.jp/asp/suminoe/02kekka/kekka_list.php?jyo=12&yd=20261105",
+   "len": 819995,
+   "展示": 72,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 72,
+   "風速": 72,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [
+    "www.boatrace-suminoe.jp"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com",
+    "https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@100;300;400;500;700;900&family=Noto+Serif+JP:wght@200;300;400;500;600;700;900&family=Oswald:wght@200;300;400;500;600;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+   ],
+   "file": "12_07.html"
+  },
+  {
+   "url": "https://www.boatrace-suminoe.jp/asp/suminoe/02kekka/kekka_list.php?jyo=12&yd=20261019",
+   "status": 200,
+   "final": "https://www.boatrace-suminoe.jp/asp/suminoe/02kekka/kekka_list.php?jyo=12&yd=20261019",
+   "len": 820016,
+   "展示": 72,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 72,
+   "風速": 72,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [
+    "www.boatrace-suminoe.jp"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com",
+    "https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@100;300;400;500;700;900&family=Noto+Serif+JP:wght@200;300;400;500;600;700;900&family=Oswald:wght@200;300;400;500;600;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+   ],
+   "file": "12_08.html"
+  },
+  {
+   "url": "https://www.boatrace-suminoe.jp/asp/suminoe/02kekka/kekka_list.php?jyo=12&yd=20261010",
+   "status": 200,
+   "final": "https://www.boatrace-suminoe.jp/asp/suminoe/02kekka/kekka_list.php?jyo=12&yd=20261010",
+   "len": 806851,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 72,
+   "風速": 72,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [
+    "www.boatrace-suminoe.jp"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com",
+    "https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@100;300;400;500;700;900&family=Noto+Serif+JP:wght@200;300;400;500;600;700;900&family=Oswald:wght@200;300;400;500;600;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+   ],
+   "file": "12_09.html"
+  },
+  {
+   "url": "https://www.boatrace-suminoe.jp/asp/suminoe/02kekka/kekka_list.php?jyo=12&yd=20261001",
+   "status": 200,
+   "final": "https://www.boatrace-suminoe.jp/asp/suminoe/02kekka/kekka_list.php?jyo=12&yd=20261001",
+   "len": 806651,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 72,
+   "風速": 72,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [
+    "www.boatrace-suminoe.jp"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com",
+    "https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@100;300;400;500;700;900&family=Noto+Serif+JP:wght@200;300;400;500;600;700;900&family=Oswald:wght@200;300;400;500;600;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+   ],
+   "file": "12_10.html"
+  },
+  {
+   "url": "https://www.boatrace-suminoe.jp/asp/suminoe/02kekka/kekka_list.php?jyo=12&yd=20260918",
+   "status": 200,
+   "final": "https://www.boatrace-suminoe.jp/asp/suminoe/02kekka/kekka_list.php?jyo=12&yd=20260918",
+   "len": 806795,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 72,
+   "風速": 72,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [
+    "www.boatrace-suminoe.jp"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com",
+    "https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@100;300;400;500;700;900&family=Noto+Serif+JP:wght@200;300;400;500;600;700;900&family=Oswald:wght@200;300;400;500;600;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+   ],
+   "file": "12_11.html"
+  },
+  {
+   "url": "https://www.boatrace-suminoe.jp/asp/suminoe/02kekka/kekka_list.php?jyo=12&yd=20260911",
+   "status": 200,
+   "final": "https://www.boatrace-suminoe.jp/asp/suminoe/02kekka/kekka_list.php?jyo=12&yd=20260911",
+   "len": 806823,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 72,
+   "風速": 72,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [
+    "www.boatrace-suminoe.jp"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com",
+    "https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@100;300;400;500;700;900&family=Noto+Serif+JP:wght@200;300;400;500;600;700;900&family=Oswald:wght@200;300;400;500;600;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+   ],
+   "file": "12_12.html"
+  },
+  {
+   "url": "https://www.boatrace-suminoe.jp/asp/suminoe/02kekka/kekka_list.php?jyo=12&yd=20260901",
+   "status": 200,
+   "final": "https://www.boatrace-suminoe.jp/asp/suminoe/02kekka/kekka_list.php?jyo=12&yd=20260901",
+   "len": 793502,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 72,
+   "風速": 72,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [
+    "www.boatrace-suminoe.jp"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com",
+    "https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@100;300;400;500;700;900&family=Noto+Serif+JP:wght@200;300;400;500;600;700;900&family=Oswald:wght@200;300;400;500;600;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+   ],
+   "file": "12_13.html"
+  },
+  {
+   "url": "https://www.boatrace-suminoe.jp/asp/suminoe/02kekka/kekka_list.php?jyo=12&yd=20260813",
+   "status": 200,
+   "final": "https://www.boatrace-suminoe.jp/asp/suminoe/02kekka/kekka_list.php?jyo=12&yd=20260813",
+   "len": 793545,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 72,
+   "風速": 72,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [
+    "www.boatrace-suminoe.jp"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com",
+    "https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@100;300;400;500;700;900&family=Noto+Serif+JP:wght@200;300;400;500;600;700;900&family=Oswald:wght@200;300;400;500;600;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+   ],
+   "file": "12_14.html"
+  },
+  {
+   "url": "https://www.boatrace-suminoe.jp/asp/suminoe/02kekka/kekka_list.php?jyo=12&yd=20260804",
+   "status": 200,
+   "final": "https://www.boatrace-suminoe.jp/asp/suminoe/02kekka/kekka_list.php?jyo=12&yd=20260804",
+   "len": 793445,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 72,
+   "風速": 72,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [
+    "www.boatrace-suminoe.jp"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com",
+    "https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@100;300;400;500;700;900&family=Noto+Serif+JP:wght@200;300;400;500;600;700;900&family=Oswald:wght@200;300;400;500;600;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+   ],
+   "file": "12_15.html"
+  },
+  {
+   "url": "https://www.boatrace-suminoe.jp/asp/suminoe/02kekka/kekka_list.php?jyo=12&yd=20260724",
+   "status": 200,
+   "final": "https://www.boatrace-suminoe.jp/asp/suminoe/02kekka/kekka_list.php?jyo=12&yd=20260724",
+   "len": 529998,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 48,
+   "風速": 48,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [
+    "www.boatrace-suminoe.jp"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com",
+    "https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@100;300;400;500;700;900&family=Noto+Serif+JP:wght@200;300;400;500;600;700;900&family=Oswald:wght@200;300;400;500;600;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+   ],
+   "file": "12_16.html"
+  }
+ ],
+ "13": [],
+ "14": [
+  {
+   "url": "https://www.n14.jp/modules/raceinfo/",
+   "status": 200,
+   "final": "https://www.n14.jp/modules/raceinfo/",
+   "len": 28596,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-MNVSDXZN",
+    "https://www.googletagmanager.com/ns.html?id=GTM-PV4CKM6",
+    "https://www.googletagmanager.com/ns.html?id=GTM-K6PR445",
+    "https://www.googletagmanager.com/ns.html?id=GTM-59FMP9J9"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "14_01.html"
+  },
+  {
+   "url": "https://www.n14.jp/modules/raceinfo/?page=index_assen",
+   "status": 200,
+   "final": "https://www.n14.jp/modules/raceinfo/?page=index_assen",
+   "len": 38044,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-MNVSDXZN",
+    "https://www.googletagmanager.com/ns.html?id=GTM-PV4CKM6",
+    "https://www.googletagmanager.com/ns.html?id=GTM-K6PR445",
+    "https://www.googletagmanager.com/ns.html?id=GTM-59FMP9J9"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "14_02.html"
+  },
+  {
+   "url": "https://www.n14.jp/modules/raceinfo/?page=index_kikaku",
+   "status": 200,
+   "final": "https://www.n14.jp/modules/raceinfo/?page=index_kikaku",
+   "len": 21091,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-MNVSDXZN",
+    "https://www.googletagmanager.com/ns.html?id=GTM-PV4CKM6",
+    "https://www.googletagmanager.com/ns.html?id=GTM-K6PR445",
+    "https://www.googletagmanager.com/ns.html?id=GTM-59FMP9J9"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "14_03.html"
+  },
+  {
+   "url": "https://www.n14.jp/modules/raceinfo/?page=index_pdf",
+   "status": 200,
+   "final": "https://www.n14.jp/modules/raceinfo/?page=index_pdf",
+   "len": 24426,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-MNVSDXZN",
+    "https://www.googletagmanager.com/ns.html?id=GTM-PV4CKM6",
+    "https://www.googletagmanager.com/ns.html?id=GTM-K6PR445",
+    "https://www.googletagmanager.com/ns.html?id=GTM-59FMP9J9"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "14_04.html"
+  },
+  {
+   "url": "https://www.n14.jp/modules/raceinfo/?page=index_resultlist",
+   "status": 200,
+   "final": "https://www.n14.jp/modules/raceinfo/?page=index_resultlist",
+   "len": 43217,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-MNVSDXZN",
+    "https://www.googletagmanager.com/ns.html?id=GTM-PV4CKM6",
+    "https://www.googletagmanager.com/ns.html?id=GTM-K6PR445",
+    "https://www.googletagmanager.com/ns.html?id=GTM-59FMP9J9"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "14_05.html"
+  },
+  {
+   "url": "https://www.n14.jp/modules/raceinfo/?page=index_tenbo",
+   "status": 200,
+   "final": "https://www.n14.jp/modules/raceinfo/?page=index_tenbo",
+   "len": 25848,
+   "展示": 1,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-MNVSDXZN",
+    "https://www.googletagmanager.com/ns.html?id=GTM-PV4CKM6",
+    "https://www.googletagmanager.com/ns.html?id=GTM-K6PR445",
+    "https://www.googletagmanager.com/ns.html?id=GTM-59FMP9J9"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "14_06.html"
+  },
+  {
+   "url": "https://www.n14.jp/modules/raceinfo/?page=index_timerank",
+   "status": 200,
+   "final": "https://www.n14.jp/modules/raceinfo/?page=index_timerank",
+   "len": 43600,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-MNVSDXZN",
+    "https://www.googletagmanager.com/ns.html?id=GTM-PV4CKM6",
+    "https://www.googletagmanager.com/ns.html?id=GTM-K6PR445",
+    "https://www.googletagmanager.com/ns.html?id=GTM-59FMP9J9"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "14_07.html"
+  },
+  {
+   "url": "https://www.n14.jp/modules/raceinfo/?page=index_tokutenrank",
+   "status": 200,
+   "final": "https://www.n14.jp/modules/raceinfo/?page=index_tokutenrank",
+   "len": 34434,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-MNVSDXZN",
+    "https://www.googletagmanager.com/ns.html?id=GTM-PV4CKM6",
+    "https://www.googletagmanager.com/ns.html?id=GTM-K6PR445",
+    "https://www.googletagmanager.com/ns.html?id=GTM-59FMP9J9"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "14_08.html"
+  },
+  {
+   "url": "https://www.n14.jp/modules/raceinfo/?page=index_resultlist&resultday=20261119",
+   "status": 200,
+   "final": "https://www.n14.jp/modules/raceinfo/?page=index_resultlist&resultday=20261119",
+   "len": 43217,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-MNVSDXZN",
+    "https://www.googletagmanager.com/ns.html?id=GTM-PV4CKM6",
+    "https://www.googletagmanager.com/ns.html?id=GTM-K6PR445",
+    "https://www.googletagmanager.com/ns.html?id=GTM-59FMP9J9"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "14_09.html"
+  },
+  {
+   "url": "https://www.n14.jp/modules/raceinfo/?page=index_resultlist&resultday=20261111",
+   "status": 200,
+   "final": "https://www.n14.jp/modules/raceinfo/?page=index_resultlist&resultday=20261111",
+   "len": 43222,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-MNVSDXZN",
+    "https://www.googletagmanager.com/ns.html?id=GTM-PV4CKM6",
+    "https://www.googletagmanager.com/ns.html?id=GTM-K6PR445",
+    "https://www.googletagmanager.com/ns.html?id=GTM-59FMP9J9"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "14_10.html"
+  },
+  {
+   "url": "https://www.n14.jp/modules/raceinfo/?page=index_resultlist&resultday=20261102",
+   "status": 200,
+   "final": "https://www.n14.jp/modules/raceinfo/?page=index_resultlist&resultday=20261102",
+   "len": 42911,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-MNVSDXZN",
+    "https://www.googletagmanager.com/ns.html?id=GTM-PV4CKM6",
+    "https://www.googletagmanager.com/ns.html?id=GTM-K6PR445",
+    "https://www.googletagmanager.com/ns.html?id=GTM-59FMP9J9"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "14_11.html"
+  },
+  {
+   "url": "https://www.n14.jp/modules/raceinfo/?page=index_resultlist&resultday=20261025",
+   "status": 200,
+   "final": "https://www.n14.jp/modules/raceinfo/?page=index_resultlist&resultday=20261025",
+   "len": 42881,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-MNVSDXZN",
+    "https://www.googletagmanager.com/ns.html?id=GTM-PV4CKM6",
+    "https://www.googletagmanager.com/ns.html?id=GTM-K6PR445",
+    "https://www.googletagmanager.com/ns.html?id=GTM-59FMP9J9"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "14_12.html"
+  },
+  {
+   "url": "https://www.n14.jp/modules/raceinfo/?page=index_resultlist&resultday=20261017",
+   "status": 200,
+   "final": "https://www.n14.jp/modules/raceinfo/?page=index_resultlist&resultday=20261017",
+   "len": 43299,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-MNVSDXZN",
+    "https://www.googletagmanager.com/ns.html?id=GTM-PV4CKM6",
+    "https://www.googletagmanager.com/ns.html?id=GTM-K6PR445",
+    "https://www.googletagmanager.com/ns.html?id=GTM-59FMP9J9"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "14_13.html"
+  },
+  {
+   "url": "https://www.n14.jp/modules/raceinfo/?page=index_resultlist&resultday=20261009",
+   "status": 200,
+   "final": "https://www.n14.jp/modules/raceinfo/?page=index_resultlist&resultday=20261009",
+   "len": 42576,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-MNVSDXZN",
+    "https://www.googletagmanager.com/ns.html?id=GTM-PV4CKM6",
+    "https://www.googletagmanager.com/ns.html?id=GTM-K6PR445",
+    "https://www.googletagmanager.com/ns.html?id=GTM-59FMP9J9"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "14_14.html"
+  }
+ ],
+ "15": [],
+ "16": [
+  {
+   "url": "https://www.kojimaboat.jp/01motor/01motor.htm",
+   "status": 200,
+   "final": "https://www.kojimaboat.jp/01motor/01motor.htm",
+   "len": 25083,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 5,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [
+    "www.googletagmanager.com",
+    "www.kojimaboat.jp"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com",
+    "https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@100;300;400;500;700;900&family=Noto+Serif+JP:wght@200;300;400;500;600;700;900&family=Oswald:wght@200;300;400;500;600;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+   ],
+   "file": "16_01.html"
+  },
+  {
+   "url": "https://www.kojimaboat.jp/asp/htmlmade/Race/Syutujo/16/s60.htm",
+   "status": 200,
+   "final": "https://www.kojimaboat.jp/asp/htmlmade/Race/Syutujo/16/s60.htm",
+   "len": 53809,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 5,
+   "チルト": 0,
+   "着順": 2,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-5ZTTGDG",
+    "https://www.googletagmanager.com/ns.html?id=GTM-K2SX29F"
+   ],
+   "ext_js": [
+    "www.googletagmanager.com",
+    "www.kojimaboat.jp"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com",
+    "https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@100;300;400;500;700;900&family=Noto+Serif+JP:wght@200;300;400;500;600;700;900&family=Oswald:wght@200;300;400;500;600;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+   ],
+   "file": "16_02.html"
+  },
+  {
+   "url": "https://www.kojimaboat.jp/asp/htmlmade/Race/Syutujo/16/s61.htm",
+   "status": 200,
+   "final": "https://www.kojimaboat.jp/asp/htmlmade/Race/Syutujo/16/s61.htm",
+   "len": 53958,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 5,
+   "チルト": 0,
+   "着順": 2,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-5ZTTGDG",
+    "https://www.googletagmanager.com/ns.html?id=GTM-K2SX29F"
+   ],
+   "ext_js": [
+    "www.googletagmanager.com",
+    "www.kojimaboat.jp"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com",
+    "https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@100;300;400;500;700;900&family=Noto+Serif+JP:wght@200;300;400;500;600;700;900&family=Oswald:wght@200;300;400;500;600;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+   ],
+   "file": "16_03.html"
+  },
+  {
+   "url": "https://www.kojimaboat.jp/asp/htmlmade/Race/Tenbo/16/jumper.htm",
+   "status": 200,
+   "final": "https://www.kojimaboat.jp/asp/htmlmade/Race/Tenbo/16/jumper.htm",
+   "len": 5528,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [],
+   "ajax": [],
+   "file": "16_04.html"
+  },
+  {
+   "url": "https://www.kojimaboat.jp/asp/htmlmade/kojima/today_syussou/touban.htm",
+   "status": 200,
+   "final": "https://www.kojimaboat.jp/asp/htmlmade/kojima/today_syussou/touban.htm",
+   "len": 114227,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 5,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [
+    "www.googletagmanager.com",
+    "www.kojimaboat.jp"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com",
+    "https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@100;300;400;500;700;900&family=Noto+Serif+JP:wght@200;300;400;500;600;700;900&family=Oswald:wght@200;300;400;500;600;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+   ],
+   "file": "16_05.html"
+  },
+  {
+   "url": "https://www.kojimaboat.jp/asp/kojima/02kekka/kekka.php",
+   "status": 200,
+   "final": "https://www.kojimaboat.jp/asp/kojima/02kekka/kekka.php",
+   "len": 57707,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 5,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.kojimaboat.jp/02kekka/kekka_list/20261111.htm?yd="
+   ],
+   "ext_js": [
+    "www.googletagmanager.com",
+    "www.kojimaboat.jp"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com",
+    "https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@100;300;400;500;700;900&family=Noto+Serif+JP:wght@200;300;400;500;600;700;900&family=Oswald:wght@200;300;400;500;600;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+   ],
+   "file": "16_06.html"
+  },
+  {
+   "url": "https://www.kojimaboat.jp/s_pdf/s_pdf.htm",
+   "status": 200,
+   "final": "https://www.kojimaboat.jp/s_pdf/s_pdf.htm",
+   "len": 30396,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 5,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [
+    "www.googletagmanager.com",
+    "www.kojimaboat.jp"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com",
+    "https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@100;300;400;500;700;900&family=Noto+Serif+JP:wght@200;300;400;500;600;700;900&family=Oswald:wght@200;300;400;500;600;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+   ],
+   "file": "16_07.html"
+  },
+  {
+   "url": "https://www.kojimaboat.jp/jump/official_syussou.html?yd=20261119&racenum=6&jyo=09",
+   "status": 200,
+   "final": "https://www.kojimaboat.jp/jump/official_syussou.html?yd=20261119&racenum=6&jyo=09",
+   "len": 240,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [],
+   "ajax": [],
+   "file": "16_08.html"
+  },
+  {
+   "url": "https://www.kojimaboat.jp/jump/official_syussou.html?yd=20261119&racenum=2&jyo=01",
+   "status": 200,
+   "final": "https://www.kojimaboat.jp/jump/official_syussou.html?yd=20261119&racenum=2&jyo=01",
+   "len": 240,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [],
+   "ajax": [],
+   "file": "16_09.html"
+  },
+  {
+   "url": "https://www.kojimaboat.jp/jump/official_syussou.html?yd=20261119&racenum=7&jyo=01",
+   "status": 200,
+   "final": "https://www.kojimaboat.jp/jump/official_syussou.html?yd=20261119&racenum=7&jyo=01",
+   "len": 240,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [],
+   "ajax": [],
+   "file": "16_10.html"
+  },
+  {
+   "url": "https://www.kojimaboat.jp/jump/official_kekka.html?yd=20261117&racenum=5&jyo=01",
+   "status": 200,
+   "final": "https://www.kojimaboat.jp/jump/official_kekka.html?yd=20261117&racenum=5&jyo=01",
+   "len": 240,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [],
+   "ajax": [],
+   "file": "16_11.html"
+  },
+  {
+   "url": "https://www.kojimaboat.jp/jump/official_kekka.html?yd=20261118&racenum=5&jyo=01",
+   "status": 200,
+   "final": "https://www.kojimaboat.jp/jump/official_kekka.html?yd=20261118&racenum=5&jyo=01",
+   "len": 240,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [],
+   "ajax": [],
+   "file": "16_12.html"
+  },
+  {
+   "url": "https://www.kojimaboat.jp/jump/official_kekka.html?yd=20261118&racenum=12&jyo=01",
+   "status": 200,
+   "final": "https://www.kojimaboat.jp/jump/official_kekka.html?yd=20261118&racenum=12&jyo=01",
+   "len": 240,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [],
+   "ajax": [],
+   "file": "16_13.html"
+  },
+  {
+   "url": "https://www.kojimaboat.jp/jump/official_kekka.html?yd=20261119&racenum=2&jyo=01",
+   "status": 200,
+   "final": "https://www.kojimaboat.jp/jump/official_kekka.html?yd=20261119&racenum=2&jyo=01",
+   "len": 240,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [],
+   "ajax": [],
+   "file": "16_14.html"
+  },
+  {
+   "url": "https://www.kojimaboat.jp/jump/official_kekka.html?yd=20261119&racenum=7&jyo=01",
+   "status": 200,
+   "final": "https://www.kojimaboat.jp/jump/official_kekka.html?yd=20261119&racenum=7&jyo=01",
+   "len": 240,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [],
+   "ajax": [],
+   "file": "16_15.html"
+  },
+  {
+   "url": "https://www.kojimaboat.jp/jump/official_syussou.html?yd=20261119&racenum=1&jyo=04",
+   "status": 200,
+   "final": "https://www.kojimaboat.jp/jump/official_syussou.html?yd=20261119&racenum=1&jyo=04",
+   "len": 240,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [],
+   "ajax": [],
+   "file": "16_16.html"
+  }
+ ],
+ "17": [
+  {
+   "url": "https://www.boatrace-miyajima.com/race_result.html",
+   "status": 200,
+   "final": "https://www.boatrace-miyajima.com/race_result.html",
+   "len": 121768,
+   "展示": 1,
+   "展示タイム": 0,
+   "進入": 5,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NLGHRFZD"
+   ],
+   "ext_js": [
+    "ajax.googleapis.com",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"
+   ],
+   "file": "17_01.html"
+  },
+  {
+   "url": "https://www.boatrace-miyajima.com/racecard.html",
+   "status": 200,
+   "final": "https://www.boatrace-miyajima.com/racecard.html",
+   "len": 55976,
+   "展示": 1,
+   "展示タイム": 0,
+   "進入": 5,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NLGHRFZD"
+   ],
+   "ext_js": [
+    "ajax.googleapis.com",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"
+   ],
+   "file": "17_02.html"
+  },
+  {
+   "url": "https://www.boatrace-miyajima.com/raceinfo_timerank.html",
+   "status": 200,
+   "final": "https://www.boatrace-miyajima.com/raceinfo_timerank.html",
+   "len": 110449,
+   "展示": 1,
+   "展示タイム": 0,
+   "進入": 5,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NLGHRFZD"
+   ],
+   "ext_js": [
+    "ajax.googleapis.com",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"
+   ],
+   "file": "17_03.html"
+  },
+  {
+   "url": "https://www.boatrace-miyajima.com/results.html",
+   "status": 200,
+   "final": "https://www.boatrace-miyajima.com/results.html",
+   "len": 85542,
+   "展示": 1,
+   "展示タイム": 0,
+   "進入": 5,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NLGHRFZD"
+   ],
+   "ext_js": [
+    "ajax.googleapis.com",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"
+   ],
+   "file": "17_04.html"
+  },
+  {
+   "url": "https://www.boatrace-miyajima.com/result_detail.html?day=20201003",
+   "status": 200,
+   "final": "https://www.boatrace-miyajima.com/result_detail.html?day=20201003",
+   "len": 110246,
+   "展示": 1,
+   "展示タイム": 0,
+   "進入": 5,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NLGHRFZD"
+   ],
+   "ext_js": [
+    "ajax.googleapis.com",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"
+   ],
+   "file": "17_05.html"
+  },
+  {
+   "url": "https://www.boatrace-miyajima.com/result_detail.html?day=20191111",
+   "status": 200,
+   "final": "https://www.boatrace-miyajima.com/result_detail.html?day=20191111",
+   "len": 139646,
+   "展示": 1,
+   "展示タイム": 0,
+   "進入": 5,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NLGHRFZD"
+   ],
+   "ext_js": [
+    "ajax.googleapis.com",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"
+   ],
+   "file": "17_06.html"
+  },
+  {
+   "url": "https://www.boatrace-miyajima.com/result_detail.html?day=20190218",
+   "status": 200,
+   "final": "https://www.boatrace-miyajima.com/result_detail.html?day=20190218",
+   "len": 139612,
+   "展示": 1,
+   "展示タイム": 0,
+   "進入": 5,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NLGHRFZD"
+   ],
+   "ext_js": [
+    "ajax.googleapis.com",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"
+   ],
+   "file": "17_07.html"
+  },
+  {
+   "url": "https://www.boatrace-miyajima.com/result_detail.html?day=20171025",
+   "status": 200,
+   "final": "https://www.boatrace-miyajima.com/result_detail.html?day=20171025",
+   "len": 125098,
+   "展示": 1,
+   "展示タイム": 0,
+   "進入": 5,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NLGHRFZD"
+   ],
+   "ext_js": [
+    "ajax.googleapis.com",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"
+   ],
+   "file": "17_08.html"
+  }
+ ],
+ "18": [
+  {
+   "url": "https://www.boatrace-tokuyama.jp/modules/raceinfo/",
+   "status": 200,
+   "final": "https://www.boatrace-tokuyama.jp/modules/raceinfo/",
+   "len": 25122,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-T73HR29"
+   ],
+   "ext_js": [
+    "sunacchi.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "18_01.html"
+  },
+  {
+   "url": "https://www.boatrace-tokuyama.jp/modules/raceinfo/?page=index_assen",
+   "status": 200,
+   "final": "https://www.boatrace-tokuyama.jp/modules/raceinfo/?page=index_assen",
+   "len": 29967,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-T73HR29"
+   ],
+   "ext_js": [
+    "sunacchi.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "18_02.html"
+  },
+  {
+   "url": "https://www.boatrace-tokuyama.jp/modules/raceinfo/?page=index_pdf",
+   "status": 200,
+   "final": "https://www.boatrace-tokuyama.jp/modules/raceinfo/?page=index_pdf",
+   "len": 18802,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-T73HR29"
+   ],
+   "ext_js": [
+    "sunacchi.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "18_03.html"
+  },
+  {
+   "url": "https://www.boatrace-tokuyama.jp/modules/raceinfo/?page=index_racecourse",
+   "status": 200,
+   "final": "https://www.boatrace-tokuyama.jp/modules/raceinfo/?page=index_racecourse",
+   "len": 29475,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 11,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-T73HR29"
+   ],
+   "ext_js": [
+    "sunacchi.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "18_04.html"
+  },
+  {
+   "url": "https://www.boatrace-tokuyama.jp/modules/raceinfo/?page=index_resultlist",
+   "status": 200,
+   "final": "https://www.boatrace-tokuyama.jp/modules/raceinfo/?page=index_resultlist",
+   "len": 31066,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-T73HR29"
+   ],
+   "ext_js": [
+    "sunacchi.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "18_05.html"
+  },
+  {
+   "url": "https://www.boatrace-tokuyama.jp/modules/raceinfo/?page=index_tenbo",
+   "status": 200,
+   "final": "https://www.boatrace-tokuyama.jp/modules/raceinfo/?page=index_tenbo",
+   "len": 32275,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-T73HR29"
+   ],
+   "ext_js": [
+    "sunacchi.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "18_06.html"
+  },
+  {
+   "url": "https://www.boatrace-tokuyama.jp/modules/raceinfo/?page=index_timerank",
+   "status": 200,
+   "final": "https://www.boatrace-tokuyama.jp/modules/raceinfo/?page=index_timerank",
+   "len": 34303,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-T73HR29"
+   ],
+   "ext_js": [
+    "sunacchi.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "18_07.html"
+  },
+  {
+   "url": "https://www.boatrace-tokuyama.jp/modules/raceinfo/?page=index_tokutenrank",
+   "status": 200,
+   "final": "https://www.boatrace-tokuyama.jp/modules/raceinfo/?page=index_tokutenrank",
+   "len": 17659,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-T73HR29"
+   ],
+   "ext_js": [
+    "sunacchi.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "18_08.html"
+  },
+  {
+   "url": "https://www.boatrace-tokuyama.jp/modules/raceinfo/?page=index_zenkoku",
+   "status": 200,
+   "final": "https://www.boatrace-tokuyama.jp/modules/raceinfo/?page=index_zenkoku",
+   "len": 25666,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 11,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-T73HR29"
+   ],
+   "ext_js": [
+    "sunacchi.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "18_09.html"
+  },
+  {
+   "url": "https://www.boatrace-tokuyama.jp/modules/raceinfo/?page=index_resultlist&resultday=20261119",
+   "status": 200,
+   "final": "https://www.boatrace-tokuyama.jp/modules/raceinfo/?page=index_resultlist&resultday=20261119",
+   "len": 31066,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-T73HR29"
+   ],
+   "ext_js": [
+    "sunacchi.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "18_10.html"
+  },
+  {
+   "url": "https://www.boatrace-tokuyama.jp/modules/raceinfo/?page=index_resultlist&resultday=20261103",
+   "status": 200,
+   "final": "https://www.boatrace-tokuyama.jp/modules/raceinfo/?page=index_resultlist&resultday=20261103",
+   "len": 31054,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-T73HR29"
+   ],
+   "ext_js": [
+    "sunacchi.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "18_11.html"
+  },
+  {
+   "url": "https://www.boatrace-tokuyama.jp/modules/raceinfo/?page=index_resultlist&resultday=20261023",
+   "status": 200,
+   "final": "https://www.boatrace-tokuyama.jp/modules/raceinfo/?page=index_resultlist&resultday=20261023",
+   "len": 31026,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-T73HR29"
+   ],
+   "ext_js": [
+    "sunacchi.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "18_12.html"
+  },
+  {
+   "url": "https://www.boatrace-tokuyama.jp/modules/raceinfo/?page=index_resultlist&resultday=20261014",
+   "status": 200,
+   "final": "https://www.boatrace-tokuyama.jp/modules/raceinfo/?page=index_resultlist&resultday=20261014",
+   "len": 30756,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-T73HR29"
+   ],
+   "ext_js": [
+    "sunacchi.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "18_13.html"
+  },
+  {
+   "url": "https://www.boatrace-tokuyama.jp/modules/raceinfo/?page=index_resultlist&resultday=20261007",
+   "status": 200,
+   "final": "https://www.boatrace-tokuyama.jp/modules/raceinfo/?page=index_resultlist&resultday=20261007",
+   "len": 31008,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-T73HR29"
+   ],
+   "ext_js": [
+    "sunacchi.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "18_14.html"
+  }
+ ],
+ "19": [
+  {
+   "url": "https://www.boatrace-shimonoseki.jp/modules/entry/magazine/",
+   "status": 200,
+   "final": "https://www.boatrace-shimonoseki.jp/modules/entry/magazine/",
+   "len": 20004,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-PT3X85W"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "19_01.html"
+  },
+  {
+   "url": "https://www.boatrace-shimonoseki.jp/modules/raceinfo/",
+   "status": 200,
+   "final": "https://www.boatrace-shimonoseki.jp/modules/raceinfo/",
+   "len": 44040,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-PT3X85W"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "19_02.html"
+  },
+  {
+   "url": "https://www.boatrace-shimonoseki.jp/modules/raceinfo/?page=index_assen",
+   "status": 200,
+   "final": "https://www.boatrace-shimonoseki.jp/modules/raceinfo/?page=index_assen",
+   "len": 35912,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 1,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-PT3X85W"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "19_03.html"
+  },
+  {
+   "url": "https://www.boatrace-shimonoseki.jp/modules/raceinfo/?page=index_konsetsu",
+   "status": 200,
+   "final": "https://www.boatrace-shimonoseki.jp/modules/raceinfo/?page=index_konsetsu",
+   "len": 16219,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 11,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 6,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-PT3X85W"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "19_04.html"
+  },
+  {
+   "url": "https://www.boatrace-shimonoseki.jp/modules/raceinfo/?page=index_pdf",
+   "status": 200,
+   "final": "https://www.boatrace-shimonoseki.jp/modules/raceinfo/?page=index_pdf",
+   "len": 17533,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 8,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 3,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-PT3X85W"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "19_05.html"
+  },
+  {
+   "url": "https://www.boatrace-shimonoseki.jp/modules/raceinfo/?page=index_racecourse",
+   "status": 200,
+   "final": "https://www.boatrace-shimonoseki.jp/modules/raceinfo/?page=index_racecourse",
+   "len": 16101,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 11,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 3,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-PT3X85W"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "19_06.html"
+  },
+  {
+   "url": "https://www.boatrace-shimonoseki.jp/modules/raceinfo/?page=index_raceindex",
+   "status": 200,
+   "final": "https://www.boatrace-shimonoseki.jp/modules/raceinfo/?page=index_raceindex",
+   "len": 30354,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-PT3X85W"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "19_07.html"
+  },
+  {
+   "url": "https://www.boatrace-shimonoseki.jp/modules/raceinfo/?page=index_resultlist",
+   "status": 200,
+   "final": "https://www.boatrace-shimonoseki.jp/modules/raceinfo/?page=index_resultlist",
+   "len": 32533,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-PT3X85W"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "19_08.html"
+  },
+  {
+   "url": "https://www.boatrace-shimonoseki.jp/modules/raceinfo/?page=index_tenbo",
+   "status": 200,
+   "final": "https://www.boatrace-shimonoseki.jp/modules/raceinfo/?page=index_tenbo",
+   "len": 22810,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 7,
+   "チルト": 1,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-PT3X85W"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "19_09.html"
+  },
+  {
+   "url": "https://www.boatrace-shimonoseki.jp/modules/raceinfo/?page=index_tenbo&targetday=20261123",
+   "status": 200,
+   "final": "https://www.boatrace-shimonoseki.jp/modules/raceinfo/?page=index_tenbo&targetday=20261123",
+   "len": 22810,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 7,
+   "チルト": 1,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-PT3X85W"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "19_10.html"
+  },
+  {
+   "url": "https://www.boatrace-shimonoseki.jp/modules/raceinfo/?page=index_timerank",
+   "status": 200,
+   "final": "https://www.boatrace-shimonoseki.jp/modules/raceinfo/?page=index_timerank",
+   "len": 16508,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 8,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 3,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-PT3X85W"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "19_11.html"
+  },
+  {
+   "url": "https://www.boatrace-shimonoseki.jp/modules/raceinfo/?page=index_resultlist&resultday=20261112",
+   "status": 200,
+   "final": "https://www.boatrace-shimonoseki.jp/modules/raceinfo/?page=index_resultlist&resultday=20261112",
+   "len": 32533,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-PT3X85W"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "19_12.html"
+  },
+  {
+   "url": "https://www.boatrace-shimonoseki.jp/modules/raceinfo/?page=index_resultlist&resultday=20261104",
+   "status": 200,
+   "final": "https://www.boatrace-shimonoseki.jp/modules/raceinfo/?page=index_resultlist&resultday=20261104",
+   "len": 31934,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-PT3X85W"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "19_13.html"
+  },
+  {
+   "url": "https://www.boatrace-shimonoseki.jp/modules/raceinfo/?page=index_resultlist&resultday=20261020",
+   "status": 200,
+   "final": "https://www.boatrace-shimonoseki.jp/modules/raceinfo/?page=index_resultlist&resultday=20261020",
+   "len": 32233,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-PT3X85W"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "19_14.html"
+  },
+  {
+   "url": "https://www.boatrace-shimonoseki.jp/modules/raceinfo/?page=index_resultlist&resultday=20261014",
+   "status": 200,
+   "final": "https://www.boatrace-shimonoseki.jp/modules/raceinfo/?page=index_resultlist&resultday=20261014",
+   "len": 31930,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-PT3X85W"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "19_15.html"
+  },
+  {
+   "url": "https://www.boatrace-shimonoseki.jp/modules/raceinfo/?page=index_resultlist&resultday=20261006",
+   "status": 200,
+   "final": "https://www.boatrace-shimonoseki.jp/modules/raceinfo/?page=index_resultlist&resultday=20261006",
+   "len": 32504,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-PT3X85W"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "19_16.html"
+  }
+ ],
+ "20": [
+  {
+   "url": "https://www.wmb.jp/modules/raceinfo/",
+   "status": 200,
+   "final": "https://www.wmb.jp/modules/raceinfo/",
+   "len": 59944,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NRQQJ3T4"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "20_01.html"
+  },
+  {
+   "url": "https://www.wmb.jp/modules/raceinfo/?page=index_assen",
+   "status": 200,
+   "final": "https://www.wmb.jp/modules/raceinfo/?page=index_assen",
+   "len": 63666,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 1,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NRQQJ3T4"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "20_02.html"
+  },
+  {
+   "url": "https://www.wmb.jp/modules/raceinfo/?page=index_assen&targetday=20261125",
+   "status": 200,
+   "final": "https://www.wmb.jp/modules/raceinfo/?page=index_assen&targetday=20261125",
+   "len": 63666,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 1,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NRQQJ3T4"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "20_03.html"
+  },
+  {
+   "url": "https://www.wmb.jp/modules/raceinfo/?page=index_konsetsu",
+   "status": 200,
+   "final": "https://www.wmb.jp/modules/raceinfo/?page=index_konsetsu",
+   "len": 38930,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NRQQJ3T4"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "20_04.html"
+  },
+  {
+   "url": "https://www.wmb.jp/modules/raceinfo/?page=index_pdf",
+   "status": 200,
+   "final": "https://www.wmb.jp/modules/raceinfo/?page=index_pdf",
+   "len": 45021,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NRQQJ3T4"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "20_05.html"
+  },
+  {
+   "url": "https://www.wmb.jp/modules/raceinfo/?page=index_racecourse",
+   "status": 200,
+   "final": "https://www.wmb.jp/modules/raceinfo/?page=index_racecourse",
+   "len": 38948,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 8,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NRQQJ3T4"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "20_06.html"
+  },
+  {
+   "url": "https://www.wmb.jp/modules/raceinfo/?page=index_resultlist",
+   "status": 200,
+   "final": "https://www.wmb.jp/modules/raceinfo/?page=index_resultlist",
+   "len": 44276,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NRQQJ3T4"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "20_07.html"
+  },
+  {
+   "url": "https://www.wmb.jp/modules/raceinfo/?page=index_timerank",
+   "status": 200,
+   "final": "https://www.wmb.jp/modules/raceinfo/?page=index_timerank",
+   "len": 39107,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NRQQJ3T4"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "20_08.html"
+  },
+  {
+   "url": "https://www.wmb.jp/modules/raceinfo/?page=index_tokutenrank",
+   "status": 200,
+   "final": "https://www.wmb.jp/modules/raceinfo/?page=index_tokutenrank",
+   "len": 39025,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NRQQJ3T4"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "20_09.html"
+  },
+  {
+   "url": "https://www.wmb.jp/modules/raceinfo/?page=index_winner",
+   "status": 200,
+   "final": "https://www.wmb.jp/modules/raceinfo/?page=index_winner",
+   "len": 38847,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NRQQJ3T4"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "20_10.html"
+  },
+  {
+   "url": "https://www.wmb.jp/modules/raceinfo/?page=index_resultlist&resultday=20261118",
+   "status": 200,
+   "final": "https://www.wmb.jp/modules/raceinfo/?page=index_resultlist&resultday=20261118",
+   "len": 44276,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NRQQJ3T4"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "20_11.html"
+  },
+  {
+   "url": "https://www.wmb.jp/modules/raceinfo/?page=index_resultlist&resultday=20261025",
+   "status": 200,
+   "final": "https://www.wmb.jp/modules/raceinfo/?page=index_resultlist&resultday=20261025",
+   "len": 56382,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NRQQJ3T4"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "20_12.html"
+  },
+  {
+   "url": "https://www.wmb.jp/modules/raceinfo/?page=index_resultlist&resultday=20261018",
+   "status": 200,
+   "final": "https://www.wmb.jp/modules/raceinfo/?page=index_resultlist&resultday=20261018",
+   "len": 57873,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NRQQJ3T4"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "20_13.html"
+  },
+  {
+   "url": "https://www.wmb.jp/modules/raceinfo/?page=index_resultlist&resultday=20261009",
+   "status": 200,
+   "final": "https://www.wmb.jp/modules/raceinfo/?page=index_resultlist&resultday=20261009",
+   "len": 57502,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NRQQJ3T4"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "20_14.html"
+  },
+  {
+   "url": "https://www.wmb.jp/modules/raceinfo/?page=index_resultlist&resultday=20260927",
+   "status": 200,
+   "final": "https://www.wmb.jp/modules/raceinfo/?page=index_resultlist&resultday=20260927",
+   "len": 57898,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NRQQJ3T4"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "20_15.html"
+  },
+  {
+   "url": "https://www.wmb.jp/modules/raceinfo/?page=index_resultlist&resultday=20260915",
+   "status": 200,
+   "final": "https://www.wmb.jp/modules/raceinfo/?page=index_resultlist&resultday=20260915",
+   "len": 58259,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NRQQJ3T4"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "20_16.html"
+  }
+ ],
+ "21": [
+  {
+   "url": "https://www.boatrace-ashiya.com/modules/raceinfo/",
+   "status": 200,
+   "final": "https://www.boatrace-ashiya.com/modules/raceinfo/",
+   "len": 39196,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-TTF3F22F",
+    "https://www.googletagmanager.com/ns.html?id=GTM-5BWZB7W"
+   ],
+   "ext_js": [
+    "s.yimg.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "21_01.html"
+  },
+  {
+   "url": "https://www.boatrace-ashiya.com/modules/raceinfo/?page=index_pdf",
+   "status": 200,
+   "final": "https://www.boatrace-ashiya.com/modules/raceinfo/?page=index_pdf",
+   "len": 22284,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-TTF3F22F",
+    "https://www.googletagmanager.com/ns.html?id=GTM-5BWZB7W"
+   ],
+   "ext_js": [
+    "s.yimg.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "21_02.html"
+  },
+  {
+   "url": "https://www.boatrace-ashiya.com/modules/raceinfo/?page=index_racecourse",
+   "status": 200,
+   "final": "https://www.boatrace-ashiya.com/modules/raceinfo/?page=index_racecourse",
+   "len": 32488,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 9,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-TTF3F22F",
+    "https://www.googletagmanager.com/ns.html?id=GTM-5BWZB7W"
+   ],
+   "ext_js": [
+    "s.yimg.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "21_03.html"
+  },
+  {
+   "url": "https://www.boatrace-ashiya.com/modules/raceinfo/?page=index_racers_comment",
+   "status": 200,
+   "final": "https://www.boatrace-ashiya.com/modules/raceinfo/?page=index_racers_comment",
+   "len": 27368,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-TTF3F22F",
+    "https://www.googletagmanager.com/ns.html?id=GTM-5BWZB7W"
+   ],
+   "ext_js": [
+    "s.yimg.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "21_04.html"
+  },
+  {
+   "url": "https://www.boatrace-ashiya.com/modules/raceinfo/?page=index_resultlist",
+   "status": 200,
+   "final": "https://www.boatrace-ashiya.com/modules/raceinfo/?page=index_resultlist",
+   "len": 34216,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-TTF3F22F",
+    "https://www.googletagmanager.com/ns.html?id=GTM-5BWZB7W"
+   ],
+   "ext_js": [
+    "s.yimg.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "21_05.html"
+  },
+  {
+   "url": "https://www.boatrace-ashiya.com/modules/raceinfo/?page=index_sunrise",
+   "status": 200,
+   "final": "https://www.boatrace-ashiya.com/modules/raceinfo/?page=index_sunrise",
+   "len": 20926,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-TTF3F22F",
+    "https://www.googletagmanager.com/ns.html?id=GTM-5BWZB7W"
+   ],
+   "ext_js": [
+    "s.yimg.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "21_06.html"
+  },
+  {
+   "url": "https://www.boatrace-ashiya.com/modules/raceinfo/?page=index_timerank",
+   "status": 200,
+   "final": "https://www.boatrace-ashiya.com/modules/raceinfo/?page=index_timerank",
+   "len": 38271,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-TTF3F22F",
+    "https://www.googletagmanager.com/ns.html?id=GTM-5BWZB7W"
+   ],
+   "ext_js": [
+    "s.yimg.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "21_07.html"
+  },
+  {
+   "url": "https://www.boatrace-ashiya.com/modules/raceinfo/?page=index_tokutenrank",
+   "status": 200,
+   "final": "https://www.boatrace-ashiya.com/modules/raceinfo/?page=index_tokutenrank",
+   "len": 33477,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-TTF3F22F",
+    "https://www.googletagmanager.com/ns.html?id=GTM-5BWZB7W"
+   ],
+   "ext_js": [
+    "s.yimg.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "21_08.html"
+  },
+  {
+   "url": "https://www.boatrace-ashiya.com/modules/raceinfo/?page=index_resultlist&resultday=20261112",
+   "status": 200,
+   "final": "https://www.boatrace-ashiya.com/modules/raceinfo/?page=index_resultlist&resultday=20261112",
+   "len": 34216,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-TTF3F22F",
+    "https://www.googletagmanager.com/ns.html?id=GTM-5BWZB7W"
+   ],
+   "ext_js": [
+    "s.yimg.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "21_09.html"
+  },
+  {
+   "url": "https://www.boatrace-ashiya.com/modules/raceinfo/?page=index_resultlist&resultday=20261105",
+   "status": 200,
+   "final": "https://www.boatrace-ashiya.com/modules/raceinfo/?page=index_resultlist&resultday=20261105",
+   "len": 34211,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-TTF3F22F",
+    "https://www.googletagmanager.com/ns.html?id=GTM-5BWZB7W"
+   ],
+   "ext_js": [
+    "s.yimg.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "21_10.html"
+  },
+  {
+   "url": "https://www.boatrace-ashiya.com/modules/raceinfo/?page=index_resultlist&resultday=20261026",
+   "status": 200,
+   "final": "https://www.boatrace-ashiya.com/modules/raceinfo/?page=index_resultlist&resultday=20261026",
+   "len": 33910,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-TTF3F22F",
+    "https://www.googletagmanager.com/ns.html?id=GTM-5BWZB7W"
+   ],
+   "ext_js": [
+    "s.yimg.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "21_11.html"
+  },
+  {
+   "url": "https://www.boatrace-ashiya.com/modules/raceinfo/?page=index_resultlist&resultday=20261018",
+   "status": 200,
+   "final": "https://www.boatrace-ashiya.com/modules/raceinfo/?page=index_resultlist&resultday=20261018",
+   "len": 34224,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-TTF3F22F",
+    "https://www.googletagmanager.com/ns.html?id=GTM-5BWZB7W"
+   ],
+   "ext_js": [
+    "s.yimg.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "21_12.html"
+  },
+  {
+   "url": "https://www.boatrace-ashiya.com/modules/raceinfo/?page=index_resultlist&resultday=20260929",
+   "status": 200,
+   "final": "https://www.boatrace-ashiya.com/modules/raceinfo/?page=index_resultlist&resultday=20260929",
+   "len": 34530,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 4,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-TTF3F22F",
+    "https://www.googletagmanager.com/ns.html?id=GTM-5BWZB7W"
+   ],
+   "ext_js": [
+    "s.yimg.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "21_13.html"
+  },
+  {
+   "url": "https://www.boatrace-ashiya.com/uploads/cdn/pdf/syussou/21_20261120_1_2.pdf?d=20261119163904?p=1795082757",
+   "status": 200,
+   "final": "https://www.boatrace-ashiya.com/uploads/cdn/pdf/syussou/21_20261120_1_2.pdf?d=20261119163904?p=1795082757",
+   "len": 344686,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [],
+   "ajax": [],
+   "file": "21_14.html"
+  },
+  {
+   "url": "https://www.boatrace-ashiya.com/uploads/cdn/pdf/syussou/21_20261120_1_3.pdf?d=20261119163904?p=1795082757",
+   "status": 200,
+   "final": "https://www.boatrace-ashiya.com/uploads/cdn/pdf/syussou/21_20261120_1_3.pdf?d=20261119163904?p=1795082757",
+   "len": 195986,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [],
+   "ajax": [],
+   "file": "21_15.html"
+  }
+ ],
+ "22": [
+  {
+   "url": "https://www.boatrace-fukuoka.com/modules/raceinfo/?page=index_tokuten",
+   "status": 200,
+   "final": "https://www.boatrace-fukuoka.com/modules/raceinfo/?page=index_tokuten",
+   "len": 53149,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NCD5FR5Q",
+    "https://www.googletagmanager.com/ns.html?id=GTM-PHHNQDH"
+   ],
+   "ext_js": [
+    "s.yimg.jp",
+    "www.boatrace-fukuoka.com",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "22_01.html"
+  },
+  {
+   "url": "https://www.boatrace-fukuoka.com/modules/yosou/",
+   "status": 200,
+   "final": "https://www.boatrace-fukuoka.com/modules/yosou/",
+   "len": 39517,
+   "展示": 1,
+   "展示タイム": 0,
+   "進入": 1,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-NCD5FR5Q",
+    "https://www.googletagmanager.com/ns.html?id=GTM-PHHNQDH"
+   ],
+   "ext_js": [
+    "s.yimg.jp",
+    "www.boatrace-fukuoka.com",
+    "www.googletagmanager.com",
+    "www2.uliza.jp"
+   ],
+   "ajax": [],
+   "file": "22_02.html"
+  }
+ ],
+ "23": [
+  {
+   "url": "https://www.boatrace-karatsu.jp/modules/raceinfo/",
+   "status": 200,
+   "final": "https://www.boatrace-karatsu.jp/modules/raceinfo/",
+   "len": 24479,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-W5CD54Z",
+    "https://www.googletagmanager.com/ns.html?id=GTM-NPW44LDD"
+   ],
+   "ext_js": [
+    "www.boatrace-karatsu.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css?family=Oswald"
+   ],
+   "file": "23_01.html"
+  },
+  {
+   "url": "https://www.boatrace-karatsu.jp/modules/raceinfo/?page=index_konsetsu",
+   "status": 200,
+   "final": "https://www.boatrace-karatsu.jp/modules/raceinfo/?page=index_konsetsu",
+   "len": 18432,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 9,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 5,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-W5CD54Z",
+    "https://www.googletagmanager.com/ns.html?id=GTM-NPW44LDD"
+   ],
+   "ext_js": [
+    "www.boatrace-karatsu.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css?family=Oswald"
+   ],
+   "file": "23_02.html"
+  },
+  {
+   "url": "https://www.boatrace-karatsu.jp/modules/raceinfo/?page=index_marutoku",
+   "status": 200,
+   "final": "https://www.boatrace-karatsu.jp/modules/raceinfo/?page=index_marutoku",
+   "len": 18381,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-W5CD54Z",
+    "https://www.googletagmanager.com/ns.html?id=GTM-NPW44LDD"
+   ],
+   "ext_js": [
+    "www.boatrace-karatsu.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css?family=Oswald"
+   ],
+   "file": "23_03.html"
+  },
+  {
+   "url": "https://www.boatrace-karatsu.jp/modules/raceinfo/?page=index_pdf",
+   "status": 200,
+   "final": "https://www.boatrace-karatsu.jp/modules/raceinfo/?page=index_pdf",
+   "len": 21144,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-W5CD54Z",
+    "https://www.googletagmanager.com/ns.html?id=GTM-NPW44LDD"
+   ],
+   "ext_js": [
+    "www.boatrace-karatsu.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css?family=Oswald"
+   ],
+   "file": "23_04.html"
+  },
+  {
+   "url": "https://www.boatrace-karatsu.jp/modules/raceinfo/?page=index_racecourse",
+   "status": 200,
+   "final": "https://www.boatrace-karatsu.jp/modules/raceinfo/?page=index_racecourse",
+   "len": 18366,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 9,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-W5CD54Z",
+    "https://www.googletagmanager.com/ns.html?id=GTM-NPW44LDD"
+   ],
+   "ext_js": [
+    "www.boatrace-karatsu.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css?family=Oswald"
+   ],
+   "file": "23_05.html"
+  },
+  {
+   "url": "https://www.boatrace-karatsu.jp/modules/raceinfo/?page=index_racers_comment",
+   "status": 200,
+   "final": "https://www.boatrace-karatsu.jp/modules/raceinfo/?page=index_racers_comment",
+   "len": 18462,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-W5CD54Z",
+    "https://www.googletagmanager.com/ns.html?id=GTM-NPW44LDD"
+   ],
+   "ext_js": [
+    "www.boatrace-karatsu.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css?family=Oswald"
+   ],
+   "file": "23_06.html"
+  },
+  {
+   "url": "https://www.boatrace-karatsu.jp/modules/raceinfo/?page=index_resultlist",
+   "status": 200,
+   "final": "https://www.boatrace-karatsu.jp/modules/raceinfo/?page=index_resultlist",
+   "len": 31497,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-W5CD54Z",
+    "https://www.googletagmanager.com/ns.html?id=GTM-NPW44LDD"
+   ],
+   "ext_js": [
+    "www.boatrace-karatsu.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css?family=Oswald"
+   ],
+   "file": "23_07.html"
+  },
+  {
+   "url": "https://www.boatrace-karatsu.jp/modules/raceinfo/?page=index_tenbo",
+   "status": 200,
+   "final": "https://www.boatrace-karatsu.jp/modules/raceinfo/?page=index_tenbo",
+   "len": 18332,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-W5CD54Z",
+    "https://www.googletagmanager.com/ns.html?id=GTM-NPW44LDD"
+   ],
+   "ext_js": [
+    "www.boatrace-karatsu.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css?family=Oswald"
+   ],
+   "file": "23_08.html"
+  },
+  {
+   "url": "https://www.boatrace-karatsu.jp/modules/raceinfo/?page=index_timerank",
+   "status": 200,
+   "final": "https://www.boatrace-karatsu.jp/modules/raceinfo/?page=index_timerank",
+   "len": 18398,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-W5CD54Z",
+    "https://www.googletagmanager.com/ns.html?id=GTM-NPW44LDD"
+   ],
+   "ext_js": [
+    "www.boatrace-karatsu.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css?family=Oswald"
+   ],
+   "file": "23_09.html"
+  },
+  {
+   "url": "https://www.boatrace-karatsu.jp/modules/raceinfo/?page=index_tokutenrank",
+   "status": 200,
+   "final": "https://www.boatrace-karatsu.jp/modules/raceinfo/?page=index_tokutenrank",
+   "len": 18374,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-W5CD54Z",
+    "https://www.googletagmanager.com/ns.html?id=GTM-NPW44LDD"
+   ],
+   "ext_js": [
+    "www.boatrace-karatsu.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css?family=Oswald"
+   ],
+   "file": "23_10.html"
+  },
+  {
+   "url": "https://www.boatrace-karatsu.jp/modules/raceinfo/?page=index_resultlist&resultday=20261117",
+   "status": 200,
+   "final": "https://www.boatrace-karatsu.jp/modules/raceinfo/?page=index_resultlist&resultday=20261117",
+   "len": 31497,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-W5CD54Z",
+    "https://www.googletagmanager.com/ns.html?id=GTM-NPW44LDD"
+   ],
+   "ext_js": [
+    "www.boatrace-karatsu.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css?family=Oswald"
+   ],
+   "file": "23_11.html"
+  },
+  {
+   "url": "https://www.boatrace-karatsu.jp/modules/raceinfo/?page=index_resultlist&resultday=20261109",
+   "status": 200,
+   "final": "https://www.boatrace-karatsu.jp/modules/raceinfo/?page=index_resultlist&resultday=20261109",
+   "len": 31199,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-W5CD54Z",
+    "https://www.googletagmanager.com/ns.html?id=GTM-NPW44LDD"
+   ],
+   "ext_js": [
+    "www.boatrace-karatsu.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css?family=Oswald"
+   ],
+   "file": "23_12.html"
+  },
+  {
+   "url": "https://www.boatrace-karatsu.jp/modules/raceinfo/?page=index_resultlist&resultday=20261031",
+   "status": 200,
+   "final": "https://www.boatrace-karatsu.jp/modules/raceinfo/?page=index_resultlist&resultday=20261031",
+   "len": 31524,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-W5CD54Z",
+    "https://www.googletagmanager.com/ns.html?id=GTM-NPW44LDD"
+   ],
+   "ext_js": [
+    "www.boatrace-karatsu.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css?family=Oswald"
+   ],
+   "file": "23_13.html"
+  },
+  {
+   "url": "https://www.boatrace-karatsu.jp/modules/raceinfo/?page=index_resultlist&resultday=20261023",
+   "status": 200,
+   "final": "https://www.boatrace-karatsu.jp/modules/raceinfo/?page=index_resultlist&resultday=20261023",
+   "len": 31657,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-W5CD54Z",
+    "https://www.googletagmanager.com/ns.html?id=GTM-NPW44LDD"
+   ],
+   "ext_js": [
+    "www.boatrace-karatsu.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css?family=Oswald"
+   ],
+   "file": "23_14.html"
+  },
+  {
+   "url": "https://www.boatrace-karatsu.jp/modules/raceinfo/?page=index_resultlist&resultday=20261012",
+   "status": 200,
+   "final": "https://www.boatrace-karatsu.jp/modules/raceinfo/?page=index_resultlist&resultday=20261012",
+   "len": 31460,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 6,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 2,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-W5CD54Z",
+    "https://www.googletagmanager.com/ns.html?id=GTM-NPW44LDD"
+   ],
+   "ext_js": [
+    "www.boatrace-karatsu.jp",
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css?family=Oswald"
+   ],
+   "file": "23_15.html"
+  },
+  {
+   "url": "https://www.boatrace-karatsu.jp/uploads/pdf/syussou/20261117_02.pdf?p=190647",
+   "status": 200,
+   "final": "https://www.boatrace-karatsu.jp/uploads/pdf/syussou/20261117_02.pdf?p=190647",
+   "len": 645784,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 0,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [],
+   "ajax": [],
+   "file": "23_16.html"
+  }
+ ],
+ "24": [
+  {
+   "url": "https://www.omurakyotei.jp/conveni/",
+   "status": 200,
+   "final": "https://www.omurakyotei.jp/conveni/",
+   "len": 54249,
+   "展示": 4,
+   "展示タイム": 0,
+   "進入": 1,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-K6JFDD23",
+    "https://www.googletagmanager.com/ns.html?id=GTM-T9QQ6XF"
+   ],
+   "ext_js": [
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css2?family=Goldman:wght@700&display=swap",
+    "https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@900&display=swap"
+   ],
+   "file": "24_01.html"
+  },
+  {
+   "url": "https://www.omurakyotei.jp/etsuran/",
+   "status": 200,
+   "final": "https://www.omurakyotei.jp/etsuran/",
+   "len": 59800,
+   "展示": 4,
+   "展示タイム": 0,
+   "進入": 1,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-K6JFDD23",
+    "https://www.googletagmanager.com/ns.html?id=GTM-T9QQ6XF"
+   ],
+   "ext_js": [
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css2?family=Goldman:wght@700&display=swap",
+    "https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@900&display=swap"
+   ],
+   "file": "24_02.html"
+  },
+  {
+   "url": "https://www.omurakyotei.jp/fax/",
+   "status": 200,
+   "final": "https://www.omurakyotei.jp/fax/",
+   "len": 55563,
+   "展示": 4,
+   "展示タイム": 0,
+   "進入": 1,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-K6JFDD23",
+    "https://www.googletagmanager.com/ns.html?id=GTM-T9QQ6XF"
+   ],
+   "ext_js": [
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css2?family=Goldman:wght@700&display=swap",
+    "https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@900&display=swap"
+   ],
+   "file": "24_03.html"
+  },
+  {
+   "url": "https://www.omurakyotei.jp/np/",
+   "status": 200,
+   "final": "https://www.omurakyotei.jp/np/",
+   "len": 55833,
+   "展示": 4,
+   "展示タイム": 0,
+   "進入": 1,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-K6JFDD23",
+    "https://www.googletagmanager.com/ns.html?id=GTM-T9QQ6XF"
+   ],
+   "ext_js": [
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css2?family=Goldman:wght@700&display=swap",
+    "https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@900&display=swap"
+   ],
+   "file": "24_04.html"
+  },
+  {
+   "url": "https://www.omurakyotei.jp/pdf/",
+   "status": 200,
+   "final": "https://www.omurakyotei.jp/pdf/",
+   "len": 55027,
+   "展示": 4,
+   "展示タイム": 0,
+   "進入": 1,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-K6JFDD23",
+    "https://www.googletagmanager.com/ns.html?id=GTM-T9QQ6XF"
+   ],
+   "ext_js": [
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css2?family=Goldman:wght@700&display=swap",
+    "https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@900&display=swap"
+   ],
+   "file": "24_05.html"
+  },
+  {
+   "url": "https://www.omurakyotei.jp/shusou_pdf.php",
+   "status": 200,
+   "final": "https://www.omurakyotei.jp/shusou_pdf.php",
+   "len": 10125,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 1,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "//b.yjtag.jp/iframe?c=STZIcNR"
+   ],
+   "ext_js": [],
+   "ajax": [],
+   "file": "24_06.html"
+  },
+  {
+   "url": "https://www.omurakyotei.jp/special/nighter/race/",
+   "status": 200,
+   "final": "https://www.omurakyotei.jp/special/nighter/race/",
+   "len": 4905,
+   "展示": 0,
+   "展示タイム": 0,
+   "進入": 2,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [],
+   "ext_js": [
+    "www.googletagmanager.com"
+   ],
+   "ajax": [],
+   "file": "24_07.html"
+  },
+  {
+   "url": "https://www.omurakyotei.jp/yosou/",
+   "status": 200,
+   "final": "https://www.omurakyotei.jp/yosou/",
+   "len": 71048,
+   "展示": 4,
+   "展示タイム": 0,
+   "進入": 2,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-K6JFDD23",
+    "https://www.googletagmanager.com/ns.html?id=GTM-T9QQ6XF",
+    "/yosou/include/iframe_chokuzen_comment.php?day=20261119&amp;chokuzen_check=1&amp;race="
+   ],
+   "ext_js": [
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css2?family=Goldman:wght@700&display=swap",
+    "https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@900&display=swap"
+   ],
+   "file": "24_08.html"
+  },
+  {
+   "url": "https://www.omurakyotei.jp/yosou/kekka_list.php",
+   "status": 200,
+   "final": "https://www.omurakyotei.jp/yosou/kekka_list.php",
+   "len": 62611,
+   "展示": 4,
+   "展示タイム": 0,
+   "進入": 2,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-K6JFDD23",
+    "https://www.googletagmanager.com/ns.html?id=GTM-T9QQ6XF"
+   ],
+   "ext_js": [
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css2?family=Goldman:wght@700&display=swap",
+    "https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@900&display=swap"
+   ],
+   "file": "24_09.html"
+  },
+  {
+   "url": "https://www.omurakyotei.jp/yosou/ranking_motor.php",
+   "status": 200,
+   "final": "https://www.omurakyotei.jp/yosou/ranking_motor.php",
+   "len": 73934,
+   "展示": 4,
+   "展示タイム": 0,
+   "進入": 2,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-K6JFDD23",
+    "https://www.googletagmanager.com/ns.html?id=GTM-T9QQ6XF"
+   ],
+   "ext_js": [
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css2?family=Goldman:wght@700&display=swap",
+    "https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@900&display=swap"
+   ],
+   "file": "24_10.html"
+  },
+  {
+   "url": "https://www.omurakyotei.jp/yosou/chokuzen.php",
+   "status": 200,
+   "final": "https://www.omurakyotei.jp/yosou/chokuzen.php",
+   "len": 60126,
+   "展示": 5,
+   "展示タイム": 1,
+   "進入": 2,
+   "チルト": 1,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-K6JFDD23",
+    "https://www.googletagmanager.com/ns.html?id=GTM-T9QQ6XF"
+   ],
+   "ext_js": [
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css2?family=Goldman:wght@700&display=swap",
+    "https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@900&display=swap"
+   ],
+   "file": "24_11.html"
+  },
+  {
+   "url": "https://www.omurakyotei.jp/yosou/start.php",
+   "status": 200,
+   "final": "https://www.omurakyotei.jp/yosou/start.php",
+   "len": 66022,
+   "展示": 9,
+   "展示タイム": 0,
+   "進入": 2,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-K6JFDD23",
+    "https://www.googletagmanager.com/ns.html?id=GTM-T9QQ6XF"
+   ],
+   "ext_js": [
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css2?family=Goldman:wght@700&display=swap",
+    "https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@900&display=swap"
+   ],
+   "file": "24_12.html"
+  },
+  {
+   "url": "https://www.omurakyotei.jp/yosou/kekka.php",
+   "status": 200,
+   "final": "https://www.omurakyotei.jp/yosou/kekka.php",
+   "len": 65357,
+   "展示": 4,
+   "展示タイム": 0,
+   "進入": 2,
+   "チルト": 0,
+   "着順": 0,
+   "決まり手": 0,
+   "風速": 1,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-K6JFDD23",
+    "https://www.googletagmanager.com/ns.html?id=GTM-T9QQ6XF"
+   ],
+   "ext_js": [
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css2?family=Goldman:wght@700&display=swap",
+    "https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@900&display=swap"
+   ],
+   "file": "24_13.html"
+  },
+  {
+   "url": "https://www.omurakyotei.jp/yosou/syussou.php?day=20261119&amp;race=01",
+   "status": 200,
+   "final": "https://www.omurakyotei.jp/yosou/syussou.php?day=20261119&amp;race=01",
+   "len": 118971,
+   "展示": 5,
+   "展示タイム": 0,
+   "進入": 5,
+   "チルト": 0,
+   "着順": 8,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-K6JFDD23",
+    "https://www.googletagmanager.com/ns.html?id=GTM-T9QQ6XF"
+   ],
+   "ext_js": [
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css2?family=Goldman:wght@700&display=swap",
+    "https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@900&display=swap"
+   ],
+   "file": "24_14.html"
+  },
+  {
+   "url": "https://www.omurakyotei.jp/yosou/syussou.php?day=20261119&amp;race=02",
+   "status": 200,
+   "final": "https://www.omurakyotei.jp/yosou/syussou.php?day=20261119&amp;race=02",
+   "len": 118971,
+   "展示": 5,
+   "展示タイム": 0,
+   "進入": 5,
+   "チルト": 0,
+   "着順": 8,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-K6JFDD23",
+    "https://www.googletagmanager.com/ns.html?id=GTM-T9QQ6XF"
+   ],
+   "ext_js": [
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css2?family=Goldman:wght@700&display=swap",
+    "https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@900&display=swap"
+   ],
+   "file": "24_15.html"
+  },
+  {
+   "url": "https://www.omurakyotei.jp/yosou/syussou.php?day=20261119&amp;race=03",
+   "status": 200,
+   "final": "https://www.omurakyotei.jp/yosou/syussou.php?day=20261119&amp;race=03",
+   "len": 118971,
+   "展示": 5,
+   "展示タイム": 0,
+   "進入": 5,
+   "チルト": 0,
+   "着順": 8,
+   "決まり手": 0,
+   "風速": 0,
+   "部品": 0,
+   "iframe": [
+    "https://www.googletagmanager.com/ns.html?id=GTM-K6JFDD23",
+    "https://www.googletagmanager.com/ns.html?id=GTM-T9QQ6XF"
+   ],
+   "ext_js": [
+    "www.googletagmanager.com"
+   ],
+   "ajax": [
+    "https://fonts.googleapis.com/css2?family=Goldman:wght@700&display=swap",
+    "https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@900&display=swap"
+   ],
+   "file": "24_16.html"
+  }
+ ]
+}
