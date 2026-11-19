@@ -227,6 +227,10 @@ td.who{min-width:6.5em}td.who b{white-space:nowrap}td.who span{white-space:nowra
 .sh-ord{display:inline-flex;gap:3px} .sh-why{margin:6px 0 0;padding-left:18px;display:grid;gap:6px;line-height:1.7}
 .sh-warn{margin:6px 0 0;padding:8px 10px;border-radius:8px;background:var(--ana-soft);color:var(--ana);font-weight:700}
 .pill.sh-pill{background:var(--ana-soft);color:var(--ana);font-weight:700}
+.ink-lose{margin:4px 0;font-size:15px}.ink-lose b{color:var(--ana)}
+.ink-list{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px}
+.ink-list li{display:grid;grid-template-columns:minmax(0,11em) 1fr 3.2em;gap:8px;align-items:center}
+.ink-list li b{text-align:right}.ink-list .bar{height:6px;border-radius:3px;background:var(--bg);overflow:hidden}.ink-list .bar i{display:block;height:100%;background:var(--ana)}
 .bn.lg{width:30px;height:30px;font-size:16px;border-radius:7px}
 .comment{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:grid;gap:10px}
 .comment p{margin:0;max-width:68ch}
@@ -679,7 +683,8 @@ function analyze(race,exOverride){
   const p1in3=sum(combos.filter(c=>c.k.split('-').includes('1')).map(c=>c.pAi)), p1in2=sum(combos.filter(c=>c.k.split('-').slice(0,2).includes('1')).map(c=>c.pAi));
   const b1=boats.find(b=>b.waku===1), tobu=clamp(0.04+0.73*(1-p1in3),0.02,0.8);
   const one={win:b1?b1.pWin:0,in2:p1in2,in3:1-tobu,tobu,course:b1?b1.course:1};
-  return {boats,combos,honsen,ana,cover:cum,top,topWin,real,manP,one,ashi:AS?{kind:ASHI_W[Number(race.jcd)]?'場別':'既定',sep:ASHI_SEP[Number(race.jcd)]??null,venueCorr:!!ASHI_CONFIG.corrVenue[Number(race.jcd)],notes:AS.notes||[]}:null,level:topWin>=0.6?'kata':topWin>=0.42?'futsu':'are',hasEx:exMean!=null};
+  const ink=inkmOf(boats);
+  return {boats,combos,honsen,ana,cover:cum,top,topWin,real,manP,one,ink,ashi:AS?{kind:ASHI_W[Number(race.jcd)]?'場別':'既定',sep:ASHI_SEP[Number(race.jcd)]??null,venueCorr:!!ASHI_CONFIG.corrVenue[Number(race.jcd)],notes:AS.notes||[]}:null,level:topWin>=0.6?'kata':topWin>=0.42?'futsu':'are',hasEx:exMean!=null};
 }
 const LEVEL={kata:['堅い','var(--good)'],futsu:['本命寄り','var(--accent)'],are:['波乱含み','var(--ana)']};
 
@@ -1226,6 +1231,44 @@ function courseHtml(r,a){
 // まくりアラート：補正後の展示タイムが ①すぐ内側の艇より0.06秒以上速い ②内側の全艇より速い（進入コースで判定）
 // 過去1年・2〜6コースの29.7万走の検証（11/14）：まくりで勝つ率は①で2.2倍・②で2.5倍・両方で2.6倍
 const MAKURI_RATE={2:[7.0,3.1,5.3,2.5],3:[8.0,4.5,7.7,4.2],4:[8.8,3.8,8.5,3.7],5:[2.9,0.9,2.8,0.9],6:[1.5,0.3,1.7,0.3]}; // [①の率,①以外,②の率,②以外]（%）
+// 1コースの艇が1着を逃す確率と、そのときの決まり手（11/20 殿の依頼。1コースの艇の差され・まくられ・まくり差され率と、
+// 2〜6コースの艇の差し・まくり・まくり差し率で、AIの1着確率を補正。学習は train.py の inkm、検証はテスト期間で）
+const KM3=['差し','まくり','まくり差し'];
+function inkmOf(boats){
+  const IK=MODEL.inkm; if(!IK||!STATS||!STATS.p)return null;
+  const bs=boats.slice().sort((x,y)=>x.course-y.course);
+  if(bs.length!==6||new Set(bs.map(b=>b.course)).size!==6)return null;
+  const K=IK.K,PL=IK.PL,PW=IK.PW,cl=(x,lo,hi)=>Math.max(lo,Math.min(hi,x)),rate=(a,n,p)=>(a+K*p)/(n+K);
+  const P=t=>STATS.p[String(t)]||{};
+  const lk=P(bs[0].toban).lk||[0,0,0,0,0];
+  const v=[0,1,2].map(j=>Math.log(Math.max(rate(lk[1+j],lk[0],PL[j]),1e-4)/PL[j]));
+  const a=bs.slice(1).map(b=>{const wk=P(b.toban).wk,row=wk?wk[b.course-2]:[0,0,0,0];
+    return [0,1,2].map(j=>Math.log(Math.max(rate(row[1+j],row[0],PW[b.course-1][j]),1e-4)/Math.max(PW[b.course-1][j],1e-4)));});
+  const p1=cl(bs[0].pWin,1e-4,1-1e-4);
+  const f=[1,Math.log(p1/(1-p1)),...v,...[0,1,2].map(j=>Math.max(...a.map(r=>r[j]))),...[0,1,2].map(j=>Math.log(a.reduce((s,r)=>s+Math.exp(r[j]),0)/a.length))].map(x=>cl(x,-8,8));
+  const lose=1/(1+Math.exp(-f.reduce((s,x,i)=>s+x*IK.lose[i],0)));
+  const pr=bs.map(b=>b.pWin),ps=pr.slice(1).reduce((s,x)=>s+x,0)||1e-9,us=[],keys=[];
+  for(let c=2;c<=6;c++)for(let j=0;j<3;j++){const sw=PW[c-1].reduce((s,x)=>s+x,0)||1e-9;
+    const fe=[Math.log(pr[c-1]/ps+1e-9),Math.log(PW[c-1][j]/sw),a[c-2][j],v[j]].map(x=>cl(x,-12,8));
+    us.push(fe.reduce((s,x,i)=>s+x*IK.km[i],0));keys.push({course:c,waku:bs[c-1].waku,name:bs[c-1].name,km:KM3[j]});}
+  us.push(IK.km[4]);
+  const mx=Math.max(...us),ex=us.map(u=>Math.exp(u-mx)),Z=ex.reduce((s,x)=>s+x,0);
+  const km=keys.map((k,i)=>({...k,pc:ex[i]/Z,p:lose*ex[i]/Z})).sort((x,y)=>y.p-x.p);
+  return {lose,loseAI:1-p1,b1:{waku:bs[0].waku,name:bs[0].name},km,other:lose*ex[ex.length-1]/Z,
+    vul:v.map(x=>Math.exp(x)),n1:lk[0]};
+}
+function inkHtml(r,a){
+  const k=a&&a.ink;if(!k)return '';
+  const pc=x=>Math.round(x*100)+'%';
+  const top=k.km.slice(0,5), mx=top[0]?top[0].p:1;
+  const vu=['差され','まくられ','まくり差され'].map((t,i)=>k.vul[i]>=1.25?t+'やすい':k.vul[i]<=0.8?t+'にくい':'').filter(Boolean);
+  return `<div class="panel ink"><h3>負け方の予想</h3>
+    <p class="ink-lose">1コースの ${bn(k.b1.waku)} ${esc(k.b1.name||'')} が<b>1着を逃す確率 ${pc(k.lose)}</b><span class="sub">（AIの1着率だけなら ${pc(k.loseAI)}）</span></p>
+    ${vu.length?`<p class="sub">この選手は1コースで${vu.join('・')}（通算${k.n1}回の1コースから）。</p>`:''}
+    <ul class="ink-list">${top.map(x=>`<li><span>${bn(x.waku)} ${x.course}コース<b>${x.km}</b></span><span class="bar"><i style="width:${Math.round(x.p/mx*100)}%"></i></span><b>${pc(x.p)}</b></li>`).join('')}
+      <li class="sub"><span>その他（抜き・恵まれ）</span><span></span><b>${pc(k.other)}</b></li></ul>
+    <p class="hint">％はレース全体に対する確率です。1コースの艇の「差され・まくられ・まくり差され」の率と、攻める艇の「差し・まくり・まくり差し」の率（過去1年）でAIの見立てを補正しています。学習に使っていない期間で、1着を逃す確率の損失0.6222→0.6184、決まり手の一番手の的中24.6%→25.2%でした。</p></div>`;
+}
 function makuriHtml(r,a){
   const CR=ashiCorr(r.jcd), ce={}, byC={};
   a.boats.forEach(b=>{if(b.exTime!=null)ce[b.waku]=Math.round((b.exTime+CR[b.waku][3])*100)/100;if(b.course)byC[b.course]=b;});
@@ -1250,12 +1293,12 @@ function ashiHtml(r,a){
       <p class="sub">枠ごとの計測のクセを補正し、同じレースの中で速いほど＋。${a.ashi.venueCorr?'この場専用の補正':'全場共通の補正'}をかけ、${a.ashi.kind==='場別'?`この場で検証した重み${a.ashi.sep!=null?`（判別力sep ${a.ashi.sep}）`:''}`:'未検証の場なので既定の戸田新式（一周1・まわり足0.5・直線0.5・展示1）'}で合計。${a.ashi.notes.length?'※'+esc(a.ashi.notes.join('・')):''}</p>
       <div class="tablebox"><table class="card"><thead><tr><th>順位</th><th>艇</th><th>一周</th><th>まわり足</th><th>直線</th><th>展示</th><th>足スコア</th><th>評価</th></tr></thead><tbody>
       ${rows.map(b=>b.ashi?`<tr><td>${b.ashi.rank}位</td><td>${bn(b.waku)}</td>${b.ashi.z.map(z=>`<td class="n ${cls(z)}">${f(z)}</td>`).join('')}<td class="n"><b>${f(b.ashi.score)}</b></td><td><b class="fg fg-${fgCls(b.footGrade)}">${b.footGrade}</b></td></tr>`:`<tr><td>-</td><td>${bn(b.waku)}</td><td colspan="6" class="n">展示なし</td></tr>`).join('')}
-      </tbody></table></div>${makuriHtml(r,a)}</div>`;}
+      </tbody></table></div>${makuriHtml(r,a)}</div>${inkHtml(r,a)}`;}
   const jc=String(r.jcd).padStart(2,'0');
   return `<div class="panel ashi"><h3>足評価</h3><p class="sub">${ASHI_SKIP_NOTE(jc,r)}展示タイム・オリジナル展示・モーターの遍歴（交換後に乗った選手たちの実測の足と、乗り手の腕を差し引いた成績。2連率は使いません）を、AIが学んだ重みで合計した評価です。</p>
     <div class="tablebox"><table class="card"><thead><tr><th>艇</th><th>展示</th><th>オリ展</th><th>モーター</th><th>合計</th><th>評価</th></tr></thead><tbody>
     ${a.boats.slice().sort((x,y)=>y.foot-x.foot).map(b=>{const o=(b.parts.olap||0)+(b.parts.oturn||0)+(b.parts.ostr||0);return `<tr><td>${bn(b.waku)}</td><td class="n">${f(b.parts.ex||0)}</td><td class="n">${f(o)}</td><td class="n">${f((b.parts.mfoot||0)+(b.parts.madj||0))}</td><td class="n"><b>${f(b.foot)}</b></td><td><b class="fg fg-${fgCls(b.footGrade)}">${b.footGrade}</b></td></tr>`;}).join('')}
-    </tbody></table></div>${makuriHtml(r,a)}</div>`;}
+    </tbody></table></div>${makuriHtml(r,a)}</div>${inkHtml(r,a)}`;}
 const ASHI_SKIP_NOTE=(jc,r)=>'展示タイムがまだ無いため、';
 function oriHtml(r,a){
   const o=r.before&&r.before.ori, bf=(r.before&&r.before.boats)||{};
@@ -1513,7 +1556,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='54';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='55';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));

@@ -450,6 +450,102 @@ def kimarite_stats(races):
             "v": {j: {c: dict(v) for c, v in cs.items()} for j, cs in ven.items()}}
 
 
+# ---------------------------------------------------------------- 1コースが負ける確率と、負けるときの決まり手（11/20 殿の依頼で追加）
+KM3 = ["差し", "まくり", "まくり差し"]
+INK = 15  # 少ない選手は全体の割合に寄せる強さ
+
+
+def _ok_races(races):
+    out = []
+    for r in races:
+        bs = r["boats"]; cs = [b.get("course") for b in bs]; fin = {b["finish"] for b in bs if b.get("finish")}
+        if all(c in range(1, 7) for c in cs) and len(set(cs)) == 6 and 1 in fin:
+            out.append(r)
+    return out
+
+
+def inkm_features(races, P):
+    """各レースについて、そのレースより前の結果だけから：1コースの艇の負け方の率、2〜6コースの艇の勝ち方の率。
+    P は rows（枠順）の1着確率。戻り値は学習用の特徴と、アプリ用の選手ごとの通算"""
+    ok = _ok_races(races)
+    tot = np.zeros(5); totw = np.zeros((6, 4))
+    for r in ok:
+        km = r.get("kimarite"); bs = sorted(r["boats"], key=lambda b: b["course"])
+        wc = [b["course"] for b in bs if b.get("finish") == 1][0]
+        tot[0] += 1
+        if wc != 1:
+            tot[1 + KM3.index(km) if km in KM3 else 4] += 1
+        for b in bs:
+            totw[b["course"] - 1][0] += 1
+            if b.get("finish") == 1 and km in KM3:
+                totw[b["course"] - 1][1 + KM3.index(km)] += 1
+    PL = tot[1:4] / tot[0]; PW = totw[:, 1:] / np.maximum(totw[:, :1], 1)
+    lose = defaultdict(lambda: np.zeros(5)); win = defaultdict(lambda: np.zeros((6, 4)))
+    F1, FK, Y1, YK = [], [], [], []
+    rate = lambda a, n, p: (a + INK * p) / (n + INK)
+    for i, r in enumerate(ok):
+        bs = sorted(r["boats"], key=lambda b: b["course"])
+        l = lose[bs[0]["toban"]]
+        v = np.log(np.clip([rate(l[1 + j], l[0], PL[j]) for j in range(3)], 1e-4, 1) / PL)
+        att = np.array([[rate(win[b["toban"]][b["course"] - 1][1 + j], win[b["toban"]][b["course"] - 1][0], PW[b["course"] - 1][j])
+                         for j in range(3)] for b in bs[1:]])
+        a = np.log(np.clip(att, 1e-4, 1) / np.clip(PW[1:], 1e-4, 1))
+        pr = np.array([P[i][b["waku"] - 1] for b in bs])
+        F1.append(inkm_vec(pr[0], v, a)); FK.append(km_mat(pr, v, a, PW))
+        wc = [b["course"] for b in bs if b.get("finish") == 1][0]; km = r.get("kimarite")
+        Y1.append(0 if wc == 1 else 1)
+        YK.append(-1 if wc == 1 else ((wc - 2) * 3 + KM3.index(km) if km in KM3 else 15))
+        l[0] += 1
+        if wc != 1:
+            l[1 + KM3.index(km) if km in KM3 else 4] += 1
+        for b in bs:
+            w_ = win[b["toban"]][b["course"] - 1]; w_[0] += 1
+            if b.get("finish") == 1 and km in KM3:
+                w_[1 + KM3.index(km)] += 1
+    per = {"lk": {t: v.astype(int).tolist() for t, v in lose.items()}, "wk": {t: v[1:].astype(int).tolist() for t, v in win.items()}}
+    return np.array(F1), np.array(FK), np.array(Y1), np.array(YK), PL, PW, per
+
+
+def inkm_vec(p1, v, a):
+    p1 = float(np.clip(p1, 1e-4, 1 - 1e-4))
+    f = [1.0, np.log(p1 / (1 - p1)), *v, *a.max(0), *np.log(np.exp(a).mean(0))]
+    return np.clip(f, -8, 8)
+
+
+def km_mat(pr, v, a, PW):
+    pn = pr[1:] / max(pr[1:].sum(), 1e-9)
+    rows = []
+    for c in range(2, 7):
+        for j in range(3):
+            rows.append([np.log(pn[c - 2] + 1e-9), np.log(PW[c - 1][j] / max(PW[c - 1].sum(), 1e-9)), a[c - 2][j], v[j]])
+    rows.append([0.0, 0.0, 0.0, 0.0])
+    return np.clip(np.array(rows), -12, 8)
+
+
+def fit_inkm(F1, FK, Y1, YK, m):
+    def nll1(t):
+        z = F1[m] @ t; return np.mean(np.logaddexp(0, z) - Y1[m] * z)
+    t1 = minimize(nll1, np.zeros(F1.shape[1]), method="L-BFGS-B").x
+    mk = m & (YK >= 0)
+    def nllk(t):
+        u = FK[mk] @ t[:4]; u[:, -1] = t[4]; u = u - u.max(1, keepdims=True)
+        lp = u - np.log(np.exp(u).sum(1, keepdims=True)); return -lp[np.arange(mk.sum()), YK[mk]].mean()
+    tk = minimize(nllk, np.array([1.0, 1.0, 0.0, 0.0, -2.0]), method="L-BFGS-B").x
+    return t1, tk
+
+
+def eval_inkm(F1, FK, Y1, YK, t1, tk, m):
+    p = 1 / (1 + np.exp(-(F1[m] @ t1))); y = Y1[m]; p = np.clip(p, 1e-6, 1 - 1e-6)
+    ll1 = float(-np.mean(y * np.log(p) + (1 - y) * np.log(1 - p)))
+    p0 = 1 - np.clip(1 / (1 + np.exp(-F1[m][:, 1])), 1e-6, 1 - 1e-6)
+    ll0 = float(-np.mean(y * np.log(p0) + (1 - y) * np.log(1 - p0)))
+    mk = m & (YK >= 0)
+    u = FK[mk] @ tk[:4]; u[:, -1] = tk[4]; u = u - u.max(1, keepdims=True)
+    lp = u - np.log(np.exp(u).sum(1, keepdims=True))
+    return {"loseLogLoss": ll1, "loseLogLossAI": ll0, "kmLogLoss": float(-lp[np.arange(mk.sum()), YK[mk]].mean()),
+            "kmTop1": float((lp.argmax(1) == YK[mk]).mean())}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--data", default="data")
@@ -513,8 +609,18 @@ def main():
     base_only = np.exp(M["lnbase"][Dte["venue"][:, None], Dte["course"]])
     ll_base = float(-np.log(base_only[np.arange(len(Dte["w1"])), Dte["w1"]]).mean())
 
+    # 3b. 1コースが負ける確率・決まり手（学習期間のモデルの1着確率から、学習＋検証で重みを決め、テストで採点）
+    _, _, win_all = predict(M, D)
+    F1, FK, Y1, YK, PL, PW, _ = inkm_features(races, win_all)
+    t1, tk = fit_inkm(F1, FK, Y1, YK, ~te)
+    ink_test = eval_inkm(F1, FK, Y1, YK, t1, tk, te)
+    print("1コースが負ける・決まり手（テスト）", ink_test)
+
     # 4. 本番用は全期間で学習し直す
     Mall = fit_all(np.ones(len(dates), dtype=bool))
+    _, _, win_full = predict(Mall, D)
+    F1, FK, Y1, YK, PL, PW, INKPER = inkm_features(races, win_full)
+    t1, tk = fit_inkm(F1, FK, Y1, YK, np.ones(len(Y1), dtype=bool))
     base = np.exp(Mall["lnbase"])
     w = dict(zip(FEATS, Mall["beta"].round(4).tolist()))
     n_ori = sum(len(v) for v in ORI.values())
@@ -534,6 +640,7 @@ def main():
         "market": {"inner": th[0], "kNat": th[1], "kMotor": th[2], "kEx": th[3],
                    "cls": {"A1": th[4], "A2": th[5], "B1": 0.0, "B2": th[6]}, "kPlace": th[7], "c0": round(Mall["c0"], 4)},
         "ana": best_rule,
+        "inkm": {"PL": PL.round(5).tolist(), "PW": PW.round(5).tolist(), "K": INK, "lose": t1.round(4).tolist(), "km": tk.round(4).tolist()},
     }
     report = {
         "trainedAt": model["trainedAt"],
@@ -543,6 +650,7 @@ def main():
             "winTopHit": top_hit, "innerWinRate": in1,
             "logLoss": ll_model, "logLossCourseOnly": ll_base,
             "honsen": bt["hon"], "ana": bt["ana"],
+            "inkm": ink_test,
         },
         "anaRule": best_rule,
     }
@@ -560,7 +668,7 @@ def main():
     stats = {"updated": model["trainedAt"],
              "p": {str(t): {"cw": v, "rf": STATE["recent"].get(t, []), "st": [round(x, 2) for x in STATE["st"].get(t, [])[-20:]],
                               "stc": [[round(x, 2) for x in l] for l in STATE["stc"][t]] if t in STATE["stc"] else None,
-                              "kmy": kmy.get(t), "cy": cy.get(t), "kon": kon.get(t), "l1": l1.get(t), **prof.get(t, {})}
+                              "kmy": kmy.get(t), "cy": cy.get(t), "lk": INKPER["lk"].get(t), "wk": INKPER["wk"].get(t), "kon": kon.get(t), "l1": l1.get(t), **prof.get(t, {})}
                    for t, v in STATE["cw"].items()},
              "km": kimarite_stats(races),
              "cbase": cbase,
