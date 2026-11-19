@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="expires" content="0">
+<title>ボートレースびわこ Official Site</title>
+    <meta name="viewport" content="width=1200" />
+    <meta name="description" content="BOAT RACE びわこ公式サイト。" />
+    <meta name="keywords" content="びわこ競艇,競艇,kyotei,kyoutei,競艇場,boatrace,boat,ボートレースびわこ,ボートレース,びわこ,ボートレース場,琵琶湖" />
+    <meta name="author" content="BOAT RACE BIWAKO" lang="ja" />
+    <meta name="copyright" content="BOAT RACE BIWAKO" />
+    <meta name="robots" content="INDEX,FOLLOW" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <!-- Open Graph Protocol -->
+    <meta property="og:title" content="ボートレースびわこ Official Site" />
+    <meta property="og:description" content="BOAT RACE びわこ公式サイト。" />
+    <!--meta property="og:image" content="https://www.boatrace-biwako.jp/themes/biwako/images/fb_icon.jpg" /-->
+    <meta property="og:url" content="https://www.boatrace-biwako.jp" />
+    <!-- /Open Graph Protocol -->
+    <link rel="stylesheet" href="https://www.boatrace-biwako.jp/themes/biwako/css/reset.css?ver=1.1.3">
+    <link rel="stylesheet" href="https://www.boatrace-biwako.jp/themes/biwako/css/common.css?ver=1.1.3">
+    <link rel="stylesheet" href="https://www.boatrace-biwako.jp/themes/biwako/css/common11.css?ver=1.1.3">
+    <script src="https://www.boatrace-biwako.jp/themes/biwako/js/jquery-1.12.4.min.js"></script>
+    <script src="https://www.boatrace-biwako.jp/themes/biwako/js/common.js?ver=1.0.0"></script>
+    <script type="text/javascript" src="/themes/biwako/js/jquery.easing.min.js"></script>
+    <script>
+    $(function(){
+        var $setElm = $('.ticker ul li a');
+        var cutFigure = '70'; // カットする文字数
+        var afterTxt = ' …'; // 文字カット後に表示するテキスト
+
+        $setElm.each(function(){
+            var textLength = $(this).text().length;
+            var textTrim = $(this).text().substr(0,(cutFigure))
+
+            if(cutFigure < textLength) {
+                $(this).html(textTrim + afterTxt).css({visibility:'visible'});
+            } else if(cutFigure >= textLength) {
+                $(this).css({visibility:'visible'});
+            }
+        });
+
+        $(window).load(function(){
+            var $setElm = $('.ticker');
+            var effectSpeed = 1000;
+            var switchDelay = 6000;
+            var easing = 'easeOutBack';
+
+            $setElm.each(function(){
+                var effectFilter = $(this).attr('rel'); // 'fade' or 'roll' or 'slide'
+
+                var $targetObj = $(this);
+                var $targetUl = $targetObj.children('ul');
+                var $targetLi = $targetObj.find('li');
+                var $setList = $targetObj.find('li:first');
+
+                var ulWidth = $targetUl.width();
+                var listHeight = $targetLi.height();
+                $targetObj.css({height:(listHeight)});
+                $targetLi.css({top:'0',left:'0',position:'absolute'});
+
+                if(effectFilter == 'fade') {
+                    $setList.css({display:'block',opacity:'0',zIndex:'98'}).stop().animate({opacity:'1'},effectSpeed,easing).addClass('showlist');
+                    setInterval(function(){
+                        var $activeShow = $targetObj.find('.showlist');
+                        $activeShow.animate({opacity:'0'},effectSpeed,easing,function(){
+                            $(this).next().css({display:'block',opacity:'0',zIndex:'99'}).animate({opacity:'1'},effectSpeed,easing).addClass('showlist').end().appendTo($targetUl).css({display:'none',zIndex:'98'}).removeClass('showlist');
+                        });
+                    },switchDelay);
+                } else if(effectFilter == 'roll') {
+                    $setList.css({top:'3em',display:'block',opacity:'0',zIndex:'98'}).stop().animate({top:'0',opacity:'1'},effectSpeed,easing).addClass('showlist');
+                    setInterval(function(){
+                        var $activeShow = $targetObj.find('.showlist');
+                        $activeShow.animate({top:'-3em',opacity:'0'},effectSpeed,easing).next().css({top:'3em',display:'block',opacity:'0',zIndex:'99'}).animate({top:'0',opacity:'1'},effectSpeed,easing).addClass('showlist').end().appendTo($targetUl).css({zIndex:'98'}).removeClass('showlist');
+                    },switchDelay);
+                } else if(effectFilter == 'slide') {
+                    $setList.css({left:(ulWidth),display:'block',opacity:'0',zIndex:'98'}).stop().animate({left:'0',opacity:'1'},effectSpeed,easing).addClass('showlist');
+                    if($(".ticker li").length>1){
+                        setInterval(function(){
+                            var $activeShow = $targetObj.find('.showlist');
+                            $activeShow.animate({left:(-(ulWidth)),opacity:'0'},effectSpeed,easing).next().css({left:(ulWidth),display:'block',opacity:'0',zIndex:'99'}).animate({left:'0',opacity:'1'},effectSpeed,easing).addClass('showlist').end().appendTo($targetUl).css({zIndex:'98'}).removeClass('showlist');
+                        },switchDelay);
+                    }
+                }
+            });
+        });
+    });
+    </script>
+    
+    <link rel="stylesheet" href="https://www.boatrace-biwako.jp/themes/biwako/css/slick.css">
+    <link rel="stylesheet" href="https://www.boatrace-biwako.jp/themes/biwako/css/slick-theme.css">
+    <link rel="stylesheet" href="https://www.boatrace-biwako.jp/themes/biwako/css/top.css?ver=1.1.3">
+    <script src="https://www.boatrace-biwako.jp/themes/biwako/js/top.js"></script>
+    <script src="https://www.boatrace-biwako.jp/themes/biwako/js/pctosmart.js"></script>
+    <script src="https://www.boatrace-biwako.jp/themes/biwako/js/slick.min.js"></script>
+
+    <!-- 20220125 -->
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-M5H4WHZ');</script>
+    <!-- End Google Tag Manager -->
+    <!-- 20220125 -->
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-84781097-11"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-84781097-11');
+    </script>
+  </head>
+
+<body id="top" class="home hikaisai kaisai_today ">
+<!-- 20220125 -->
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-M5H4WHZ"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<!-- 20220125 -->
+    
+<div id="header">
+    <div id="headline">
+        <div id="header_info_contents">
+            <a id="biwakohomelink" href="/">BOAT RACE びわこ</a>
+            <div id="today_info">
+                <div class="box_announce"><span class="item-text">開催中</span>                </div>
+                <div class="today_date">
+                    <div class="box_day">11/19</div>
+                    <div class="box_week">木曜日　</div>
+                    <div class="item-time">
+                        9:50開門                    </div>
+                </div>
+                
+            </div>
+            
+			    <div id="hatsubaiarea">
+					<div class="hatsubai_block jogai">
+						<div class="hatsubai_header">
+							<span class="title">場外発売</span>
+							<div class="item_kaimon">開門時間<span class="time">9:50</span></div>
+						</div>
+						<ul class="hatsubai_data_list">
+								<li><span class='item_jo'>丸亀</span><span class="icon_grade_hatsubai G1">ＧⅠ</span><span class='mark'><img src="/themes/biwako/images/common/ico-time-night.png"></span><span>&nbsp;&nbsp;</span></span></li><li><span class='item_jo'>戸田</span><span class="icon_grade_hatsubai G3">ＧⅢ</span><span class='mark'><img src="/themes/biwako/images/common/ico-time-day.png"></span><span class='mark heart_mark'><img src="/themes/biwako/images/common/ico-heart.png"></span></li>
+						</ul>
+					</div>
+    
+					<div class="hatsubai_block sotomuke">
+						<div class="hatsubai_header">
+							<span class="title">外向発売</span><div class="item_kaimon">開門時間<span class="time">8:00</span></div>
+						</div>
+						<ul class="hatsubai_data_list">
+								<li><span class='item_jo'>丸亀</span><span class="icon_grade_hatsubai G1">ＧⅠ</span><span class='mark'><img src="/themes/biwako/images/common/ico-time-night.png"></span><span>&nbsp;&nbsp;</span></li><li><span class='item_jo'>戸田</span><span class="icon_grade_hatsubai G3">ＧⅢ</span><span class='mark'><img src="/themes/biwako/images/common/ico-time-day.png"></span><span class='mark heart_mark'><img src="/themes/biwako/images/common/ico-heart.png"></span></li><li><span class='item_jo'>鳴門</span><span class="icon_grade_hatsubai IP">一般</span><span class='mark'><img src="/themes/biwako/images/common/ico-time-morning.png"></span><span>&nbsp;&nbsp;</span></li><li><span class='item_jo'>徳山</span><span class="icon_grade_hatsubai IP">一般</span><span class='mark'><img src="/themes/biwako/images/common/ico-time-morning.png"></span><span>&nbsp;&nbsp;</span></li><li><span class='item_jo'>平和島</span><span class="icon_grade_hatsubai IP">一般</span><span class='mark'><img src="/themes/biwako/images/common/ico-time-day.png"></span><span>&nbsp;&nbsp;</span></li><li><span class='item_jo'>宮島</span><span class="icon_grade_hatsubai IP">一般</span><span class='mark'><img src="/themes/biwako/images/common/ico-time-day.png"></span><span>&nbsp;&nbsp;</span></li><li><span class='item_jo'>福岡</span><span class="icon_grade_hatsubai IP">一般</span><span class='mark'><img src="/themes/biwako/images/common/ico-time-day.png"></span><span>&nbsp;&nbsp;</span></li><li><span class='item_jo'>桐生</span><span class="icon_grade_hatsubai IP">一般</span><span class='mark'><img src="/themes/biwako/images/common/ico-time-night.png"></span><span>&nbsp;&nbsp;</span></li><li><span class='item_jo'>大村</span><span class="icon_grade_hatsubai IP">一般</span><span class='mark'><img src="/themes/biwako/images/common/ico-time-night.png"></span><span>&nbsp;&nbsp;</span></li>
+						</ul>
+					</div>
+                </div>
+	        </div>
+    	<div id="header_contents">
+            <div id="headermenu">
+                <div id="mainmenuarea">
+                                        <div id="votearea" class="u-mb_5">
+                        <a href="https://ib.mbrace.or.jp/" target="_blank">インターネット投票</a>
+                    </div>
+                                        <ul id="mainmenu">
+                        <li class="cat racedata">
+                            <h4>レースデータ</h4>
+                            <ul class="sub">
+                            <li><a href="/modules/datafile/">シリーズインデックス</a></li><!--
+                                --><li><a href="/modules/datafile/?page=index_deme">出目データ</a></li><!--
+                                --><li><a href="/modules/raceinfo/?page=index_tokutenrank">得点率ランキング</a></li><!--
+                                --><li><a href="/modules/raceinfo/?page=index_tenbo">レース展望</a></li><!--
+                                --><li><a href="/modules/datafile/?page=index_suimen">水面特性</a></li><!--
+                                --><li><a href="/modules/raceinfo/?page=index_timerank">モーター抽選結果・前検タイムランキング</a></li><!--
+                                --><li><a href="/modules/datafile/?page=index_motorrank">モーターランキング</a></li><!--
+                                --><li><a href="/modules/datafile/?page=index_datacourse">進入コース別データ</a></li><!--
+                                --><li><a href="/modules/raceinfo/?page=index_racecourse">進入コース別選手成績</a></li><!--
+                                --><li><a href="/modules/datafile/?page=index_boat">ボートデータ</a></li><!--
+                                --><li><a href="/modules/datafile/?page=index_resultlist">今節の結果</a></li><!--
+                                --><!--li><a href="/modules/datafile/?page=index_biwakodata">ゴゴイチびわこデータ</a></li>--><!--
+                                --><li><a href="/modules/raceinfo/?page=index_konsetsu">今節の進入コース別成績・決まり手</a></li><!--
+                                --><li><a href="/modules/raceinfo/?page=index_pdf">出走表・前日予想PDF</a></li><!--
+                                --><li></li>
+                                <!-- <li><a href="/modules/datafile/?page=index_master">びわこ舟券マスターへの道</a></li>-->
+                                
+                            </ul>
+                        </li>
+                        <li class="cat cal">
+                            <h4>開催日程</h4>
+                            <ul class="sub">
+                            <li><a href="/modules/kaisai/">開催日程</a></li><!--
+                                --><li><a href="/uploads/pdf/cal/calendar_year.pdf?p=185441" target="_blank">開催日程（年間）</a></li>                            
+                            </ul>
+                        </li>
+                        <li class="cat access">
+                            <h4>施設・周辺情報</h4>
+                            <ul class="sub">
+                                <li><a href="/modules/access/">交通ガイド</a></li><!--
+                                --><li><a href="/modules/access/?page=index_facility">施設ガイド</a></li><!--
+                                --><li><a href="/modules/access/?page=index_lakelbiwako">レイクルびわこ</a></li><!--
+                                --><li><a href="/modules/biwako/?page=index_boatrace">ボートレースびわこを知る</a></li><!--
+                                --><li><a href="/modules/biwako/?page=index_intr">オーミー！フォーユー！</a></li><!--
+                                --><li><a href="/uploads/pdf/access/web_poster.pdf" target="_blank">滋賀遊びますガイド</a></li>
+                            </ul>
+                        </li>
+
+                        <li class="cat miryoku">
+                            <a href="https://www.pref.shiga.lg.jp/miryoku/biwako/" target="_blank">
+                            <h4>湖国の魅力</h4>
+                            </a>
+                        </li>
+
+                        <li class="cat event">
+                            <a href="/modules/news/?kind=2">
+                            <h4>イベント・ファンサービス</h4>
+                            </a>
+                        </li>
+                        <li class="cat service">
+                            <h4>各種サービス</h4>
+                            <ul class="sub">
+                                <li><a href="/modules/service/?page=index_tokusetsu">特設バックナンバー</a></li><!--
+                                --><li class="end"><a href="/modules/service/?page=index_movie">動画集</a></li><!--
+                                --><li class="end"><a href="https://ohmi.boatrace-biwako.jp/cgcm/pc/index.php" target="_blank">淡海ポイント倶楽部</a></li><!--
+                                --><li class="end"><a href="/modules/service/?page=index_sp">スマートフォンサイト紹介</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                                    </div>
+            </div>
+        </div>
+    </div>
+    <div class="com-box" style="position: relative;">
+        <div id="header_info">
+            <h3>INFO &gt;&gt; </h3>
+            <!--ul><li>これはテストです。</li></ul-->
+            <div class="ticker" rel="slide">
+                <ul>
+                <li><a href="/modules/news/?kind=1&storyid=2405"><font color="#00FFFF">オリジナルカレンダーの記載誤りについて（お詫びと訂正）</font></a></li>
+<li><a href="/modules/news/?kind=1&storyid=2404"><font color="#00FFFF">キャッシュレスカード「ビナタッチ」　GⅠびわこ大賞中における特設入会ブースの設置について</font></a></li>
+<li><a href="/modules/news/?kind=1&storyid=2391"><font color="#00FFFF">キャッシュレス景品交換サービスの開始について</font></a></li>
+<li><a href="/modules/news/?kind=1&storyid=2372"><font color="#00FFFF">温水パイプ装着のお知らせ</font></a></li>
+<li><a href="/modules/news/?kind=1&storyid=2302"><font color="#00FFFF">ボートレースびわこ　キャッシュレスカード愛称の決定について</font></a></li>
+<li><a href="/modules/news/?kind=1&storyid=2296"><font color="#00FFFF">【令和8年10月1日以降】横断幕掲出終了のお知らせ</font></a></li>
+<li><a href="/modules/news/?kind=1&storyid=2287"><font color="#00FFFF">  びわこ本場出走表が新しくなります！</font></a></li>
+<li><a href="/modules/news/?kind=1&storyid=2235"><font color="#00FFFF">新ボート・モーターの導入および凍結防止温水パイプの継続使用について</font></a></li>
+<li><a href="/modules/news/?kind=1&storyid=2230"><font color="#00FFFF">開門時刻の運用変更について</font></a></li>
+<li><a href="/modules/news/?kind=1&storyid=2226"><font color="#00FFFF">ポイント制度の運用変更について</font></a></li>
+<li><a href="/modules/news/?kind=1&storyid=2119"><font color="#04FFFF"> 専用カウリングの廃止について</font></a></li>
+<li><a href="/modules/news/?kind=1&storyid=2052"><font color="#04FFFF">【注意喚起】ボートレースびわこのなりすましサイトについて</font></a></li>
+<li><a href="/modules/news/?kind=1&storyid=2042"><font color="#04FFFF">バーチャルスリットの導入について</font></a></li>
+<li><a href="/modules/news/?kind=1&storyid=2021"><font color="#04FFFF">企画レース「ゴゴイチびわこ」の休止について</font></a></li>
+<li><a href="/modules/news/?kind=1&storyid=2013"><font color="#04FFFF">新ガソリン（E30ガソリン）のテスト導入について</font></a></li>
+                </ul>
+            </div>
+        </div>
+        <div id="sns_icon">
+            <ul>
+                <li><a href="https://lin.ee/XtQXIOA" target="_blank"><img src="/themes/biwako/images/common/ico-header-li.png"></a></li>
+                <li class="icon_twitter"><a href="https://twitter.com/br_biwako" target="_blank"><img src="/themes/biwako/images/common/ico-header-tw.png"></a></li>
+                <li><a href="https://www.instagram.com/boatrace_biwako/" target="_blank"><img src="/themes/biwako/images/common/ico-header-ig.png"></a></li>
+                <li><a href="https://www.youtube.com/channel/UCLbcsJqsT5Qa1axpYcOBpmg" target="_blank"><img src="/themes/biwako/images/common/ico-header-yt.png"></a></li>
+            </ul>
+        </div>
+        <div id="lang_menu" class="close">
+            <div id="lang_menu_box">
+                <ul>
+                    <li><a href="/modules/lang/?page=index_english" lang="en"><span>EN</span>English</a></li>
+                    <li><a href="/modules/lang/?page=index_cchinese" lang="zh-cn"><span>简</span>简体字</a></li>
+                    <li><a href="/modules/lang/?page=index_tchinese" lang="zh-tw"><span>繁</span>繁體字</a></li>
+                    <li><a href="/modules/lang/?page=index_korean" lang="ko"><span>한</span>한국어</a></li>
+                </ul>
+            </div>
+            <div id="lang_menu_tab"></div>
+        </div>
+    </div>
+</div>
+
+<main>
+
+<div class="com-box">
+          <div id="pr_banner_area" class="u-mb_5">
+        <ul>
+            <li><a href="https://ai.boatrace-biwako.jp/top" target="_blank"> <img src="/uploads/banner/prbanner_pc/images/topbanner_2.png"  alt="topbanner_2"/></a></li><li><a href="https://ohmi.boatrace-biwako.jp/cgcm/pc/index.php" target="_blank"> <img src="/uploads/banner/prbanner_pc/images/ohmi_pc_2025.png"  alt="topbanner_2"/></a></li>
+        </ul>
+  </div>      <div id="toppage_raceinfo_header" class="IP state-over_race">
+        <div class="racetitle-area">キリンカップ２０２６</div>
+        <div class="schedule-area"><dl class="schedule-area__month-group"><dt class="schedule-area__month">11/</dt><dd class="schedule-area__days  "><span class="item-day">23</span><span class="item-youbi dayWNo-0">月</span></dd><dd class="schedule-area__days  "><span class="item-day">24</span><span class="item-youbi dayWNo-2">火</span></dd><dd class="schedule-area__days  "><span class="item-day">25</span><span class="item-youbi dayWNo-3">水</span></dd><dd class="schedule-area__days  "><span class="item-day">26</span><span class="item-youbi dayWNo-4">木</span></dd><dd class="schedule-area__days  "><span class="item-day">27</span><span class="item-youbi dayWNo-5">金</span></dd></dl>
+</div>
+  </div>    <div style="width:100%;min-height:300px;background-color:#1e3c64;padding:8px;box-sizing:border-box;-webkit-box-sizing:border-box;">
+        <div style="width:100%;height:100%;background-color:#fff">
+            		
+		<div class="tenbo-slider">
+			<ul class="slider">
+				<li><div class='tenbo-area'><h3 class='item-title'>君島秀三が13年ぶり地元Vへ激走誓う</h3><div class='tenbo-inner'><div class='left-contnets'><ul class='item-player'><li><img src="/uploads/kao/faceimg/Face34137.jpg?d=20261119"><span class="item-toban">4137</span><span class="item-name">君島秀三（滋賀）</span></li><li><img src="/uploads/kao/faceimg/Face34019.jpg?d=20261119"><span class="item-toban">4019</span><span class="item-name">笠原亮（静岡）</span></li><li><img src="/uploads/kao/faceimg/Face34295.jpg?d=20261119"><span class="item-toban">4295</span><span class="item-name">小坂尚哉（兵庫）</span></li><li><img src="/uploads/kao/faceimg/Face35089.jpg?d=20261119"><span class="item-toban">5089</span><span class="item-name">前田翔（愛知）</span></li></ul><p class='item-info u-mt_10'>5日制シリーズの主軸には地元・君島秀三を指名する。今年の当地戦はここまでの3節をすべて準優敗退。昨年12月（準V）以来の当地優出はもちろん、13年ぶりの地元Vをめざし気合を倍増させて臨んでくる。2005年に当地周年（G1）を制した笠原亮も有力なV候補。SG2冠を重ねた剛腕で湖面を大暴れのシーンは十分あるはずだ。今節メンバーでは最多の今年V4をマークする小坂尚哉は、2連続優出中の当地で今回こそ初Vを飾りたいところ。前田翔の前期勝率（5～10月）は小坂（7.54）に次ぐ7.22の好アベレージ。和田拓也、小野達哉、三浦敬太、稗田聖也、嶋義信らも現A1ランカーの手腕を駆使してV争いに加わってくる。A2級ではSG4冠＆G1を21Vの服部幸男が3連続優出中の当地で存在感を発揮へ。地元・吉川昭男も気合たっぷりの走りを披露する。</p><div class='read-more'>...　<a href='/modules/raceinfo/?page=index_tenbo'><span class='color-text'>[続きを読む]</span></a></div></div><div class='right-contnets'><h3 class='pickup-title'><span class='toban'>3582</span><span class='name'>吉川昭男（滋賀）</span></h3><div class='tenbo-data'><h3 class='tenbo-title'>A1復帰のびわこ番長が躍動する！</h3><div class='clearfix'><img class='pickup-img' src='/uploads/kao/faceimg/Face33582.jpg?d=20261119'>吉川の前期勝率（5～10月）は6.61。来年1月には4期ぶりにA1級に復帰する。前期はVこそ手にしていないものの優出は5回。その中には優勝戦1号艇ながら悔しい準Vに終わった8月の地元戦もあった。2019年3月の秩父宮妃記念杯（G2）を含め、当地で重ねたVは24回。まだまだ勝利への執念に陰りのない〝びわこ番長〟がVのみに照準を合わせて湖面を躍動する。</div><div class='read-more2'>...</div></div></div></div></div></li>
+				
+			</ul>
+			<div class='arrow_left'><img src='/themes/biwako/images/common/ico-arrow-01-left.png'></div>
+				<div class='tenbo_dot'>　</div>
+				<div class='arrow_right'><img src='/themes/biwako/images/common/ico-arrow-01-right.png'></div>
+		</div>
+<link rel="stylesheet" href="/themes/biwako/css/tenbo.css" type="text/css">
+<script type="text/javascript">
+    // $(window).bind("load", function() {
+    $(document).ready(function() {
+        if(parseInt($(".item-info", parent.document).height()) > 90) {
+            // $(".item-info", parent.document).css({"height": "5em", "overflow": "hidden"});
+            $(".item-info", parent.document).css({"height": "4.4em", "display": "block"});
+            $(".read-more", parent.document).css({"display": "block"});
+        }else {
+            $(".read-more", parent.document).css({"display": "none"});
+            $(".item-info", parent.document).css({"display": "block"});
+        }
+        if(parseInt($(".clearfix", parent.document).height()) > 198) {
+            // $(".clearfix", parent.document).css({"height": "11.7em", "overflow": "hidden"});
+            // $(".clearfix", parent.document).css({"height": "11.6em", "display": "block"});
+            $(".clearfix", parent.document).css({"height": "12em", "display": "block"});
+            $(".read-more2", parent.document).css({"display": "block"});
+        }else {
+            $(".read-more2", parent.document).css({"display": "none"});
+            $(".clearfix", parent.document).css({"height": "12em", "display": "block"});
+        }
+    });
+</script>
+<script>
+	// TOPスライダー
+	$('.slider').slick({
+		accessibility: true,
+		autoplay: false,
+		autoplaySpeed: 3000,
+		speed: 400,
+		dots: true,
+		arrows: true,
+		infinite: true,
+		slidesToShow: 1,
+		slidesToScroll: 1
+	});
+</script>
+
+        </div>
+    </div>
+        <p style="text-align:center;width:100%;padding:20px 0;margin-bottom:40px;">
+       <a class="toppage_circle_btn" href="javascript: void(0);" onclick="javascript:window.open('https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=11','BB_window','width=1020,height=688,resizable=yes')"><span class="text">レース<br>リプレイ</span></a><!--
+    --><a class="toppage_circle_btn" href="/modules/datafile/?page=index_motorrank"><span class="text">モーター<br>ランキング</span></a><!--
+    --><!--a class="toppage_circle_btn" href="/modules/datafile/?page=index_biwakodata"><span class="text">ゴゴイチ<br>びわこ<br>データ</span></a--><!--
+    --><a class="toppage_circle_btn" href="/modules/datafile/?page=index_deme"><span class="text">出目データ</span></a><!--
+    --><a class="toppage_circle_btn" href="/modules/datafile/?page=index_suimen"><span class="text">水面特性</span></a><!--
+    --><a class="toppage_circle_btn" href="/modules/datafile/"><span class="text">優勝戦結果</span></a><!--
+    -->
+    </p>
+    </div>
+
+<div class="com-bg_alpha">
+	<div class="com-box">
+    	<style>
+		</style>
+    	<div id="toppage_pickup_area">
+        	<h4>ピックアップ</h4>
+        	<ul>
+<!--
+            	<li>sample</li>
+            	<li>サンプル</li>
+            	<li>試料</li>
+-->
+            <li><a href="https://www.b-race.jp/202611GI11/" target="_blank"><img src="/uploads/banner/topbanner_pc/slider/20261114_g1_sp-site.jpg" alt=""></a></li>
+<li><a href="https://www.b-race.jp/202612GIII11/" target="_blank"><img src="/uploads/banner/topbanner_pc/slider/20261201_g3_sp-site.png" alt=""></a></li>
+<li><a href="https://br-biwako-coupon2026.com/" target="_blank"><img src="/uploads/banner/topbanner_pc/slider/20261007_coupon.jpg" alt=""></a></li>
+<li><a href="https://www.nikkansports.com/public_race/boat/biwako/colosseum/" target="_blank"><img src="/uploads/banner/topbanner_pc/slider/2026_colosseum_kyokugenyoso.jpg" alt=""></a></li>
+<li><a href="https://ohmi.boatrace-biwako.jp/" target="_blank"><img src="/uploads/banner/topbanner_pc/slider/oumi_point_2025.png" alt=""></a></li>
+<li><a href="https://www.boatrace.jp/bosyu/pc/" target="_blank"><img src="/uploads/banner/topbanner_pc/slider/teleboat_pc.jpg" alt=""></a></li>
+<li><a href="http://nikkansports.raceyosou.jp/boatrace/biwako/" target="_blank"><img src="/uploads/banner/topbanner_pc/slider/2022nikkan.jpg" alt=""></a></li>
+<li><a href="/modules/access/?page=index_lakelbiwako" target="_self"><img src="/uploads/banner/topbanner_pc/slider/reikuru_biwako.jpg" alt=""></a></li>
+<li><a href="https://boatcast.jp/?utm_source=biwako&utm_medium=HP%2FBB&utm_campaign=boatcast&utm_id=banner" target="_blank"><img src="/uploads/banner/topbanner_pc/slider/boatcast.png" alt=""></a></li>
+<li><a href="https://lp.so-da.jp/about?biwako" target="_blank"><img src="/uploads/banner/topbanner_pc/slider/biwako_SODA.jpg" alt=""></a></li>
+<li><a href="https://www.boatrace.jp/extent/common/en/" target="_blank"><img src="/uploads/banner/topbanner_pc/slider/br_en.png" alt=""></a></li>
+            </ul>
+            <div id="toppage_pickup_switcher">
+            	<a class="pickup_l" href="javascript:void(0);"></a>
+            	<a class="pickup_r" href="javascript:void(0);"></a>
+                <div class="switchpoint"></div>
+            </div>
+        </div>
+    	<div id="toppage_news_area">
+        	<ul id="toppage_news_tab" class="com-tablink01">
+            	<li class="tab_a is_new" data="tab_a"><a href="javascript:void(0);">お知らせ</a></li>
+            	<li class="tab_b" data="tab_b"><a href="javascript:void(0);">イベント</a></li>
+            	<li class="tab_c is_new" data="tab_c"><a href="javascript:void(0);">選手情報</a></li>
+            </ul>
+            <ul id="toppage_news_content">
+            	<li class="tab_a"><div class="tab_cont"><div class=" item-news"><span class="news_date">2026/11/19</span><span class="news_label"></span><span class="news_text"><a href="/modules/news/?kind=1&storyid=2414">開設74周年記念GⅠびわこ大賞の優勝選手表彰式インタビューVTRを掲載しました</a></span></div><div class=" item-news"><span class="news_date">2026/11/14</span><span class="news_label"></span><span class="news_text"><a href="/modules/news/?kind=1&storyid=2410">開設74周年記念GⅠびわこ大賞の選手紹介VTRを掲載しました。</a></span></div><div class=" item-news"><span class="news_date">2026/11/13</span><span class="news_label"></span><span class="news_text"><a href="/modules/news/?kind=1&storyid=2406">「GⅢオールレディース ビーナスちゃんカップ」のレース展望を更新しました。</a></span></div><div class=" item-news"><span class="news_date">2026/11/12</span><span class="news_label"></span><span class="news_text"><a href="/modules/news/?kind=1&storyid=2405">オリジナルカレンダーの記載誤りについて（お詫びと訂正）</a></span></div><div class=" item-news"><span class="news_date">2026/11/12</span><span class="news_label"></span><span class="news_text"><a href="/modules/news/?kind=1&storyid=2404">キャッシュレスカード「ビナタッチ」　GⅠびわこ大賞中における特設入会ブースの設置について</a></span></div><div class=" item-news"><span class="news_date">2026/11/11</span><span class="news_label"></span><span class="news_text"><a href="/modules/news/?kind=1&storyid=99">シリーズインデックスを更新しました。</a></span></div><div class=" item-news"><span class="news_date">2026/11/11</span><span class="news_label"></span><span class="news_text"><a href="/modules/news/?kind=1&storyid=61">モーターランキング・ボートデータを更新しました。</a></span></div><div class=" item-news"><span class="news_date">2026/11/06</span><span class="news_label"></span><span class="news_text"><a href="/modules/news/?kind=1&storyid=2401">「キリンカップ2026」のレース展望を更新しました。</a></span></div><div class=" item-news"><span class="news_date">2026/11/04</span><span class="news_label"><em class="is-imp">重要</em></span><span class="news_text"><a href="/modules/news/?kind=1&storyid=2399">ボートレースびわこ公式メールマガジン配信サービスに対する不正アクセス及び情報漏洩に関するお詫びとお知らせ</a></span></div><div class="notborder item-news"><span class="news_date">2026/11/01</span><span class="news_label"></span><span class="news_text"><a href="/modules/news/?kind=1&storyid=2052">【注意喚起】ボートレースびわこのなりすましサイトについて</a></span></div></div><a class="com-button01" href="/modules/news/?kind=1">一覧へ</a></li>
+            	<li class="tab_b"><div class="tab_cont"><div class=" item-news"><span class="news_date">2026/09/28</span><span class="news_label"></span><span class="news_text"><a href="/modules/news/?kind=2&evtID=F20260227N2377">令和8年度ボーネルンドあそびばの開催日程について</a></span></div><div class="notborder item-news"><span class="news_date">2026/03/16</span><span class="news_label"></span><span class="news_text"><a href="/modules/news/?kind=2&evtID=F20260314N2221">R8年度 BOATRACE VRスプラッシュバトル 開催日程</a></span></div></div><a class="com-button01" href="/modules/news/?kind=2">一覧へ</a></li>
+            	<li class="tab_c"><div class="tab_cont"><div class=" item-news"><span class="news_date">2026/11/19</span><span class="news_label"></span><span class="news_text"><a href="/modules/news/?kind=3&storyid=2412">4448青木玄太選手が江戸川・一般戦で優勝！</a></span></div><div class=" item-news"><span class="news_date">2026/10/19</span><span class="news_label"></span><span class="news_text"><a href="/modules/news/?kind=3&storyid=2389">3721守田俊介選手が芦屋・一般戦で優勝！</a></span></div><div class=" item-news"><span class="news_date">2026/10/10</span><span class="news_label"></span><span class="news_text"><a href="/modules/news/?kind=3&storyid=2384">3721守田俊介選手が若松・一般戦で優勝！</a></span></div><div class=" item-news"><span class="news_date">2026/10/09</span><span class="news_label"></span><span class="news_text"><a href="/modules/news/?kind=3&storyid=2382">4743木村仁紀選手がびわこ・一般戦で優勝！</a></span></div><div class=" item-news"><span class="news_date">2026/09/30</span><span class="news_label"></span><span class="news_text"><a href="/modules/news/?kind=3&storyid=2378">4262馬場貴也選手が尼崎・一般戦で優勝！</a></span></div><div class=" item-news"><span class="news_date">2026/09/22</span><span class="news_label"></span><span class="news_text"><a href="/modules/news/?kind=3&storyid=2370">4686丸野一樹選手が多摩川・GⅠウェイキーカップ開設72周年記念、5115香川颯太選手が丸亀・一般戦で優勝！</a></span></div><div class=" item-news"><span class="news_date">2026/09/16</span><span class="news_label"></span><span class="news_text"><a href="/modules/news/?kind=3&storyid=2365">3721守田俊介選手が浜名湖・一般戦で優勝！</a></span></div><div class=" item-news"><span class="news_date">2026/09/13</span><span class="news_label"></span><span class="news_text"><a href="/modules/news/?kind=3&storyid=2361">4262馬場貴也選手が大村・GⅠ海の王者決定戦で優勝！</a></span></div><div class=" item-news"><span class="news_date">2026/08/31</span><span class="news_label"></span><span class="news_text"><a href="/modules/news/?kind=3&storyid=2355">4502遠藤エミ選手が宮島・一般戦で優勝！</a></span></div><div class="notborder item-news"><span class="news_date">2026/08/21</span><span class="news_label"></span><span class="news_text"><a href="/modules/news/?kind=3&storyid=2351">4388是澤孝宏選手がびわこ・一般戦で優勝！</a></span></div></div><a class="com-button01" href="/modules/news/?kind=3">一覧へ</a></li>
+            </ul>
+        </div>
+        <div id="toppage_sns_icon">
+            <p>ボートレースびわこ　公式SNSはこちらです♪</p>
+            <ul class="toppage_sns_icon_list">
+                <li><a href="https://lin.ee/XtQXIOA" target="_blank"><img src="./themes/biwako/images/common/banner_line_pc.png"></a></li>
+                <li><a href="https://twitter.com/br_biwako" target="_blank"><img src="./themes/biwako/images/common/banner_tw_pc.png"></a></li>
+                <li><a href="https://www.instagram.com/boatrace_biwako/" target="_blank"><img src="./themes/biwako/images/common/banner_ig_pc.png"></a></li>
+                <li><a href="https://www.youtube.com/channel/UCLbcsJqsT5Qa1axpYcOBpmg" target="_blank"><img src="./themes/biwako/images/common/banner_yt_pc.png"></a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="com-bg_alpha">
+	<div class="com-box">
+    	<h3 class="toppage_contents_header"><span>開催日程</span></h3>
+        <div class="com-cap"></div>
+        <div id="toppage_cal_area" class="com-content" style="padding:20px;">
+        	<div id="toppage_cal_tabs" style="margin-bottom:12px;">
+        	<ul class="com-tablink01"><li class="current"><a href="javascript:void(0);" data="202611">11月</a></li><li class=""><a href="javascript:void(0);" data="202612">12月</a></li><li class=""><span>1月</span></li>                <li class="tab-spacer" style="border:none;">
+                	<div class="hanrei">
+                    <table>
+                        <tr>
+                            <td><span class="is-sg">SG</span></td>
+                            <td><span class="is-g1">GI</span></td>
+                            <td><span class="is-g2">GII</span></td>
+                            <td><span class="is-g3">GIII</span></td>
+                            <td><span class="is-ippan">一般</span></td>
+                            <td><span class="is-ladies"><span class="is-mark">♥</span>女子レース</span></td>
+                            <td><span class="is-jogai">★場外発売</span></td>
+                        </tr>
+                    </table>
+                    </div>
+                </li>
+            </ul></div>
+        	<div class="cal_contents"><table><tbody><tr class="dateline"><th>日付</th><td class="is-sun"><span class="is-num">1</span><span class="is-week">日</span></td><td><span class="is-num">2</span><span class="is-week">月</span></td><td class="is-sun"><span class="is-num">3</span><span class="is-week">火</span></td><td><span class="is-num">4</span><span class="is-week">水</span></td><td><span class="is-num">5</span><span class="is-week">木</span></td><td><span class="is-num">6</span><span class="is-week">金</span></td><td class="is-sat"><span class="is-num">7</span><span class="is-week">土</span></td><td class="is-sun"><span class="is-num">8</span><span class="is-week">日</span></td><td><span class="is-num">9</span><span class="is-week">月</span></td><td><span class="is-num">10</span><span class="is-week">火</span></td><td><span class="is-num">11</span><span class="is-week">水</span></td><td><span class="is-num">12</span><span class="is-week">木</span></td><td><span class="is-num">13</span><span class="is-week">金</span></td><td class="is-sat"><span class="is-num">14</span><span class="is-week">土</span></td><td class="is-sun"><span class="is-num">15</span><span class="is-week">日</span></td><td><span class="is-num">16</span><span class="is-week">月</span></td><td><span class="is-num">17</span><span class="is-week">火</span></td><td><span class="is-num">18</span><span class="is-week">水</span></td><td><span class="is-num">19</span><span class="is-week">木</span></td><td><span class="is-num">20</span><span class="is-week">金</span></td><td class="is-sat"><span class="is-num">21</span><span class="is-week">土</span></td><td class="is-sun"><span class="is-num">22</span><span class="is-week">日</span></td><td class="is-sun"><span class="is-num">23</span><span class="is-week">月</span></td><td><span class="is-num">24</span><span class="is-week">火</span></td><td><span class="is-num">25</span><span class="is-week">水</span></td><td><span class="is-num">26</span><span class="is-week">木</span></td><td><span class="is-num">27</span><span class="is-week">金</span></td><td class="is-sat"><span class="is-num">28</span><span class="is-week">土</span></td><td class="is-sun"><span class="is-num">29</span><span class="is-week">日</span></td><td><span class="is-num">30</span><span class="is-week">月</span></td><td class="is-next"></td></tr><tr class="is-typeH"><th>本場</th><td></td><td></td><td colspan="1" class=" is-close" rowspan="2">休<br>館<br>日</td><td></td><td colspan="6" class=" is-day is-ippan"><a href="/url_changer.php?sdate=20261105&jo=11" target="_blank">奥村佃煮提供<br>第4回びわこお魚0929CUP</a></td><td></td><td></td><td></td><td colspan="6" class=" is-day is-g1"><a href="/url_changer.php?sdate=20261114&jo=11" target="_blank">開設74周年記念<br>GⅠびわこ大賞</a></td><td></td><td></td><td></td><td colspan="5" class=" is-day is-ippan"><a href="/url_changer.php?sdate=20261123&jo=11" target="_blank">キリンカップ2026</a></td><td></td><td></td><td></td><td class="is-next"></td></tr><tr><th>場外</th><td></td><td></td><td></td><td>★</td><td>★</td><td>★</td><td>★</td><td>★</td><td>★</td><td></td><td></td><td></td><td>★</td><td>★</td><td>★</td><td>★</td><td>★</td><td>★</td><td></td><td></td><td></td><td>★</td><td>★</td><td>★</td><td>★</td><td>★</td><td></td><td></td><td></td><td class="is-next"></td></tr></tbody></table></div>
+            <p style="padding-top:20px;text-align:center;"><a class="com-button01" href="/modules/kaisai/">一覧へ</a></p>
+        </div>
+    </div>
+</div>
+
+<div class="com-bg_alpha">
+	<div class="com-box">
+    	<h3 class="toppage_contents_header"><span>地元選手を応援しよう！</span></h3>
+        
+<div class="jimoto_ouen"><div id="js-kyu" class="jimoto_kyu_wrap"><a class="player_class ca1 active" href="javascript: void(0);" kind="a1">A1</a><a class="player_class ca2" href="javascript: void(0);" kind="a2">A2</a><a class="player_class cb1" href="javascript: void(0);" kind="b1">B1</a><a class="player_class cb2" href="javascript: void(0);" kind="b2">B2</a></div><div id="js-p_wrap"><div class="jimoto_p_wrap a1 "><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=3721" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_3721.jpg" alt="守田俊介"><p class="name">守田俊介</p><span class="period">74期</span><span class="all_v">4回</span></a><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=3918" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_3918.jpg" alt="深井利寿"><p class="name">深井利寿</p><span class="period">81期</span><span class="all_v">0回</span></a><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=3965" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_3965.jpg" alt="北中元樹"><p class="name">北中元樹</p><span class="period">82期</span><span class="all_v">1回</span></a><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=4137" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_4137.jpg" alt="君島秀三"><p class="name">君島秀三</p><span class="period">89期</span><span class="all_v">0回</span></a><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=4218" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_4218.jpg" alt="吉川喜継"><p class="name">吉川喜継</p><span class="period">92期</span><span class="all_v">0回</span></a><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=4262" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_4262.jpg" alt="馬場貴也"><p class="name">馬場貴也</p><span class="period">93期</span><span class="all_v">3回</span></a><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=4448" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_4448.jpg" alt="青木玄太"><p class="name">青木玄太</p><span class="period">100期</span><span class="all_v">4回</span></a><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=4502" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_4502.jpg" alt="遠藤エミ"><p class="name">遠藤エミ</p><span class="period">102期</span><span class="all_v">2回</span></a><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=4677" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_4677.jpg" alt="片橋幸貴"><p class="name">片橋幸貴</p><span class="period">109期</span><span class="all_v">0回</span></a><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=4686" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_4686.jpg" alt="丸野一樹"><p class="name">丸野一樹</p><span class="period">109期</span><span class="all_v">4回</span></a></div><div class="jimoto_p_wrap a2 hidden"><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=3582" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_3582.jpg" alt="吉川昭男"><p class="name">吉川昭男</p><span class="period">70期</span><span class="all_v">0回</span></a><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=3769" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_3769.jpg" alt="佐竹恒彦"><p class="name">佐竹恒彦</p><span class="period">76期</span><span class="all_v">0回</span></a><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=3900" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_3900.jpg" alt="香川素子"><p class="name">香川素子</p><span class="period">80期</span><span class="all_v">1回</span></a><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=3968" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_3968.jpg" alt="茶谷信次"><p class="name">茶谷信次</p><span class="period">83期</span><span class="all_v">0回</span></a><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=4012" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_4012.jpg" alt="中村有裕"><p class="name">中村有裕</p><span class="period">84期</span><span class="all_v">0回</span></a><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=4120" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_4120.jpg" alt="柘植政浩"><p class="name">柘植政浩</p><span class="period">88期</span><span class="all_v">0回</span></a><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=4146" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_4146.jpg" alt="柳橋宏紀"><p class="name">柳橋宏紀</p><span class="period">89期</span><span class="all_v">1回</span></a><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=4254" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_4254.jpg" alt="川島圭司"><p class="name">川島圭司</p><span class="period">93期</span><span class="all_v">0回</span></a><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=4388" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_4388.jpg" alt="是澤孝宏"><p class="name">是澤孝宏</p><span class="period">98期</span><span class="all_v">1回</span></a><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=4761" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_4761.jpg" alt="山田晃大"><p class="name">山田晃大</p><span class="period">112期</span><span class="all_v">1回</span></a></div><div class="jimoto_p_wrap b1 hidden"><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=3580" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_3580.jpg" alt="水口由紀"><p class="name">水口由紀</p><span class="period">70期</span><span class="all_v">0回</span></a><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=3606" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_3606.jpg" alt="川北浩貴"><p class="name">川北浩貴</p><span class="period">71期</span><span class="all_v">0回</span></a><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=3761" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_3761.jpg" alt="山本光雄"><p class="name">山本光雄</p><span class="period">76期</span><span class="all_v">0回</span></a><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=3896" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_3896.jpg" alt="上田洋平"><p class="name">上田洋平</p><span class="period">80期</span><span class="all_v">0回</span></a><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=3994" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_3994.jpg" alt="小野桜"><p class="name">小野桜</p><span class="period">83期</span><span class="all_v">0回</span></a><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=4182" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_4182.jpg" alt="吉田和仁"><p class="name">吉田和仁</p><span class="period">90期</span><span class="all_v">0回</span></a><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=4253" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_4253.jpg" alt="西川真人"><p class="name">西川真人</p><span class="period">93期</span><span class="all_v">0回</span></a><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=4382" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_4382.jpg" alt="高山智至"><p class="name">高山智至</p><span class="period">98期</span><span class="all_v">0回</span></a><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=4594" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_4594.jpg" alt="谷川祐一"><p class="name">谷川祐一</p><span class="period">106期</span><span class="all_v">0回</span></a><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=4649" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_4649.jpg" alt="和田操拓"><p class="name">和田操拓</p><span class="period">108期</span><span class="all_v">0回</span></a></div><div class="jimoto_p_wrap b2 hidden"><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=5171" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_5171.jpg" alt="清水未唯"><p class="name">清水未唯</p><span class="period">127期</span><span class="all_v">0回</span></a><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=5323" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_5323.jpg" alt="香川陽太"><p class="name">香川陽太</p><span class="period">133期</span><span class="all_v">0回</span></a><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=5400" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_5400.jpg" alt="高村諒"><p class="name">高村諒</p><span class="period">136期</span><span class="all_v">0回</span></a><a href="https://www.boatrace.jp/owpc/pc/data/racersearch/profile?toban=5460" class="jimoto_p" target="_blank"><img src="/uploads/shibu_racer/images/PC/pc_5460.jpg" alt="早川理稀"><p class="name">早川理稀</p><span class="period">138期</span><span class="all_v">0回</span></a></div></div></div>        <p class="jimoto_ouen_link" style="padding-top:20px;text-align:center;"><a class="com-button01" href="/modules/biwako/">一覧へ</a></p>
+    </div>
+</div>
+
+<div class="com-bg_alpha">
+	<div id="toppage_image_link" class="com-box">
+    	<h3 class="toppage_contents_header"><span>滋賀県・ボートレースびわこを満喫</span></h3>
+        <ul>
+        	<li style="background-image:url(/themes/biwako/images/top/img-s00-enjoy01.png);">
+            	<a href="/modules/biwako/?page=index_boatrace">
+            	<p>ボートレースびわこは滋賀県の県庁所在地・大津市にあります。大津市は琵琶湖や比叡山など豊かな自然に囲まれ、まさに風光明媚な景観は有名。</p>
+            	<span class="linkhead_msg">ボートレースびわこを知る！</span>
+                <span class="linkfoot_msg">詳細はこちら</span>
+                </a>
+           </li><!--
+        	--><li style="background-image:url(/themes/biwako/images/top/img-s00-enjoy02.png);">
+            	<a href="/modules/biwako/?page=index_view">
+            	<p>景観を楽しみながらレース観戦をするならココ！</p>
+            	<span class="linkhead_msg">景観とレース観戦を楽しむ！</span>
+                <span class="linkfoot_msg">詳細はこちら</span>
+                </a>
+           </li><!--
+        	--><li style="background-image:url(/themes/biwako/images/top/img-s00-enjoy03.png);">
+            	<a href="/modules/biwako/?page=index_gourmet">
+            	<p>場内の売店・レストランには、食欲を満たすメニューが満載！たくさんあるメニューの中から各売店・レストランのイチオシを紹介！</p>
+            	<span class="linkhead_msg">場内グルメを楽しむ！</span>
+                <span class="linkfoot_msg">詳細はこちら</span>
+                </a>
+           </li><!--
+        	--><li style="background-image:url(/themes/biwako/images/top/img-s00-enjoy04.png);">
+            	<a href="http://www.biwako-visitors.jp/spot/" target="_blank">
+            	<p>ボートレースびわこ近隣の観光スポットをご紹介！琵琶湖周辺や滋賀県内・大津市内には、歴史的な建造物やグループで楽しめるレジャー施設などが数多くあります。ボートレースびわこのレース観戦と合わせて、ぜひお楽しみください。</p>
+            	<span class="linkhead_msg">近隣の観光スポットを探す！</span>
+                <span class="linkfoot_msg">詳細はこちら</span>
+                </a>
+           </li><!--
+        	--><li style="background-image:url(/uploads/banner/oh_me_for_you/pc/oh_me_for_you.png);"><a href="/modules/biwako/?page=index_intr"><p>滋賀支部選手による滋賀(近江)のグルメ・観光スポット・特産品の紹介を毎回、画像と文章でお伝えします！<br></p><span class="linkhead_msg">オーミー！フォーユー！</span><span class="linkfoot_msg">詳細はこちら</span></a></li><!--
+        	--><li style="background-image:url(/themes/biwako/images/top/img-s00-enjoy06.png);">
+            	<a href="http://www.biwako-visitors.jp/stay/" target="_blank">
+            	<p>ボートレースびわこへお越しの際に、便利な宿泊施設をご紹介！レース観戦、観光、レジャーの拠点としてご活用ください。</p>
+            	<span class="linkhead_msg">宿泊施設</span>
+                <span class="linkfoot_msg">詳細はこちら</span>
+                </a>
+           </li>
+        </ul>
+    </div>
+</div>
+
+<div class="com-box">
+	<div class="com-cap"></div>
+	<div class="com-content" style="padding-top:20px;padding-bottom:20px;">
+        <!-- ▼一般バナー▼ -->
+        <div id="toppage_footer_banner_area">
+        	<div class="slide">
+            <ul>
+                <li class="banner__list__li"><a href="https://www.nta.go.jp/publication/pamph/shotoku/kakuteishinkokukankei/koueikyougi/" target="_blank"><img src="/uploads/banner/footerbanner/images/haraimodoshi_160_40.jpg" width="160" height="40" alt="公営競技の払戻金"></a></li><li class="banner__list__li"><a href="modules/news/?kind=1&storyid=144" target="_blank"><img src="/uploads/banner/footerbanner/images/addiction.jpg" width="160" height="40" alt="ボートレースをよりお楽しみいただくために"></a></li><li class="banner__list__li"><a href="http://www.nippon-foundation.or.jp/" target="_blank"><img src="/uploads/banner/footerbanner/images/nihonzaidan.png" width="160" height="40" alt="日本財団"></a></li><li class="banner__list__li"><a href="https://www.boatrace.jp/extent/common/csr/index.html" target="_blank"><img src="/uploads/banner/footerbanner/images/shakaikoken.jpg" width="160" height="40" alt="社会貢献スポーツ BOATRACE"></a></li><li class="banner__list__li"><a href="https://www.facebook.com/boatracePR" target="_blank"><img src="/uploads/banner/footerbanner/images/kouhou.jpg" width="160" height="40" alt="ボートレース広報"></a></li><li class="banner__list__li"><a href="https://www.boatrace.jp/" target="_blank"><img src="/uploads/banner/footerbanner/images/boatraceweb.jpg" width="160" height="40" alt="ボートレースオフィシャルウェブ"></a></li><li class="banner__list__li"><a href="http://bpky.co.jp/" target="_blank"><img src="/uploads/banner/footerbanner/images/kyoto-yawata.jpg" width="160" height="40" alt="ボートレースチケットショップ京都やわた"></a></li><li class="banner__list__li"><a href="https://kyoto-mukomachikeirin.com/" target="_blank"><img src="/uploads/banner/footerbanner/images/mukomachikeirin.gif" width="160" height="40" alt="京都向日町競輪場"></a></li><li class="banner__list__li"><a href="https://www.boatrace.jp/bosyu/?utm_source=link&utm_medium=tb11&utm_campaign=tbnew" target="_blank"><img src="/uploads/banner/footerbanner/images/2019teleboat.jpg" width="160" height="40" alt="テレボート"></a></li><li class="banner__list__li"><a href="https://boatcast.jp/?utm_source=biwako&utm_medium=HP%2FBB&utm_campaign=boatcast&utm_id=banner" target="_blank"><img src="/uploads/banner/footerbanner/images/boatcast.png" width="160" height="40" alt="BOATCAST映像サービス"></a></li><li class="banner__list__li"><a href="https://gamble-shindan.com/" target="_blank"><img src="/uploads/banner/footerbanner/images/selfcheck.png" width="160" height="40" alt="ギャンブル依存症セルフチェック"></a></li>            </ul>
+            </div>
+        </div>
+        <!-- ▲一般バナー▲ -->
+        <!-- ▼企業バナー▼ -->
+    	        <!-- ▲企業バナー▲ -->
+
+    </div>
+</div>
+
+
+
+
+
+
+</main>
+
+
+<div id="footer">
+	<div id="footer_waveline">
+    	<div class="linkbox">
+               <a id="footer_qr" href="/modules/service/?page=index_sp">スマホQRコード</a><!--
+            --><span id="footer_icon1"></span><!--
+            --><span id="footer_icon2"></span>
+        <!--<a id="footer_fb" href="https://www.facebook.com/boatrace.biwako.jp" target="_blank">facebook</a>-->
+        </div>
+    </div>
+	<div id="footer_linkline">
+    	<ul>
+        	<li><a href="/modules/other/">よくある質問</a></li>
+        	<li><a href="/modules/other/?page=index_ad">ウェブ広告の募集</a></li>
+        	<li><a href="/modules/entry/contact/">お問い合わせ</a></li>
+        	<li><a href="/modules/other/?page=index_link">リンク</a></li>
+        	<li><a href="/modules/other/?page=index_pinfo">プライバシーポリシー</a></li>
+        	<!-- <li><a href="/modules/other/?page=index_fb">Facebookページ利用要領</a></li> -->
+        	<li><a href="/modules/other/?page=index_guideline">ソーシャルメディア利用ガイドライン</a></li>
+        </ul>
+    	<address>&copy;Shiga Prefectural Government. All Rights Reserved.</address>
+    </div>
+</div>
+
+<div id="mtpt_frame">
+	<div id="mtpt_box">
+       <a id="mtpt" onclick="$('body, html').animate({scrollTop:0},250);">ページトップへ</a>
+    </div>
+</div>
+
+
+
+
+  </body>
+</html>
