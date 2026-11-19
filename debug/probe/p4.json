@@ -1,0 +1,567 @@
+{
+ "1": {
+  "host": "www.kiryu-kyotei.com",
+  "js": [
+   "https://www.kiryu-kyotei.com/themes/kiryu/js/common/html5.js",
+   "https://www.kiryu-kyotei.com/include/xoops.js",
+   "https://www.kiryu-kyotei.com/themes/kiryu/js/common/script.js",
+   "https://www.kiryu-kyotei.com/themes/kiryu/js/top/script.js",
+   "https://www.kiryu-kyotei.com/themes/tamagawa/js/pctosmart.js"
+  ],
+  "found": [
+   "/race_live.html",
+   "CTX <li class=\"banner__list__li\"><a href=\"/modules/yosou/?mode=cyokuzen\"><img src=\"uploads/banner/footerbanner/bana_mawariashi.jpg\" width=\"160\" height=\"40\" alt=\"本日のまわり足情報\"></a></li>",
+   "https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=01"
+  ]
+ },
+ "2": {
+  "host": "www.boatrace-toda.jp",
+  "js": [
+   "https://www.boatrace-toda.jp/assets/js/bootstrap/bootstrap.min.js",
+   "https://www.boatrace-toda.jp/assets/js/common.js",
+   "https://www.boatrace-toda.jp/assets/js/banner.js?ver=01",
+   "https://www.boatrace-toda.jp/assets/js/series_info.js",
+   "https://www.boatrace-toda.jp/assets/js/system.js?ver=20260921_1",
+   "https://www.boatrace-toda.jp/assets/js/system_sp.js?ver=20260921_1"
+  ],
+  "found": [
+   "CTX             <img src=\"assets/img/toda_tenjidata.png\" alt=\"オリジナル展示計測位置\" class=\"img-fluid\" width=\"700\">",
+   "CTX .boatrace-toda.jp/news/news.html?id=16688\"><img src=\"assets/img/bn_l/bn_originaltenjitime.jpg?ver=20220115\" width=\"100%\" class=\"img-fluid\"></a></div>",
+   "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js",
+   "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/locale/ja.js",
+   "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.js",
+   "https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js",
+   "https://www.boatrace-toda.jp/event/event.html?id=18526",
+   "https://www.boatrace-toda.jp/event/event.html?id=20453",
+   "https://www.boatrace-toda.jp/event/event.html?id=20543",
+   "https://www.boatrace-toda.jp/event/event.html?id=21025",
+   "https://www.boatrace-toda.jp/news/news.html?id=14097",
+   "https://www.boatrace-toda.jp/news/news.html?id=16688",
+   "https://www.boatrace-toda.jp/news/news.html?id=17470",
+   "https://www.boatrace-toda.jp/news/news.html?id=18471",
+   "https://www.boatrace-toda.jp/news/news.html?id=18477",
+   "https://www.boatrace-toda.jp/news/news.html?id=18753",
+   "https://www.boatrace-toda.jp/news/news.html?id=19369",
+   "https://www.boatrace-toda.jp/news/news.html?id=19404",
+   "https://www.boatrace-toda.jp/news/news.html?id=19436",
+   "https://www.boatrace-toda.jp/news/news.html?id=19461",
+   "https://www.boatrace-toda.jp/news/news.html?id=19648",
+   "https://www.boatrace-toda.jp/news/news.html?id=20213",
+   "https://www.boatrace-toda.jp/news/news.html?id=20355",
+   "https://www.boatrace-toda.jp/news/news.html?id=20358",
+   "https://www.boatrace-toda.jp/news/news.html?id=20394",
+   "https://www.boatrace-toda.jp/news/news.html?id=20619",
+   "https://www.boatrace-toda.jp/news/news.html?id=20621",
+   "https://www.boatrace-toda.jp/news/news.html?id=20632",
+   "https://www.boatrace-toda.jp/news/news.html?id=20643",
+   "https://www.boatrace-toda.jp/news/news.html?id=20710",
+   "https://www.boatrace-toda.jp/news/news.html?id=20782",
+   "https://www.boatrace-toda.jp/news/news.html?id=20984",
+   "https://www.boatrace-toda.jp/news/news.html?id=21001",
+   "https://www.boatrace-toda.jp/news/news.html?id=21023",
+   "https://www.boatrace-toda.jp/news/news.html?id=21056",
+   "https://www.boatrace-toda.jp/news/news.html?id=21118",
+   "https://www.boatrace-toda.jp/news/news.html?id=21182",
+   "https://www.boatrace-toda.jp/news/news.html?id=21288",
+   "https://www.boatrace-toda.jp/news/news.html?id=21318",
+   "https://www.boatrace-toda.jp/news/news.html?id=21429"
+  ]
+ },
+ "3": {
+  "host": "www.boatrace-edogawa.com",
+  "js": [
+   "https://www.boatrace-edogawa.com/themes/edogawa/AC_RunActiveContent.js",
+   "https://www.boatrace-edogawa.com/include/xoops.js"
+  ],
+  "found": [
+   "/modules/kako/race_result.php",
+   "/modules/kouryaku/race_betsu.php",
+   "/modules/pdf/syussou_pdf.php",
+   "http://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=03",
+   "https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=03",
+   "https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=03&jyo=03&race=&md=VL",
+   "https://test.boatrace-edogawa.com/modules/news2/article.php?storyid=2761",
+   "https://www.boatrace-edogawa.com/modules/news/article.php?storyid=1125",
+   "https://www.boatrace-edogawa.com/modules/news/article.php?storyid=1345",
+   "https://www.boatrace-edogawa.com/modules/news2/article.php?storyid=2777",
+   "https://www.boatrace-edogawa.com/themes/edogawa/br_calender/ajax_cal.php",
+   "https://www.boatrace.jp/extent/common/csr/index.html",
+   "https://www.boatrace.jp/yamato/pc/site/index.html"
+  ]
+ },
+ "4": {
+  "host": "www.heiwajima.gr.jp",
+  "js": [
+   "https://www.heiwajima.gr.jp/js/viewport_top.js",
+   "https://www.heiwajima.gr.jp/js/swiper.js",
+   "https://www.heiwajima.gr.jp/js/index.js",
+   "https://www.heiwajima.gr.jp/js/timeline_top.js",
+   "https://www.heiwajima.gr.jp/js/common.js"
+  ],
+  "found": [
+   "/00live/00live.htm",
+   "/01result/search01.php",
+   "/asp/heiwajima/json/timeline.json",
+   "/asp/htmlmade/Race/Tenbo/04/PC/jumper.htm",
+   "/asp/htmlmade/Race/Tenbo/04/PC/t412.htm",
+   "CTX                     <td class=\"st_tenji\" colspan=\"3\">",
+   "https://www.boatrace.jp/extent/common/csr/index.html",
+   "https://www.city.fuchu.tokyo.jp/shisetu/sekatu/goraku/boatracehwiwajma/boatracejigyosha/teianboshu.html",
+   "https://www.heiwajima.gr.jp/01event/01event.htm#race16306",
+   "https://www.heiwajima.gr.jp/01result/search01.php",
+   "https://www.heiwajima.gr.jp/asp/heiwajima/kyogi/kyogihtml/index.htm?racenum=1",
+   "https://www.heiwajima.gr.jp/asp/heiwajima/kyogi/kyogihtml/index.htm?racenum=10",
+   "https://www.heiwajima.gr.jp/asp/heiwajima/kyogi/kyogihtml/index.htm?racenum=11",
+   "https://www.heiwajima.gr.jp/asp/heiwajima/kyogi/kyogihtml/index.htm?racenum=12",
+   "https://www.heiwajima.gr.jp/asp/heiwajima/kyogi/kyogihtml/index.htm?racenum=2",
+   "https://www.heiwajima.gr.jp/asp/heiwajima/kyogi/kyogihtml/index.htm?racenum=3",
+   "https://www.heiwajima.gr.jp/asp/heiwajima/kyogi/kyogihtml/index.htm?racenum=4",
+   "https://www.heiwajima.gr.jp/asp/heiwajima/kyogi/kyogihtml/index.htm?racenum=5",
+   "https://www.heiwajima.gr.jp/asp/heiwajima/kyogi/kyogihtml/index.htm?racenum=6",
+   "https://www.heiwajima.gr.jp/asp/heiwajima/kyogi/kyogihtml/index.htm?racenum=7",
+   "https://www.heiwajima.gr.jp/asp/heiwajima/kyogi/kyogihtml/index.htm?racenum=8",
+   "https://www.heiwajima.gr.jp/asp/heiwajima/kyogi/kyogihtml/index.htm?racenum=9",
+   "https://www.heiwajima.gr.jp/asp/heiwajima/tokyo_next/racer_message.php"
+  ]
+ },
+ "5": {
+  "host": "www.boatrace-tamagawa.com",
+  "js": [
+   "https://www.boatrace-tamagawa.com/resources/assets/js/common05.js?ver=1.0.4",
+   "https://www.boatrace-tamagawa.com/resources/assets/js/slick.js?ver=1.0.4",
+   "https://www.boatrace-tamagawa.com/modules/top/js/top.js?ver=1.0.4"
+  ],
+  "found": [
+   "/live/streamer/streamer.php?jo=05",
+   "CTX /tamagawa/' target='_blank'><img src='/uploads/cdn/banner/pr_banner/pc/data/bnr_chokuzen.jpg' alt='直前予想' /></a>",
+   "https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=05"
+  ]
+ },
+ "6": {
+  "host": "www.boatrace-hamanako.jp",
+  "js": [
+   "https://www.boatrace-hamanako.jp/resources/assets/js/common06.js?ver=1.0.0",
+   "https://www.boatrace-hamanako.jp/resources/assets/js/slick.js?ver=1.0.0",
+   "https://www.boatrace-hamanako.jp/modules/top/js/top.js?ver=1.0.0",
+   "https://www.boatrace-hamanako.jp/modules/top/js/swiper-bundle.min.js?ver=1.0.0",
+   "https://www.boatrace-hamanako.jp/resources/assets/js/com_cal.js"
+  ],
+  "found": [
+   "/live/streamer/streamer.php?jo=06",
+   "https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=06",
+   "https://www.boatrace.jp/extent/common/csr/index.html",
+   "https://www.boatrace.jp/yamato/pc/extra/bosyu/index.html"
+  ]
+ },
+ "7": {
+  "host": "www.gamagori-kyotei.com",
+  "js": [
+   "https://www.gamagori-kyotei.com/js/common.js",
+   "https://www.gamagori-kyotei.com/js/changeCSS.js",
+   "https://www.gamagori-kyotei.com/js/swiper.js",
+   "https://www.gamagori-kyotei.com/js/indexOutput.js",
+   "https://www.gamagori-kyotei.com/js/timeline.js",
+   "https://www.gamagori-kyotei.com/js/contents_footer_menu_assengaiyo.js"
+  ],
+  "found": [
+   "/asp/gamagori/contents/01race/01race.php?id=437",
+   "/asp/gamagori/contents/01race/01race.php?id=438",
+   "/asp/gamagori/contents/01race/01race.php?id=439",
+   "/asp/gamagori/contents/01race/01race.php?id=440",
+   "/asp/gamagori/contents/01race/01race.php?id=441",
+   "/asp/gamagori/contents/04racer/04racer.php",
+   "/asp/gamagori/json/timeline.json",
+   "/asp/gamagori/kyogi/kyogihtml/index.htm?page=motor&racenum=",
+   "/asp/gamagori/kyogi/kyogihtml/index.htm?page=pit&racenum=",
+   "/asp/gamagori/kyogi/kyogihtml/index.htm?page=start&racenum=",
+   "/asp/gamagori/kyogi/kyogihtml/index.htm?page=takahashi&racenum=",
+   "https://www.gamagori-kyotei.com/asp/gamagori/contents/01race/01race.php?id=439"
+  ]
+ },
+ "8": {
+  "host": "www.boatrace-tokoname.jp",
+  "js": [
+   "https://www.boatrace-tokoname.jp/resources/assets/js/common08.js?ver=1.0.1",
+   "https://www.boatrace-tokoname.jp/resources/assets/js/slick.js?ver=1.0.1",
+   "https://www.boatrace-tokoname.jp/modules/top/js/top.js?ver=1.0.1",
+   "https://www.boatrace-tokoname.jp/modules/top/js/swiper-bundle.min.js?ver=1.0.1",
+   "https://www.boatrace-tokoname.jp/resources/assets/js/tabmenu.js?ver=1.0.1",
+   "https://www.boatrace-tokoname.jp/modules/top/js/boatcast.js?ver=1.0.1"
+  ],
+  "found": [
+   "/live/streamer/streamer.php",
+   "https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=08",
+   "https://www.boatrace.jp/extent/common/csr/index.html",
+   "https://www.boatrace.jp/yamato/pc/extra/bosyu/index.html"
+  ]
+ },
+ "9": {
+  "host": "www.boatrace-tsu.com",
+  "js": [
+   "https://www.boatrace-tsu.com/resources/assets/js/common09.js?ver=1.0.5",
+   "https://www.boatrace-tsu.com/resources/assets/js/slick.js?ver=1.0.5",
+   "https://www.boatrace-tsu.com/modules/top/js/top.js?ver=1.0.5",
+   "https://www.boatrace-tsu.com/resources/assets/js/com_cal.js"
+  ],
+  "found": [
+   "/modules/yosou/ajax/getReplayStatus.php",
+   "CTX \t\t\t\t\t<li class=\"js-tab_category ctg_menu_li\" data-tab=\"cyokuzen\">",
+   "CTX \t\t\t\t\t<li class=\"js-tab_category ctg_menu_li\" data-tab=\"group-tenji\">"
+  ]
+ },
+ "10": {
+  "host": "www.boatrace-mikuni.jp",
+  "js": [
+   "https://www.boatrace-mikuni.jp/resources/assets/js/common10.js?ver=1.0.1",
+   "https://www.boatrace-mikuni.jp/resources/assets/js/slick.js?ver=1.0.1",
+   "https://www.boatrace-mikuni.jp/modules/top/js/top.js?ver=1.0.1",
+   "https://www.boatrace-mikuni.jp/modules/top/js/swiper-bundle.min.js?ver=1.0.1",
+   "https://www.boatrace-mikuni.jp/resources/assets/js/com_cal.js"
+  ],
+  "found": [
+   "/live/streamer/streamer.php?jo=10",
+   "https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=10",
+   "https://www.boatrace.jp/extent/common/csr/index.html",
+   "https://www.boatrace.jp/yamato/pc/extra/bosyu/index.html"
+  ]
+ },
+ "11": {
+  "host": "www.boatrace-biwako.jp",
+  "js": [
+   "https://www.boatrace-biwako.jp/themes/biwako/js/common.js?ver=1.0.0",
+   "https://www.boatrace-biwako.jp/themes/biwako/js/top.js",
+   "https://www.boatrace-biwako.jp/themes/biwako/js/pctosmart.js",
+   "https://www.boatrace-biwako.jp/themes/biwako/js/slick.min.js"
+  ],
+  "found": [
+   "https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=11",
+   "https://ohmi.boatrace-biwako.jp/cgcm/pc/index.php",
+   "https://www.boatrace.jp/extent/common/csr/index.html"
+  ]
+ },
+ "12": {
+  "host": "www.boatrace-suminoe.jp",
+  "js": [
+   "https://www.boatrace-suminoe.jp/js/viewport.js",
+   "https://www.boatrace-suminoe.jp/js/swiper.js",
+   "https://www.boatrace-suminoe.jp/js/mymenu.js",
+   "https://www.boatrace-suminoe.jp/js/common.js",
+   "https://www.boatrace-suminoe.jp/js/index.js",
+   "https://www.boatrace-suminoe.jp/js/yoso_in.js"
+  ],
+  "found": [
+   "/asp/suminoe/json/timeline.json",
+   "https://www.boatrace-suminoe.jp/01cal/cal.htm",
+   "https://www.boatrace-suminoe.jp/01suimen/01suimen.htm",
+   "https://www.boatrace-suminoe.jp/03event/event.htm",
+   "https://www.boatrace-suminoe.jp/03event/event.htm#eve10773_1_18",
+   "https://www.boatrace-suminoe.jp/03event/event.htm#eve10773_1_19",
+   "https://www.boatrace-suminoe.jp/03event/event.htm#eve10773_1_20",
+   "https://www.boatrace-suminoe.jp/03event/event.htm#eve10773_1_26",
+   "https://www.boatrace-suminoe.jp/03event/event.htm#eve10773_1_28",
+   "https://www.boatrace-suminoe.jp/03event/event.htm#eve10773_1_33",
+   "https://www.boatrace-suminoe.jp/03event/event.htm#eve10773_5_14",
+   "https://www.boatrace-suminoe.jp/03event/event.htm#eve10773_5_15",
+   "https://www.boatrace-suminoe.jp/03event/event.htm#eve10773_5_17",
+   "https://www.boatrace-suminoe.jp/03event/event.htm#eve10773_7_8",
+   "https://www.boatrace-suminoe.jp/05win/win.htm",
+   "https://www.boatrace-suminoe.jp/access.html",
+   "https://www.boatrace-suminoe.jp/asp/htmlmade/Race/Syutujo/12/PC/jumper.htm",
+   "https://www.boatrace-suminoe.jp/asp/htmlmade/Race/Tenbo/12/PC/jumper.htm",
+   "https://www.boatrace-suminoe.jp/asp/htmlmade/Race/Tenbo/12/PC/t204.htm",
+   "https://www.boatrace-suminoe.jp/asp/htmlmade/suminoe/01boat/boat02.htm",
+   "https://www.boatrace-suminoe.jp/asp/htmlmade/suminoe/rank/rank.htm",
+   "https://www.boatrace-suminoe.jp/asp/kyogi/12/pc/today_tenbo_detail.htm",
+   "https://www.boatrace-suminoe.jp/asp/suminoe/00info/info.php",
+   "https://www.boatrace-suminoe.jp/asp/suminoe/00info/info.php#404",
+   "https://www.boatrace-suminoe.jp/asp/suminoe/00info/info.php#420",
+   "https://www.boatrace-suminoe.jp/asp/suminoe/00info/info.php#421",
+   "https://www.boatrace-suminoe.jp/asp/suminoe/00info/info.php#424",
+   "https://www.boatrace-suminoe.jp/asp/suminoe/00info/info.php#426",
+   "https://www.boatrace-suminoe.jp/asp/suminoe/00info/info.php#435",
+   "https://www.boatrace-suminoe.jp/asp/suminoe/00info/info.php#436",
+   "https://www.boatrace-suminoe.jp/asp/suminoe/00info/info.php#racer20261201",
+   "https://www.boatrace-suminoe.jp/asp/suminoe/00info/info.php?Year=2025#316",
+   "https://www.boatrace-suminoe.jp/asp/suminoe/02kekka/kekka.php",
+   "https://www.boatrace-suminoe.jp/asp/suminoe/contents/01history/ranking_motor.php",
+   "https://www.boatrace-suminoe.jp/asp/suminoe/kyogi/kyogihtml/index.htm",
+   "https://www.boatrace-suminoe.jp/asp/suminoe/kyogi/kyogihtml/zenken/zenken1205.htm",
+   "https://www.boatrace-suminoe.jp/asp/suminoe/replay/replay.php",
+   "https://www.boatrace-suminoe.jp/cal_tv.html",
+   "https://www.boatrace-suminoe.jp/cashless.html",
+   "https://www.boatrace-suminoe.jp/dento01.html"
+  ]
+ },
+ "13": {
+  "host": "www.boatrace-amagasaki.jp",
+  "js": [
+   "https://www.boatrace-amagasaki.jp/resources/assets/js/common13.js?ver=1.0.2",
+   "https://www.boatrace-amagasaki.jp/resources/assets/js/slick.js?ver=1.0.2",
+   "https://www.boatrace-amagasaki.jp/modules/top/js/top.js?ver=1.0.2",
+   "https://www.boatrace-amagasaki.jp/modules/top/js/swiper-bundle.min.js?ver=1.0.2",
+   "https://www.boatrace-amagasaki.jp/modules/top/js/live-video-control.js?ver=1.0.2",
+   "https://www.boatrace-amagasaki.jp/resources/assets/js/com_cal.js"
+  ],
+  "found": [
+   "/live/streamer/streamer.php?jo=13",
+   "CTX \t\t\t\t\t\t<li class=\"js-tab_category par-tab_li\" data-tab=\"group-cyokuzen\">",
+   "https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=13",
+   "https://www.boatrace.jp/extent/common/csr/index.html",
+   "https://www.boatrace.jp/yamato/pc/extra/bosyu/index.html",
+   "https://www.facebook.com/v17.0/plugins/page.php?adapt_container_width=true&amp;app_id=&amp;channel=https%3A%2F%2Fstaticxx.facebook.com%2Fx%2Fconnect%2Fxd_arbite"
+  ]
+ },
+ "14": {
+  "host": "www.n14.jp",
+  "js": [
+   "https://www.n14.jp/resources/assets/js/common14.js?ver=1.0.0",
+   "https://www.n14.jp/resources/assets/js/slick.js?ver=1.0.0",
+   "https://www.n14.jp/modules/top/js/top.js?ver=1.0.0"
+  ],
+  "found": [
+   "/live/streamer/streamer.php?jo=14",
+   "CTX \t\t\t\t\t\t<li class=\"js-tab_category par-tab_li\" data-tab=\"group-cyokuzen\">",
+   "https://livebb.jlc.ne.jp/bb_top/new_bb/finals.php?tpl=14",
+   "https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=14"
+  ]
+ },
+ "15": {
+  "host": "www.marugameboat.jp",
+  "js": [
+   "https://www.marugameboat.jp/js/swiper.js",
+   "https://www.marugameboat.jp/js/swiper-bundle.min.js",
+   "https://www.marugameboat.jp/js/index.js",
+   "https://www.marugameboat.jp/js/viewport.js",
+   "https://www.marugameboat.jp/js/mymenu.js",
+   "https://www.marugameboat.jp/js/timeline.js"
+  ],
+  "found": [
+   "/asp/htmlmade/Race/Syutujo/15/PC/jumper.htm?is_anchor",
+   "/asp/htmlmade/Race/Syutujo/15/PC/s121.htm",
+   "/asp/htmlmade/Race/Syutujo/15/PC/s122.htm",
+   "/asp/htmlmade/Race/Syutujo/15/PC/s123.htm",
+   "/asp/htmlmade/Race/Tenbo/15/PC/jumper.htm",
+   "/asp/htmlmade/Race/Tenbo/15/PC/t117.htm",
+   "/asp/htmlmade/Race/Tenbo/15/PC/t120.htm",
+   "/asp/htmlmade/marugame/today_syussou/touban.htm",
+   "/asp/marugame/02kekka/kekka_list.php",
+   "/asp/marugame/json/timeline.json",
+   "https://www.boatrace.jp/extent/common/csr/index.html",
+   "https://www.boatrace.jp/yamato/pc/extra/bosyu/index.html",
+   "https://www.marugameboat.jp/asp/kyogi/15/pc/syusso0101.htm",
+   "https://www.marugameboat.jp/replay/replay_movie/race/2026111901.htm",
+   "https://www.marugameboat.jp/replay/replay_movie/race/2026111902.htm",
+   "https://www.marugameboat.jp/replay/replay_movie/race/2026111903.htm",
+   "https://www.marugameboat.jp/replay/replay_movie/race/2026111904.htm",
+   "https://www.marugameboat.jp/replay/replay_movie/race/2026111905.htm",
+   "https://www.marugameboat.jp/replay/replay_movie/race/2026111906.htm",
+   "https://www.marugameboat.jp/replay/replay_movie/race/2026111907.htm",
+   "https://www.marugameboat.jp/replay/replay_movie/race/2026111908.htm"
+  ]
+ },
+ "16": {
+  "host": "www.kojimaboat.jp",
+  "js": [
+   "https://www.kojimaboat.jp/js/viewport.js",
+   "https://www.kojimaboat.jp/js/swiper.js",
+   "https://www.kojimaboat.jp/js/mymenu.js",
+   "https://www.kojimaboat.jp/js/index.js",
+   "https://www.kojimaboat.jp/js/common.js"
+  ],
+  "found": [
+   "/asp/htmlmade/Race/Syutujo/16/s60.htm",
+   "/asp/htmlmade/Race/Syutujo/16/s61.htm",
+   "/asp/htmlmade/Race/Tenbo/16/jumper.htm",
+   "/asp/htmlmade/kojima/today_syussou/touban.htm",
+   "/asp/kojima/02kekka/kekka.php",
+   "/favicons/manifest.json",
+   "/jump/official_raceindex.html?jyo=01&yd=20261119",
+   "/jump/official_raceindex.html?jyo=02&yd=20261119",
+   "/jump/official_raceindex.html?jyo=04&yd=20261119",
+   "/jump/official_raceindex.html?jyo=09&yd=20261119",
+   "/jump/official_raceindex.html?jyo=11&yd=20261119",
+   "/jump/official_raceindex.html?jyo=14&yd=20261119",
+   "/jump/official_raceindex.html?jyo=15&yd=20261119",
+   "/jump/official_raceindex.html?jyo=17&yd=20261119",
+   "/jump/official_raceindex.html?jyo=18&yd=20261119",
+   "/jump/official_raceindex.html?jyo=22&yd=20261119",
+   "/jump/official_raceindex.html?jyo=24&yd=20261119",
+   "https://www.boatrace.jp/extent/common/csr/index.html",
+   "https://www.boatrace.jp/owpc/pc/site/enjoy/category1/index.html",
+   "https://www.boatrace.jp/yamato/pc/extra/bosyu/index.html",
+   "https://www.kojimaboat.jp/asp/htmlmade/Race/Tenbo/16/jumper.htm"
+  ]
+ },
+ "17": {
+  "host": "www.boatrace-miyajima.com",
+  "js": [
+   "https://www.boatrace-miyajima.com/js/analytics.js",
+   "https://www.boatrace-miyajima.com/slick/slick.js",
+   "https://www.boatrace-miyajima.com/js/anime.min.js",
+   "https://www.boatrace-miyajima.com/js/anime.detail.js",
+   "https://www.boatrace-miyajima.com/js/ScrollTrigger.min.js",
+   "https://www.boatrace-miyajima.com/js/swiper.min.js"
+  ],
+  "found": [
+   "https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js",
+   "https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=17",
+   "https://livebb.jlc.ne.jp/bb_top/sp_bb/live_17.php",
+   "https://livebb.jlc.ne.jp/bb_top/sp_bb/vod_17.php",
+   "https://www.boatrace-miyajima.com/boatrace-contribution.html",
+   "https://www.boatrace-miyajima.com/coupon.html",
+   "https://www.boatrace-miyajima.com/event.html#2184",
+   "https://www.boatrace-miyajima.com/event.html#2185",
+   "https://www.boatrace-miyajima.com/event.html#2189",
+   "https://www.boatrace-miyajima.com/event.html#2190",
+   "https://www.boatrace-miyajima.com/facility.html",
+   "https://www.boatrace-miyajima.com/fanservice.html#2181",
+   "https://www.boatrace-miyajima.com/fanservice.html#2182",
+   "https://www.boatrace-miyajima.com/fanservice.html#2187",
+   "https://www.boatrace-miyajima.com/fanservice.html#2188",
+   "https://www.boatrace-miyajima.com/fanservice.html#2191",
+   "https://www.boatrace-miyajima.com/fanservice.html#2192",
+   "https://www.boatrace-miyajima.com/fanservice.html#2195",
+   "https://www.boatrace-miyajima.com/fanservice.html#2196",
+   "https://www.boatrace-miyajima.com/fanservice.html#2197",
+   "https://www.boatrace-miyajima.com/index.html?m=2&month=11",
+   "https://www.boatrace-miyajima.com/net-campaign.html",
+   "https://www.boatrace-miyajima.com/weather_live/index.html",
+   "https://www.boatrace-miyajima.com/youtube-cp.html",
+   "https://www.boatrace.jp/extent/common/csr/index.html"
+  ]
+ },
+ "18": {
+  "host": "www.boatrace-tokuyama.jp",
+  "js": [
+   "https://www.boatrace-tokuyama.jp/themes/tokuyama/js/common18.js",
+   "https://www.boatrace-tokuyama.jp/themes/tokuyama/js/top.js?ver=1.0"
+  ],
+  "found": [
+   "/live/streamer/streamer.php?jo=18",
+   "CTX \t\t\t\t\t\t<a class=\"js-race-type com-tab-list\" data-tab=\"cyokuzen\" href=\"javascript:void(0)\"><span class=\"com-tab-list-text\">直前情報</span></a>",
+   "CTX \t\t\t\t\t\t<a class=\"js-race-type com-tab-list\" data-tab=\"tenji\" href=\"javascript:void(0)\"><span class=\"com-tab-list-text\">展示情報</span></a>",
+   "https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=18",
+   "https://www.boatrace.jp/extent/common/csr/index.html",
+   "https://www.boatrace.jp/owpc/pc/extra/cn_s/index.html",
+   "https://www.boatrace.jp/owpc/pc/extra/cn_t/index.html",
+   "https://www.boatrace.jp/owpc/pc/extra/en/index.html",
+   "https://www.boatrace.jp/owpc/pc/extra/kr/index.html"
+  ]
+ },
+ "19": {
+  "host": "www.boatrace-shimonoseki.jp",
+  "js": [
+   "https://www.boatrace-shimonoseki.jp/resources/assets/js/common19.js?ver=1.1.2",
+   "https://www.boatrace-shimonoseki.jp/resources/assets/js/slick.js?ver=1.1.2",
+   "https://www.boatrace-shimonoseki.jp/modules/top/js/top.js?ver=1.1.2",
+   "https://www.boatrace-shimonoseki.jp/uploads/data/collaboration/20260325081223865/collabo_data/js/pc/collabo.js"
+  ],
+  "found": [
+   "https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=19",
+   "https://www.boatrace.jp/extent/common/csr/index.html",
+   "https://www.boatrace.jp/extent/common/midnightboatrace/index.php",
+   "https://www.boatrace.jp/yamato/pc/extra/bosyu/index.html",
+   "https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fboatrace.simonoseki.jp&tabs=timeline&width=494&height=373&small_header=false&ada"
+  ]
+ },
+ "20": {
+  "host": "www.wmb.jp",
+  "js": [
+   "https://www.wmb.jp/resources/assets/js/common20.js?ver=1.0.0",
+   "https://www.wmb.jp/resources/assets/js/slick.js?ver=1.0.0",
+   "https://www.wmb.jp/modules/top/js/top.js?ver=1.0.0",
+   "https://www.wmb.jp/modules/top/js/swiper-bundle.min.js?ver=1.0.0",
+   "https://www.wmb.jp/resources/assets/js/com_cal.js"
+  ],
+  "found": [
+   "/live/streamer/streamer.php?jo=20",
+   "https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=20",
+   "https://www.boatrace.jp/extent/common/midnightboatrace/index.php"
+  ]
+ },
+ "21": {
+  "host": "www.boatrace-ashiya.com",
+  "js": [
+   "https://www.boatrace-ashiya.com/resources/assets/js/common21.js?ver=1.0.0",
+   "https://www.boatrace-ashiya.com/resources/assets/js/slick.js?ver=1.0.0",
+   "https://www.boatrace-ashiya.com/modules/top/js/top.js?ver=1.0.0"
+  ],
+  "found": [
+   "/live/streamer/streamer.php?jo=21",
+   "CTX \t\t\t\t\t\t<li class=\"js-tab_category par-tab_li\" data-tab=\"group-cyokuzen\">",
+   "CTX lass=\"item_raceinfo_btn\"><a class=\"par-btn01 no_right_radius right_triangle btn_cyokuzen\" href=\"https://nikkansports.raceyosou.jp/boatrace/ashiya/\" target=\"_blank\"><span>直前予想</span></a></li>",
+   "http://www.rakuten-bank.co.jp/koueirace/kyotei.html?scid=we_brc_koueirace_019",
+   "https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=21",
+   "https://www.boatrace.jp/extent/common/csr/index.html",
+   "https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fboatrace.asiya.jp%2F&tabs=timeline&width=380&height=455&small_header=true&adapt_"
+  ]
+ },
+ "22": {
+  "host": "www.boatrace-fukuoka.com",
+  "js": [
+   "https://www.boatrace-fukuoka.com/themes/fukuoka/js/html5.js",
+   "https://www.boatrace-fukuoka.com/themes/fukuoka/js/common.js",
+   "https://www.boatrace-fukuoka.com/include/xoops.js",
+   "https://www.boatrace-fukuoka.com/themes/fukuoka/ReadSpeaker2.5/ReadSpeaker.js?pids=embhl",
+   "https://www.boatrace-fukuoka.com/themes/fukuoka/js/pctosmart.js",
+   "https://www.boatrace-fukuoka.com/themes/fukuoka/js/top.js?ver0.0"
+  ],
+  "found": [
+   "/modules/yosou/simple_syussouhyo.php",
+   "/modules/yosou/simple_syussouhyo.php?day=",
+   "CTX                    \t<div class=\"pickupcontent\"><a href='https://boatracefukuoka-tenjinstreetpark.com/' target='_blank'  class=\"pickup\"><img src='/uploads/banner/topbanner/slider/tenjinstreetpark.jpg' ",
+   "https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=22",
+   "https://www.boatrace.jp/extent/common/csr/index.html",
+   "https://www.boatrace.jp/yamato/pc/extra/bosyu/index.html"
+  ]
+ },
+ "23": {
+  "host": "www.boatrace-karatsu.jp",
+  "js": [
+   "https://www.boatrace-karatsu.jp/themes/karatsu/js/top.js",
+   "https://www.boatrace-karatsu.jp/themes/karatsu/js/cal.js",
+   "https://www.boatrace-karatsu.jp/themes/karatsu/js/slick.min.js",
+   "https://www.boatrace-karatsu.jp/themes/karatsu/js/main.js",
+   "https://www.boatrace-karatsu.jp/themes/karatsu/js/common23.js",
+   "https://www.boatrace-karatsu.jp/themes/karatsu/js/pctosmart.js"
+  ],
+  "found": [
+   "https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=23",
+   "https://www.boatrace.jp/extent/common/csr/index.html",
+   "https://www.city.karatsu.lg.jp/koho/boatrace/kouryaku2021/html5.html#page=1",
+   "https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fboatrace.karatsu.jp%2F&tabs=timeline&width=500&height=350&small_header=true&adap"
+  ]
+ },
+ "24": {
+  "host": "www.omurakyotei.jp",
+  "js": [
+   "https://www.omurakyotei.jp/js/pagetop.js",
+   "https://www.omurakyotei.jp/js/swiper.min.js",
+   "https://www.omurakyotei.jp/js/getdata2.js?v1",
+   "https://www.omurakyotei.jp/js/sric_top_option.js",
+   "https://www.omurakyotei.jp/js/top_page.js?v1",
+   "https://www.omurakyotei.jp/js/swiper_option.js?v1"
+  ],
+  "found": [
+   "//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js",
+   "/boatraceguide/index.html",
+   "/include2/iframe_live.php?dspkbn=",
+   "/include2/iframe_live_swtest.php?dspkbn=",
+   "/include2/iframe_live_tab.php?dspkbn=",
+   "/include2/iframe_live_test.php?dspkbn=",
+   "/include2/iframe_top_syussou_sp.php?liveday=",
+   "/yosou/include/new_top_iframe_syussou_2.php?day=20261119&amp;race=09",
+   "/yosou/kekka_list.php",
+   "CTX \t<a onclick=\"GetLiveContents('chokuzen', '20261119', '9R ');\" href=\"javascript:void(0)\">直前予想</a>",
+   "http://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=24",
+   "http://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=24&md=VL",
+   "http://www.boatrace.jp/yamato/pc/extra/bosyu/index.html",
+   "https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.3.5/css/swiper.min.css",
+   "https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.3.5/js/swiper.min.js",
+   "https://livebb.jlc.ne.jp/bb_top/new_bb/index.php?tpl=24&ymd=&race=01&md=V",
+   "https://www.boatrace.jp/extent/common/csr/index.html",
+   "https://www.boatrace.jp/extent/common/midnightboatrace/index.php",
+   "https://www.boatrace.jp/yamato/pc/extra/bosyu/index.html"
+  ]
+ }
+}
