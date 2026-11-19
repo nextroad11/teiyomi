@@ -235,11 +235,11 @@ def wind_code(jcd: int, compass: str | None, speed) -> int | None:
 
 
 def update_before(r: dict, D: str, now: dt.datetime, sui_cache: dict) -> bool:
-    bf = r.setdefault("before", {})
+    bf = r.get("before") or {}; r["before"] = bf
     j, rno = r["jcd"], r["rno"]
     tk = get(f"/hp_txt/{j:02d}/bc_j_tkz_{D}_{j:02d}_{rno:02d}.txt")
     st = get(f"/hp_txt/{j:02d}/bc_j_stt_{D}_{j:02d}_{rno:02d}.txt")
-    boats = bf.setdefault("boats", {})
+    boats = bf.get("boats") or {}; bf["boats"] = boats
     if tk:
         for w, v in parse_tkz(tk).items():
             e = boats.setdefault(w, {})
@@ -328,7 +328,7 @@ def update_result(r: dict, D: str, now: dt.datetime) -> bool:
         return False
     old = r.get("result") or {}
     r["result"] = {**old, **p, "at": now.isoformat(timespec="seconds")}
-    bf = r.setdefault("before", {})
+    bf = r.get("before") or {}; r["before"] = bf
     wx = p.get("wx")
     if wx and not bf.get("complete"):
         bf.update({"weather": wx["weather"], "windSpeed": wx["windSpeed"], "wave": wx["wave"],
@@ -374,7 +374,7 @@ def tick(root: Path, D: str, now: dt.datetime) -> dict:
             la = ts(res, "at")
             if not la or (now - la).total_seconds() >= RECHECK:
                 if not update_result(r, D, now):
-                    r.setdefault("result", {})["at"] = now.isoformat(timespec="seconds")
+                    r["result"] = {**(r.get("result") or {}), "at": now.isoformat(timespec="seconds")}
                 st["result"] += 1
     day["updated"] = now.isoformat(timespec="seconds")
     day["src"] = "boatcast"
@@ -393,7 +393,7 @@ def fill_ori(root: Path, D: str) -> int:
         return 0
     n = 0
     for r in day["races"]:
-        bf = r.setdefault("before", {})
+        bf = r.get("before") or {}; r["before"] = bf
         if bf.get("ori") and not ori_incomplete(bf["ori"]):
             continue
         t = get(f"/txt/{r['jcd']:02d}/bc_oriten_{D}_{r['jcd']:02d}_{r['rno']:02d}.txt")
