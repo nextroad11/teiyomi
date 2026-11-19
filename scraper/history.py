@@ -10,7 +10,7 @@
 """
 from __future__ import annotations
 
-import argparse
+import argparse, os
 import datetime as dt
 import json
 import re
@@ -30,18 +30,29 @@ def nfkc(s: str) -> str:
     return unicodedata.normalize("NFKC", s)
 
 
+LOCAL = None  # 手動で置いた配布ファイルの場所（data/mbrace）。ここにあればネットに取りに行かない
+
+
 def download_text(kind: str, day: dt.date) -> str | None:
-    url = f"{BASE}/{kind}/{day:%Y%m}/{kind.lower()}{day:%y%m%d}.lzh"
-    try:
-        r = requests.get(url, headers=HEADERS, timeout=(10, 30))
-    except requests.RequestException as e:
-        print(f"  {url}: {e}")
+    name = f"{kind.lower()}{day:%y%m%d}.lzh"
+    local = Path(LOCAL) / name if LOCAL else None
+    if local and local.exists():
+        content = local.read_bytes()
+    elif os.environ.get("MBRACE_OFFLINE"):
         return None
-    if r.status_code != 200 or len(r.content) < 100:
-        print(f"  {url}: HTTP {r.status_code} {len(r.content)}B", flush=True)
-        return None
+    else:
+        url = f"{BASE}/{kind}/{day:%Y%m}/{name}"
+        try:
+            r = requests.get(url, headers=HEADERS, timeout=(10, 30))
+        except requests.RequestException as e:
+            print(f"  {url}: {e}")
+            return None
+        if r.status_code != 200 or len(r.content) < 100:
+            print(f"  {url}: HTTP {r.status_code} {len(r.content)}B", flush=True)
+            return None
+        content = r.content
     with tempfile.TemporaryDirectory() as td:
-        (Path(td) / "a.lzh").write_bytes(r.content)
+        (Path(td) / "a.lzh").write_bytes(content)
         p = subprocess.run(["lha", "xqf", "a.lzh"], cwd=td, capture_output=True, text=True)
         if p.returncode != 0:
             raise RuntimeError(f"lha {p.returncode} {url} head={r.content[:40]!r} {p.stderr[:200]}")
@@ -187,6 +198,8 @@ def main():
     ap.add_argument("--parse-b")
     ap.add_argument("--parse-k")
     a = ap.parse_args()
+    global LOCAL
+    LOCAL = str(Path(a.data) / "mbrace")
 
     if a.parse_b and a.parse_k:
         b = parse_b(Path(a.parse_b).read_text(encoding="utf-8"))
@@ -275,7 +288,7 @@ def main():
             continue
         if races is None:
             # 開催なし・未公開の日も記録して二度取りしない（直近3日は再挑戦）
-            if (today - d).days > 3:
+            if (today - d).days > 3 and not os.environ.get("MBRACE_OFFLINE"):
                 (hist / f"{d:%Y%m%d}.json").write_text('{"races":[]}', encoding="utf-8")
             continue
         (hist / f"{d:%Y%m%d}.json").write_text(

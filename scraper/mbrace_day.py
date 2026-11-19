@@ -40,6 +40,7 @@ def headers_b(text):
 
 def main():
     root, D = Path(sys.argv[1]), sys.argv[2]
+    h.LOCAL = str(root / "mbrace")
     day = dt.date(int(D[:4]), int(D[4:6]), int(D[6:]))
     path = root / f"{D}.json"
     cur = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {"date": D, "races": []}

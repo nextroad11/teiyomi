@@ -1,10 +1,7 @@
 name: 出走表と結果（公式の配布ファイル）
 # boatrace.jp は使わない。mbrace の番組表(B)・競走成績(K)から日別ファイルを作る・補う。
-# 21:15 は翌日の出走表と今日の結果、7:15 は取りこぼし用。
+# 公式の配布サーバーは自動取得を断っているため、殿が取得して data/mbrace に置いたファイルだけを使う（ネットには取りに行かない）。
 on:
-  schedule:
-    - cron: "15 12 * * *"   # 日本時間 21:15
-    - cron: "15 22 * * *"   # 日本時間 7:15
   workflow_dispatch:
     inputs:
       dates:
@@ -27,6 +24,8 @@ jobs:
         with: { python-version: "3.12" }
       - run: sudo apt-get update -qq && sudo apt-get install -y -qq lhasa >/dev/null && pip install -q -r scraper/requirements.txt
       - name: 作る・補う
+        env:
+          MBRACE_OFFLINE: "1"
         run: |
           DS="${{ inputs.dates }}"
           if [ -z "$DS" ]; then DS="$(TZ=Asia/Tokyo date -d yesterday +%Y%m%d) $(TZ=Asia/Tokyo date +%Y%m%d) $(TZ=Asia/Tokyo date -d tomorrow +%Y%m%d)"; fi
