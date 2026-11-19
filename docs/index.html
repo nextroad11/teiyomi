@@ -1510,16 +1510,28 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
+const APP_VERSION='53';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+// 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
+function saionjiResult(r){
+  const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
+  if(!res.order&&!voidR)return null;
+  const st=res.st||[], refund=[];
+  st.forEach(([w,v])=>{if(/[FL]/.test(String(v)))refund.push(+w);});
+  if(st.length&&st.length<6)for(let w=1;w<=6;w++)if(!st.some(([x])=>+x===w))refund.push(w);
+  return {order:res.order||null,payout:voidR?null:(res.payout??null),status:voidR?'void':'normal',
+    refundBoats:[...new Set(refund)].sort((a,b)=>a-b),fetchedAt:res.at||null};
+}
 function saionjiDay(){
   const r4=v=>v==null||!isFinite(v)?null:Math.round(v*10000)/10000;
   const out={format:'saionji-day-v1',date:dateSel,generatedAt:new Date().toISOString(),
-    engine:{commit:null,modelTrainedAt:(MODEL&&MODEL.trainedAt)||null},races:[]};
+    engine:{commit:null,modelTrainedAt:(MODEL&&MODEL.trainedAt)||null,appVersion:APP_VERSION},races:[]};
   races.slice().sort((x,y)=>(x.deadline||'').localeCompare(y.deadline||'')||x.jcd-y.jcd||x.rno-y.rno).forEach(r=>{
     let a=null;try{a=A(r);}catch(_){a=null;}
     if(!a)return;
     out.races.push({id:r.id,jcd:r.jcd,venue:r.venue||VENUES[r.jcd]||null,rno:r.rno,name:r.name||null,grade:r.grade||null,deadline:r.deadline||null,
       beforeComplete:!!(r.before&&r.before.complete),
       level:a.level??null,manP:r4(a.manP),tobu:r4(a.one&&a.one.tobu),
+      result:saionjiResult(r),
       honsen:(a.honsen||[]).map(c=>({k:c.k,p:r4(c.pAi)})),
       ana:(a.ana||[]).map(c=>({k:c.k,p:r4(c.pAi)})),
       boats:a.boats.map(b=>({waku:b.waku,name:b.name??null,cls:b.cls??null,natWin:b.natWin??null,locWin:b.locWin??null,motor2:b.motor2??null,
