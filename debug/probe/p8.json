@@ -1,0 +1,154 @@
+{
+ "https://www.heiwajima.gr.jp/asp/kyogi/04/pc/syusso0101.htm": {
+  "ctx": [
+   "            <script>var link_params = {\"current\":1,\"link\":\"https:\\/\\/www.heiwajima.gr.jp\\/asp\\/kyogi\\/04\\/pc\\/syusso01_RACENUM_.htm\",\"key\":\"syusso01\",\"data_kekka_exist\":{\"1\":false,\"2\":false,\"3\":false,\"4\":false,\"5\":false,\"6\":false,\"7\":false,\"8\":false,\"9\":false,\"10\":false,\"11\":false,\"12\":false}};</script>",
+   "                <h6><a href=\"https://www.heiwajima.gr.jp/asp/kyogi/04/pc/syusso0801.htm\">出走表</a></h6>",
+   "                    <li class=\"\"><a href=\"https://www.heiwajima.gr.jp/asp/kyogi/04/pc/syusso0801.htm\">今節成績</a></li>",
+   "                    <li class=\"\"><a href=\"https://www.heiwajima.gr.jp/asp/kyogi/04/pc/syusso0201.htm\">近況節成績</a></li>",
+   "                    <li class=\"\"><a href=\"https://www.heiwajima.gr.jp/asp/kyogi/04/pc/syusso0601.htm\">枠番別過去10走成績</a></li>",
+   "                    <li class=\"\"><a href=\"https://www.heiwajima.gr.jp/asp/kyogi/04/pc/syusso0501.htm\">モーター履歴</a></li>",
+   "                <h6><a href=\"https://www.heiwajima.gr.jp/asp/kyogi/04/pc/syusso0101.htm\">予想</a></h6>",
+   "                    <li class=\"active2\"><a href=\"https://www.heiwajima.gr.jp/asp/kyogi/04/pc/syusso0101.htm\">前日記者予想</a></li>",
+   "                    <li class=\"none2\"><a href=\"https://www.heiwajima.gr.jp/jump/yoso.html\" target=\"_blank\">直前記者予想</a></li>",
+   "                <h6><a href=\"https://www.heiwajima.gr.jp/asp/kyogi/04/pc/yoso0501.htm\">直前<span>＆</span>展示</a></h6>",
+   "                    <li class=\"\"><a href=\"https://www.heiwajima.gr.jp/asp/kyogi/04/pc/yoso0501.htm\">直前情報</a></li>",
+   "                    <li class=\"\"><a href=\"#\" class=\"iframe\">展示リプレイ</a></li>",
+   "                <h6><a href=\"https://www.heiwajima.gr.jp/asp/kyogi/04/pc/kekka0101.htm\">結果</a></h6>",
+   "                    href=\"https://www.heiwajima.gr.jp/asp/kyogi/04/pc/syusso0105.htm\">5<span>R</span></a>",
+   "                    href=\"https://www.heiwajima.gr.jp/asp/kyogi/04/pc/syusso0109.htm\">9<span>R</span></a>",
+   "                    href=\"https://www.heiwajima.gr.jp/asp/kyogi/04/pc/syusso0111.htm\">11<span>R</span></a>",
+   "                    href=\"https://www.heiwajima.gr.jp/asp/kyogi/04/pc/syusso0110.htm\">10<span>R</span></a>",
+   "                    href=\"https://www.heiwajima.gr.jp/asp/kyogi/04/pc/syusso0107.htm\">7<span>R</span></a>",
+   "                    href=\"https://www.heiwajima.gr.jp/asp/kyogi/04/pc/syusso0106.htm\">6<span>R</span></a>"
+  ],
+  "js": [
+   "https://www.heiwajima.gr.jp/js/jquery-1.8.3.min.js",
+   "https://www.heiwajima.gr.jp/js/viewport2.js",
+   "https://www.heiwajima.gr.jp/js/timeline.js",
+   "https://www.heiwajima.gr.jp/js/yoso.js"
+  ],
+  "jsctx": {
+   "https://www.heiwajima.gr.jp/js/jquery-1.8.3.min.js": [
+    "tributes&&t.clearAttributes(),t.mergeAttributes&&t.mergeAttributes(e),n=t.nodeName.toLowerCase(),n===\"object\"?(t.parentNode&&(t.outerHTML=e.outerHTML),v.support.html5Clone&&e.innerHTML&&!v.trim(t.innerHTML)&&(t.innerHTML=e.innerHTML)):n===\"input\"&&Et.test(e.type)?(t.defaultChecked=t.",
+    "=e.target.parentNode),e.metaKey=!!e.metaKey,s.filter?s.filter(e,r):e},special:{load:{noBubble:!0},focus:{delegateType:\"focusin\"},blur:{delegateType:\"focusout\"},beforeunload:{setup:function(e,t,n){v.isWindow(this)&&(this.onbeforeunload=n)},teardown:function(e,t){this.onbeforeunload===t&",
+    "&(this.onbeforeunload=null)}}},simulate:function(e,t,n,r){var i=v.extend(new v.Event,n,{type:e,isSimulated:!0,originalEvent:{}});r?v.ev",
+    "dd(this,\"click._change\",function(e){this._just_changed&&!e.isTrigger&&(this._just_changed=!1),v.event.simulate(\"change\",this,e,!0)});return!1}v.event.add(this,\"beforeactivate._change\",function(e){var t=e.target;$.test(t.nodeName)&&!v._data(t,\"_change_attached\")&&(v.event.add(t,\"change.",
+    "ault:[0,\"\",\"\"]},Ct=lt(i),kt=Ct.appendChild(i.createElement(\"div\"));Nt.optgroup=Nt.option,Nt.tbody=Nt.tfoot=Nt.colgroup=Nt.caption=Nt.thead,Nt.th=Nt.td,v.support.htmlSerialize||(Nt._default=[1,\"X<div>\",\"</div>\"]),v.fn.extend({text:function(e){return v.access(this,function(e){return e=",
+    "ndChild(e)})},prepend:function(){return this.domManip(arguments,!0,function(e){(this.nodeType===1||this.nodeType===11)&&this.insertBefore(e,this.firstChild)})},before:function(){if(!ut(this[0]))return this.domManip(arguments,!1,function(e){this.parentNode.insertBefore(e,this)});if(argu",
+    "ments.length){var e=v.clean(arguments);return this.pushStack(v.merge(e,this),\"before\",this.selector)}},after:function(){if(!ut(this[0]))return this.domManip(arguments,!1,function(e){this.parentNode.insert",
+    "(this,function(e){var n=this[0]||{},r=0,i=this.length;if(e===t)return n.nodeType===1?n.innerHTML.replace(ht,\"\"):t;if(typeof e==\"string\"&&!yt.test(e)&&(v.support.htmlSerialize||!wt.test(e))&&(v.support.leadingWhitespace||!pt.test(e))&&!Nt[(vt.exec(e)||[\"\",\"\"])[1].toLowerCase()]){e=e.r",
+    "function(e){return ut(this[0])?this.length?this.pushStack(v(v.isFunction(e)?e():e),\"replaceWith\",e):this:v.isFunction(e)?this.each(function(t){var n=v(this),r=n.html();n.replaceWith(e.call(this,t,r))}):(typeof e!=\"string\"&&(e=v(e).detach()),this.each(function(){var t=this.nextSibling",
+    ",n=this.parentNode;v(this).remove(),t?v(t).before(e):v(n).append(e)}))},detach:function(e){return this.remove(e,!0)},domManip:function(e,n,r){e=[].concat.apply([],e);var",
+    "=\"string\"&&St.test(f))return this.each(function(){v(this).domManip(e,n,r)});if(v.isFunction(f))return this.each(function(i){var s=v(this);e[0]=f.call(this,i,n?s.html():t),s.domManip(e,n,r)});if(this[0]){i=v.buildFragment(e,this,l),o=i.fragment,s=o.firstChild,o.childNodes.length===1&&",
+    "]||n,n=n.ownerDocument||n,e.length===1&&typeof a==\"string\"&&a.length<512&&n===i&&a.charAt(0)===\"<\"&&!bt.test(a)&&(v.support.checkClone||!St.test(a))&&(v.support.html5Clone||!wt.test(a))&&(o=!0,s=v.fragments[a],u=s!==t),s||(s=n.createDocumentFragment(),v.clean(e,n,s,r),o&&(v.fragments",
+    "[a]=u&&s)),{fragment:s,cacheable:o}},v.fragments={},v.each({appendTo:\"append\",prependTo:\"prepend\",insertBefore:\"before\",insertAfter:\"after\",replaceAll:\"replaceWith\"},function(e,t){v.fn[e]=function(n){var r,i=0,s=[],o=v(n),u=o.length,a=thi",
+    "i++)r=(i>0?this.clone(!0):this).get(),v(o[i])[t](r),s=s.concat(r);return this.pushStack(s,e,o.selector)}}),v.extend({clone:function(e,t,n){var r,i,s,o;v.support.html5Clone||v.isXMLDoc(e)||!wt.test(\"<\"+e.nodeName+\">\")?o=e.cloneNode(!0):(kt.innerHTML=e.outerHTML,kt.removeChild(o=kt.fir",
+    "==\"object\"&&(s=\"POST\"),v.ajax({url:e,type:s,dataType:\"html\",data:n,complete:function(e,t){r&&u.each(r,o||[e.responseText,t,e])}}).done(function(e){o=arguments,u.html(i?v(\"<div>\").append(e.replace(yn,\"\")).find(i):e)}),this},v.each(\"ajaxStart ajaxStop ajaxComplete ajaxError ajaxSuccess",
+    "ataTypes[0]]?c.accepts[c.dataTypes[0]]+(c.dataTypes[0]!==\"*\"?\", \"+Tn+\"; q=0.01\":\"\"):c.accepts[\"*\"]);for(l in c.headers)x.setRequestHeader(l,c.headers[l]);if(!c.beforeSend||c.beforeSend.call(h,x,c)!==!1&&E!==2){S=\"abort\";for(l in{success:1,error:1,complete:1})x[l](c[l]);o=kn(xn,c,n,x);i",
+    "\",jsonpCallback:function(){var e=Mn.pop()||v.expando+\"_\"+Pn++;return this[e]=!0,e}}),v.ajaxPrefilter(\"json jsonp\",function(n,r,i){var s,o,u,a=n.data,f=n.url,l=n.jsonp!==!1,c=l&&Dn.test(f),h=l&&!c&&typeof a==\"string\"&&!(n.contentType||\"\").indexOf(\"application/x-www-form-urlencoded\")&&D",
+    "n.test(a);if(n.dataTypes[0]===\"jsonp\"||c||h)return s=n.jsonpCallback=v.isFunction(n.jsonpCallback)?n.jsonpCallback():n.jsonpCallback,o=e[s],c?n.url=f.replace(Dn,\"$1\"+s):h?n.data=a.replace(Dn,\"$1\"+s):l&&(n.url+=(_n.test(f)?\"&\":\"?\")+n.jsonp+\"=\"+",
+    "rs[\"script json\"]=function(){return u||v.error(s+\" was not called\"),u[0]},n.dataTypes[0]=\"json\",e[s]=function(){u=arguments},i.always(function(){e[s]=o,n[s]&&(n.jsonpCallback=r.jsonpCallback,Mn.push(s)),u&&v.isFunction(o)&&o(u[0]),u=o=t}),\"script\"}),v.ajaxSetup({accepts:{script:\"text/"
+   ],
+   "https://www.heiwajima.gr.jp/js/viewport2.js": [],
+   "https://www.heiwajima.gr.jp/js/timeline.js": [
+    "            url: '/asp/heiwajima/json/timeline.json',\r",
+    "                $element.find('div.time1').html(lefttime);\r"
+   ],
+   "https://www.heiwajima.gr.jp/js/yoso.js": [
+    "        $(\"iframe[name='kyogi']\").attr(\"src\", \"/asp/kyogi/04/pc/syusso08\" + raceNumber + \".htm\");",
+    "        $(\"iframe[name='kyogi']\").attr(\"src\", \"/asp/kyogi/04/pc/syusso02\" + raceNumber + \".htm\");",
+    "        $(\"iframe[name='kyogi']\").attr(\"src\", \"/asp/kyogi/04/pc/syusso06\" + raceNumber + \".htm\");",
+    "        $(\"iframe[name='kyogi']\").attr(\"src\", \"/asp/kyogi/04/pc/syusso05\" + raceNumber + \".htm\");",
+    "        $(\"iframe[name='kyogi']\").attr(\"src\", \"/asp/kyogi/04/pc/hayami01\" + raceNumber + \".htm\");",
+    "        $(\"iframe[name='kyogi']\").attr(\"src\", \"/asp/kyogi/04/pc/syusso01\" + raceNumber + \".htm\");",
+    "        $(\"iframe[name='kyogi']\").attr(\"src\", \"/asp/kyogi/04/pc/yoso02\" + raceNumber + \".htm\");",
+    "        $(\"iframe[name='kyogi']\").attr(\"src\", \"/asp/kyogi/04/pc/yoso06\" + raceNumber + \".htm\");",
+    "        $(\"iframe[name='kyogi']\").attr(\"src\", \"/asp/kyogi/04/pc/odds01\" + raceNumber + \".htm\");",
+    "        $(\"iframe[name='kyogi']\").attr(\"src\", \"/asp/kyogi/04/pc/odds05\" + raceNumber + \".htm\");",
+    "        $(\"iframe[name='kyogi']\").attr(\"src\", \"/asp/kyogi/04/pc/odds07\" + raceNumber + \".htm\");",
+    "        $(\"iframe[name='kyogi']\").attr(\"src\", \"/asp/kyogi/04/pc/odds02\" + raceNumber + \".htm\");",
+    "        $(\"iframe[name='kyogi']\").attr(\"src\", \"/asp/kyogi/04/pc/yoso05\" + raceNumber + \".htm\");",
+    "        $(\"iframe[name='kyogi']\").attr(\"src\", \"/asp/kyogi/04/pc/kekka01\" + raceNumber + \".htm\");"
+   ]
+  }
+ },
+ "https://www.heiwajima.gr.jp/asp/kyogi/04/pc/kekka0101.htm": {
+  "ctx": [
+   "            <script>var link_params = {\"current\":\"1\",\"link\":\"https:\\/\\/www.heiwajima.gr.jp\\/asp\\/kyogi\\/04\\/pc\\/kekka01_RACENUM_.htm\",\"key\":\"kekka01\",\"data_kekka_exist\":[]};</script>",
+   "                <h6><a href=\"https://www.heiwajima.gr.jp/asp/kyogi/04/pc/syusso0801.htm\">出走表</a></h6>",
+   "                    <li class=\"\"><a href=\"https://www.heiwajima.gr.jp/asp/kyogi/04/pc/syusso0801.htm\">今節成績</a></li>",
+   "                    <li class=\"\"><a href=\"https://www.heiwajima.gr.jp/asp/kyogi/04/pc/syusso0201.htm\">近況節成績</a></li>",
+   "                    <li class=\"\"><a href=\"https://www.heiwajima.gr.jp/asp/kyogi/04/pc/syusso0601.htm\">枠番別過去10走成績</a></li>",
+   "                    <li class=\"\"><a href=\"https://www.heiwajima.gr.jp/asp/kyogi/04/pc/syusso0501.htm\">モーター履歴</a></li>",
+   "                <h6><a href=\"https://www.heiwajima.gr.jp/asp/kyogi/04/pc/syusso0101.htm\">予想</a></h6>",
+   "                    <li class=\"\"><a href=\"https://www.heiwajima.gr.jp/asp/kyogi/04/pc/syusso0101.htm\">前日記者予想</a></li>",
+   "                    <li class=\"none2\"><a href=\"https://www.heiwajima.gr.jp/jump/yoso.html\" target=\"_blank\">直前記者予想</a></li>",
+   "                <h6><a href=\"https://www.heiwajima.gr.jp/asp/kyogi/04/pc/yoso0501.htm\">直前<span>＆</span>展示</a></h6>",
+   "                    <li class=\"\"><a href=\"https://www.heiwajima.gr.jp/asp/kyogi/04/pc/yoso0501.htm\">直前情報</a></li>",
+   "                    <li class=\"\"><a href=\"#\" class=\"iframe\">展示リプレイ</a></li>",
+   "                <h6><a href=\"https://www.heiwajima.gr.jp/asp/kyogi/04/pc/kekka0101.htm\">結果</a></h6>"
+  ],
+  "js": [
+   "https://www.heiwajima.gr.jp/js/jquery-1.8.3.min.js",
+   "https://www.heiwajima.gr.jp/js/viewport2.js",
+   "https://www.heiwajima.gr.jp/js/timeline.js",
+   "https://www.heiwajima.gr.jp/js/yoso.js",
+   "https://www.heiwajima.gr.jp/js/jquery.colorbox.js"
+  ],
+  "jsctx": {
+   "https://www.heiwajima.gr.jp/js/jquery-1.8.3.min.js": [
+    "tributes&&t.clearAttributes(),t.mergeAttributes&&t.mergeAttributes(e),n=t.nodeName.toLowerCase(),n===\"object\"?(t.parentNode&&(t.outerHTML=e.outerHTML),v.support.html5Clone&&e.innerHTML&&!v.trim(t.innerHTML)&&(t.innerHTML=e.innerHTML)):n===\"input\"&&Et.test(e.type)?(t.defaultChecked=t.",
+    "=e.target.parentNode),e.metaKey=!!e.metaKey,s.filter?s.filter(e,r):e},special:{load:{noBubble:!0},focus:{delegateType:\"focusin\"},blur:{delegateType:\"focusout\"},beforeunload:{setup:function(e,t,n){v.isWindow(this)&&(this.onbeforeunload=n)},teardown:function(e,t){this.onbeforeunload===t&",
+    "&(this.onbeforeunload=null)}}},simulate:function(e,t,n,r){var i=v.extend(new v.Event,n,{type:e,isSimulated:!0,originalEvent:{}});r?v.ev",
+    "dd(this,\"click._change\",function(e){this._just_changed&&!e.isTrigger&&(this._just_changed=!1),v.event.simulate(\"change\",this,e,!0)});return!1}v.event.add(this,\"beforeactivate._change\",function(e){var t=e.target;$.test(t.nodeName)&&!v._data(t,\"_change_attached\")&&(v.event.add(t,\"change.",
+    "ault:[0,\"\",\"\"]},Ct=lt(i),kt=Ct.appendChild(i.createElement(\"div\"));Nt.optgroup=Nt.option,Nt.tbody=Nt.tfoot=Nt.colgroup=Nt.caption=Nt.thead,Nt.th=Nt.td,v.support.htmlSerialize||(Nt._default=[1,\"X<div>\",\"</div>\"]),v.fn.extend({text:function(e){return v.access(this,function(e){return e=",
+    "ndChild(e)})},prepend:function(){return this.domManip(arguments,!0,function(e){(this.nodeType===1||this.nodeType===11)&&this.insertBefore(e,this.firstChild)})},before:function(){if(!ut(this[0]))return this.domManip(arguments,!1,function(e){this.parentNode.insertBefore(e,this)});if(argu",
+    "ments.length){var e=v.clean(arguments);return this.pushStack(v.merge(e,this),\"before\",this.selector)}},after:function(){if(!ut(this[0]))return this.domManip(arguments,!1,function(e){this.parentNode.insert",
+    "(this,function(e){var n=this[0]||{},r=0,i=this.length;if(e===t)return n.nodeType===1?n.innerHTML.replace(ht,\"\"):t;if(typeof e==\"string\"&&!yt.test(e)&&(v.support.htmlSerialize||!wt.test(e))&&(v.support.leadingWhitespace||!pt.test(e))&&!Nt[(vt.exec(e)||[\"\",\"\"])[1].toLowerCase()]){e=e.r",
+    "function(e){return ut(this[0])?this.length?this.pushStack(v(v.isFunction(e)?e():e),\"replaceWith\",e):this:v.isFunction(e)?this.each(function(t){var n=v(this),r=n.html();n.replaceWith(e.call(this,t,r))}):(typeof e!=\"string\"&&(e=v(e).detach()),this.each(function(){var t=this.nextSibling",
+    ",n=this.parentNode;v(this).remove(),t?v(t).before(e):v(n).append(e)}))},detach:function(e){return this.remove(e,!0)},domManip:function(e,n,r){e=[].concat.apply([],e);var",
+    "=\"string\"&&St.test(f))return this.each(function(){v(this).domManip(e,n,r)});if(v.isFunction(f))return this.each(function(i){var s=v(this);e[0]=f.call(this,i,n?s.html():t),s.domManip(e,n,r)});if(this[0]){i=v.buildFragment(e,this,l),o=i.fragment,s=o.firstChild,o.childNodes.length===1&&",
+    "]||n,n=n.ownerDocument||n,e.length===1&&typeof a==\"string\"&&a.length<512&&n===i&&a.charAt(0)===\"<\"&&!bt.test(a)&&(v.support.checkClone||!St.test(a))&&(v.support.html5Clone||!wt.test(a))&&(o=!0,s=v.fragments[a],u=s!==t),s||(s=n.createDocumentFragment(),v.clean(e,n,s,r),o&&(v.fragments",
+    "[a]=u&&s)),{fragment:s,cacheable:o}},v.fragments={},v.each({appendTo:\"append\",prependTo:\"prepend\",insertBefore:\"before\",insertAfter:\"after\",replaceAll:\"replaceWith\"},function(e,t){v.fn[e]=function(n){var r,i=0,s=[],o=v(n),u=o.length,a=thi",
+    "i++)r=(i>0?this.clone(!0):this).get(),v(o[i])[t](r),s=s.concat(r);return this.pushStack(s,e,o.selector)}}),v.extend({clone:function(e,t,n){var r,i,s,o;v.support.html5Clone||v.isXMLDoc(e)||!wt.test(\"<\"+e.nodeName+\">\")?o=e.cloneNode(!0):(kt.innerHTML=e.outerHTML,kt.removeChild(o=kt.fir",
+    "==\"object\"&&(s=\"POST\"),v.ajax({url:e,type:s,dataType:\"html\",data:n,complete:function(e,t){r&&u.each(r,o||[e.responseText,t,e])}}).done(function(e){o=arguments,u.html(i?v(\"<div>\").append(e.replace(yn,\"\")).find(i):e)}),this},v.each(\"ajaxStart ajaxStop ajaxComplete ajaxError ajaxSuccess",
+    "ataTypes[0]]?c.accepts[c.dataTypes[0]]+(c.dataTypes[0]!==\"*\"?\", \"+Tn+\"; q=0.01\":\"\"):c.accepts[\"*\"]);for(l in c.headers)x.setRequestHeader(l,c.headers[l]);if(!c.beforeSend||c.beforeSend.call(h,x,c)!==!1&&E!==2){S=\"abort\";for(l in{success:1,error:1,complete:1})x[l](c[l]);o=kn(xn,c,n,x);i",
+    "\",jsonpCallback:function(){var e=Mn.pop()||v.expando+\"_\"+Pn++;return this[e]=!0,e}}),v.ajaxPrefilter(\"json jsonp\",function(n,r,i){var s,o,u,a=n.data,f=n.url,l=n.jsonp!==!1,c=l&&Dn.test(f),h=l&&!c&&typeof a==\"string\"&&!(n.contentType||\"\").indexOf(\"application/x-www-form-urlencoded\")&&D",
+    "n.test(a);if(n.dataTypes[0]===\"jsonp\"||c||h)return s=n.jsonpCallback=v.isFunction(n.jsonpCallback)?n.jsonpCallback():n.jsonpCallback,o=e[s],c?n.url=f.replace(Dn,\"$1\"+s):h?n.data=a.replace(Dn,\"$1\"+s):l&&(n.url+=(_n.test(f)?\"&\":\"?\")+n.jsonp+\"=\"+",
+    "rs[\"script json\"]=function(){return u||v.error(s+\" was not called\"),u[0]},n.dataTypes[0]=\"json\",e[s]=function(){u=arguments},i.always(function(){e[s]=o,n[s]&&(n.jsonpCallback=r.jsonpCallback,Mn.push(s)),u&&v.isFunction(o)&&o(u[0]),u=o=t}),\"script\"}),v.ajaxSetup({accepts:{script:\"text/"
+   ],
+   "https://www.heiwajima.gr.jp/js/viewport2.js": [],
+   "https://www.heiwajima.gr.jp/js/timeline.js": [
+    "            url: '/asp/heiwajima/json/timeline.json',\r",
+    "                $element.find('div.time1').html(lefttime);\r"
+   ],
+   "https://www.heiwajima.gr.jp/js/yoso.js": [
+    "        $(\"iframe[name='kyogi']\").attr(\"src\", \"/asp/kyogi/04/pc/syusso08\" + raceNumber + \".htm\");",
+    "        $(\"iframe[name='kyogi']\").attr(\"src\", \"/asp/kyogi/04/pc/syusso02\" + raceNumber + \".htm\");",
+    "        $(\"iframe[name='kyogi']\").attr(\"src\", \"/asp/kyogi/04/pc/syusso06\" + raceNumber + \".htm\");",
+    "        $(\"iframe[name='kyogi']\").attr(\"src\", \"/asp/kyogi/04/pc/syusso05\" + raceNumber + \".htm\");",
+    "        $(\"iframe[name='kyogi']\").attr(\"src\", \"/asp/kyogi/04/pc/hayami01\" + raceNumber + \".htm\");",
+    "        $(\"iframe[name='kyogi']\").attr(\"src\", \"/asp/kyogi/04/pc/syusso01\" + raceNumber + \".htm\");",
+    "        $(\"iframe[name='kyogi']\").attr(\"src\", \"/asp/kyogi/04/pc/yoso02\" + raceNumber + \".htm\");",
+    "        $(\"iframe[name='kyogi']\").attr(\"src\", \"/asp/kyogi/04/pc/yoso06\" + raceNumber + \".htm\");",
+    "        $(\"iframe[name='kyogi']\").attr(\"src\", \"/asp/kyogi/04/pc/odds01\" + raceNumber + \".htm\");",
+    "        $(\"iframe[name='kyogi']\").attr(\"src\", \"/asp/kyogi/04/pc/odds05\" + raceNumber + \".htm\");",
+    "        $(\"iframe[name='kyogi']\").attr(\"src\", \"/asp/kyogi/04/pc/odds07\" + raceNumber + \".htm\");",
+    "        $(\"iframe[name='kyogi']\").attr(\"src\", \"/asp/kyogi/04/pc/odds02\" + raceNumber + \".htm\");",
+    "        $(\"iframe[name='kyogi']\").attr(\"src\", \"/asp/kyogi/04/pc/yoso05\" + raceNumber + \".htm\");",
+    "        $(\"iframe[name='kyogi']\").attr(\"src\", \"/asp/kyogi/04/pc/kekka01\" + raceNumber + \".htm\");"
+   ],
+   "https://www.heiwajima.gr.jp/js/jquery.colorbox.js": [
+    "// License: http://www.opensource.org/licenses/mit-license.php\r",
+    "\t\t\t\t$close.html(settings.close).show();\r",
+    "\t                setTimeout(function () {  // small delay before binding onresize due to an IE8 bug.\r",
+    "            $title.html(settings.title).add($loaded).show();\r",
+    "                    $current.html(settings.current.replace('{current}', index + 1).replace('{total}', total)).show();\r",
+    "                $next[(settings.loop || index < total - 1) ? \"show\" : \"hide\"]().html(settings.next);\r",
+    "                $prev[(settings.loop || index) ? \"show\" : \"hide\"]().html(settings.previous);\r",
+    "\t\t} else if (settings.html) {\r",
+    "\t\t\tprep(settings.html);\r"
+   ]
+  }
+ }
+}
