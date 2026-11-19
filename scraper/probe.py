@@ -1,37 +1,52 @@
-"""一回きり：各ボートレース場の公式サイトを下見する（boatrace.jp には一切アクセスしない）。
-トップページと robots.txt を1回ずつ読み、レース情報（出走表・直前情報・結果）へのリンクを書き出す。"""
+"""一回きり：各場の公式サイトのレース情報ページを下見（boatrace.jp には一切アクセスしない）。
+トップから見つけた同じサイト内のレース情報らしいページを読み、展示タイム・進入・結果の有無と、
+中身を別サイト（iframe など）から読んでいないかを調べる。"""
 import json, re, sys, time
 from pathlib import Path
 from urllib.parse import urljoin, urlparse
 import requests
 out = Path(sys.argv[1]); out.mkdir(parents=True, exist_ok=True)
 H = {"User-Agent": "teiyomi-bot/1.0 (personal race analysis; GitHub Actions)"}
-V = {1:"https://www.kiryu-kyotei.com/",2:"https://www.boatrace-toda.jp/",3:"https://www.boatrace-edogawa.com/",4:"https://www.heiwajima.gr.jp/",
-5:"https://www.boatrace-tamagawa.com/",6:"https://www.boatrace-hamanako.jp/",7:"https://www.gamagori-kyotei.com/",8:"https://www.boatrace-tokoname.jp/",
-9:"https://www.boatrace-tsu.com/",10:"https://www.boatrace-mikuni.jp/",11:"https://www.boatrace-biwako.jp/",12:"https://www.boatrace-suminoe.jp/",
-13:"https://www.boatrace-amagasaki.jp/",14:"https://www.n14.jp/",15:"https://www.marugameboat.jp/",16:"https://www.kojimaboat.jp/",
-17:"https://www.boatrace-miyajima.com/",18:"https://www.boatrace-tokuyama.jp/",19:"https://www.boatrace-shimonoseki.jp/",20:"https://www.wmb.jp/",
-21:"https://www.boatrace-ashiya.com/",22:"https://www.boatrace-fukuoka.com/",23:"https://www.boatrace-karatsu.jp/",24:"https://www.omurakyotei.jp/"}
-KW = re.compile(r"直前|展示|結果|出走|番組|race|before|result|syusso|tenji|chokuzen|kekka|odds|オッズ", re.I)
+V = json.loads((out / "venues.json").read_text(encoding="utf-8"))
+KW = re.compile(r"raceinfo|yosou|kekka|result|Race/|chokuzen|tenji|before|syusso|shusso|race\.php|racelist|01race|02kekka|timedata|konsetsu|直前|展示|結果|出走", re.I)
+BAD = re.compile(r"boatrace\.jp|\.pdf$|access|news|event|beginner|gourmet", re.I)
+def fetch(u):
+    r = requests.get(u, headers=H, timeout=20); r.encoding = r.apparent_encoding; return r
 rep = {}
-for j, u in V.items():
-    x = {"url": u}
-    for kind, url in (("robots", urljoin(u, "/robots.txt")), ("top", u)):
+for j, x in V.items():
+    host = urlparse(x["top_final"]).netloc
+    cands = []
+    for h, t in x.get("links", []):
+        if urlparse(h).netloc == host and KW.search(h + t) and not BAD.search(h) and h not in cands: cands.append(h)
+    res = []
+    seen = set()
+    queue = cands[:10]
+    while queue and len(res) < 16:
+        u = queue.pop(0)
+        if u in seen: continue
+        seen.add(u)
         try:
-            r = requests.get(url, headers=H, timeout=20)
-            r.encoding = r.apparent_encoding
-            x[kind + "_status"] = r.status_code; x[kind + "_final"] = r.url
-            if kind == "robots": x["robots"] = r.text[:1500] if r.ok else ""
-            else:
-                (out / f"{j:02d}_top.html").write_text(r.text, encoding="utf-8")
-                links = set()
-                for m in re.finditer(r'<a[^>]+href="([^"#]+)"[^>]*>(.*?)</a>', r.text, re.S | re.I):
-                    href = urljoin(r.url, m.group(1)); txt = re.sub(r"<[^>]+>|\s+", " ", m.group(2)).strip()[:30]
-                    if KW.search(href) or KW.search(txt): links.add((href, txt))
-                x["links"] = sorted(links)[:80]
+            r = fetch(u)
         except Exception as e:
-            x[kind + "_err"] = str(e)[:200]
+            res.append({"url": u, "err": str(e)[:100]}); continue
+        t = r.text
+        txt = re.sub(r"<[^>]+>", " ", t)
+        info = {"url": u, "status": r.status_code, "final": r.url, "len": len(t),
+                "展示": txt.count("展示"), "展示タイム": txt.count("展示タイム"), "進入": txt.count("進入"), "チルト": txt.count("チルト"),
+                "着順": txt.count("着順"), "決まり手": txt.count("決まり手"), "風速": txt.count("風速"), "部品": txt.count("部品"),
+                "iframe": re.findall(r'<iframe[^>]+src="([^"]+)"', t, re.I)[:5],
+                "ext_js": sorted({urlparse(s).netloc for s in re.findall(r'<script[^>]+src="(https?://[^"]+)"', t, re.I)})[:8],
+                "ajax": sorted(set(re.findall(r'["\'](https?://[^"\']*(?:json|api|ajax)[^"\']*)["\']', t, re.I)))[:5]}
+        res.append(info)
+        fn = out / "pages" / f"{int(j):02d}_{len(res):02d}.html"; fn.parent.mkdir(exist_ok=True); fn.write_text(t, encoding="utf-8")
+        info["file"] = fn.name
+        # 1段だけ深く：同じサイト内で、展示・直前・結果・レース番号らしいリンク
+        if r.ok and len(res) < 16:
+            for m in re.finditer(r'<a[^>]+href="([^"#]+)"[^>]*>(.*?)</a>', t, re.S | re.I):
+                h = urljoin(r.url, m.group(1)); tt = re.sub(r"<[^>]+>|\s+", "", m.group(2))[:20]
+                if urlparse(h).netloc == host and not BAD.search(h) and re.search(r"直前|展示|結果|[0-9]+R|chokuzen|tenji|kekka|race_?no|rno=", h + tt, re.I) and h not in seen and h not in queue:
+                    queue.append(h)
         time.sleep(2)
-    rep[j] = x
-    print(j, x.get("top_status"), x.get("robots_status"), len(x.get("links", [])), flush=True)
-(out / "venues.json").write_text(json.dumps(rep, ensure_ascii=False, indent=1), encoding="utf-8")
+    rep[j] = res
+    print(j, host, [(p.get("status"), p.get("展示タイム"), p.get("進入"), p.get("決まり手")) for p in res], flush=True)
+(out / "pages.json").write_text(json.dumps(rep, ensure_ascii=False, indent=1), encoding="utf-8")
