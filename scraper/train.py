@@ -137,6 +137,7 @@ def build(races):
         fflag = np.zeros(6)
         sm = np.zeros((6, 4))  # 人気モデル用: skill, motor, ex, 級別
         cls = np.zeros(6, dtype=int)
+        mkf = np.zeros((6, 3))  # 人気モデル用: 勝率・モーター2連率・展示（世間が見る数字なので2連率のまま）
         of = ori_feats(ORI.get(r["date"], {}).get(f'{r["jcd"]:02d}-{r["rno"]:02d}'))
         for i, b in enumerate(boats):
             nat = b["natWin"] or 5.0
@@ -156,11 +157,12 @@ def build(races):
                  "mfoot": sum(fs) / (len(fs) + MF_K), "madj": sum(rs_) / (len(rs_) + MA_K) / 2,
                  "olap": of[b["waku"] - 1][0], "oturn": of[b["waku"] - 1][1], "ostr": of[b["waku"] - 1][2]}
             x[i] = [v[k] for k in FEATS]
+            mkf[i] = [v["skill"], v["motor"], v["ex"]]
             fflag[i] = 1.0 if any((d - fd).days <= 180 for fd in f_dates[b["toban"]]) else 0.0
             cls[i] = CLS.index(b["cls"]) if b["cls"] in CLS else 2
         if ok:
             rows.append({
-                "date": r["date"], "jcd": r["jcd"], "course": np.array(courses) - 1, "x": x, "f": fflag, "cls": cls,
+                "date": r["date"], "jcd": r["jcd"], "course": np.array(courses) - 1, "x": x, "f": fflag, "cls": cls, "mk": mkf,
                 "w1": fin[1], "w2": fin.get(2, -1), "w3": fin.get(3, -1),
                 "payout": (r.get("tri") or {}).get("payout"), "order": (r.get("tri") or {}).get("order"),
             })
@@ -210,6 +212,7 @@ def stack(rows):
         "x": np.stack([r["x"] for r in rows]),
         "f": np.stack([r["f"] for r in rows]),
         "cls": np.stack([r["cls"] for r in rows]),
+        "mk": np.stack([r["mk"] for r in rows]),
         "w1": np.array([r["w1"] for r in rows]),
         "w2": np.array([r["w2"] for r in rows]),
         "w3": np.array([r["w3"] for r in rows]),
@@ -288,7 +291,7 @@ def order_index(orders):
 def market_logits(D, lnbase, lnplace, th):
     inner, kNat, kMot, kEx, cA1, cA2, cB2, kPl = th
     clsb = np.array([cA1, cA2, 0.0, cB2])[D["cls"]]
-    sm = kNat * D["x"][:, :, 0] + kMot * D["x"][:, :, 2] + kEx * D["x"][:, :, 5] + clsb
+    sm = kNat * D["mk"][:, :, 0] + kMot * D["mk"][:, :, 1] + kEx * D["mk"][:, :, 2] + clsb  # 11/20 列の取り違えを修正
     Lw = lnbase[D["venue"][:, None], D["course"]] + inner * (D["course"] == 0) + sm
     Lp = lnplace[D["course"]] + kPl * sm
     return Lw, Lp
