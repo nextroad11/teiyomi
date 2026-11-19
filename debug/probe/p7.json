@@ -1,0 +1,374 @@
+{
+ "venues": {
+  "1": {
+   "url": "https://www.kiryu-kyotei.com/asp/kyogi/01/pc/syusso0101.htm",
+   "status": 404,
+   "len": 13348,
+   "has": false
+  },
+  "2": {
+   "url": "https://www.boatrace-toda.jp/asp/kyogi/02/pc/syusso0101.htm",
+   "status": 404,
+   "len": 228,
+   "has": false
+  },
+  "3": {
+   "url": "https://www.boatrace-edogawa.com/asp/kyogi/03/pc/syusso0101.htm",
+   "status": 404,
+   "len": 196,
+   "has": false
+  },
+  "4": {
+   "url": "https://www.heiwajima.gr.jp/asp/kyogi/04/pc/syusso0101.htm",
+   "status": 200,
+   "len": 27112,
+   "has": true
+  },
+  "5": {
+   "url": "https://www.boatrace-tamagawa.com/asp/kyogi/05/pc/syusso0101.htm",
+   "status": 404,
+   "len": 16291,
+   "has": false
+  },
+  "6": {
+   "url": "https://www.boatrace-hamanako.jp/asp/kyogi/06/pc/syusso0101.htm",
+   "status": 404,
+   "len": 31692,
+   "has": false
+  },
+  "7": {
+   "url": "https://www.gamagori-kyotei.com/asp/kyogi/07/pc/syusso0101.htm",
+   "status": 404,
+   "len": 1658,
+   "has": false
+  },
+  "8": {
+   "url": "https://www.boatrace-tokoname.jp/asp/kyogi/08/pc/syusso0101.htm",
+   "status": 404,
+   "len": 26109,
+   "has": false
+  },
+  "9": {
+   "url": "https://www.boatrace-tsu.com/asp/kyogi/09/pc/syusso0101.htm",
+   "status": 404,
+   "len": 17754,
+   "has": false
+  },
+  "10": {
+   "url": "https://www.boatrace-mikuni.jp/asp/kyogi/10/pc/syusso0101.htm",
+   "status": 404,
+   "len": 17351,
+   "has": false
+  },
+  "11": {
+   "url": "https://www.boatrace-biwako.jp/asp/kyogi/11/pc/syusso0101.htm",
+   "status": 404,
+   "len": 20229,
+   "has": false
+  },
+  "12": {
+   "url": "https://www.boatrace-suminoe.jp/asp/kyogi/12/pc/syusso0101.htm",
+   "status": 200,
+   "len": 13847,
+   "has": false
+  },
+  "13": {
+   "url": "https://www.boatrace-amagasaki.jp/asp/kyogi/13/pc/syusso0101.htm",
+   "status": 404,
+   "len": 30197,
+   "has": false
+  },
+  "14": {
+   "url": "https://www.n14.jp/asp/kyogi/14/pc/syusso0101.htm",
+   "status": 404,
+   "len": 20559,
+   "has": false
+  },
+  "15": {
+   "url": "https://www.marugameboat.jp/asp/kyogi/15/pc/syusso0101.htm",
+   "status": 200,
+   "len": 75401,
+   "has": false
+  },
+  "16": {
+   "url": "https://www.kojimaboat.jp/asp/kyogi/16/pc/syusso0101.htm",
+   "status": 200,
+   "len": 14195,
+   "has": false
+  },
+  "17": {
+   "url": "https://www.boatrace-miyajima.com/asp/kyogi/17/pc/syusso0101.htm",
+   "status": 404,
+   "len": 1270,
+   "has": false
+  },
+  "18": {
+   "url": "https://www.boatrace-tokuyama.jp/asp/kyogi/18/pc/syusso0101.htm",
+   "status": 404,
+   "len": 16649,
+   "has": false
+  },
+  "19": {
+   "url": "https://www.boatrace-shimonoseki.jp/asp/kyogi/19/pc/syusso0101.htm",
+   "status": 404,
+   "len": 15051,
+   "has": false
+  },
+  "20": {
+   "url": "https://www.wmb.jp/asp/kyogi/20/pc/syusso0101.htm",
+   "status": 404,
+   "len": 38762,
+   "has": false
+  },
+  "21": {
+   "url": "https://www.boatrace-ashiya.com/asp/kyogi/21/pc/syusso0101.htm",
+   "status": 404,
+   "len": 19398,
+   "has": false
+  },
+  "22": {
+   "url": "https://www.boatrace-fukuoka.com/asp/kyogi/22/pc/syusso0101.htm",
+   "status": 404,
+   "len": 28471,
+   "has": false
+  },
+  "23": {
+   "url": "https://www.boatrace-karatsu.jp/asp/kyogi/23/pc/syusso0101.htm",
+   "status": 404,
+   "len": 18212,
+   "has": false
+  },
+  "24": {
+   "url": "https://www.omurakyotei.jp/asp/kyogi/24/pc/syusso0101.htm",
+   "status": 200,
+   "len": 98596,
+   "has": false
+  }
+ },
+ "guess": [
+  {
+   "name": "syusso0301.htm",
+   "status": 404,
+   "len": 22121,
+   "cnt": {
+    "展示タイム": 0,
+    "展示": 0,
+    "チルト": 0,
+    "進入": 0,
+    "スタート展示": 0,
+    "決まり手": 0,
+    "風速": 0,
+    "波高": 0,
+    "部品": 0
+   }
+  },
+  {
+   "name": "syusso0401.htm",
+   "status": 404,
+   "len": 22121,
+   "cnt": {
+    "展示タイム": 0,
+    "展示": 0,
+    "チルト": 0,
+    "進入": 0,
+    "スタート展示": 0,
+    "決まり手": 0,
+    "風速": 0,
+    "波高": 0,
+    "部品": 0
+   }
+  },
+  {
+   "name": "syusso0701.htm",
+   "status": 404,
+   "len": 22121,
+   "cnt": {
+    "展示タイム": 0,
+    "展示": 0,
+    "チルト": 0,
+    "進入": 0,
+    "スタート展示": 0,
+    "決まり手": 0,
+    "風速": 0,
+    "波高": 0,
+    "部品": 0
+   }
+  },
+  {
+   "name": "syusso0901.htm",
+   "status": 404,
+   "len": 22121,
+   "cnt": {
+    "展示タイム": 0,
+    "展示": 0,
+    "チルト": 0,
+    "進入": 0,
+    "スタート展示": 0,
+    "決まり手": 0,
+    "風速": 0,
+    "波高": 0,
+    "部品": 0
+   }
+  },
+  {
+   "name": "syusso1001.htm",
+   "status": 404,
+   "len": 22121,
+   "cnt": {
+    "展示タイム": 0,
+    "展示": 0,
+    "チルト": 0,
+    "進入": 0,
+    "スタート展示": 0,
+    "決まり手": 0,
+    "風速": 0,
+    "波高": 0,
+    "部品": 0
+   }
+  },
+  {
+   "name": "syusso1101.htm",
+   "status": 404,
+   "len": 22121,
+   "cnt": {
+    "展示タイム": 0,
+    "展示": 0,
+    "チルト": 0,
+    "進入": 0,
+    "スタート展示": 0,
+    "決まり手": 0,
+    "風速": 0,
+    "波高": 0,
+    "部品": 0
+   }
+  },
+  {
+   "name": "syusso1201.htm",
+   "status": 404,
+   "len": 22121,
+   "cnt": {
+    "展示タイム": 0,
+    "展示": 0,
+    "チルト": 0,
+    "進入": 0,
+    "スタート展示": 0,
+    "決まり手": 0,
+    "風速": 0,
+    "波高": 0,
+    "部品": 0
+   }
+  },
+  {
+   "name": "chokuzen0101.htm",
+   "status": 404,
+   "len": 22121,
+   "cnt": {
+    "展示タイム": 0,
+    "展示": 0,
+    "チルト": 0,
+    "進入": 0,
+    "スタート展示": 0,
+    "決まり手": 0,
+    "風速": 0,
+    "波高": 0,
+    "部品": 0
+   }
+  },
+  {
+   "name": "tenji0101.htm",
+   "status": 404,
+   "len": 22121,
+   "cnt": {
+    "展示タイム": 0,
+    "展示": 0,
+    "チルト": 0,
+    "進入": 0,
+    "スタート展示": 0,
+    "決まり手": 0,
+    "風速": 0,
+    "波高": 0,
+    "部品": 0
+   }
+  },
+  {
+   "name": "before0101.htm",
+   "status": 404,
+   "len": 22121,
+   "cnt": {
+    "展示タイム": 0,
+    "展示": 0,
+    "チルト": 0,
+    "進入": 0,
+    "スタート展示": 0,
+    "決まり手": 0,
+    "風速": 0,
+    "波高": 0,
+    "部品": 0
+   }
+  },
+  {
+   "name": "kekka0101.htm",
+   "status": 200,
+   "len": 15354,
+   "cnt": {
+    "展示タイム": 0,
+    "展示": 2,
+    "チルト": 0,
+    "進入": 0,
+    "スタート展示": 0,
+    "決まり手": 0,
+    "風速": 0,
+    "波高": 0,
+    "部品": 0
+   }
+  },
+  {
+   "name": "kekka0201.htm",
+   "status": 404,
+   "len": 22121,
+   "cnt": {
+    "展示タイム": 0,
+    "展示": 0,
+    "チルト": 0,
+    "進入": 0,
+    "スタート展示": 0,
+    "決まり手": 0,
+    "風速": 0,
+    "波高": 0,
+    "部品": 0
+   }
+  },
+  {
+   "name": "yoso0301.htm",
+   "status": 404,
+   "len": 22121,
+   "cnt": {
+    "展示タイム": 0,
+    "展示": 0,
+    "チルト": 0,
+    "進入": 0,
+    "スタート展示": 0,
+    "決まり手": 0,
+    "風速": 0,
+    "波高": 0,
+    "部品": 0
+   }
+  },
+  {
+   "name": "yoso0401.htm",
+   "status": 404,
+   "len": 22121,
+   "cnt": {
+    "展示タイム": 0,
+    "展示": 0,
+    "チルト": 0,
+    "進入": 0,
+    "スタート展示": 0,
+    "決まり手": 0,
+    "風速": 0,
+    "波高": 0,
+    "部品": 0
+   }
+  }
+ ]
+}
