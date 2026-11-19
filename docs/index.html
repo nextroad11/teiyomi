@@ -443,7 +443,14 @@ const sum=a=>a.reduce((x,y)=>x+y,0);
 const avg=a=>a.length?sum(a)/a.length:null;
 const clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
 
-function trifecta(boats,wk,pk){
+// 展開つき（11/20）：2着は1着の艇のコース、3着は1着・2着の艇のコースで強さを補正（train.py の tenkai）
+function trifecta(boats,wk,pk,tk){
+  if(tk&&tk.B2){const out={},W=sum(boats.map(b=>b[wk])),c=b=>b.course-1;
+    for(const a of boats){const d2=boats.filter(b=>b!==a).map(b=>b[pk]*Math.exp(tk.B2[c(a)][c(b)])),S2=sum(d2);
+      boats.filter(b=>b!==a).forEach((b,bi)=>{const p2=d2[bi]/S2,rest=boats.filter(x=>x!==a&&x!==b),
+        d3=rest.map(x=>x[pk]*Math.exp(tk.B3[c(a)][c(x)]+tk.C3[c(b)][c(x)])),S3=sum(d3);
+        rest.forEach((x,xi)=>{out[a.waku+'-'+b.waku+'-'+x.waku]=(a[wk]/W)*p2*(d3[xi]/S3);});});}
+    return out;}
   const W=sum(boats.map(b=>b[wk])),P=sum(boats.map(b=>b[pk])),out={};
   for(const a of boats)for(const b of boats){if(b===a)continue;for(const c of boats){if(c===a||c===b)continue;
     out[a.waku+'-'+b.waku+'-'+c.waku]=(a[wk]/W)*(b[pk]/(P-a[pk]))*(c[pk]/(P-a[pk]-b[pk]));}}
@@ -651,7 +658,7 @@ function analyze(race,exOverride){
       winW:Math.exp(Math.log(base[course-1])+w.kWin*(s+fPen)+windU(race.before,course,race.jcd)), plW:Math.exp(Math.log(PLACE[course-1])+w.kPlace*s+windU(race.before,course,race.jcd)),
       mWinW:Math.exp(Math.log(base[course-1])+(course===1?mk.inner:0)+sm), mPlW:Math.exp(Math.log(PLACE[course-1])+mk.kPlace*sm)};
   });
-  const ai=trifecta(boats,'winW','plW'), mkP=trifecta(boats,'mWinW','mPlW');
+  const ai=trifecta(boats,'winW','plW',MODEL.tenkai), mkP=trifecta(boats,'mWinW','mPlW');
   // 舟足評価: 展示タイム・モーターの遍歴（過去の実測の足・腕を差し引いた成績）を、学習した重みで足したもの（11/20 モーター2連率は外した）
   // 学習した重みがまだ無いうちは、オリジナル展示は控えめな仮の重み(0.15)で舟足に入れる
   boats.forEach(b=>{const o=OF[b.waku],ww=MODEL.weights;b.foot=(b.parts.ex||0)+(b.parts.mfoot||0)+(b.parts.madj||0)
@@ -1556,7 +1563,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='55';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='56';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
@@ -1642,7 +1649,7 @@ const BW_EV=1.2, BW_MINP=0.004, BW_MAX=6;   // 推奨の条件（期待値1.2以
 function bwRace(r,vmap,w){
   const a=A(r);if(!a)return null;
   const bs=a.boats.map(b=>{const e=vmap[b.toban],k=Math.exp(BW_BETA*(e?e.rt:0));return {...b,winW:b.winW*k,plW:b.plW*k};});
-  const P=trifecta(bs,'winW','plW'),odds=Object.fromEntries(a.combos.map(c=>[c.k,c]));
+  const P=trifecta(bs,'winW','plW',MODEL.tenkai),odds=Object.fromEntries(a.combos.map(c=>[c.k,c]));
   const W=sum(bs.map(b=>b.winW)),bb=bs.find(b=>b.waku===w);
   const p1=bb?bb.winW/W:0;let p2=0,p3=0;const cand=[];
   for(const k in P){const f=k.split('-').map(Number);if(f[0]===w||f[1]===w)p2+=P[k];if(f.includes(w))p3+=P[k];
