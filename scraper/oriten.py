@@ -29,7 +29,8 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
     s = requests.Session(); s.headers.update(H)
     t0, got, days = time.time(), 0, 0
-    files = sorted((f for f in (root / "history").glob("2*.json")), reverse=True)
+    # 11/20 殿の指示：今あるより古いデータは取らない（新モーターの期間を重視）。直近7日分だけ見る
+    files = sorted((f for f in (root / "history").glob("2*.json")), reverse=True)[:7]
     for f in files:
         dst = out / f.name
         races = json.loads(f.read_text(encoding="utf-8")).get("races", [])
