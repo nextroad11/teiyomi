@@ -376,7 +376,6 @@ table.card.st-tbl{min-width:0}.st-tbl td,.st-tbl th{padding-left:6px;padding-rig
     <button role="tab" id="tab-tobu" aria-selected="false" data-view="tobu">穴レース</button>
     <button role="tab" id="tab-man" aria-selected="false" data-view="man">万舟</button>
     <button role="tab" id="tab-pl" aria-selected="false" data-view="pl">選手</button>
-    <button role="tab" id="tab-odds" aria-selected="false" data-view="odds">オッズ</button>
     <button role="tab" id="tab-rec" aria-selected="false" data-view="rec">成績</button>
   </nav>
 </div></header>
@@ -399,9 +398,8 @@ table.card.st-tbl{min-width:0}.st-tbl td,.st-tbl th{padding-left:6px;padding-rig
   <section id="v-pl" hidden></section>
   <section id="v-table" hidden></section>
   <section id="v-self" hidden></section>
-  <section id="v-odds" hidden></section>
   <section id="v-rec" hidden></section>
-  <p class="disclaim">確率は公式の出走表・直前情報から計算した推定値で、的中を保証するものではありません。推定オッズは人気を予想したもので、実際のオッズとは異なります。舟券は20歳から、無理のない金額で。データ出典：BOAT RACE オフィシャルウェブサイト。</p>
+  <p class="disclaim">確率は公式の出走表・直前情報から計算した推定値で、的中を保証するものではありません。舟券は20歳から、無理のない金額で。データ出典：BOAT RACE オフィシャルウェブサイト。</p>
 </main>
 <div class="toast" id="toast" hidden></div>
 
@@ -725,7 +723,7 @@ let picks=LS.get('picks',{}), exMan=LS.get('ex',{}), resMan=LS.get('res',{}), hi
 
 /* ============ 状態とデータ ============ */
 let dates=[], dateSel=null, races=[], jcdSel=null, raceId=null, view=LS.get('view','yoso');
-if(!['yoso','table','self','bw','tobu','man','pl','odds','rec'].includes(view))view='yoso';
+if(!['yoso','table','self','bw','tobu','man','pl','rec'].includes(view))view='yoso';
 const calc={mode:'form',sel:[new Set([1]),new Set([2,3]),new Set([2,3,4])],stake:100};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -791,9 +789,9 @@ function renderChips(){
 }
 const cur=()=>races.find(r=>r.id===raceId)||null;
 function renderView(){
-  ['yoso','table','self','bw','tobu','man','pl','odds','rec'].forEach(v=>{$('#v-'+v).hidden=v!==view;$('#tab-'+v).setAttribute('aria-selected',v===view);});
+  ['yoso','table','self','bw','tobu','man','pl','rec'].forEach(v=>{$('#v-'+v).hidden=v!==view;$('#tab-'+v).setAttribute('aria-selected',v===view);});
   $('#chips').hidden=view==='rec'||view==='tobu'||view==='pl'||view==='bw'||view==='man';
-  if(view==='yoso')renderYoso();else if(view==='tobu')renderTobu();else if(view==='bw')renderBW();else if(view==='man')renderMan();else if(view==='pl')renderPlayers();else if(view==='self')renderSelf();else if(view==='table')renderTable();else if(view==='odds')renderOdds();else renderRec();
+  if(view==='yoso')renderYoso();else if(view==='tobu')renderTobu();else if(view==='bw')renderBW();else if(view==='man')renderMan();else if(view==='pl')renderPlayers();else if(view==='self')renderSelf();else if(view==='table')renderTable();else renderRec();
 }
 const emptyState=()=>`<div class="empty"><b>この日のレースデータはまだありません。</b><br>毎朝7時ごろに、その日の全場の出走表を自動で取り込みます。</div>`;
 const WIND=['','北','北北東','北東','東北東','東','東南東','南東','南南東','南','南南西','南西','西南西','西','西北西','北西','北北西'];
@@ -1137,7 +1135,7 @@ function areHtml(r,a,res){
   return `<div class="panel arep"><h3><span class="mark">荒れ狙い</span>50倍以上を12点以内で狙うフォーメーション（参考）</h3>
     <div class="expect man-hi"><span class="lbl">荒れる自信</span><b>高い</b><span class="num">50倍以上で決まる確率 ${pct(p50)}（全レースの平均は約27%）</span></div>
     <div class="forms plan"><div class="form"><span class="lbl">フォーメーション${B.pts}点</span>${leg(B.F)}<span class="arrow">→</span>${leg(B.S)}<span class="arrow">→</span>${leg(B.T)}</div></div>
-    <ul class="combo-list">${rows.map(c=>`<li class="combo${res&&res.order===c.k?' hit':''}"><span class="nums">${comboHtml(c.k)}</span><span class="bar"><span style="width:${Math.min(100,c.pAi/rows[0].pAi*100)}%"></span></span><span class="val">${pct(c.pAi)}<small>${c.real?'':'推定'}${odds(c.odds)}倍${c.odds<50?'・50倍未満':''}</small></span></li>`).join('')}</ul>
+    <ul class="combo-list">${rows.map(c=>`<li class="combo${res&&res.order===c.k?' hit':''}"><span class="nums">${comboHtml(c.k)}</span><span class="bar"><span style="width:${Math.min(100,c.pAi/rows[0].pAi*100)}%"></span></span><span class="val">${pct(c.pAi)}</span></li>`).join('')}</ul>
     <p class="foot">1点${yen(unit)}なら合計${yen(unit*B.pts)}。50倍以上の決着の${pct(B.c50/p50raw)}をこの${B.pts}点で押さえます。点数は4〜12点で、押さえる確率が1点あたり1%以上増えるところまで。<b>注意：11/5〜11の1週間（149レース）では的中10本・回収52%で負けています。</b>最初の3日の好成績（回収156%）はたまたまでした。11/19に作り直すまで、買うときは参考程度に。</p></div>`;}
 
 // ---------------------------------------------------------------- 展示で変わったこと（展示前＝出走表だけの予想と比べる）
@@ -1307,13 +1305,13 @@ function planHtml(a,res){
   const leg=l=>l.map(n=>bn(n)).join('');
   const fh=P.forms.map(f=>`<div class="form"><span class="lbl">${f.type==='BOX'?'3連単BOX':f.type}</span>${f.type==='BOX'?leg(f.legs[0]):f.legs.map(leg).join('<span class="arrow">→</span>')}</div>`).join('');
   return `<div class="panel plan honsen"><h3><span class="mark">買い方</span>${ready?'':'参考・'}金額は自信の度合いで配分</h3>
-    <p class="sub">${ready?'':'公式オッズでの実績を集計中のため参考です。'}${unit>0?`1点${yen(unit)}を基本に、確率の高い買い目ほど多く（最大${MAXMUL}倍）。`:`1レース${yen(-unit)}を、確率の高い買い目ほど多く配分。`}</p>
+    <p class="sub">${unit>0?`1点${yen(unit)}を基本に、確率の高い買い目ほど多く（最大${MAXMUL}倍）。`:`1レース${yen(-unit)}を、確率の高い買い目ほど多く配分。`}</p>
     <div class="unit"><label for="unit">金額</label><select id="unit">
       <optgroup label="1レースの予算">${[1000,3000,5000,10000].map(v=>`<option value="${-v}"${-v===unit?' selected':''}>予算 ${yen(v)}</option>`).join('')}</optgroup>
       <optgroup label="1点の基本">${[100,500,1000,2000,3000,5000].map(v=>`<option value="${v}"${v===unit?' selected':''}>1点 ${yen(v)}〜</option>`).join('')}</optgroup></select></div>
     <div class="forms">${fh}</div>
-    <table><thead><tr><th>買い目</th><th>確率</th><th>オッズ</th><th>金額</th><th>当たれば</th></tr></thead><tbody>
-    ${P.rows.map(x=>`<tr class="${x.mul>1?'big':''}${res&&res.order===x.k?' hit':''}"><td>${comboHtml(x.k)}</td><td>${pct(x.pAi)}</td><td>${x.real?'':'推定'}${odds(x.odds)}</td><td>${yen(x.stake)}</td><td class="${x.gami?'warn':''}">${yen(x.back)}${x.gami?' 損':''}</td></tr>`).join('')}
+    <table><thead><tr><th>買い目</th><th>確率</th><th>金額</th><th>当たれば<small>（推定）</small></th></tr></thead><tbody>
+    ${P.rows.map(x=>`<tr class="${x.mul>1?'big':''}${res&&res.order===x.k?' hit':''}"><td>${comboHtml(x.k)}</td><td>${pct(x.pAi)}</td><td>${yen(x.stake)}</td><td class="${x.gami?'warn':''}">${yen(x.back)}${x.gami?' 損':''}</td></tr>`).join('')}
     </tbody></table>
     <p class="foot">合計 ${yen(P.total)}・${P.rows.length}点・的中確率 ${pct(P.hitP)}・期待回収 ${(P.evBack/P.total*100).toFixed(0)}%${P.rows.some(x=>x.gami)?'・「損」は当たっても合計を下回る買い目':''}</p></div>`;
 }
@@ -1323,7 +1321,7 @@ function renderYoso(){
   const a=A(r); if(!a){el.innerHTML=`<div class="empty">このレースは出走データが不完全です。</div>`;return;}
   const lv=LEVEL[a.level], p=pk(r.id), res=resultOf(r), bf=r.before||{};
   const maxWin=Math.max(...a.boats.map(b=>b.pWin));
-  const rowC=(c,ana)=>`<li class="combo${res&&res.order===c.k?' hit':''}"><span class="nums">${comboHtml(c.k)}</span><span class="bar"><span style="width:${Math.min(100,c.pAi/a.combos[0].pAi*100)}%"></span></span><span class="val">${pct(c.pAi)}<small>${ana?'人気比×'+c.ratio.toFixed(1)+' / ':''}${c.real?'':'推定'}${odds(c.odds)}倍</small></span></li>`;
+  const rowC=(c,ana)=>`<li class="combo${res&&res.order===c.k?' hit':''}"><span class="nums">${comboHtml(c.k)}</span><span class="bar"><span style="width:${Math.min(100,c.pAi/a.combos[0].pAi*100)}%"></span></span><span class="val">${pct(c.pAi)}${ana?`<small>人気比×${c.ratio.toFixed(1)}</small>`:''}</span></li>`;
   const anaEV=a.ana.length?avg(a.ana.map(c=>c.ev)):0;
   const wx=[bf.weather,windTxt(bf),bf.wave!=null?'波'+bf.wave+'cm':null].filter(Boolean).join(' ');
   el.innerHTML=`<div style="display:grid;gap:18px">
@@ -1338,7 +1336,7 @@ function renderYoso(){
         <ul class="combo-list">${a.honsen.map(c=>rowC(c,false)).join('')}</ul></div>
       <div class="panel ana"><h3><span class="mark">穴</span>人気より強いと見た買い目</h3>
         <div class="expect man-${manOf(a.manP).cls}"><span class="lbl">万舟期待</span><b>${manOf(a.manP).t}</b><span class="num">万舟になる確率 ${pct(a.manP)}（全レースの平均は約${Math.round(MAN_AVG*100)}%）</span></div>
-        <p class="sub">${a.real&&!(MODEL.live&&MODEL.live.ready)?'参考（オッズでの実績を集計中のため2点まで）。':''}${a.real?`公式オッズ（${a.real.final?'締切時点':(a.real.at||'').slice(11,16)+'時点'}）で`:'推定'}${MODEL.ana.minOdds}倍以上、AI確率が人気の${MODEL.ana.minRatio}倍以上のもの</p>
+        <p class="sub">AIの確率が、AIが推定した人気の${MODEL.ana.minRatio}倍以上ある買い目（人気薄に限る）</p>
         ${a.ana.length?`<ul class="combo-list">${a.ana.map(c=>rowC(c,true)).join('')}</ul>
         <p class="foot">${a.ana.length}点の的中確率 ${pct(sum(a.ana.map(c=>c.pAi)))}・1点あたり期待値 ${(anaEV*100).toFixed(0)}%</p>`
         :`<p class="sub">人気とのズレが小さく、狙える穴が見つかりません。見送り候補です。</p>`}</div>
@@ -1449,7 +1447,7 @@ function renderTable(){
   const a=A(r); if(!a){el.innerHTML=`<div class="empty">このレースは出走データが不完全です。</div>`;return;}
   const res=resultOf(r), bf=r.before||{};
   const maxWin=Math.max(...a.boats.map(b=>b.pWin));
-  const rowC=(c,ana)=>`<li class="combo${res&&res.order===c.k?' hit':''}"><span class="nums">${comboHtml(c.k)}</span><span class="bar"><span style="width:${Math.min(100,c.pAi/a.combos[0].pAi*100)}%"></span></span><span class="val">${pct(c.pAi)}<small>${ana?'人気比×'+c.ratio.toFixed(1)+' / ':''}${c.real?'':'推定'}${odds(c.odds)}倍</small></span></li>`;
+  const rowC=(c,ana)=>`<li class="combo${res&&res.order===c.k?' hit':''}"><span class="nums">${comboHtml(c.k)}</span><span class="bar"><span style="width:${Math.min(100,c.pAi/a.combos[0].pAi*100)}%"></span></span><span class="val">${pct(c.pAi)}${ana?`<small>人気比×${c.ratio.toFixed(1)}</small>`:''}</span></li>`;
   const anaEV=a.ana.length?avg(a.ana.map(c=>c.ev)):0;
   const wx=[bf.weather,windTxt(bf),bf.wave!=null?'波'+bf.wave+'cm':null].filter(Boolean).join(' ');
   el.innerHTML=`<div style="display:grid;gap:14px">
@@ -1486,7 +1484,7 @@ function renderSelf(){
   const a=A(r); if(!a){el.innerHTML=`<div class="empty">このレースは出走データが不完全です。</div>`;return;}
   const lv=LEVEL[a.level], p=pk(r.id), res=resultOf(r), bf=r.before||{};
   const maxWin=Math.max(...a.boats.map(b=>b.pWin));
-  const rowC=(c,ana)=>`<li class="combo${res&&res.order===c.k?' hit':''}"><span class="nums">${comboHtml(c.k)}</span><span class="bar"><span style="width:${Math.min(100,c.pAi/a.combos[0].pAi*100)}%"></span></span><span class="val">${pct(c.pAi)}<small>${ana?'人気比×'+c.ratio.toFixed(1)+' / ':''}${c.real?'':'推定'}${odds(c.odds)}倍</small></span></li>`;
+  const rowC=(c,ana)=>`<li class="combo${res&&res.order===c.k?' hit':''}"><span class="nums">${comboHtml(c.k)}</span><span class="bar"><span style="width:${Math.min(100,c.pAi/a.combos[0].pAi*100)}%"></span></span><span class="val">${pct(c.pAi)}${ana?`<small>人気比×${c.ratio.toFixed(1)}</small>`:''}</span></li>`;
   const anaEV=a.ana.length?avg(a.ana.map(c=>c.ev)):0;
   el.innerHTML=`<div style="display:grid;gap:18px">
     ${raceHead(r,a)}
@@ -1510,7 +1508,7 @@ function copyForClaude(r,a){
   const data={レース:`${fmtDate(r.date)} ${r.venue||VENUES[r.jcd]} ${r.rno}R ${r.name||''} ${r.distance||''}m 締切${r.deadline||''}`,
     風波:r.before?{風速:r.before.windSpeed,波高:r.before.wave}:null,
     艇:a.boats.map(b=>({枠:b.waku,選手:b.name,級:b.cls,全国勝率:b.natWin,当地勝率:b.locWin,モーター2連:b.motor2,ST:b.st,F:b.f,展示:b.exTime,チルト:b.tilt,進入:b.course,AI1着率:+(b.pWin*100).toFixed(1)})),
-    AI本線:a.honsen.map(c=>`${c.k} ${(c.pAi*100).toFixed(1)}%`),AI穴:a.ana.map(c=>`${c.k} ${(c.pAi*100).toFixed(1)}% ${c.real?'オッズ':'推定'}${odds(c.odds)}倍`)};
+    AI本線:a.honsen.map(c=>`${c.k} ${(c.pAi*100).toFixed(1)}%`),AI穴:a.ana.map(c=>`${c.k} ${(c.pAi*100).toFixed(1)}%`)};
   const text=`艇読みAIのこのレースを解説して。展開予想、本線と穴の根拠、注意点を短く。\n${JSON.stringify(data)}`;
   const done=()=>toast('コピーしました。Claudeのチャットに貼り付けてください');
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done,()=>fallbackCopy(text,done));}else fallbackCopy(text,done);
@@ -1524,7 +1522,7 @@ function calcCombos(){const out=[];
   return out.sort();}
 function statsHtml(list,r,a,map){const hitP=a?sum(list.map(k=>map[k]?.pAi||0)):0,back=a?sum(list.map(k=>(map[k]?.pAi||0)*(map[k]?.odds||0)))*calc.stake:0;
   return `<div class="stat"><span>点数</span><b>${list.length}点</b></div><div class="stat"><span>合計金額</span><b>${yen(list.length*calc.stake)}</b></div>${a?`<div class="stat"><span>AI的中確率（${r.rno}R）</span><b>${pct(hitP)}</b></div><div class="stat"><span>推定回収の期待値</span><b>${list.length?Math.round(back/(list.length*calc.stake)*100)+'%':'-'}</b></div>`:''}`;}
-const gridHtml=(list,map)=>list.map(k=>`<div class="cg"><span class="nums">${comboHtml(k)}</span>${map[k]?`<span>${pct(map[k].pAi)}・${odds(map[k].odds)}倍</span>`:''}</div>`).join('');
+const gridHtml=(list,map)=>list.map(k=>`<div class="cg"><span class="nums">${comboHtml(k)}</span>${map[k]?`<span>${pct(map[k].pAi)}</span>`:''}</div>`).join('');
 function renderCalc(){
   const el=$('#v-calc'), r=cur(), a=r?A(r):null, map=a?Object.fromEntries(a.combos.map(c=>[c.k,c])):{};
   const rows=calc.mode==='box'?[['ボックス',0]]:[['1着',0],['2着',1],['3着',2]], list=calcCombos();
@@ -1538,7 +1536,7 @@ function renderCalc(){
     </div>
     <div class="stats" id="cstats">${statsHtml(list,r,a,map)}</div>
     <div class="combo-grid" id="cgrid">${gridHtml(list,map)}</div>
-    ${a?`<p class="hint">確率と倍率は${esc(r.venue||'')}${r.rno}Rの推定値です。倍率は人気の推定で、実際のオッズとは違います。</p>`:''}
+    ${a?`<p class="hint">確率は${esc(r.venue||'')}${r.rno}Rの推定値です。</p>`:''}
   </div>`;
   const showList=ks=>{$('#cstats').innerHTML=statsHtml(ks,r,a,map);$('#cgrid').innerHTML=gridHtml(ks,map);el.querySelectorAll('.tog').forEach(b=>b.setAttribute('aria-pressed','false'));};
   el.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{calc.mode=b.dataset.mode;renderCalc();});
@@ -1566,7 +1564,7 @@ function bwRace(r,vmap,w){
   return {a,p1,p2:Math.min(1,p2),p3:Math.min(1,p3),rec,best:cand.length?Math.max(...cand.map(c=>c.ev)):null,real:!!a.real};
 }
 function bwIntro(extra){
-  return `<div class="panel"><h3>B級ウォッチ</h3><p class="hint" style="margin-top:0">「勝負」になったレースは、展示が出そろったあとにスマホへ通知します（オッズの基準は検証中）。</p>
+  return `<div class="panel"><h3>B級ウォッチ</h3><p class="hint" style="margin-top:0">「勝負」になったレースは、展示が出そろったあとにスマホへ通知します。</p>
     <p class="sub">各開催の<b>前日までの足スコア</b>（オリジナル展示＋展示タイム）を開催全体でまとめて評価し、B級選手をS〜Dの5段階にしました。水面・風・時間帯の差はレースごとに差し引いています。今日の展示や結果は評価に使っていません（毎朝決まる評価）。</p>
     <details><summary class="sub">評価の根拠（過去1年のうち、基準づくりに使っていない後半の期間）</summary>
     <table class="bw-tbl"><tr><th>評価</th><th>1着</th><th>2連対</th><th>3連対</th><th>1着流しの回収率</th></tr>
@@ -1575,7 +1573,7 @@ function bwIntro(extra){
     <tr><td>B（25〜45%）</td><td>11.8%</td><td>26.2%</td><td>42.4%</td><td>62%</td></tr>
     <tr><td>C（45〜70%）</td><td>9.1%</td><td>22.8%</td><td>38.6%</td><td>52%</td></tr>
     <tr><td>D（下位30%）</td><td>7.1%</td><td>18.2%</td><td>31.7%</td><td>48%</td></tr></table>
-    <p class="hint">計測1走だけの選手は1段階下げ、B2は最高A、足の評価が効きにくい場（江戸川・住之江・三国・蒲郡）は最高Bです。評価だけで毎回買うと回収率は100%に届かないので、<b>オッズが割に合うときだけ</b>推奨を出します（期待値${BW_EV}以上。この基準はオッズの記録で検証中）。取得できないデータ：スリットの行き足・1マークの旋回内容・着順に出ない不利。</p></details>
+    <p class="hint">計測1走だけの選手は1段階下げ、B2は最高A、足の評価が効きにくい場（江戸川・住之江・三国・蒲郡）は最高Bです。評価だけで毎回買うと回収率は100%に届かない点に注意してください。取得できないデータ：スリットの行き足・1マークの旋回内容・着順に出ない不利。</p></details>
     ${extra||''}
     <div class="seg" role="group" aria-label="表示"><button data-s="SA" aria-pressed="${bwShow==='SA'}">S・Aだけ</button><button data-s="SAB" aria-pressed="${bwShow==='SAB'}">Bまで</button></div></div>`;
 }
@@ -1596,10 +1594,10 @@ function renderBW(){
         const x=bwRace(r,vmap,w);if(!x)return '';
         const res=resultOf(r),done=!!(res&&res.order),fin=done?res.order.split('-').map(Number).indexOf(w)+1:0;
         if(done){sumN++;if(fin>=1&&fin<=3)sumIn3++;}
-        const aim=done?['no','終了']:!x.real?['no','オッズ待ち']:x.rec.length&&'SA'.includes(p.grade)&&x.p2>=0.2?['go','勝負']:x.rec.length?['ok','狙い']:['no','見送り（期待値不足）'];
+        const aim=done?['no','終了']:!x.real?null:x.rec.length&&'SA'.includes(p.grade)&&x.p2>=0.2?['go','勝負']:x.rec.length?['ok','狙い']:['no','見送り（期待値不足）'];
         const recs=x.rec.map(c=>`<span class="${done&&res.order===c.k?'hit':''}">${c.k} ${c.odds}倍 <small>期待値${c.ev.toFixed(2)}</small></span>`).join('');
         return `<button class="bw-race" data-id="${esc(r.id)}"><div class="row"><b>${rno}R</b><span>${esc(r.deadline||'')}</span>${bn(w)}
-          <span>1着 ${pc(x.p1)}・2着以内 ${pc(x.p2)}・3着以内 ${pc(x.p3)}</span><span class="bw-aim ${aim[0]}">${aim[1]}</span>
+          <span>1着 ${pc(x.p1)}・2着以内 ${pc(x.p2)}・3着以内 ${pc(x.p3)}</span>${aim?`<span class="bw-aim ${aim[0]}">${aim[1]}</span>`:''}
           ${done?`<span>結果 ${esc(res.order)}（${fin?fin+'着':'着外'}）</span>`:''}</div>
           ${recs&&!done?`<div class="bw-recs">${recs}</div><small style="color:var(--muted)">推奨は各100円から。この選手を1着か2着に置いた3連単のうち、期待値の高い順</small>`:x.best!=null&&!done?`<small style="color:var(--muted)">一番良い組でも期待値${x.best.toFixed(2)}</small>`:''}</button>`;}).join('');
       return `<div class="bw-pl"><div class="bw-head"><span class="bw-g ${p.grade}">${p.grade}</span><b class="pl-link" data-toban="${p.toban}">${esc(p.name||'')}</b><span class="tag">${esc(p.cls)}</span>
