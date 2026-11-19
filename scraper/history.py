@@ -38,6 +38,7 @@ def download_text(kind: str, day: dt.date) -> str | None:
         print(f"  {url}: {e}")
         return None
     if r.status_code != 200 or len(r.content) < 100:
+        print(f"  {url}: HTTP {r.status_code} {len(r.content)}B", flush=True)
         return None
     with tempfile.TemporaryDirectory() as td:
         (Path(td) / "a.lzh").write_bytes(r.content)
