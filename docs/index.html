@@ -393,6 +393,7 @@ table.card.st-tbl{min-width:0}.st-tbl td,.st-tbl th{padding-left:6px;padding-rig
     <select id="date" aria-label="日付を選ぶ"></select>
     <select id="venue" aria-label="レース場を選ぶ"></select>
     <span class="note" id="loadnote">データを読み込み中…</span>
+    <button class="btn ghost" id="saionji" type="button">SAIONJI用に今日の予想をまとめてコピー</button>
   </div>
   <div class="chips" id="chips" role="group" aria-label="レースを選ぶ"></div>
   <section id="v-yoso"></section>
@@ -1508,6 +1509,30 @@ function renderSelf(){
   $('#ask').addEventListener('click',()=>copyForClaude(r,a));
 }
 
+// SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
+function saionjiDay(){
+  const r4=v=>v==null||!isFinite(v)?null:Math.round(v*10000)/10000;
+  const out={format:'saionji-day-v1',date:dateSel,generatedAt:new Date().toISOString(),
+    engine:{commit:null,modelTrainedAt:(MODEL&&MODEL.trainedAt)||null},races:[]};
+  races.slice().sort((x,y)=>(x.deadline||'').localeCompare(y.deadline||'')||x.jcd-y.jcd||x.rno-y.rno).forEach(r=>{
+    let a=null;try{a=A(r);}catch(_){a=null;}
+    if(!a)return;
+    out.races.push({id:r.id,jcd:r.jcd,venue:r.venue||VENUES[r.jcd]||null,rno:r.rno,name:r.name||null,grade:r.grade||null,deadline:r.deadline||null,
+      beforeComplete:!!(r.before&&r.before.complete),
+      level:a.level??null,manP:r4(a.manP),tobu:r4(a.one&&a.one.tobu),
+      honsen:(a.honsen||[]).map(c=>({k:c.k,p:r4(c.pAi)})),
+      ana:(a.ana||[]).map(c=>({k:c.k,p:r4(c.pAi)})),
+      boats:a.boats.map(b=>({waku:b.waku,name:b.name??null,cls:b.cls??null,natWin:b.natWin??null,locWin:b.locWin??null,motor2:b.motor2??null,
+        st:b.st??null,f:b.f??null,exTime:b.exTime??null,course:b.course??null,pWin:r4(b.pWin),footGrade:b.footGrade??null}))});
+  });
+  return out;
+}
+function copySaionji(){
+  if(!races.length){toast('この日のレースがありません');return;}
+  const o=saionjiDay(), text=JSON.stringify(o);
+  const done=()=>toast(`${o.races.length}レース分をコピーしました`);
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done,()=>fallbackCopy(text,done));}else fallbackCopy(text,done);
+}
 function copyForClaude(r,a){
   const data={レース:`${fmtDate(r.date)} ${r.venue||VENUES[r.jcd]} ${r.rno}R ${r.name||''} ${r.distance||''}m 締切${r.deadline||''}`,
     風波:r.before?{風速:r.before.windSpeed,波高:r.before.wave}:null,
@@ -1753,6 +1778,7 @@ function renderRec(){
 
 /* ============ 起動 ============ */
 $('#date').addEventListener('change',e=>{dateSel=e.target.value;raceId=null;loadDay();});
+$('#saionji').addEventListener('click',copySaionji);
 $('#venue').addEventListener('change',e=>{jcdSel=+e.target.value;LS.set('jcd',jcdSel);raceId=null;renderChips();renderView();});
 $('#chips').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;raceId=b.dataset.id;renderChips();renderView();});
 document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>{view=b.dataset.view;LS.set('view',view);renderView();}));
