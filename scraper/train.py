@@ -29,7 +29,9 @@ import os
 MOTOR_MODE = os.environ.get("MOTOR_MODE", "new")   # old: 2連率と直近着順 / new: 新しい2つ / both: 全部（比較用）
 _MF = {"old": ["motor", "mform"], "new": ["mfoot", "madj"], "both": ["motor", "mform", "mfoot", "madj"]}[MOTOR_MODE]
 FEATS = ["skill", "local", *[k for k in _MF if k == "motor"], "boat", "st", "ex", "cwin", "form",
-         *[k for k in _MF if k != "motor"], "olap", "oturn", "ostr"]
+         *[k for k in _MF if k != "motor"], "olap", "oturn", "ostr", "nozoki", "wall", "dash"]
+# スリットの隊形（11/20 追加。st は平均STの速さ）：nozoki＝すぐ内の艇より速い、wall＝1コースが2コースより速い、
+# dash＝4〜6コースが1〜3コースの平均より速い
 PTS = {1: 10, 2: 8, 3: 6, 4: 4, 5: 2, 6: 1}
 CADJ = {1: 2.39, 2: 0.21, 3: 0.07, 4: -0.37, 5: -0.93, 6: -1.59}  # コースごとの着順点の上乗せ（過去1年の前半から）
 MF_K, MA_K = 5, 10
@@ -137,7 +139,7 @@ def build(races):
         fflag = np.zeros(6)
         sm = np.zeros((6, 4))  # 人気モデル用: skill, motor, ex, 級別
         cls = np.zeros(6, dtype=int)
-        mkf = np.zeros((6, 3))  # 人気モデル用: 勝率・モーター2連率・展示（世間が見る数字なので2連率のまま）
+        mkf = np.zeros((6, 3)); stz = np.zeros(6); crs = np.zeros(6, dtype=int)  # 人気モデル用: 勝率・モーター2連率・展示（世間が見る数字なので2連率のまま）
         of = ori_feats(ORI.get(r["date"], {}).get(f'{r["jcd"]:02d}-{r["rno"]:02d}'))
         for i, b in enumerate(boats):
             nat = b["natWin"] or 5.0
@@ -155,11 +157,21 @@ def build(races):
                  "cwin": cwin_of(cw[b["toban"]][c - 1], c), "form": form_of(recent[b["toban"]][-10:], 3),
                  "mform": form_of(motorf[f'{r["jcd"]}-{b["motor"]}'][-20:], 5),
                  "mfoot": sum(fs) / (len(fs) + MF_K), "madj": sum(rs_) / (len(rs_) + MA_K) / 2,
-                 "olap": of[b["waku"] - 1][0], "oturn": of[b["waku"] - 1][1], "ostr": of[b["waku"] - 1][2]}
+                 "olap": of[b["waku"] - 1][0], "oturn": of[b["waku"] - 1][1], "ostr": of[b["waku"] - 1][2],
+                 "nozoki": 0.0, "wall": 0.0, "dash": 0.0}
             x[i] = [v[k] for k in FEATS]
+            stz[i] = v["st"]; crs[i] = c - 1
             mkf[i] = [v["skill"], v["motor"], v["ex"]]
             fflag[i] = 1.0 if any((d - fd).days <= 180 for fd in f_dates[b["toban"]]) else 0.0
             cls[i] = CLS.index(b["cls"]) if b["cls"] in CLS else 2
+        if len(set(crs.tolist())) == 6:
+            byc = np.zeros(6); byc[crs] = stz
+            for i in range(6):
+                c = crs[i]
+                if "nozoki" in FEATS:
+                    x[i, FEATS.index("nozoki")] = np.clip(stz[i] - byc[c - 1], -4, 4) if c > 0 else 0.0
+                    x[i, FEATS.index("wall")] = np.clip(stz[i] - byc[1], -4, 4) if c == 0 else 0.0
+                    x[i, FEATS.index("dash")] = np.clip(stz[i] - byc[:3].mean(), -4, 4) if c >= 3 else 0.0
         if ok:
             rows.append({
                 "date": r["date"], "jcd": r["jcd"], "course": np.array(courses) - 1, "x": x, "f": fflag, "cls": cls, "mk": mkf,

@@ -626,6 +626,10 @@ function analyze(race,exOverride){
   const base=MODEL.baseVenue[race.jcd]||MODEL.baseDefault;
   const m2Mean=avg(B.map(b=>num(b.motor2)).filter(v=>v!=null));
   const ORI=race.before&&race.before.ori, OF=oriFeats(ORI);
+  // スリットの隊形（11/20）：コースごとの平均STの速さ
+  const stzOf=b=>-clamp(((num(b.st)??0.17)-0.16)/0.025,-2.5,2.5), SZ={};
+  B.forEach(b=>{SZ[clamp(num(ex[b.waku].course)||b.waku,1,6)]=stzOf(b);});
+  const slitOK=Object.keys(SZ).length===6, SM3=slitOK?(SZ[1]+SZ[2]+SZ[3])/3:0;
   const boats=B.map((b,i)=>{
     const course=clamp(num(ex[b.waku].course)||b.waku,1,6);
     const nat=num(b.natWin)??5.0, loc=num(b.locWin), locEff=(loc&&loc>0)?loc:nat;
@@ -636,7 +640,10 @@ function analyze(race,exOverride){
       cwin:(w.cwin||0)*cwinOf(b.toban,course), form:(w.form||0)*formOf(STATS&&STATS.p[String(b.toban)]?.rf.slice(-10),3),
       mform:(w.mform||0)*formOf(STATS&&STATS.m[`${race.jcd}-${b.motor}`]?.slice(-20),5),
       mfoot:(w.mfoot||0)*(mt?mt[0]:0), madj:(w.madj||0)*(mt?mt[1]:0),
-      olap:(w.olap||0)*OF[b.waku][0], oturn:(w.oturn||0)*OF[b.waku][1], ostr:(w.ostr||0)*OF[b.waku][2]};
+      olap:(w.olap||0)*OF[b.waku][0], oturn:(w.oturn||0)*OF[b.waku][1], ostr:(w.ostr||0)*OF[b.waku][2],
+      nozoki:slitOK&&course>1?(w.nozoki||0)*clamp(stzOf(b)-SZ[course-1],-4,4):0,
+      wall:slitOK&&course===1?(w.wall||0)*clamp(stzOf(b)-SZ[2],-4,4):0,
+      dash:slitOK&&course>=4?(w.dash||0)*clamp(stzOf(b)-SM3,-4,4):0};
     const s=sum(Object.values(parts)), fPen=f>0?-w.fPen:0;
     const mk=MODEL.market, exF=(exMean!=null&&exT[i]!=null)?-clamp((exT[i]-exMean)/0.07,-2.5,2.5):0;
     const sm=mk.kNat*(nat-5.5)/1.2+mk.kMotor*(m2-35)/8+mk.kEx*exF+(mk.cls[b.cls]??0);
@@ -1563,7 +1570,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='56';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='57';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
