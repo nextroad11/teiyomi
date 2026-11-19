@@ -20,7 +20,6 @@ jobs:
       - run: python scraper/probe.py data/debug/probe
       - uses: actions/upload-artifact@v4
         with: { name: probe, path: data/debug/probe/, retention-days: 3 }
-      - run: rm -rf data/debug/probe/p3 data/debug/probe/p3.json
       - working-directory: data
         run: |
           git config user.name "teiyomi-bot"

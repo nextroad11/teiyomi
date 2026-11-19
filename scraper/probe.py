@@ -49,9 +49,11 @@ for j, x in V.items():
         tx = text(r.text)
         c = {k: tx.count(k) for k in ["展示タイム", "展示", "チルト", "進入", "スタート展示", "決まり手", "風速", "波高", "着順", "ST"]}
         js = re.findall(r'(?:url|src|fetch|load|get|ajax)\s*[:(=]\s*["\']([^"\']+\.(?:php|json|htm|html)[^"\']*)["\']', r.text, re.I)[:6]
-        fn = f"{int(j):02d}_{len(pages)+1:02d}.html"; (out / "p3" / fn).write_text(r.text, encoding="utf-8")
+        fn = f"{int(j):02d}_{len(pages)+1:02d}.txt"; (out / "p3" / fn).write_text(tx[:60000], encoding="utf-8")
+        anchors = [(urljoin(r.url, m.group(1)), text(m.group(2))[:24]) for m in re.finditer(r'<a[^>]+href="([^"#]+)"[^>]*>(.*?)</a>', r.text, re.S | re.I)]
+        anchors = [(h, t3) for h, t3 in anchors if re.search(r"直前|展示|スタート|結果|オッズ|出走", t3)][:40]
         pages.append({"url": u, "title": tt, "status": r.status_code, "file": fn, "cnt": c, "js": js,
-                      "iframe": [s for s in re.findall(r'<iframe[^>]+src="([^"]+)"', r.text, re.I) if "googletag" not in s][:3]})
+                      "anchors": anchors, "iframe": [s for s in re.findall(r'<iframe[^>]+src="([^"]+)"', r.text, re.I) if "googletag" not in s][:3]})
         if d < 3:
             for m in re.finditer(r'<a[^>]+href="([^"#]+)"[^>]*>(.*?)</a>', r.text, re.S | re.I):
                 h = urljoin(r.url, m.group(1)); t2 = text(m.group(2))[:20]
