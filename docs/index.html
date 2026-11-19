@@ -618,24 +618,27 @@ function analyze(race,exOverride){
   const boats=B.map((b,i)=>{
     const course=clamp(num(ex[b.waku].course)||b.waku,1,6);
     const nat=num(b.natWin)??5.0, loc=num(b.locWin), locEff=(loc&&loc>0)?loc:nat;
+    const mt=STATS&&STATS.mt&&STATS.mt[`${race.jcd}-${b.motor}`];  // モーターの遍歴 [過去の実測の足, 腕を差し引いた成績, 走数]
     const m2=num(b.motor2)>0?num(b.motor2):33, b2=num(b.boat2)>0?num(b.boat2):33, st=num(b.st)??0.17, f=num(b.f)||0;
-    const parts={skill:w.skill*(nat-5.5)/1.2, local:w.local*(locEff-nat)/1.2, motor:w.motor*(m2-35)/8, boat:w.boat*(b2-33)/6,
+    const parts={skill:w.skill*(nat-5.5)/1.2, local:w.local*(locEff-nat)/1.2, motor:(w.motor||0)*(m2-35)/8, boat:w.boat*(b2-33)/6,
       st:-w.st*clamp((st-0.16)/0.025,-2.5,2.5), ex:(exMean!=null&&exT[i]!=null)?-w.ex*clamp((exT[i]-exMean)/0.07,-2.5,2.5):0,
       cwin:(w.cwin||0)*cwinOf(b.toban,course), form:(w.form||0)*formOf(STATS&&STATS.p[String(b.toban)]?.rf.slice(-10),3),
       mform:(w.mform||0)*formOf(STATS&&STATS.m[`${race.jcd}-${b.motor}`]?.slice(-20),5),
+      mfoot:(w.mfoot||0)*(mt?mt[0]:0), madj:(w.madj||0)*(mt?mt[1]:0),
       olap:(w.olap||0)*OF[b.waku][0], oturn:(w.oturn||0)*OF[b.waku][1], ostr:(w.ostr||0)*OF[b.waku][2]};
     const s=sum(Object.values(parts)), fPen=f>0?-w.fPen:0;
     const mk=MODEL.market, exF=(exMean!=null&&exT[i]!=null)?-clamp((exT[i]-exMean)/0.07,-2.5,2.5):0;
     const sm=mk.kNat*(nat-5.5)/1.2+mk.kMotor*(m2-35)/8+mk.kEx*exF+(mk.cls[b.cls]??0);
     const tags=[];
-    if(m2Mean!=null&&m2>=m2Mean+5)tags.push(['plus','モーター上位']);
-    if(m2Mean!=null&&m2<=m2Mean-5)tags.push(['minus','モーター劣勢']);
+    // 11/20：モーター2連率は乗り手の腕が混ざるので、タグはモーターの遍歴（過去の実測の足）で出す
+    if(mt&&mt[2]>=8&&mt[0]>=0.25)tags.push(['plus','モーター上位']);
+    if(mt&&mt[2]>=8&&mt[0]<=-0.25)tags.push(['minus','モーター劣勢']);
     if(loc&&loc>=nat+0.4)tags.push(['plus','当地巧者']);
     if(loc&&loc>0&&loc<=nat-0.8)tags.push(['minus','当地苦戦']);
     if(STATS){const cv=cwinOf(b.toban,course),fv=formOf(STATS.p[String(b.toban)]?.rf.slice(-10),3),mv=formOf(STATS.m[`${race.jcd}-${b.motor}`]?.slice(-20),5);
       if(cv>=0.8)tags.push(['plus',course+'コース得意']);else if(cv<=-0.8)tags.push(['minus',course+'コース苦手']);
       if(fv>=0.5)tags.push(['plus','好調']);else if(fv<=-0.5)tags.push(['minus','不調']);
-      if(mv>=0.45)tags.push(['plus','機力上昇']);}
+      if(MODEL.weights.mform!=null&&mv>=0.45)tags.push(['plus','機力上昇']);}
     if(st<=0.13)tags.push(['plus','ST速い']); if(st>=0.18)tags.push(['minus','ST遅め']);
     if(f>0)tags.push(['minus','F'+f+'持ち']);
     if(exBest!=null&&exT[i]===exBest)tags.push(['plus','展示1位']);
@@ -645,9 +648,9 @@ function analyze(race,exOverride){
       mWinW:Math.exp(Math.log(base[course-1])+(course===1?mk.inner:0)+sm), mPlW:Math.exp(Math.log(PLACE[course-1])+mk.kPlace*sm)};
   });
   const ai=trifecta(boats,'winW','plW'), mkP=trifecta(boats,'mWinW','mPlW');
-  // 舟足評価: 展示タイム・モーター2連率・モーターの直近成績を、学習した重みで足したもの
+  // 舟足評価: 展示タイム・モーターの遍歴（過去の実測の足・腕を差し引いた成績）を、学習した重みで足したもの（11/20 モーター2連率は外した）
   // 学習した重みがまだ無いうちは、オリジナル展示は控えめな仮の重み(0.15)で舟足に入れる
-  boats.forEach(b=>{const o=OF[b.waku],ww=MODEL.weights;b.foot=(b.parts.ex||0)+(b.parts.motor||0)+(b.parts.mform||0)
+  boats.forEach(b=>{const o=OF[b.waku],ww=MODEL.weights;b.foot=(b.parts.ex||0)+(b.parts.mfoot||0)+(b.parts.madj||0)
     +(ww.olap!=null?b.parts.olap:0.15*o[0])+(ww.oturn!=null?b.parts.oturn:0.15*o[1])+(ww.ostr!=null?b.parts.ostr:0.15*o[2]);});
   const AS=ashiFor(race,exT,B);
   if(AS){const GR=['S','A','B','B','C','D']; /* 足評価 S〜D（11/18 殿の指定でSが一番）。過去1年で1号艇が1着を逃す率は足1位32%・2位38%・3位43%・4位47%・5位52%・6位58% */boats.forEach(b=>{const a=AS.find(x=>x.waku===b.waku);b.ashi=a||null;b.footGrade=a?GR[a.rank-1]:'-';});}
@@ -1249,9 +1252,9 @@ function ashiHtml(r,a){
       ${rows.map(b=>b.ashi?`<tr><td>${b.ashi.rank}位</td><td>${bn(b.waku)}</td>${b.ashi.z.map(z=>`<td class="n ${cls(z)}">${f(z)}</td>`).join('')}<td class="n"><b>${f(b.ashi.score)}</b></td><td><b class="fg fg-${fgCls(b.footGrade)}">${b.footGrade}</b></td></tr>`:`<tr><td>-</td><td>${bn(b.waku)}</td><td colspan="6" class="n">展示なし</td></tr>`).join('')}
       </tbody></table></div>${makuriHtml(r,a)}</div>`;}
   const jc=String(r.jcd).padStart(2,'0');
-  return `<div class="panel ashi"><h3>足評価</h3><p class="sub">${ASHI_SKIP_NOTE(jc,r)}展示タイム・オリジナル展示・モーターの最近の成績を、AIが学んだ重みで合計した評価です。</p>
+  return `<div class="panel ashi"><h3>足評価</h3><p class="sub">${ASHI_SKIP_NOTE(jc,r)}展示タイム・オリジナル展示・モーターの遍歴（交換後に乗った選手たちの実測の足と、乗り手の腕を差し引いた成績。2連率は使いません）を、AIが学んだ重みで合計した評価です。</p>
     <div class="tablebox"><table class="card"><thead><tr><th>艇</th><th>展示</th><th>オリ展</th><th>モーター</th><th>合計</th><th>評価</th></tr></thead><tbody>
-    ${a.boats.slice().sort((x,y)=>y.foot-x.foot).map(b=>{const o=(b.parts.olap||0)+(b.parts.oturn||0)+(b.parts.ostr||0);return `<tr><td>${bn(b.waku)}</td><td class="n">${f(b.parts.ex||0)}</td><td class="n">${f(o)}</td><td class="n">${f((b.parts.motor||0)+(b.parts.mform||0))}</td><td class="n"><b>${f(b.foot)}</b></td><td><b class="fg fg-${fgCls(b.footGrade)}">${b.footGrade}</b></td></tr>`;}).join('')}
+    ${a.boats.slice().sort((x,y)=>y.foot-x.foot).map(b=>{const o=(b.parts.olap||0)+(b.parts.oturn||0)+(b.parts.ostr||0);return `<tr><td>${bn(b.waku)}</td><td class="n">${f(b.parts.ex||0)}</td><td class="n">${f(o)}</td><td class="n">${f((b.parts.mfoot||0)+(b.parts.madj||0))}</td><td class="n"><b>${f(b.foot)}</b></td><td><b class="fg fg-${fgCls(b.footGrade)}">${b.footGrade}</b></td></tr>`;}).join('')}
     </tbody></table></div>${makuriHtml(r,a)}</div>`;}
 const ASHI_SKIP_NOTE=(jc,r)=>'展示タイムがまだ無いため、';
 function oriHtml(r,a){
@@ -1510,7 +1513,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='53';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='54';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));

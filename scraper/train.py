@@ -22,7 +22,41 @@ from pathlib import Path
 import numpy as np
 from scipy.optimize import least_squares, minimize
 
-FEATS = ["skill", "local", "motor", "boat", "st", "ex", "cwin", "form", "mform", "olap", "oturn", "ostr"]
+import os
+# モーター（11/20 殿の指摘で見直し）：2連率は乗った選手の腕が混ざるので使わず、
+#   mfoot: そのモーターの過去の実測の足（交換後に乗った全員の展示タイム・オリ展のレース内z の平均、少数は0に寄せる）
+#   madj : 乗り手の腕を差し引いた成績（着順点 − 選手の全国勝率 − コース差 の平均、少数は0に寄せる）
+MOTOR_MODE = os.environ.get("MOTOR_MODE", "new")   # old: 2連率と直近着順 / new: 新しい2つ / both: 全部（比較用）
+_MF = {"old": ["motor", "mform"], "new": ["mfoot", "madj"], "both": ["motor", "mform", "mfoot", "madj"]}[MOTOR_MODE]
+FEATS = ["skill", "local", *[k for k in _MF if k == "motor"], "boat", "st", "ex", "cwin", "form",
+         *[k for k in _MF if k != "motor"], "olap", "oturn", "ostr"]
+PTS = {1: 10, 2: 8, 3: 6, 4: 4, 5: 2, 6: 1}
+CADJ = {1: 2.39, 2: 0.21, 3: 0.07, 4: -0.37, 5: -0.93, 6: -1.59}  # コースごとの着順点の上乗せ（過去1年の前半から）
+MF_K, MA_K = 5, 10
+
+
+def renew_dates(races):
+    """場ごとのモーター交換日：その日の場のモーター2連率の中央値が前の開催日より12以上下がり、25未満になった日"""
+    med = defaultdict(lambda: defaultdict(list))
+    for r in races:
+        for b in r["boats"]:
+            if b.get("motor2") is not None:
+                med[r["jcd"]][r["date"]].append(b["motor2"])
+    out = {}
+    for j, dd in med.items():
+        last, rs = None, []
+        for d in sorted(dd):
+            m = float(np.median(dd[d]))
+            if last is not None and last - m >= 12 and m < 25:
+                rs.append(d)
+            last = m
+        out[j] = rs
+    return out
+
+
+def motor_key(renew, jcd, date, motor):
+    p = [x for x in renew.get(jcd, []) if x <= date]
+    return f'{jcd}-{p[-1] if p else "0"}-{motor}'
 # olap/oturn/ostr: オリジナル展示の 一周（半周）・まわり足・直線。同じレース内で速いほど＋（無い場は0）
 ORI_GROUP = {"一周": 0, "半周ラップ": 0, "半周": 0, "まわり足": 1, "直線": 2}
 ORI = {}
@@ -87,6 +121,8 @@ def build(races):
     stv = defaultdict(list)                               # "jcd-course" -> 直近ST（場のクセ）
     recent = defaultdict(list)    # toban -> 直近の着順
     motorf = defaultdict(list)    # "jcd-motor" -> 直近の着順
+    mh = defaultdict(lambda: [[], []])  # "jcd-交換日-motor" -> [実測の足z, 腕を差し引いた着順点]
+    renew = renew_dates(races)
     rows = []
     for r in races:
         d = dt.datetime.strptime(r["date"], "%Y%m%d").date()
@@ -111,10 +147,15 @@ def build(races):
             st_avg = (sum(hist) + 0.16 * 3) / (len(hist) + 3)
             ex = -np.clip((exs[i] - ex_mean) / 0.07, -2.5, 2.5) if ex_ok else 0.0
             c = b.get("course") if b.get("course") in range(1, 7) else b["waku"]
-            x[i] = [(nat - 5.5) / 1.2, (loc - nat) / 1.2, (m2 - 35) / 8, (b2 - 33) / 6,
-                    -np.clip((st_avg - 0.16) / 0.025, -2.5, 2.5), ex,
-                    cwin_of(cw[b["toban"]][c - 1], c), form_of(recent[b["toban"]][-10:], 3),
-                    form_of(motorf[f'{r["jcd"]}-{b["motor"]}'][-20:], 5), *of[b["waku"] - 1]]
+            mk = motor_key(renew, r["jcd"], r["date"], b["motor"])
+            fs, rs_ = mh[mk]
+            v = {"skill": (nat - 5.5) / 1.2, "local": (loc - nat) / 1.2, "motor": (m2 - 35) / 8, "boat": (b2 - 33) / 6,
+                 "st": -np.clip((st_avg - 0.16) / 0.025, -2.5, 2.5), "ex": ex,
+                 "cwin": cwin_of(cw[b["toban"]][c - 1], c), "form": form_of(recent[b["toban"]][-10:], 3),
+                 "mform": form_of(motorf[f'{r["jcd"]}-{b["motor"]}'][-20:], 5),
+                 "mfoot": sum(fs) / (len(fs) + MF_K), "madj": sum(rs_) / (len(rs_) + MA_K) / 2,
+                 "olap": of[b["waku"] - 1][0], "oturn": of[b["waku"] - 1][1], "ostr": of[b["waku"] - 1][2]}
+            x[i] = [v[k] for k in FEATS]
             fflag[i] = 1.0 if any((d - fd).days <= 180 for fd in f_dates[b["toban"]]) else 0.0
             cls[i] = CLS.index(b["cls"]) if b["cls"] in CLS else 2
         if ok:
@@ -124,6 +165,15 @@ def build(races):
                 "payout": (r.get("tri") or {}).get("payout"), "order": (r.get("tri") or {}).get("order"),
             })
         # 結果を履歴に反映（このレースの後に使う）
+        has = [ex_ok] + [bool(np.any(of[:, g] != 0)) for g in range(3)]
+        for i, b in enumerate(boats):
+            comp = ([-np.clip((exs[i] - ex_mean) / 0.07, -2.5, 2.5)] if ex_ok else []) + [of[i, g] for g in range(3) if has[g + 1]]
+            mk = motor_key(renew, r["jcd"], r["date"], b["motor"])
+            if comp:
+                mh[mk][0].append(float(np.mean(comp)))
+            c0 = b.get("course") if b.get("course") in range(1, 7) else b["waku"]
+            if b.get("finish") in PTS and b.get("natWin"):
+                mh[mk][1].append(PTS[b["finish"]] - b["natWin"] - CADJ[c0])
         for b in boats:
             if b.get("flying"):
                 f_dates[b["toban"]].append(d)
@@ -142,7 +192,14 @@ def build(races):
                 recent[b["toban"]] = (recent[b["toban"]] + [fin_b])[-10:]
                 k = f'{r["jcd"]}-{b["motor"]}'
                 motorf[k] = (motorf[k] + [fin_b])[-20:]
-    STATE.update(cw=cw, recent=recent, motorf=motorf, st=st_hist, stc=stc, stv=stv)
+    # アプリ用：今の交換期間のモーターだけ（"jcd-motor" -> [mfoot, madj, 走数]）
+    mt = {}
+    for k, (fs, rs_) in mh.items():
+        j, per, m = k.split("-")
+        cur = renew.get(int(j), [])
+        if per == (cur[-1] if cur else "0"):
+            mt[f"{j}-{m}"] = [round(sum(fs) / (len(fs) + MF_K), 3), round(sum(rs_) / (len(rs_) + MA_K) / 2, 3), len(rs_)]
+    STATE.update(cw=cw, recent=recent, motorf=motorf, st=st_hist, stc=stc, stv=stv, mt=mt, renew=renew)
     return rows
 
 
@@ -509,7 +566,8 @@ def main():
              "cbase": cbase,
              "l1base": l1base,
              "stv": {k: round(float(np.mean(v)), 4) for k, v in STATE["stv"].items() if len(v) >= 50},
-             "m": {k: v for k, v in STATE["motorf"].items()}}
+             "m": {k: v for k, v in STATE["motorf"].items()},
+             "mt": STATE["mt"], "renew": {str(k): v[-1] for k, v in STATE["renew"].items() if v}}
     (root / "stats.json").write_text(json.dumps(stats, separators=(",", ":")), encoding="utf-8")
     (root / "model.json").write_text(json.dumps(model, ensure_ascii=False, indent=1), encoding="utf-8")
     (root / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=1), encoding="utf-8")
