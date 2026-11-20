@@ -667,6 +667,7 @@ function formationOf(a,target=FORM_TARGET,avoid=null){
   return {label:`${W(F1)}-${W(F2)}-${W(F3)}`,n:best.ks.length,p:best.p,keys};
 }
 function formsOf(a){const h=formationOf(a,FORM_TARGET);if(!h)return null;return {h,a:formationOf(a,FORM_ANA,new Set(h.keys))};}
+function formRow(lab,f){return `<div class="expect"><span class="lbl">${lab}</span><b style="font-size:1.25em;letter-spacing:.04em">${f.label}</b><span class="num">${f.n}点で的中確率 ${pct(f.p)}</span></div>`;}
 function formHtml(a){
   const F=formsOf(a);if(!F)return '';
   const row=(lab,f)=>f?`<div class="expect"><span class="lbl">${lab}</span><b style="font-size:1.25em;letter-spacing:.04em">${f.label}</b><span class="num">${f.n}点で的中確率 ${pct(f.p)}</span></div>
@@ -754,7 +755,9 @@ function analyze(race,exOverride){
   const R=MODEL.ana;
   // 公式オッズのときは、オッズでの実績がそろうまで穴は2点までの参考扱い
   const anaMax=real&&!(MODEL.live&&MODEL.live.ready)?Math.min(R.max,2):R.max;
-  const ana=combos.filter(c=>!hset.has(c.k)&&c.pAi>=R.minP&&c.odds>=R.minOdds&&c.ratio>=R.minRatio).sort((x,y)=>y.ev-x.ev).slice(0,anaMax);
+  // 11/21：穴はフォーメーション（本線フォーメーションと重ならない目で、見込み10%に届く一番少ない点数）に変更
+  const form=formsOf({boats,combos});
+  const ana=form&&form.a?form.a.keys.map(k=>combos.find(c=>c.k===k)).filter(Boolean):[];
   const top=boats.slice().sort((a,b)=>b.pWin-a.pWin), topWin=top[0].pWin;
   // 万舟（3連単1万円以上）になる確率。AIはそのままだと高く出すぎる（11/5〜7の418Rで予測22%→実際13%）ので0.61倍して使う
   const manP=clamp(MAN_CAL*sum(combos.filter(c=>c.odds>=100).map(c=>c.pAi)),0,0.6);
@@ -763,7 +766,7 @@ function analyze(race,exOverride){
   const b1=boats.find(b=>b.waku===1), tobu=clamp(0.04+0.73*(1-p1in3),0.02,0.8);
   const one={win:b1?b1.pWin:0,in2:p1in2,in3:1-tobu,tobu,course:b1?b1.course:1};
   const ink=inkmOf(boats);
-  return {boats,combos,honsen,ana,cover:cum,top,topWin,real,manP,one,ink,ashi:AS?{kind:ASHI_W[Number(race.jcd)]?'場別':'既定',sep:ASHI_SEP[Number(race.jcd)]??null,venueCorr:!!ASHI_CONFIG.corrVenue[Number(race.jcd)],notes:AS.notes||[]}:null,level:topWin>=0.6?'kata':topWin>=0.42?'futsu':'are',hasEx:exMean!=null};
+  return {boats,combos,honsen,ana,form,cover:cum,top,topWin,real,manP,one,ink,ashi:AS?{kind:ASHI_W[Number(race.jcd)]?'場別':'既定',sep:ASHI_SEP[Number(race.jcd)]??null,venueCorr:!!ASHI_CONFIG.corrVenue[Number(race.jcd)],notes:AS.notes||[]}:null,level:topWin>=0.6?'kata':topWin>=0.42?'futsu':'are',hasEx:exMean!=null};
 }
 const LEVEL={kata:['堅い','var(--good)'],futsu:['本命寄り','var(--accent)'],are:['波乱含み','var(--ana)']};
 
@@ -774,9 +777,8 @@ function commentary(r,A){
   s+=`対抗は${nm(t2)}（${pct(t2.pWin)}）。`;
   const good=t1.tags.filter(t=>t[0]==='plus').map(t=>t[1]);
   if(good.length)s+=`${t1.name}は${good.join('・')}。`;
-  if(A.ana.length){const h=+A.ana[0].k.split('-')[0],hb=A.boats[h-1],why=hb.tags.filter(t=>t[0]==='plus').map(t=>t[1]);
-    s+=`穴は${A.ana[0].k}。人気想定より${A.ana[0].ratio.toFixed(1)}倍高く評価${why.length?'（'+hb.name+'：'+why.join('・')+'）':''}。`;}
-  else s+='人気とのズレが小さく、穴は見送り候補です。';
+  if(A.form&&A.form.h)s+=`本線のフォーメーションは${A.form.h.label}（${A.form.h.n}点・的中確率${pct(A.form.h.p)}）。`;
+  if(A.form&&A.form.a)s+=`穴は${A.form.a.label}（${A.form.a.n}点・${pct(A.form.a.p)}）。`;
   if(!A.hasEx)s+='展示タイムが入ると計算し直します。';
   return s;
 }
@@ -1459,7 +1461,7 @@ function renderYoso(){
   const a=A(r); if(!a){el.innerHTML=`<div class="empty">このレースは出走データが不完全です。</div>`;return;}
   const lv=LEVEL[a.level], p=pk(r.id), res=resultOf(r), bf=r.before||{};
   const maxWin=Math.max(...a.boats.map(b=>b.pWin));
-  const rowC=(c,ana)=>`<li class="combo${res&&res.order===c.k?' hit':''}"><span class="nums">${comboHtml(c.k)}</span><span class="bar"><span style="width:${Math.min(100,c.pAi/a.combos[0].pAi*100)}%"></span></span><span class="val">${pct(c.pAi)}${ana?`<small>人気比×${c.ratio.toFixed(1)}</small>`:''}</span></li>`;
+  const rowC=(c,ana)=>`<li class="combo${res&&res.order===c.k?' hit':''}"><span class="nums">${comboHtml(c.k)}</span><span class="bar"><span style="width:${Math.min(100,c.pAi/a.combos[0].pAi*100)}%"></span></span><span class="val">${pct(c.pAi)}</span></li>`;
   const anaEV=a.ana.length?avg(a.ana.map(c=>c.ev)):0;
   const wx=[bf.weather,windTxt(bf),bf.wave!=null?'波'+bf.wave+'cm':null].filter(Boolean).join(' ');
   el.innerHTML=`<div style="display:grid;gap:18px">
@@ -1471,15 +1473,17 @@ function renderYoso(){
     <div class="picks" id="j-picks">
       <div class="panel honsen"><h3><span class="mark">本線</span>確率の高い順</h3>
         <div class="expect ex-${expectOf(a.cover).cls}"><span class="lbl">当たる期待度</span><b class="stars">${expectOf(a.cover).st}</b><b>${expectOf(a.cover).t}</b><span class="num">${a.honsen.length}点で的中確率 ${pct(a.cover)}</span></div>
-        <ul class="combo-list">${a.honsen.map(c=>rowC(c,false)).join('')}</ul></div>
-      <div class="panel ana"><h3><span class="mark">穴</span>人気より強いと見た買い目</h3>
+        <ul class="combo-list">${a.honsen.map(c=>rowC(c,false)).join('')}</ul>
+        ${a.form&&a.form.h?`${formRow('フォーメーション',a.form.h)}
+        <ul class="combo-list">${a.form.h.keys.map(k=>a.combos.find(c=>c.k===k)).filter(Boolean).map(c=>rowC(c,false)).join('')}</ul>
+        <p class="foot">的中見込み${Math.round(FORM_TARGET*100)}%に届く一番少ない点数で組んだ形（1着はAIの上位3艇から1〜2艇）。過去の検証（学習に使っていない8,848R）：平均5.8点・見込み33%→実際32%。</p>`:''}</div>
+      <div class="panel ana"><h3><span class="mark">穴</span>本線と重ならないフォーメーション</h3>
         <div class="expect man-${manOf(a.manP).cls}"><span class="lbl">万舟期待</span><b>${manOf(a.manP).t}</b><span class="num">万舟になる確率 ${pct(a.manP)}（全レースの平均は約${Math.round(MAN_AVG*100)}%）</span></div>
-        <p class="sub">AIの確率が、AIが推定した人気の${MODEL.ana.minRatio}倍以上ある買い目（人気薄に限る）</p>
-        ${a.ana.length?`<ul class="combo-list">${a.ana.map(c=>rowC(c,true)).join('')}</ul>
-        <p class="foot">${a.ana.length}点の的中確率 ${pct(sum(a.ana.map(c=>c.pAi)))}・1点あたり期待値 ${(anaEV*100).toFixed(0)}%</p>`
-        :`<p class="sub">人気とのズレが小さく、狙える穴が見つかりません。見送り候補です。</p>`}</div>
+        ${a.form&&a.form.a?`${formRow('フォーメーション',a.form.a)}
+        <ul class="combo-list">${a.ana.map(c=>rowC(c,true)).join('')}</ul>
+        <p class="foot">本線のフォーメーションと1点も重ならない目だけで、的中見込み${Math.round(FORM_ANA*100)}%に届く一番少ない点数で組んだ形。過去の検証：平均3.1点・見込み12%→実際12%。</p>`
+        :`<p class="sub">穴のフォーメーションが組めませんでした。</p>`}</div>
     </div>
-    ${formHtml(a)}
     <div id="j-are">${areHtml(r,a,res)}</div>
     <div class="panel" id="j-slit"><h3>スリット予測</h3><p class="sub">右ほど早いスタート。「凹」は両隣より遅れる予測、「先」は内より早い予測。展開予想・足評価・オリジナル展示は「自分で予想」タブに。</p>${slitSvg(tenkaiOf(r,a))}</div>
     <div id="j-plan">${planHtml(a,res)}</div>
@@ -1586,7 +1590,7 @@ function renderTable(){
   const a=A(r); if(!a){el.innerHTML=`<div class="empty">このレースは出走データが不完全です。</div>`;return;}
   const res=resultOf(r), bf=r.before||{};
   const maxWin=Math.max(...a.boats.map(b=>b.pWin));
-  const rowC=(c,ana)=>`<li class="combo${res&&res.order===c.k?' hit':''}"><span class="nums">${comboHtml(c.k)}</span><span class="bar"><span style="width:${Math.min(100,c.pAi/a.combos[0].pAi*100)}%"></span></span><span class="val">${pct(c.pAi)}${ana?`<small>人気比×${c.ratio.toFixed(1)}</small>`:''}</span></li>`;
+  const rowC=(c,ana)=>`<li class="combo${res&&res.order===c.k?' hit':''}"><span class="nums">${comboHtml(c.k)}</span><span class="bar"><span style="width:${Math.min(100,c.pAi/a.combos[0].pAi*100)}%"></span></span><span class="val">${pct(c.pAi)}</span></li>`;
   const anaEV=a.ana.length?avg(a.ana.map(c=>c.ev)):0;
   const wx=[bf.weather,windTxt(bf),bf.wave!=null?'波'+bf.wave+'cm':null].filter(Boolean).join(' ');
   el.innerHTML=`<div style="display:grid;gap:14px">
@@ -1623,7 +1627,7 @@ function renderSelf(){
   const a=A(r); if(!a){el.innerHTML=`<div class="empty">このレースは出走データが不完全です。</div>`;return;}
   const lv=LEVEL[a.level], p=pk(r.id), res=resultOf(r), bf=r.before||{};
   const maxWin=Math.max(...a.boats.map(b=>b.pWin));
-  const rowC=(c,ana)=>`<li class="combo${res&&res.order===c.k?' hit':''}"><span class="nums">${comboHtml(c.k)}</span><span class="bar"><span style="width:${Math.min(100,c.pAi/a.combos[0].pAi*100)}%"></span></span><span class="val">${pct(c.pAi)}${ana?`<small>人気比×${c.ratio.toFixed(1)}</small>`:''}</span></li>`;
+  const rowC=(c,ana)=>`<li class="combo${res&&res.order===c.k?' hit':''}"><span class="nums">${comboHtml(c.k)}</span><span class="bar"><span style="width:${Math.min(100,c.pAi/a.combos[0].pAi*100)}%"></span></span><span class="val">${pct(c.pAi)}</span></li>`;
   const anaEV=a.ana.length?avg(a.ana.map(c=>c.ev)):0;
   el.innerHTML=`<div style="display:grid;gap:18px">
     ${raceHead(r,a)}
@@ -1644,7 +1648,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='61';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='62';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
@@ -1885,13 +1889,13 @@ function learnPanel(){
   if(!REPORT)return `<div class="panel"><h3>AIの学習状況</h3><p class="sub">過去データでの学習はまだです。学習が終わるとここに成績が出ます。</p></div>`;
   const t=REPORT.test, h=t.honsen, a=t.ana, d=s=>s?`${s.slice(0,4)}/${+s.slice(4,6)}/${+s.slice(6,8)}`:'';
   return `<div class="panel"><h3>AIの学習状況</h3>
-    <p class="sub">${d(REPORT.period.from)}〜${d(REPORT.period.to)}の${REPORT.races.all.toLocaleString()}レースで学習。下の成績は、学習に使っていない${d(REPORT.period.testFrom)}以降の${REPORT.races.test.toLocaleString()}レースで試した結果です（1点100円・実際の払戻）。</p>
+    <p class="sub">${d(REPORT.period.from)}〜${d(REPORT.period.to)}の${REPORT.races.all.toLocaleString()}レースで学習。下の成績は、学習に使っていない${d(REPORT.period.testFrom)}以降の${REPORT.races.test.toLocaleString()}レースで試した結果です（1点100円・実際の払戻）。フォーメーションの的中率は11/21に同じ方法で確かめた値です。</p>
     <div class="stats">
       <div class="stat"><span>1着の的中率</span><b>${pct(t.winTopHit)}</b></div>
       <div class="stat"><span>本線の的中率</span><b>${pct(h.hitRate)}</b></div>
       <div class="stat"><span>本線の回収率</span><b>${Math.round(h.roi*100)}%</b></div>
-      <div class="stat"><span>穴の的中率</span><b>${pct(a.hitRate)}</b></div>
-      <div class="stat"><span>穴の回収率</span><b>${Math.round(a.roi*100)}%</b></div>
+      <div class="stat"><span>本線フォーメーションの的中率</span><b>32.3%</b></div>
+      <div class="stat"><span>穴フォーメーションの的中率</span><b>12.2%</b></div>
     </div>
     <p class="hint">学習日 ${esc((REPORT.trainedAt||'').slice(0,10))}。毎週月曜に最新のデータで学習し直します。</p></div>`;
 }
