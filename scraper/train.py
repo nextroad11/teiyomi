@@ -38,6 +38,7 @@ FEATS = ["skill", "local", *[k for k in _MF if k == "motor"], "boat", "st", "ex"
 PTS = {1: 10, 2: 8, 3: 6, 4: 4, 5: 2, 6: 1}
 CADJ = {1: 2.39, 2: 0.21, 3: 0.07, 4: -0.37, 5: -0.93, 6: -1.59}  # コースごとの着順点の上乗せ（過去1年の前半から）
 MF_K, MA_K = 5, 10
+ZAN_K = 8  # 残り方のクセ：少ない選手は0に寄せる強さ
 
 
 def renew_dates(races):
@@ -142,6 +143,15 @@ def build(races):
     aPL = tot[1:4] / max(tot[0], 1); aPW = np.clip(totw[:, 1:] / np.maximum(totw[:, :1], 1), 1e-4, 1)
     alose = defaultdict(lambda: np.zeros(5)); awin = defaultdict(lambda: np.zeros((6, 4)))
     arate = lambda a, n, p: (a + INK * p) / (n + INK)
+    # 残り方のクセ（11/20）：1着でないときに2・3着へ残った数 − コースごとの期待 を、そのレースより前だけで数える
+    zb = np.zeros((6, 2))
+    for r in okr:
+        f1 = [b for b in r["boats"] if b.get("finish") == 1][0]
+        for b in r["boats"]:
+            if b is not f1:
+                zb[b["course"] - 1] += [1, b.get("finish") in (2, 3)]
+    zp23 = zb[:, 1] / np.maximum(zb[:, 0], 1)
+    zacc = defaultdict(lambda: [0.0, 0])
     rows = []
     for r in races:
         d = dt.datetime.strptime(r["date"], "%Y%m%d").date()
@@ -209,8 +219,13 @@ def build(races):
                 w_ = awin[b["toban"]][b["course"] - 1]; w_[0] += 1
                 if b.get("finish") == 1 and km in KM3:
                     w_[1 + KM3.index(km)] += 1
+        zan = np.array([zacc[b["toban"]][0] / (zacc[b["toban"]][1] + ZAN_K) * 3 for b in boats])
         if ok:
+            for b in boats:
+                if b.get("finish") != 1:
+                    a_ = zacc[b["toban"]]; a_[0] += (b.get("finish") in (2, 3)) - zp23[b["course"] - 1]; a_[1] += 1
             rows.append({
+                "zan": zan,
                 "date": r["date"], "jcd": r["jcd"], "course": np.array(courses) - 1, "x": x, "f": fflag, "cls": cls, "mk": mkf,
                 "w1": fin[1], "w2": fin.get(2, -1), "w3": fin.get(3, -1),
                 "payout": (r.get("tri") or {}).get("payout"), "order": (r.get("tri") or {}).get("order"),
@@ -250,6 +265,7 @@ def build(races):
         cur = renew.get(int(j), [])
         if per == (cur[-1] if cur else "0"):
             mt[f"{j}-{m}"] = [round(sum(fs) / (len(fs) + MF_K), 3), round(sum(rs_) / (len(rs_) + MA_K) / 2, 3), len(rs_)]
+    STATE["zn"] = {t: round(a_[0] / (a_[1] + ZAN_K) * 3, 3) for t, a_ in zacc.items()}
     STATE.update(cw=cw, recent=recent, motorf=motorf, st=st_hist, stc=stc, stv=stv, mt=mt, renew=renew)
     return rows
 
@@ -262,6 +278,7 @@ def stack(rows):
         "f": np.stack([r["f"] for r in rows]),
         "cls": np.stack([r["cls"] for r in rows]),
         "mk": np.stack([r["mk"] for r in rows]),
+        "zan": np.stack([r["zan"] for r in rows]),
         "w1": np.array([r["w1"] for r in rows]),
         "w2": np.array([r["w2"] for r in rows]),
         "w3": np.array([r["w3"] for r in rows]),
@@ -334,28 +351,29 @@ def tri_probs(Lw, Lp):
 # ---------------------------------------------------------------- 展開（11/20 追加）：2着・3着は1着の艇のコースで変わる
 # 2着の強さに B2[1着のコース, 候補のコース]、3着に B3[1着のコース, 候補]＋C3[2着のコース, 候補] を足す
 def fit_tenkai(D, Lp):
+    """11/20 追加：2着・3着の強さに 選手の残り方のクセ×kz を足す（テストで3連単損失3.7890→3.7874）"""
     R = len(D["w1"]); C = D["course"]; w1, w2, w3 = D["w1"], D["w2"], D["w3"]
     m = (w2 >= 0) & (w3 >= 0); idx = np.where(m)[0]; Rm = len(idx)
-    c1 = C[idx, w1[idx]]; c2 = C[idx, w2[idx]]; Ci = C[idx]; Lpi = Lp[idx]
+    c1 = C[idx, w1[idx]]; c2 = C[idx, w2[idx]]; Ci = C[idx]; Lpi = Lp[idx]; Zi = D["zan"][idx]
     def nll(p):
-        B2 = p[:36].reshape(6, 6); B3 = p[36:72].reshape(6, 6); C3 = p[72:].reshape(6, 6)
-        L2 = Lpi + B2[c1[:, None], Ci]; L2[np.arange(Rm), w1[idx]] = -np.inf
-        L3 = Lpi + B3[c1[:, None], Ci] + C3[c2[:, None], Ci]
+        B2 = p[:36].reshape(6, 6); B3 = p[36:72].reshape(6, 6); C3 = p[72:108].reshape(6, 6)
+        L2 = Lpi + p[108] * Zi + B2[c1[:, None], Ci]; L2[np.arange(Rm), w1[idx]] = -np.inf
+        L3 = Lpi + p[109] * Zi + B3[c1[:, None], Ci] + C3[c2[:, None], Ci]
         L3[np.arange(Rm), w1[idx]] = -np.inf; L3[np.arange(Rm), w2[idx]] = -np.inf
-        return -((L2[np.arange(Rm), w2[idx]] - logsumexp(L2, 1)) + (L3[np.arange(Rm), w3[idx]] - logsumexp(L3, 1))).mean() + 1e-3 * (p ** 2).sum()
-    p = minimize(nll, np.zeros(108), method="L-BFGS-B").x
-    return p[:36].reshape(6, 6), p[36:72].reshape(6, 6), p[72:].reshape(6, 6)
+        return -((L2[np.arange(Rm), w2[idx]] - logsumexp(L2, 1)) + (L3[np.arange(Rm), w3[idx]] - logsumexp(L3, 1))).mean() + 1e-3 * (p[:108] ** 2).sum()
+    p = minimize(nll, np.zeros(110), method="L-BFGS-B").x
+    return p[:36].reshape(6, 6), p[36:72].reshape(6, 6), p[72:108].reshape(6, 6), p[108:110]
 
 
-def tri_probs_t(Lw, Lp, C, TK):
-    """展開つきの3連単の確率。C: (R,6) 枠→コース(0-5)"""
-    B2, B3, C3 = TK
+def tri_probs_t(Lw, Lp, C, TK, Z):
+    """展開つきの3連単の確率。C: (R,6) 枠→コース(0-5)、Z: (R,6) 残り方のクセ"""
+    B2, B3, C3, kz = TK
     W = np.exp(Lw - logsumexp(Lw, 1)[:, None]); R = len(Lw)
     out = np.zeros((R, 120))
     for n, (i, j, k) in enumerate(PERMS):
         ci, cj = C[:, i], C[:, j]
-        L2 = Lp + B2[ci[:, None], C]; L2[:, i] = -np.inf
-        L3 = Lp + B3[ci[:, None], C] + C3[cj[:, None], C]; L3[:, i] = -np.inf; L3[:, j] = -np.inf
+        L2 = Lp + kz[0] * Z + B2[ci[:, None], C]; L2[:, i] = -np.inf
+        L3 = Lp + kz[1] * Z + B3[ci[:, None], C] + C3[cj[:, None], C]; L3[:, i] = -np.inf; L3[:, j] = -np.inf
         out[:, n] = W[:, i] * np.exp(L2[:, j] - logsumexp(L2, 1)) * np.exp(L3[:, k] - logsumexp(L3, 1))
     return out
 
@@ -660,7 +678,7 @@ def main():
         s = Dx["x"] @ M["beta"]
         Lw = M["lnbase"][Dx["venue"][:, None], Dx["course"]] + s + M["g"] * Dx["f"]
         Lp = M["lnplace"][Dx["course"]] + M["kPl"] * s
-        PA = tri_probs_t(Lw, Lp, Dx["course"], M["TK"])
+        PA = tri_probs_t(Lw, Lp, Dx["course"], M["TK"], Dx["zan"])
         mw, mp = market_logits(Dx, M["lnbase"], M["lnplace"], M["th"])
         PM = tri_probs(mw, mp)
         win = np.exp(Lw - logsumexp(Lw, 1)[:, None])
@@ -687,6 +705,11 @@ def main():
     PAt, PMt, wint = predict(M, Dte)
     bt = backtest(PAt, PMt, Dte, best_rule)
     top_hit = float((wint.argmax(1) == Dte["w1"]).mean())
+    mt3 = (Dte["w2"] >= 0) & (Dte["w3"] >= 0)
+    pid = {tuple(p): n for n, p in enumerate(PERMS.tolist())}
+    tix = np.array([pid[(a, b, c)] for a, b, c in zip(Dte["w1"][mt3], Dte["w2"][mt3], Dte["w3"][mt3])])
+    pt3 = PAt[mt3][np.arange(mt3.sum()), tix]
+    tri_ll = float(-np.log(np.maximum(pt3, 1e-12)).mean()); tri_top = float((PAt[mt3].argmax(1) == tix).mean())
     in1 = float((Dte["course"][np.arange(len(Dte["w1"])), Dte["w1"]] == 0).mean())
     ll_model = float(-np.log(wint[np.arange(len(Dte["w1"])), Dte["w1"]]).mean())
     base_only = np.exp(M["lnbase"][Dte["venue"][:, None], Dte["course"]])
@@ -723,7 +746,8 @@ def main():
         "market": {"inner": th[0], "kNat": th[1], "kMotor": th[2], "kEx": th[3],
                    "cls": {"A1": th[4], "A2": th[5], "B1": 0.0, "B2": th[6]}, "kPlace": th[7], "c0": round(Mall["c0"], 4)},
         "ana": best_rule,
-        "tenkai": {"B2": Mall["TK"][0].round(4).tolist(), "B3": Mall["TK"][1].round(4).tolist(), "C3": Mall["TK"][2].round(4).tolist()},
+        "tenkai": {"B2": Mall["TK"][0].round(4).tolist(), "B3": Mall["TK"][1].round(4).tolist(), "C3": Mall["TK"][2].round(4).tolist(),
+                   "kz": Mall["TK"][3].round(4).tolist()},
         "inkm": {"PL": PL.round(5).tolist(), "PW": PW.round(5).tolist(), "K": INK, "lose": t1.round(4).tolist(), "km": tk.round(4).tolist()},
     }
     report = {
@@ -732,7 +756,7 @@ def main():
         "races": {"all": len(rows), "test": int(te.sum())},
         "test": {
             "winTopHit": top_hit, "innerWinRate": in1,
-            "logLoss": ll_model, "logLossCourseOnly": ll_base,
+            "logLoss": ll_model, "triLogLoss": tri_ll, "triTop1": tri_top, "logLossCourseOnly": ll_base,
             "honsen": bt["hon"], "ana": bt["ana"],
             "inkm": ink_test,
         },
@@ -752,7 +776,7 @@ def main():
     stats = {"updated": model["trainedAt"],
              "p": {str(t): {"cw": v, "rf": STATE["recent"].get(t, []), "st": [round(x, 2) for x in STATE["st"].get(t, [])[-20:]],
                               "stc": [[round(x, 2) for x in l] for l in STATE["stc"][t]] if t in STATE["stc"] else None,
-                              "kmy": kmy.get(t), "cy": cy.get(t), "lk": INKPER["lk"].get(t), "wk": INKPER["wk"].get(t), "kon": kon.get(t), "l1": l1.get(t), **prof.get(t, {})}
+                              "kmy": kmy.get(t), "cy": cy.get(t), "lk": INKPER["lk"].get(t), "wk": INKPER["wk"].get(t), "zn": STATE["zn"].get(t), "kon": kon.get(t), "l1": l1.get(t), **prof.get(t, {})}
                    for t, v in STATE["cw"].items()},
              "km": kimarite_stats(races),
              "cbase": cbase,

@@ -445,10 +445,11 @@ const clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
 
 // 展開つき（11/20）：2着は1着の艇のコース、3着は1着・2着の艇のコースで強さを補正（train.py の tenkai）
 function trifecta(boats,wk,pk,tk){
-  if(tk&&tk.B2){const out={},W=sum(boats.map(b=>b[wk])),c=b=>b.course-1;
-    for(const a of boats){const d2=boats.filter(b=>b!==a).map(b=>b[pk]*Math.exp(tk.B2[c(a)][c(b)])),S2=sum(d2);
+  // 11/20：残り方のクセ（1着でないときに2・3着へ粘る選手か）を2着・3着の強さに足す。重みは tk.kz
+  if(tk&&tk.B2){const out={},W=sum(boats.map(b=>b[wk])),c=b=>b.course-1,kz=tk.kz||[0,0],z=b=>b.zan||0;
+    for(const a of boats){const d2=boats.filter(b=>b!==a).map(b=>b[pk]*Math.exp(tk.B2[c(a)][c(b)]+kz[0]*z(b))),S2=sum(d2);
       boats.filter(b=>b!==a).forEach((b,bi)=>{const p2=d2[bi]/S2,rest=boats.filter(x=>x!==a&&x!==b),
-        d3=rest.map(x=>x[pk]*Math.exp(tk.B3[c(a)][c(x)]+tk.C3[c(b)][c(x)])),S3=sum(d3);
+        d3=rest.map(x=>x[pk]*Math.exp(tk.B3[c(a)][c(x)]+tk.C3[c(b)][c(x)]+kz[1]*z(x))),S3=sum(d3);
         rest.forEach((x,xi)=>{out[a.waku+'-'+b.waku+'-'+x.waku]=(a[wk]/W)*p2*(d3[xi]/S3);});});}
     return out;}
   const W=sum(boats.map(b=>b[wk])),P=sum(boats.map(b=>b[pk])),out={};
@@ -680,7 +681,8 @@ function analyze(race,exOverride){
     if(f>0)tags.push(['minus','F'+f+'持ち']);
     if(exBest!=null&&exT[i]===exBest)tags.push(['plus','展示1位']);
     if(course!==b.waku)tags.push(['',course+'コース進入']);
-    return {...b,course,parts,s,exTime:exT[i],tilt:num(ex[b.waku].tilt),tags,
+    const zan=num(STATS&&STATS.p&&STATS.p[String(b.toban)]?.zn)??0;
+    return {...b,course,parts,s,zan,exTime:exT[i],tilt:num(ex[b.waku].tilt),tags,
       winW:Math.exp(Math.log(base[course-1])+w.kWin*(s+fPen)+windU(race.before,course,race.jcd)), plW:Math.exp(Math.log(PLACE[course-1])+w.kPlace*s+windU(race.before,course,race.jcd)),
       mWinW:Math.exp(Math.log(base[course-1])+(course===1?mk.inner:0)+sm), mPlW:Math.exp(Math.log(PLACE[course-1])+mk.kPlace*sm)};
   });
@@ -1589,7 +1591,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='58';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='59';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
