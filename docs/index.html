@@ -682,7 +682,8 @@ function analyze(race,exOverride){
     if(exBest!=null&&exT[i]===exBest)tags.push(['plus','展示1位']);
     if(course!==b.waku)tags.push(['',course+'コース進入']);
     const zan=num(STATS&&STATS.p&&STATS.p[String(b.toban)]?.zn)??0;
-    return {...b,course,parts,s,zan,exTime:exT[i],tilt:num(ex[b.waku].tilt),tags,
+    const sz=stzOf(b), ft=exF+OF[b.waku][0]+OF[b.waku][1]+OF[b.waku][2];  // 決まり手の予想用（STの速さ・足の生の値）
+    return {...b,course,parts,s,zan,sz,ft,exTime:exT[i],tilt:num(ex[b.waku].tilt),tags,
       winW:Math.exp(Math.log(base[course-1])+w.kWin*(s+fPen)+windU(race.before,course,race.jcd)), plW:Math.exp(Math.log(PLACE[course-1])+w.kPlace*s+windU(race.before,course,race.jcd)),
       mWinW:Math.exp(Math.log(base[course-1])+(course===1?mk.inner:0)+sm), mPlW:Math.exp(Math.log(PLACE[course-1])+mk.kPlace*sm)};
   });
@@ -936,13 +937,16 @@ let tobuSort=LS.get('tobuSort','p');
 // 11/5〜16の使っていない1,725Rで：上位20%は万舟23.2%（全体16.5%）・50倍以上39.4%（28.8%）・1号艇着外27.2%（17.5%）。
 // 展示後の評価で選び直しても万舟の当たりは良くならなかった（展示で下がったレースも万舟28%）ので、選んだレースは外さず、変化を書き足すだけにする。
 const ANA_SHARE=0.20;
+// 11/20：攻める艇の平均STが すぐ内の艇より0.02秒以上遅いときは出さない（過去1年：アラートが出ても まくり勝ちは条件なしと同じ程度。
+// 4コースなら 9.9%→4.3%（条件なし3.8%））
+const mkSlow=(b,nb)=>{const x=num(b.st),y=num(nb.st);return x!=null&&y!=null&&x-y>=0.02-1e-9;};
 function makuriHits(r,a){
   const CR=ashiCorr(r.jcd),ce={},byC={};
   a.boats.forEach(b=>{if(b.exTime!=null)ce[b.waku]=Math.round((b.exTime+CR[b.waku][3])*100)/100;if(b.course)byC[b.course]=b;});
   if(Object.keys(ce).length<6||Object.keys(byC).length<6)return [];
   const out=[];
   for(let c=2;c<=6;c++){const b=byC[c],x=ce[b.waku],nb=byC[c-1];const inner=[1,2,3,4,5,6].filter(k=>k<c).map(k=>byC[k]);
-    const c1=ce[nb.waku]-x>=0.06-1e-9,c2=inner.every(i=>x<ce[i.waku]);if(c1||c2)out.push({b,c,both:c1&&c2});}
+    const c1=ce[nb.waku]-x>=0.06-1e-9,c2=inner.every(i=>x<ce[i.waku]);if((c1||c2)&&!mkSlow(b,nb))out.push({b,c,both:c1&&c2});}
   return out;
 }
 function anaPreWhy(r,a0){
@@ -1282,11 +1286,14 @@ function inkmOf(boats){
   const p1=cl(bs[0].pWin,1e-4,1-1e-4);
   const f=[1,Math.log(p1/(1-p1)),...v,...[0,1,2].map(j=>Math.max(...a.map(r=>r[j]))),...[0,1,2].map(j=>Math.log(a.reduce((s,r)=>s+Math.exp(r[j]),0)/a.length))].map(x=>cl(x,-8,8));
   const lose=1/(1+Math.exp(-f.reduce((s,x,i)=>s+x*IK.lose[i],0)));
-  const pr=bs.map(b=>b.pWin),ps=pr.slice(1).reduce((s,x)=>s+x,0)||1e-9,us=[],keys=[];
+  const pr=bs.map(b=>b.pWin),ps=pr.slice(1).reduce((s,x)=>s+x,0)||1e-9,us=[],keys=[],nf=IK.km.length-1;
   for(let c=2;c<=6;c++)for(let j=0;j<3;j++){const sw=PW[c-1].reduce((s,x)=>s+x,0)||1e-9;
-    const fe=[Math.log(pr[c-1]/ps+1e-9),Math.log(PW[c-1][j]/sw),a[c-2][j],v[j]].map(x=>cl(x,-12,8));
-    us.push(fe.reduce((s,x,i)=>s+x*IK.km[i],0));keys.push({course:c,waku:bs[c-1].waku,name:bs[c-1].name,km:KM3[j]});}
-  us.push(IK.km[4]);
+    const fe=[Math.log(pr[c-1]/ps+1e-9),Math.log(PW[c-1][j]/sw),a[c-2][j],v[j]];
+    // 11/20：STの並び（すぐ内の艇のST＝壁）と足。決まり手×(2〜3コース / 4〜6コース)ごとに [自分のST, すぐ内のST, 内の最速, 足]
+    if(nf>4){const e=new Array(24).fill(0),k=c-1,g=c<=3?0:1,szs=bs.map(b=>b.sz||0),fts=bs.map(b=>b.ft||0),fm=fts.reduce((s,x)=>s+x,0)/6;
+      e.splice(g*12+j*4,4,szs[k],szs[k-1],Math.max(...szs.slice(0,k)),cl(fts[k]-fm,-4,4));fe.push(...e);}
+    us.push(fe.map(x=>cl(x,-12,8)).reduce((s,x,i)=>s+x*IK.km[i],0));keys.push({course:c,waku:bs[c-1].waku,name:bs[c-1].name,km:KM3[j]});}
+  us.push(IK.km[nf]);
   const mx=Math.max(...us),ex=us.map(u=>Math.exp(u-mx)),Z=ex.reduce((s,x)=>s+x,0);
   const km=keys.map((k,i)=>({...k,pc:ex[i]/Z,p:lose*ex[i]/Z})).sort((x,y)=>y.p-x.p);
   return {lose,loseAI:1-p1,b1:{waku:bs[0].waku,name:bs[0].name},km,other:lose*ex[ex.length-1]/Z,
@@ -1308,10 +1315,11 @@ function makuriHtml(r,a){
   const CR=ashiCorr(r.jcd), ce={}, byC={};
   a.boats.forEach(b=>{if(b.exTime!=null)ce[b.waku]=Math.round((b.exTime+CR[b.waku][3])*100)/100;if(b.course)byC[b.course]=b;});
   if(Object.keys(ce).length<6||Object.keys(byC).length<6)return `<div class="mk-box"><b>まくりアラート</b><span class="sub">展示タイムが出そろうと判定します。</span></div>`;
-  const hits=[];
+  const hits=[],skip=[];
   for(let c=2;c<=6;c++){const b=byC[c],x=ce[b.waku];const nb=byC[c-1];const inner=[1,2,3,4,5,6].filter(k=>k<c).map(k=>byC[k]);
     const d1=Math.round((ce[nb.waku]-x)*100)/100, c1=d1>=0.06, c2=inner.every(i=>x<ce[i.waku]);
     if(!c1&&!c2)continue;
+    if(mkSlow(b,nb)){skip.push(`${b.waku}号艇（${c}コース）`);continue;}
     const R=MAKURI_RATE[c], why=[];
     if(c1)why.push(`すぐ内側の${nb.waku}号艇より${d1.toFixed(2)}秒速い`);
     if(c2)why.push('内側の全艇より速い');
@@ -1319,6 +1327,7 @@ function makuriHtml(r,a){
     hits.push({b,c,both:c1&&c2,why,rate,base});}
   const st=v=>v.toFixed(1)+'%';
   return `<div class="mk-box"><b>まくりアラート</b>${hits.length?hits.map(h=>`<div class="mk-row ${h.both?'mk-strong':''}">${bn(h.b.waku)}<span class="mk-lv">${h.both?'強':'注意'}</span><span>${h.c}コース：${h.why.join('・')}</span><small>この条件のまくり勝ち率 ${st(h.rate)}（${h.c}コースで当てはまらない艇は ${st(h.base)}）</small></div>`).join(''):'<span class="sub">該当する艇はありません。</span>'}
+    ${skip.length?`<p class="sub">${skip.join('・')}は展示は速いものの、平均STがすぐ内の艇より0.02秒以上遅いため出していません（この形はまくり勝ちが普段と変わりません）。</p>`:''}
     <p class="hint">補正後の展示タイム（足スコアと同じ枠別補正）を、実際の進入コースで内側の艇と比べています。「強」は①すぐ内側より0.06秒以上速い・②内側の全艇より速い の両方。過去1年の検証で、まくりで勝つ率は条件なしの約2.5倍ですが、まくり勝ちの半分以上はこの条件に当てはまらないので、STと合わせて見てください。</p></div>`;
 }
 function ashiHtml(r,a){
@@ -1591,7 +1600,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='59';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='60';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));

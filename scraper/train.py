@@ -563,7 +563,15 @@ def _ok_races(races):
     return out
 
 
-def inkm_features(races, P):
+def slit_arrays(D):
+    """決まり手用（11/20）：コース順の 平均STの速さ(z) と 足（展示＋オリ展の生の値の和）"""
+    X = D["x"]; fi = FEATS.index; R = len(X)
+    stz = X[:, :, fi("st")]; ft = X[:, :, fi("ex")] + X[:, :, fi("olap")] + X[:, :, fi("oturn")] + X[:, :, fi("ostr")]
+    oc = np.argsort(D["course"], 1); ar = np.arange(R)[:, None]
+    return stz[ar, oc], ft[ar, oc]
+
+
+def inkm_features(races, P, SZ=None, FT=None):
     """各レースについて、そのレースより前の結果だけから：1コースの艇の負け方の率、2〜6コースの艇の勝ち方の率。
     P は rows（枠順）の1着確率。戻り値は学習用の特徴と、アプリ用の選手ごとの通算"""
     ok = _ok_races(races)
@@ -590,7 +598,8 @@ def inkm_features(races, P):
                          for j in range(3)] for b in bs[1:]])
         a = np.log(np.clip(att, 1e-4, 1) / np.clip(PW[1:], 1e-4, 1))
         pr = np.array([P[i][b["waku"] - 1] for b in bs])
-        F1.append(inkm_vec(pr[0], v, a)); FK.append(km_mat(pr, v, a, PW))
+        F1.append(inkm_vec(pr[0], v, a))
+        FK.append(km_mat(pr, v, a, PW, None if SZ is None else SZ[i], None if FT is None else FT[i]))
         wc = [b["course"] for b in bs if b.get("finish") == 1][0]; km = r.get("kimarite")
         Y1.append(0 if wc == 1 else 1)
         YK.append(-1 if wc == 1 else ((wc - 2) * 3 + KM3.index(km) if km in KM3 else 15))
@@ -611,13 +620,22 @@ def inkm_vec(p1, v, a):
     return np.clip(f, -8, 8)
 
 
-def km_mat(pr, v, a, PW):
+KM_SLIT = 24  # 決まり手×(2〜3コース / 4〜6コース)ごとに [自分のSTの速さ, すぐ内のSTの速さ, 内の最速, 足]
+
+
+def km_mat(pr, v, a, PW, sz=None, ft=None):
+    """11/20：STの並び（とくに すぐ内の艇のST＝壁）と足を足した。テストで決まり手損失2.2106→2.2018、
+    3コースの壁が速いレースでの4コースまくりの言いすぎ 4.0%→3.1%（実際2.2%）"""
     pn = pr[1:] / max(pr[1:].sum(), 1e-9)
     rows = []
     for c in range(2, 7):
         for j in range(3):
-            rows.append([np.log(pn[c - 2] + 1e-9), np.log(PW[c - 1][j] / max(PW[c - 1].sum(), 1e-9)), a[c - 2][j], v[j]])
-    rows.append([0.0, 0.0, 0.0, 0.0])
+            e = np.zeros(KM_SLIT)
+            if sz is not None:
+                k = c - 1; g = 0 if c <= 3 else 1
+                e[g * 12 + j * 4:g * 12 + j * 4 + 4] = [sz[k], sz[k - 1], sz[:k].max(), np.clip(ft[k] - ft.mean(), -4, 4)]
+            rows.append([np.log(pn[c - 2] + 1e-9), np.log(PW[c - 1][j] / max(PW[c - 1].sum(), 1e-9)), a[c - 2][j], v[j], *e])
+    rows.append([0.0] * (4 + KM_SLIT))
     return np.clip(np.array(rows), -12, 8)
 
 
@@ -626,10 +644,11 @@ def fit_inkm(F1, FK, Y1, YK, m):
         z = F1[m] @ t; return np.mean(np.logaddexp(0, z) - Y1[m] * z)
     t1 = minimize(nll1, np.zeros(F1.shape[1]), method="L-BFGS-B").x
     mk = m & (YK >= 0)
+    nf = FK.shape[2]
     def nllk(t):
-        u = FK[mk] @ t[:4]; u[:, -1] = t[4]; u = u - u.max(1, keepdims=True)
-        lp = u - np.log(np.exp(u).sum(1, keepdims=True)); return -lp[np.arange(mk.sum()), YK[mk]].mean()
-    tk = minimize(nllk, np.array([1.0, 1.0, 0.0, 0.0, -2.0]), method="L-BFGS-B").x
+        u = FK[mk] @ t[:nf]; u[:, -1] = t[nf]; u = u - u.max(1, keepdims=True)
+        lp = u - np.log(np.exp(u).sum(1, keepdims=True)); return -lp[np.arange(mk.sum()), YK[mk]].mean() + 1e-4 * (t[4:nf] ** 2).sum()
+    tk = minimize(nllk, np.concatenate([[1.0, 1.0, 0.0, 0.0], np.zeros(nf - 4), [-2.0]]), method="L-BFGS-B").x
     return t1, tk
 
 
@@ -639,7 +658,8 @@ def eval_inkm(F1, FK, Y1, YK, t1, tk, m):
     p0 = 1 - np.clip(1 / (1 + np.exp(-F1[m][:, 1])), 1e-6, 1 - 1e-6)
     ll0 = float(-np.mean(y * np.log(p0) + (1 - y) * np.log(1 - p0)))
     mk = m & (YK >= 0)
-    u = FK[mk] @ tk[:4]; u[:, -1] = tk[4]; u = u - u.max(1, keepdims=True)
+    nf = FK.shape[2]
+    u = FK[mk] @ tk[:nf]; u[:, -1] = tk[nf]; u = u - u.max(1, keepdims=True)
     lp = u - np.log(np.exp(u).sum(1, keepdims=True))
     return {"loseLogLoss": ll1, "loseLogLossAI": ll0, "kmLogLoss": float(-lp[np.arange(mk.sum()), YK[mk]].mean()),
             "kmTop1": float((lp.argmax(1) == YK[mk]).mean())}
@@ -717,7 +737,7 @@ def main():
 
     # 3b. 1コースが負ける確率・決まり手（学習期間のモデルの1着確率から、学習＋検証で重みを決め、テストで採点）
     _, _, win_all = predict(M, D)
-    F1, FK, Y1, YK, PL, PW, _ = inkm_features(races, win_all)
+    F1, FK, Y1, YK, PL, PW, _ = inkm_features(races, win_all, *slit_arrays(D))
     t1, tk = fit_inkm(F1, FK, Y1, YK, ~te)
     ink_test = eval_inkm(F1, FK, Y1, YK, t1, tk, te)
     print("1コースが負ける・決まり手（テスト）", ink_test)
@@ -725,7 +745,7 @@ def main():
     # 4. 本番用は全期間で学習し直す
     Mall = fit_all(np.ones(len(dates), dtype=bool))
     _, _, win_full = predict(Mall, D)
-    F1, FK, Y1, YK, PL, PW, INKPER = inkm_features(races, win_full)
+    F1, FK, Y1, YK, PL, PW, INKPER = inkm_features(races, win_full, *slit_arrays(D))
     t1, tk = fit_inkm(F1, FK, Y1, YK, np.ones(len(Y1), dtype=bool))
     base = np.exp(Mall["lnbase"])
     w = dict(zip(FEATS, Mall["beta"].round(4).tolist()))
