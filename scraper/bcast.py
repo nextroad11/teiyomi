@@ -207,10 +207,11 @@ def parse_tkz(txt: str) -> dict:
 def parse_stt(txt: str) -> dict:
     out = {}
     for c in (l.split("\t") for l in lines_of(txt)):
-        if len(c) >= 4 and c[0].strip().isdigit() and c[1].strip().isdigit():
-            course, waku, s = int(c[0]), c[1].strip(), z(c[3])
+        # [進入コース, 枠, 名前, (今節平均ST?), 展示ST, F, ...]。展示STは5列目、Fは6列目（11/20 芦屋・鳴門で確認）
+        if len(c) >= 6 and c[0].strip().isdigit() and c[1].strip().isdigit():
+            course, waku, s, fl = int(c[0]), c[1].strip(), z(c[4]), z(c[5])
             v = fnum(s)
-            out[waku] = {"course": course, "exST": (-v if "F" in s else v) if v is not None else None}
+            out[waku] = {"course": course, "exST": (-v if ("F" in fl or "F" in s) else v) if v is not None else None}
     return out
 
 
@@ -268,7 +269,7 @@ def update_before(r: dict, D: str, now: dt.datetime, sui_cache: dict) -> bool:
     ok = all(boats.get(str(w), {}).get("exTime") is not None and boats.get(str(w), {}).get("course") for w in range(1, 7))
     bf["complete"] = ok
     bf["fetchedAt"] = now.isoformat(timespec="seconds")
-    bf["src"] = "boatcast"
+    bf["src"] = "boatcast"; bf["stt2"] = True
     # オリジナル展示
     if ok and (not bf.get("ori") or ori_incomplete(bf["ori"])):
         t = get(f"/txt/{j:02d}/bc_oriten_{D}_{j:02d}_{rno:02d}.txt")
@@ -368,6 +369,12 @@ def tick(root: Path, D: str, now: dt.datetime) -> dict:
         if (-5 <= mins <= 25 and not bf.get("complete")) or (need_ori and mins <= 20):
             if not last or (now - last).total_seconds() >= RECHECK:
                 update_before(r, D, now, sui); st["before"] += 1
+        if bf.get("complete") and not bf.get("stt2") and mins > -360:  # 11/20 朝の展示STの読み違いを直す（1回だけ）
+            t = get(f"/hp_txt/{r['jcd']:02d}/bc_j_stt_{D}_{r['jcd']:02d}_{r['rno']:02d}.txt")
+            if t:
+                for w, v in parse_stt(t).items():
+                    bf.setdefault("boats", {}).setdefault(w, {}).update({k: x for k, x in v.items() if x is not None})
+            bf["stt2"] = True
         res = r.get("result") or {}
         done = res.get("order") and res.get("payout") and res.get("km") and res.get("st")
         if not done and mins <= -2 and mins >= -360:
