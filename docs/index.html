@@ -632,6 +632,49 @@ function affOf(B,ex){
     out[b.waku]=[cl(A[0]+V[0]),cl(A[1]+V[1]),cl(A[2]+V[2]),0];});
   return out;
 }
+// ===== フォーメーション（11/21）：AIの見込みで的中30%に届く、一番点数の少ないフォーメーション =====
+// 1着はAIの1着予想の上位3艇から1〜2艇、2着・3着は何艇でも。同じ点数なら見込みが高いほう。
+// 学習に使っていない8,848Rで：平均5.8点・見込み33.0%→実際の的中32.3%（点数の多い少ないに関係なく見込みどおり）
+// 穴：本線のフォーメーションと1点も重ならない目だけで、見込み10%に届く一番少ない点数。同じ8,848Rで平均3.1点・見込み11.8%→実際12.2%
+const FORM_TARGET=0.30, FORM_ANA=0.10;
+let FORM_CANDS=null;
+function formCands(){
+  if(FORM_CANDS)return FORM_CANDS;
+  const subs=(pool,ks)=>{const out=[];const rec=(st,cur)=>{if(ks.includes(cur.length))out.push(cur.slice());if(cur.length===Math.max(...ks))return;for(let i=st;i<pool.length;i++){cur.push(pool[i]);rec(i+1,cur);cur.pop();}};rec(0,[]);return out;};
+  const seen=new Set(),list=[];
+  for(const F1 of subs([0,1,2],[1,2]))for(const F2 of subs([0,1,2,3,4,5],[1,2,3,4,5]))for(const F3 of subs([0,1,2,3,4,5],[1,2,3,4,5])){
+    const ks=[];for(const a of F1)for(const b of F2)for(const c of F3)if(a!==b&&b!==c&&a!==c)ks.push(a*36+b*6+c);
+    if(!ks.length)continue;ks.sort((x,y)=>x-y);const key=ks.join(',');if(seen.has(key))continue;seen.add(key);list.push({F1,F2,F3,ks});}
+  list.sort((x,y)=>x.ks.length-y.ks.length);return FORM_CANDS=list;
+}
+function formationOf(a,target=FORM_TARGET,avoid=null){
+  if(!a||!a.combos)return null;
+  const rk=a.boats.slice().sort((x,y)=>y.pWin-x.pWin).map(b=>b.waku),M={};a.combos.forEach(c=>M[c.k]=c.pAi);
+  const pr=new Float64Array(216);for(let i=0;i<6;i++)for(let j=0;j<6;j++)for(let k=0;k<6;k++)if(i!==j&&j!==k&&i!==k)pr[i*36+j*6+k]=M[`${rk[i]}-${rk[j]}-${rk[k]}`]||0;
+  let best=null;
+  const K=x=>`${rk[Math.floor(x/36)]}-${rk[Math.floor(x/6)%6]}-${rk[x%6]}`;
+  for(const c of formCands()){if(best&&c.ks.length>best.ks.length)break;
+    if(avoid&&c.ks.some(x=>avoid.has(K(x))))continue;
+    let p=0;for(const x of c.ks)p+=pr[x];if(p>=target&&(!best||p>best.p))best={...c,p};}
+  if(!best)return null;
+  // 表示：実際に使う艇だけで書ける形ならそちらで（例 1-12-12346 → 1-2-346）
+  let F1=best.F1,F2=best.F2,F3=best.F3;
+  const e1=[...new Set(best.ks.map(x=>Math.floor(x/36)))],e2=[...new Set(best.ks.map(x=>Math.floor(x/6)%6))],e3=[...new Set(best.ks.map(x=>x%6))];
+  let cnt=0;for(const a1 of e1)for(const b of e2)for(const c of e3)if(a1!==b&&b!==c&&a1!==c)cnt++;
+  if(cnt===best.ks.length){F1=e1;F2=e2;F3=e3;}
+  const W=F=>F.map(i=>rk[i]).sort((x,y)=>x-y).join('');
+  const keys=best.ks.map(K).sort((x,y)=>(M[y]||0)-(M[x]||0));
+  return {label:`${W(F1)}-${W(F2)}-${W(F3)}`,n:best.ks.length,p:best.p,keys};
+}
+function formsOf(a){const h=formationOf(a,FORM_TARGET);if(!h)return null;return {h,a:formationOf(a,FORM_ANA,new Set(h.keys))};}
+function formHtml(a){
+  const F=formsOf(a);if(!F)return '';
+  const row=(lab,f)=>f?`<div class="expect"><span class="lbl">${lab}</span><b style="font-size:1.25em;letter-spacing:.04em">${f.label}</b><span class="num">${f.n}点で的中確率 ${pct(f.p)}</span></div>
+    <p class="sub">${f.keys.join('　')}</p>`:`<p class="sub">${lab}：組めませんでした</p>`;
+  return `<div class="panel honsen"><h3><span class="mark">フォーメーション</span>本線は的中見込み${Math.round(FORM_TARGET*100)}%・穴は${Math.round(FORM_ANA*100)}%に届く一番少ない点数</h3>
+    ${row('本線',F.h)}${row('穴',F.a)}
+    <p class="foot">本線は1着をAIの上位3艇から1〜2艇、2着・3着は何艇でも組んで、点数が一番少ないものです。穴は本線と1点も重ならない目だけで組んでいます。過去の検証（学習に使っていない8,848R）：本線は平均5.8点・見込み33%→実際32%、穴は平均3.1点・見込み12%→実際12%。</p></div>`;
+}
 function analyze(race,exOverride){
   const B=(race.boats||[]).slice().sort((a,b)=>a.waku-b.waku);
   if(B.length!==6) return null;
@@ -1436,6 +1479,7 @@ function renderYoso(){
         <p class="foot">${a.ana.length}点の的中確率 ${pct(sum(a.ana.map(c=>c.pAi)))}・1点あたり期待値 ${(anaEV*100).toFixed(0)}%</p>`
         :`<p class="sub">人気とのズレが小さく、狙える穴が見つかりません。見送り候補です。</p>`}</div>
     </div>
+    ${formHtml(a)}
     <div id="j-are">${areHtml(r,a,res)}</div>
     <div class="panel" id="j-slit"><h3>スリット予測</h3><p class="sub">右ほど早いスタート。「凹」は両隣より遅れる予測、「先」は内より早い予測。展開予想・足評価・オリジナル展示は「自分で予想」タブに。</p>${slitSvg(tenkaiOf(r,a))}</div>
     <div id="j-plan">${planHtml(a,res)}</div>
@@ -1600,7 +1644,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='60';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='61';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
