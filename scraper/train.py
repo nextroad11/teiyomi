@@ -29,7 +29,10 @@ import os
 MOTOR_MODE = os.environ.get("MOTOR_MODE", "new")   # old: 2連率と直近着順 / new: 新しい2つ / both: 全部（比較用）
 _MF = {"old": ["motor", "mform"], "new": ["mfoot", "madj"], "both": ["motor", "mform", "mfoot", "madj"]}[MOTOR_MODE]
 FEATS = ["skill", "local", *[k for k in _MF if k == "motor"], "boat", "st", "ex", "cwin", "form",
-         *[k for k in _MF if k != "motor"], "olap", "oturn", "ostr", "nozoki", "wall", "dash"]
+         *[k for k in _MF if k != "motor"], "olap", "oturn", "ostr", "nozoki", "wall", "dash",
+         "asa", "amk", "ams", "av1"]
+# 相性（11/20 殿の展開予想の式から。テスト8,854Rで1着損失1.1889→1.1856）：攻める艇の今のコースでの差し/まくり/まくり差しの率（log比）
+# ＋1コースの選手の差され/まくられ/まくり差され率（log比）。av1＝1コースの選手の負けにくさ（3つの平均の符号反転）
 # スリットの隊形（11/20 追加。st は平均STの速さ）：nozoki＝すぐ内の艇より速い、wall＝1コースが2コースより速い、
 # dash＝4〜6コースが1〜3コースの平均より速い
 PTS = {1: 10, 2: 8, 3: 6, 4: 4, 5: 2, 6: 1}
@@ -125,6 +128,20 @@ def build(races):
     motorf = defaultdict(list)    # "jcd-motor" -> 直近の着順
     mh = defaultdict(lambda: [[], []])  # "jcd-交換日-motor" -> [実測の足z, 腕を差し引いた着順点]
     renew = renew_dates(races)
+    # 相性用：決まり手の全体の割合（inkm_features と同じ）と、選手ごとの通算（そのレースより前だけ）
+    okr = _ok_races(races); tot = np.zeros(5); totw = np.zeros((6, 4))
+    for r in okr:
+        km = r.get("kimarite"); wc = [b["course"] for b in r["boats"] if b.get("finish") == 1][0]
+        tot[0] += 1
+        if wc != 1:
+            tot[1 + KM3.index(km) if km in KM3 else 4] += 1
+        for b in r["boats"]:
+            totw[b["course"] - 1][0] += 1
+            if b.get("finish") == 1 and km in KM3:
+                totw[b["course"] - 1][1 + KM3.index(km)] += 1
+    aPL = tot[1:4] / max(tot[0], 1); aPW = np.clip(totw[:, 1:] / np.maximum(totw[:, :1], 1), 1e-4, 1)
+    alose = defaultdict(lambda: np.zeros(5)); awin = defaultdict(lambda: np.zeros((6, 4)))
+    arate = lambda a, n, p: (a + INK * p) / (n + INK)
     rows = []
     for r in races:
         d = dt.datetime.strptime(r["date"], "%Y%m%d").date()
@@ -158,7 +175,7 @@ def build(races):
                  "mform": form_of(motorf[f'{r["jcd"]}-{b["motor"]}'][-20:], 5),
                  "mfoot": sum(fs) / (len(fs) + MF_K), "madj": sum(rs_) / (len(rs_) + MA_K) / 2,
                  "olap": of[b["waku"] - 1][0], "oturn": of[b["waku"] - 1][1], "ostr": of[b["waku"] - 1][2],
-                 "nozoki": 0.0, "wall": 0.0, "dash": 0.0}
+                 "nozoki": 0.0, "wall": 0.0, "dash": 0.0, "asa": 0.0, "amk": 0.0, "ams": 0.0, "av1": 0.0}
             x[i] = [v[k] for k in FEATS]
             stz[i] = v["st"]; crs[i] = c - 1
             mkf[i] = [v["skill"], v["motor"], v["ex"]]
@@ -172,6 +189,26 @@ def build(races):
                     x[i, FEATS.index("nozoki")] = np.clip(stz[i] - byc[c - 1], -4, 4) if c > 0 else 0.0
                     x[i, FEATS.index("wall")] = np.clip(stz[i] - byc[1], -4, 4) if c == 0 else 0.0
                     x[i, FEATS.index("dash")] = np.clip(stz[i] - byc[:3].mean(), -4, 4) if c >= 3 else 0.0
+        if ok and "asa" in FEATS:
+            c1b = [b for b in boats if b["course"] == 1][0]; l = alose[c1b["toban"]]
+            V = np.log(np.clip([arate(l[1 + j], l[0], aPL[j]) for j in range(3)], 1e-4, 1) / np.clip(aPL, 1e-4, 1))
+            for i, b in enumerate(boats):
+                c = b["course"]
+                if c == 1:
+                    x[i, FEATS.index("av1")] = np.clip(-V.mean(), -6, 6)
+                else:
+                    w_ = awin[b["toban"]][c - 1]
+                    A = np.log(np.clip([arate(w_[1 + j], w_[0], aPW[c - 1][j]) for j in range(3)], 1e-4, 1) / aPW[c - 1])
+                    for j, k in enumerate(("asa", "amk", "ams")):
+                        x[i, FEATS.index(k)] = np.clip(A[j] + V[j], -6, 6)
+            wc = [b["course"] for b in boats if b.get("finish") == 1][0]; km = r.get("kimarite")
+            l[0] += 1
+            if wc != 1:
+                l[1 + KM3.index(km) if km in KM3 else 4] += 1
+            for b in boats:
+                w_ = awin[b["toban"]][b["course"] - 1]; w_[0] += 1
+                if b.get("finish") == 1 and km in KM3:
+                    w_[1 + KM3.index(km)] += 1
         if ok:
             rows.append({
                 "date": r["date"], "jcd": r["jcd"], "course": np.array(courses) - 1, "x": x, "f": fflag, "cls": cls, "mk": mkf,

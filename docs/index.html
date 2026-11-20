@@ -614,6 +614,23 @@ const expectOf=c=>c>=0.40?{st:'★★★',t:'高い',cls:'hi'}:c>=0.33?{st:'★�
 const fgCls=g=>g==='S'||g==='A'?'up':g==='C'||g==='D'?'dn':'mid';
 const tobuOf=p=>p>=0.30?{t:'危ない',cls:'hi'}:p>=0.18?{t:'ややあり',cls:'mid'}:{t:'低い',cls:'lo'};
 const manOf=p=>p>=0.20?{t:'高い',cls:'hi'}:p>=0.12?{t:'ふつう',cls:'mid'}:{t:'低い',cls:'lo'};
+// 相性（11/20 殿の展開予想の式から。train.py の asa/amk/ams/av1 と同じ計算）
+// 2〜6コース：その艇の今のコースでの差し/まくり/まくり差しの率 ＋ 1コースの選手の差され/まくられ/まくり差され率（どちらも全体比のlog）
+// 1コース：負けにくさ（3つの負け方の平均の符号反転）。返り値は 枠 -> [差し相性, まくり相性, まくり差し相性, 1コースの負けにくさ]
+function affOf(B,ex){
+  const IK=MODEL.inkm; if(!IK||!STATS||!STATS.p||MODEL.weights.asa==null)return null;
+  const cs=B.map(b=>clamp(num(ex[b.waku].course)||b.waku,1,6)); if(new Set(cs).size!==6)return null;
+  const K=IK.K,PL=IK.PL,PW=IK.PW.map(r=>r.map(x=>Math.max(x,1e-4))),rate=(a,n,p)=>(a+K*p)/(n+K),cl=x=>clamp(x,-6,6),P=t=>STATS.p[String(t)]||{};
+  const b1=B[cs.indexOf(1)],lk=P(b1.toban).lk||[0,0,0,0,0];
+  const V=[0,1,2].map(j=>Math.log(Math.min(1,Math.max(rate(lk[1+j],lk[0],PL[j]),1e-4))/Math.max(PL[j],1e-4)));
+  const out={};
+  B.forEach((b,i)=>{const c=cs[i];
+    if(c===1){out[b.waku]=[0,0,0,cl(-(V[0]+V[1]+V[2])/3)];return;}
+    const wk=P(b.toban).wk,row=wk&&wk[c-2]?wk[c-2]:[0,0,0,0];
+    const A=[0,1,2].map(j=>Math.log(Math.min(1,Math.max(rate(row[1+j],row[0],PW[c-1][j]),1e-4))/PW[c-1][j]));
+    out[b.waku]=[cl(A[0]+V[0]),cl(A[1]+V[1]),cl(A[2]+V[2]),0];});
+  return out;
+}
 function analyze(race,exOverride){
   const B=(race.boats||[]).slice().sort((a,b)=>a.waku-b.waku);
   if(B.length!==6) return null;
@@ -630,6 +647,7 @@ function analyze(race,exOverride){
   const stzOf=b=>-clamp(((num(b.st)??0.17)-0.16)/0.025,-2.5,2.5), SZ={};
   B.forEach(b=>{SZ[clamp(num(ex[b.waku].course)||b.waku,1,6)]=stzOf(b);});
   const slitOK=Object.keys(SZ).length===6, SM3=slitOK?(SZ[1]+SZ[2]+SZ[3])/3:0;
+  const AF=affOf(B,ex);  // 相性（11/20）：攻める艇の勝ちクセ×1コースの選手の負けクセ
   const boats=B.map((b,i)=>{
     const course=clamp(num(ex[b.waku].course)||b.waku,1,6);
     const nat=num(b.natWin)??5.0, loc=num(b.locWin), locEff=(loc&&loc>0)?loc:nat;
@@ -643,7 +661,8 @@ function analyze(race,exOverride){
       olap:(w.olap||0)*OF[b.waku][0], oturn:(w.oturn||0)*OF[b.waku][1], ostr:(w.ostr||0)*OF[b.waku][2],
       nozoki:slitOK&&course>1?(w.nozoki||0)*clamp(stzOf(b)-SZ[course-1],-4,4):0,
       wall:slitOK&&course===1?(w.wall||0)*clamp(stzOf(b)-SZ[2],-4,4):0,
-      dash:slitOK&&course>=4?(w.dash||0)*clamp(stzOf(b)-SM3,-4,4):0};
+      dash:slitOK&&course>=4?(w.dash||0)*clamp(stzOf(b)-SM3,-4,4):0,
+      asa:AF?(w.asa||0)*AF[b.waku][0]:0, amk:AF?(w.amk||0)*AF[b.waku][1]:0, ams:AF?(w.ams||0)*AF[b.waku][2]:0, av1:AF?(w.av1||0)*AF[b.waku][3]:0};
     const s=sum(Object.values(parts)), fPen=f>0?-w.fPen:0;
     const mk=MODEL.market, exF=(exMean!=null&&exT[i]!=null)?-clamp((exT[i]-exMean)/0.07,-2.5,2.5):0;
     const sm=mk.kNat*(nat-5.5)/1.2+mk.kMotor*(m2-35)/8+mk.kEx*exF+(mk.cls[b.cls]??0);
@@ -1570,7 +1589,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='57';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='58';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
