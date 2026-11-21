@@ -684,13 +684,14 @@ const PERSONS={
             {d:'11/22',t:'展開予想から3着以内に一番絡みづらい1艇を完全に切る'},{d:'11/22',t:'1レース4〜18点'},
             {d:'11/22',t:'1レース1万円を、オッズに合わせて配分'},{d:'11/22',t:'50倍以下の目は完全に切る'},
             {d:'11/22',t:'切る前の段階で、組んだ目の40%以上が50倍以下ならそのレースは見送り'},{d:'11/22',t:'（確認中）50倍以下を切っても18点を超えるときは、いまは見送り'}]},
-  ike:{name:'池田',short:'池',honsen:null,ana:{hit:0.10,ret:null,minOdds:50,maxPts:12},unit:n=>n===6?2000:1000,
+  ike:{name:'池田',short:'池',honsen:null,ana:{hit:0.15,ret:null,minOdds:50,maxPts:12},unit:n=>n<=6?2000:1000,
        log:[{d:'11/21',t:'穴1500%なら倍率どれくらい狙ってるの？（質問）'},
             {d:'11/21',t:'本線は捨てて、穴狙い1本。1点50倍から。最終的に「予想」「金予想」と戦う'},
-            {d:'11/21',t:'（まだ聞いていないので艇読みAIと同じ）穴の的中見込み10%以上'},
             {d:'11/21',t:'目標：1日10万円の利益（1週間で70万円）。1日負けても週で取り返す考え'},
             {d:'11/21',t:'転がしもやる（3レース転がし）。※どのレースを選ぶか・各レースの買い方は確認中'},
-            {d:'11/22',t:'基本は3連単フォーメーション。12点以内・1点1,000円。6点のときは1点2,000円'}]},
+            {d:'11/22',t:'基本は3連単フォーメーション。12点以内・1点1,000円。6点のときは1点2,000円'},
+            {d:'11/22',t:'1〜2点でも勝負できるなら買う'},{d:'11/22',t:'2,000円にする点数は任せる → 6点以下は1点2,000円（1レース最大12,000円にそろえる）'},
+            {d:'11/22',t:'穴の的中見込みは15%以上'}]},
 };
 let ODDS={date:null,races:{}};
 async function loadOdds(){if(ODDS.date===dateSel)return;try{const d=await fetchJSON('odds/'+dateSel+'.json');ODDS={date:dateSel,races:d.races||{}};}catch(_){ODDS={date:dateSel,races:{}};}}
@@ -750,7 +751,7 @@ function battleHtml(){
   return `<div class="panel"><h3>対戦成績（${dateSel.slice(4,6)}/${dateSel.slice(6)}、結果が出た全レース）</h3>
     <div style="overflow-x:auto"><table class="rec" style="min-width:0"><thead><tr><th></th><th>買ったR</th><th>的中R</th><th>購入</th><th>払戻</th><th>回収率</th></tr></thead><tbody>
     ${rows.map(t=>`<tr><th>${t.lab}</th><td>${t.races}</td><td>${t.hit}</td><td>${t.st.toLocaleString()}円</td><td>${Math.round(t.ret).toLocaleString()}円</td><td><b>${t.st?Math.round(t.ret/t.st*100)+'%':'-'}</b></td></tr>`).join('')}</tbody></table></div>
-    <p class="foot">予想は本線・穴フォーメーションを1点100円。金予想は1万円をオッズで配分、池予想は1点1,000円（6点のときは2,000円）。払戻は確定の払戻金。</p></div>`;
+    <p class="foot">予想は本線・穴フォーメーションを1点100円。金予想は1万円をオッズで配分、池予想は1点1,000円（6点以下は2,000円）。払戻は確定の払戻金。</p></div>`;
 }
 function renderPerson(pid){
   const el=$('#v-'+pid),P=PERSONS[pid],r=cur();
@@ -1757,7 +1758,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='67';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='68';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
