@@ -678,12 +678,12 @@ function formationOf(a,target=FORM_TARGET,avoid=null,opt=null){
 // ルールは二人から聞いたことだけを入れる。まだ聞いていない項目は艇読みAIの予想と同じ（本線 見込み30%・穴 10%）。
 // ret は「当たったときの最低回収率（倍）」。入っているときは締切前オッズ（なければ確定オッズ）で金額を配分し、満たせなければ見送り。
 const PERSONS={
-  kin:{name:'金城',short:'金',honsen:null,ana:{hit:0.10,ret:10,minOdds:50},custom:'kin',budget:10000,
-       log:[{d:'11/22',t:'1レースの的中率10%・回収率1000%以上'},{d:'11/22',t:'イン逃げは買わない'},
+  kin:{name:'金城',short:'金',honsen:null,ana:{hit:0.05,ret:10,minOdds:50},custom:'kin',budget:10000,
+       log:[{d:'11/22',t:'1レースの的中率5%以上（10%から変更）・回収率1000%以上'},{d:'11/22',t:'イン逃げは買わない'},
             {d:'11/22',t:'2〜6号艇のうち▲・△を1着に固定してフォーメーションを組む'},
             {d:'11/22',t:'展開予想から3着以内に一番絡みづらい1艇を完全に切る'},{d:'11/22',t:'1レース4〜18点'},
             {d:'11/22',t:'1レース1万円を、オッズに合わせて配分'},{d:'11/22',t:'50倍以下の目は完全に切る'},
-            {d:'11/22',t:'切る前の段階で、組んだ目の40%以上が50倍以下ならそのレースは見送り'}]},
+            {d:'11/22',t:'切る前の段階で、組んだ目の40%以上が50倍以下ならそのレースは見送り'},{d:'11/22',t:'（確認中）50倍以下を切っても18点を超えるときは、いまは見送り'}]},
   ike:{name:'池田',short:'池',honsen:null,ana:{hit:0.10,ret:null,minOdds:50},
        log:[{d:'11/21',t:'穴1500%なら倍率どれくらい狙ってるの？（質問）'},
             {d:'11/21',t:'本線は捨てて、穴狙い1本。1点50倍から。最終的に「予想」「金予想」と戦う'},
@@ -716,7 +716,7 @@ function kinForm(a,r,od){
   const keys=all.filter(k=>od.o[k]>P.ana.minOdds).sort((x,y)=>(M[y]||0)-(M[x]||0));
   if(keys.length<4||keys.length>18)return why(`${P.ana.minOdds}倍以下を切ると${keys.length}点（4〜18点の外）`);
   const p=keys.reduce((s,k)=>s+(M[k]||0),0);
-  if(p<P.ana.hit)return why(`的中見込み${(p*100).toFixed(1)}%（10%未満）`);
+  if(p<P.ana.hit)return why(`的中見込み${(p*100).toFixed(1)}%（${Math.round(P.ana.hit*100)}%未満）`);
   const I=keys.reduce((s,k)=>s+1/od.o[k],0),R=P.budget/I,st={};keys.forEach(k=>st[k]=Math.max(100,Math.round(R/od.o[k]/100)*100));
   const tot=keys.reduce((s,k)=>s+st[k],0),minRet=Math.min(...keys.map(k=>st[k]*od.o[k]))/tot;
   if(minRet<P.ana.ret)return why(`1万円を配分しても当たったとき${Math.round(minRet*100)}%（1000%未満）`);
@@ -1755,7 +1755,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='65';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='66';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
