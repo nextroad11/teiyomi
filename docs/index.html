@@ -678,7 +678,12 @@ function formationOf(a,target=FORM_TARGET,avoid=null,opt=null){
 // ルールは二人から聞いたことだけを入れる。まだ聞いていない項目は艇読みAIの予想と同じ（本線 見込み30%・穴 10%）。
 // ret は「当たったときの最低回収率（倍）」。入っているときは締切前オッズ（なければ確定オッズ）で金額を配分し、満たせなければ見送り。
 const PERSONS={
-  kin:{name:'金城',short:'金',honsen:{hit:0.30,ret:null},ana:{hit:0.10,ret:null},log:[]},
+  kin:{name:'金城',short:'金',honsen:null,ana:{hit:0.10,ret:10,minOdds:50},custom:'kin',budget:10000,
+       log:[{d:'11/22',t:'1レースの的中率10%・回収率1000%以上'},{d:'11/22',t:'イン逃げは買わない'},
+            {d:'11/22',t:'2〜6号艇のうち▲・△を1着に固定してフォーメーションを組む'},
+            {d:'11/22',t:'展開予想から3着以内に一番絡みづらい1艇を完全に切る'},{d:'11/22',t:'1レース4〜18点'},
+            {d:'11/22',t:'1レース1万円を、オッズに合わせて配分'},{d:'11/22',t:'50倍以下の目は完全に切る'},
+            {d:'11/22',t:'切る前の段階で、組んだ目の40%以上が50倍以下ならそのレースは見送り'}]},
   ike:{name:'池田',short:'池',honsen:null,ana:{hit:0.10,ret:null,minOdds:50},
        log:[{d:'11/21',t:'穴1500%なら倍率どれくらい狙ってるの？（質問）'},
             {d:'11/21',t:'本線は捨てて、穴狙い1本。1点50倍から。最終的に「予想」「金予想」と戦う'},
@@ -694,7 +699,31 @@ function stakesOf(keys,odds,need=0){ // どの目が当たっても同じくら�
   for(let m=1;m<=30;m++){const R=100*m*mx,st={};keys.forEach(k=>st[k]=Math.max(100,Math.ceil(R/odds[k]/100)*100));
     const tot=keys.reduce((s,k)=>s+st[k],0),minRet=Math.min(...keys.map(k=>st[k]*odds[k]))/tot;out={st,tot,minRet};if(minRet>=need-1e-9)break;}
   return out;}
+// 金予想（11/22 金城さん）：▲・△（2〜6号艇、1コースの艇を除く）を1着に固定し、3着以内に一番絡みづらい1艇（AIの3着以内率が最低）を切った
+// 「▲△ - 残り全部 - 残り全部」を組む。組んだ目の40%以上が50倍以下なら見送り。50倍以下を切り、4〜18点・的中見込み10%以上・
+// 1万円をオッズで配分してどの目が当たっても1000%以上、をすべて満たすときだけ買う。
+function kinForm(a,r,od){
+  const P=PERSONS.kin,ord=a.boats.slice().sort((x,y)=>y.pWin-x.pWin),M={};a.combos.forEach(c=>M[c.k]=c.pAi);
+  const F1=[ord[2],ord[3]].filter(b=>b&&b.waku!==1&&b.course!==1).map(b=>b.waku);
+  const t3={};a.boats.forEach(b=>t3[b.waku]=0);a.combos.forEach(c=>c.k.split('-').forEach(w=>t3[w]+=c.pAi));
+  const cut=+Object.keys(t3).sort((x,y)=>t3[x]-t3[y])[0];
+  const f1=F1.filter(w=>w!==cut),rest=a.boats.map(b=>b.waku).filter(w=>w!==cut);
+  const why=t=>({skip:t,cut,F1:f1});
+  if(!f1.length)return why('▲・△に2〜6号艇がいない（または切った艇）');
+  const all=[];for(const x of f1)for(const y of rest)for(const z of rest)if(x!==y&&y!==z&&x!==z)all.push(`${x}-${y}-${z}`);
+  const low=all.filter(k=>!(od.o[k]>P.ana.minOdds));
+  if(low.length/all.length>=0.4)return why(`組んだ${all.length}点のうち${low.length}点（${Math.round(low.length/all.length*100)}%）が${P.ana.minOdds}倍以下`);
+  const keys=all.filter(k=>od.o[k]>P.ana.minOdds).sort((x,y)=>(M[y]||0)-(M[x]||0));
+  if(keys.length<4||keys.length>18)return why(`${P.ana.minOdds}倍以下を切ると${keys.length}点（4〜18点の外）`);
+  const p=keys.reduce((s,k)=>s+(M[k]||0),0);
+  if(p<P.ana.hit)return why(`的中見込み${(p*100).toFixed(1)}%（10%未満）`);
+  const I=keys.reduce((s,k)=>s+1/od.o[k],0),R=P.budget/I,st={};keys.forEach(k=>st[k]=Math.max(100,Math.round(R/od.o[k]/100)*100));
+  const tot=keys.reduce((s,k)=>s+st[k],0),minRet=Math.min(...keys.map(k=>st[k]*od.o[k]))/tot;
+  if(minRet<P.ana.ret)return why(`1万円を配分しても当たったとき${Math.round(minRet*100)}%（1000%未満）`);
+  return {label:`${f1.join('')}-${rest.join('')}-${rest.join('')}`,n:keys.length,p,keys,cut,S:{st,tot,minRet}};
+}
 function personForms(pid,a,r){
+  if(PERSONS[pid].custom==='kin'){const od=oddsOf(r);if(!od)return {wait:true};const k=kinForm(a,r,od);return {h:null,a:k.skip?null:k,skip:k.skip?k:null,od};}
   const P=PERSONS[pid],od=oddsOf(r),X=[P.honsen,P.ana].filter(Boolean),need=X.some(x=>x.ret||x.minOdds);
   if(need&&!od)return {wait:true};
   const o=od?od.o:null,opt=x=>(x.ret||x.minOdds)?{ret:x.ret,minOdds:x.minOdds,odds:o}:null;
@@ -710,7 +739,7 @@ function battleRows(){
     const flat=f=>{const st={};f.keys.forEach(k=>st[k]=100);return {st,tot:f.keys.length*100};};
     if(a.form)add(T.ai,[a.form.h,a.form.a],flat);
     for(const pid of ['kin','ike']){const F=personForms(pid,a,r);if(F.wait)continue;const P=PERSONS[pid];
-      add(T[pid],[F.h,F.a],f=>F.od&&((f===F.h&&P.honsen&&P.honsen.ret)||(f===F.a&&P.ana&&P.ana.ret))?stakesOf(f.keys,F.od.o,f===F.h?P.honsen.ret:P.ana.ret):flat(f));}}
+      add(T[pid],[F.h,F.a],f=>f.S?f.S:F.od&&((f===F.h&&P.honsen&&P.honsen.ret)||(f===F.a&&P.ana&&P.ana.ret))?stakesOf(f.keys,F.od.o,f===F.h?P.honsen.ret:P.ana.ret):flat(f));}}
   return Object.values(T);
 }
 function battleHtml(){
@@ -728,10 +757,11 @@ function renderPerson(pid){
   const res=resultOf(r);
   const draw=()=>{const F=personForms(pid,a,r);
     const rule=x=>x?`的中見込み${Math.round(x.hit*100)}%以上${x.minOdds?`・1点${x.minOdds}倍以上`:''}${x.ret?`・当たったら${Math.round(x.ret*100)}%以上`:''}`:'買わない';
-    const block=(lab,f,x)=>{if(!x)return `<p class="sub">${P.name}さんは本線を買いません。</p>`;if(F.wait)return `<p class="sub">${lab}：オッズがまだ出ていません（締切15分前から取り込みます）。</p>`;
-      if(!f)return `<p class="sub">${lab}：条件（${rule(x)}）を満たす組み方がないので見送り。</p>`;
-      const S=F.od?(x.ret?stakesOf(f.keys,F.od.o,x.ret):(()=>{const st={};f.keys.forEach(k=>st[k]=100);return {st,tot:f.keys.length*100,minRet:Math.min(...f.keys.map(k=>F.od.o[k]))/f.keys.length,flat:true};})()):null;
+    const block=(lab,f,x)=>{if(!x)return `<p class="sub">${P.custom==='kin'?'金城さんの買い目は1種類です（下の欄）。':P.name+'さんは本線を買いません。'}</p>`;if(F.wait)return `<p class="sub">${lab}：オッズがまだ出ていません（締切15分前から取り込みます）。</p>`;
+      if(!f)return F.skip?`<p class="sub">見送り：${esc(F.skip.skip)}。${F.skip.cut?`（切った艇：${F.skip.cut}号艇）`:''}</p>`:`<p class="sub">${lab}：条件（${rule(x)}）を満たす組み方がないので見送り。</p>`;
+      const S=f.S?f.S:F.od?(x.ret?stakesOf(f.keys,F.od.o,x.ret):(()=>{const st={};f.keys.forEach(k=>st[k]=100);return {st,tot:f.keys.length*100,minRet:Math.min(...f.keys.map(k=>F.od.o[k]))/f.keys.length,flat:true};})()):null;
       return `${formRow(lab,f)}<ul class="combo-list">${f.keys.map(k=>{const c=a.combos.find(c=>c.k===k);return `<li class="combo${res&&res.order===k?' hit':''}"><span class="nums">${comboHtml(k)}</span><span class="bar"><span style="width:${Math.min(100,c.pAi/a.combos[0].pAi*100)}%"></span></span><span class="val">${pct(c.pAi)}${S?`<small>${F.od.o[k]}倍・${S.st[k]}円</small>`:''}</span></li>`;}).join('')}</ul>
+        ${f.cut?`<p class="sub">切った艇：${f.cut}号艇（3着以内に一番絡みづらい）</p>`:''}
         ${S?`<p class="foot">合計${S.tot.toLocaleString()}円。${S.flat?`1点100円（当たったときは${Math.round(S.minRet*100)}%以上）`:`どの目が当たっても${Math.round(S.minRet*100)}%以上戻る配分`}。オッズは${F.od.kind}。</p>`:''}`;};
     el.innerHTML=`<div style="display:grid;gap:14px">${raceHead(r,a)}
       <div class="picks"><div class="panel honsen"><h3><span class="mark">本線</span>${P.short}予想（${rule(P.honsen)}）</h3>${block('フォーメーション',F.h,P.honsen)}</div>
@@ -1725,7 +1755,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='64';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='65';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
