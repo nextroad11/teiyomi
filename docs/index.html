@@ -694,6 +694,8 @@ const PERSONS={
             {d:'11/22',t:'穴の的中見込みは15%以上'},{d:'11/22',t:'回収率重視。ただし的中も大事'},
             {d:'11/22',t:'期待値（オッズ）が100倍以上の場合は、フォーメーションを18点まで広げる → 12点以内で組めないとき、全部100倍以上の目なら18点まで（1点1,000円）'},
             {d:'11/22',t:'転がしは全部50倍以上だと難しいので、3レース目に固いレースを入れる → 1・2レース目は池予想の穴、3レース目は固いレースの本線'},
+            {d:'11/22',t:'転がしは行けそうなら1日2本まで。3レース目の選び方は任せる → 2レース目のあとで最初に見つかった固いレース'},
+            {d:'11/22',t:'単発レースと転がしレースを分かりやすく分ける'},
             {d:'11/22',t:'トリガミはしょうがないが、できるだけ減らす → 今のルールでは当たれば必ず購入額の約2.8倍以上戻る（50倍×1,000円 ÷ 最大18,000円）'}]},
 };
 let ODDS={date:null,races:{}};
@@ -749,6 +751,9 @@ function battleRows(){
     if(a.form)add(T.ai,[a.form.h,a.form.a],flat);
     for(const pid of ['kin','ike']){const F=personForms(pid,a,r);if(F.wait)continue;const P=PERSONS[pid];
       add(T[pid],[F.h,F.a],f=>f.S?f.S:F.od&&((f===F.h&&P.honsen&&P.honsen.ret)||(f===F.a&&P.ana&&P.ana.ret))?stakesOf(f.keys,F.od.o,f===F.h?P.honsen.ret:P.ana.ret):flat(f,P.unit?P.unit(f.n):100));}}
+  const RS=rollPlans().filter(R=>!R.need&&R.done);
+  T.ikeRoll={lab:'池予想（転がし）',st:RS.reduce((s,R)=>s+R.start,0),ret:RS.reduce((s,R)=>s+(R.end||0),0),races:RS.length,hit:RS.filter(R=>R.end>0).length};
+  T.ike.lab='池予想（単発）';
   return Object.values(T);
 }
 // ===== 池予想の3レース転がし（11/22 池田さん）=====
@@ -760,37 +765,55 @@ const toMin=t=>{const [h,m]=(t||'99:99').split(':').map(Number);return h*60+m;};
 function solidBet(a){let p=0;const ks=[];for(const c of a.combos){ks.push(c.k);p+=c.pAi;if(p>=ROLL_SOLID.hit)break;if(ks.length>=ROLL_SOLID.maxPts)return null;}return p>=ROLL_SOLID.hit?{keys:ks,p,n:ks.length,label:ks.join(' ')}:null;}
 function splitAll(keys,odds,money){ // money を、どの目が当たっても同じくらい戻るように100円単位で（端数は切り捨て）
   const I=keys.reduce((s,k)=>s+1/odds[k],0),st={};let tot=0;keys.forEach(k=>{st[k]=Math.max(100,Math.floor(money/I/odds[k]/100)*100);tot+=st[k];});return {st,tot};}
-function rollPlan(){
-  const list=races.filter(r=>r.deadline&&A(r)).sort((x,y)=>toMin(x.deadline)-toMin(y.deadline));const legs=[];
-  for(const r of list){if(legs.length===2)break;if(legs.length&&toMin(r.deadline)<toMin(legs[legs.length-1].r.deadline)+ROLL_GAP)continue;
-    const F=personForms('ike',A(r),r);if(F.a)legs.push({r,f:F.a,od:F.od});}
-  if(legs.length<2)return {legs,need:'池予想の穴が組めるレースが2つ見つかっていません'};
-  let best=null;for(const r of list){if(toMin(r.deadline)<toMin(legs[1].r.deadline)+ROLL_GAP)continue;const b=solidBet(A(r));if(b&&(!best||b.p>best.f.p))best={r,f:b,od:oddsOf(r),solid:true};}
-  if(!best)return {legs,need:'3レース目にできる固いレースが見つかっていません'};
-  legs.push(best);
-  // 結果が出ていれば、払戻を全部次へ入れていく
+function rollPlans(){ // 1日2本まで。2本目は1本目と別のレースで、同じ決まりで組む（並行して走る）
+  const list=races.filter(r=>r.deadline&&A(r)).sort((x,y)=>toMin(x.deadline)-toMin(y.deadline)),used=new Set(),out=[];
+  for(let c=0;c<2;c++){const legs=[];
+    for(const r of list){if(legs.length===2)break;if(used.has(r.id))continue;if(legs.length&&toMin(r.deadline)<toMin(legs[legs.length-1].r.deadline)+ROLL_GAP)continue;
+      const F=personForms('ike',A(r),r);if(F.a)legs.push({r,f:F.a,od:F.od});}
+    if(legs.length<2){if(!c)out.push({legs,need:'池予想の穴が組めるレースが2つ見つかっていません'});break;}
+    let L3=null;for(const r of list){if(used.has(r.id)||legs.some(L=>L.r===r)||toMin(r.deadline)<toMin(legs[1].r.deadline)+ROLL_GAP)continue;const b=solidBet(A(r));if(b){L3={r,f:b,od:oddsOf(r),solid:true};break;}}
+    if(!L3){if(!c)out.push({legs,need:'3レース目にできる固いレースが見つかっていません'});break;}
+    legs.push(L3);legs.forEach(L=>used.add(L.r.id));out.push(rollSim(legs));}
+  return out;
+}
+function rollSim(legs){ // 結果が出ていれば、払戻を全部次へ入れていく
   let money=null,alive=true,p=1;
   legs.forEach((L,i)=>{p*=L.f.p;const res=resultOf(L.r);
     if(i===0){const u=PERSONS.ike.unit(L.f.n);L.stake=L.f.n*u;L.st=Object.fromEntries(L.f.keys.map(k=>[k,u]));}
     else if(alive&&money!=null&&L.od){const S=splitAll(L.f.keys,L.od.o,money);L.stake=S.tot;L.st=S.st;}
-    if(!alive||!res||!res.order){alive=alive&&!res;L.state=alive?'待ち':'—';money=null;return;}
+    if(!alive){L.state='—';return;}
+    if(!res||!res.order){L.state='これから';money=null;alive=false;L.pending=true;return;}
     if(L.st&&L.f.keys.includes(res.order)){money=Math.round(L.st[res.order]*res.payout/100);L.state=`的中 ${res.order} → ${money.toLocaleString()}円`;}else{alive=false;money=0;L.state=`外れ（${res.order}）`;}});
-  return {legs,p,start:legs[0].stake,end:alive&&legs.every(L=>resultOf(L.r))?money:null,done:!alive||legs.every(L=>resultOf(L.r))};
+  const done=legs.every(L=>resultOf(L.r))||legs.some(L=>/外れ/.test(L.state||''));
+  return {legs,p,start:legs[0].stake,end:done?(money||0):null,done};
 }
+function rollOf(r){for(const [i,R] of rollPlans().entries()){const j=(R.legs||[]).findIndex(L=>L.r===r);if(j>=0&&!R.need)return {i,j};}return null;}
 function rollHtml(){
-  if(ODDS.date!==dateSel)return '';const R=rollPlan();
-  const row=(L,i)=>`<li><b>${i+1}レース目</b>：${esc(L.r.venue||VENUES[L.r.jcd])} ${L.r.rno}R（${esc(L.r.deadline)}）${L.solid?'固いレース':'池予想の穴'}　${esc(L.f.label)}（${L.f.n}点・的中見込み${pct(L.f.p)}）${L.stake?`・${L.stake.toLocaleString()}円`:''}${L.state?`　<b>${esc(L.state)}</b>`:''}</li>`;
-  return `<div class="panel"><h3>3レース転がし（${dateSel.slice(4,6)}/${dateSel.slice(6)}）</h3>
-    ${R.legs.length?`<ol class="sub" style="list-style:none;padding:0;display:grid;gap:6px">${R.legs.map(row).join('')}</ol>`:''}
-    ${R.need?`<p class="sub">${R.need}。</p>`:`<p class="foot">3つとも当たる見込み ${pct(R.p)}。スタート${R.start.toLocaleString()}円${R.end!=null?` → 最終 <b>${R.end.toLocaleString()}円</b>`:''}。2・3レース目は前の払戻を全部入れ、どの目が当たっても同じくらい戻るように配分（オッズは${R.legs[2].od?R.legs[2].od.kind:'未取得'}）。レースの間は締切から${ROLL_GAP}分以上あけています。</p>`}</div>`;
+  if(ODDS.date!==dateSel)return '';const RS=rollPlans();
+  const card=(R,ci)=>`<div style="border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:grid;gap:6px">
+      <b>転がし${'①②'[ci]}</b>
+      ${R.legs.map((L,i)=>`<div style="display:grid;grid-template-columns:auto 1fr;gap:2px 10px;align-items:start">
+        <span class="pill" style="background:${L.solid?'var(--sunk)':'#fde8e1'}">${i+1}R目・${L.solid?'固い':'穴'}</span>
+        <span><b>${esc(L.r.venue||VENUES[L.r.jcd])} ${L.r.rno}R</b>（${esc(L.r.deadline)}）${esc(L.f.label)}<br><small class="sub">${L.f.n}点・的中見込み${pct(L.f.p)}${L.stake?`・${L.stake.toLocaleString()}円`:''}${L.state?`　<b>${esc(L.state)}</b>`:''}</small></span></div>`).join('')}
+      ${R.need?`<p class="sub">${R.need}。</p>`:`<small class="sub">3つとも当たる見込み ${pct(R.p)}・スタート${R.start.toLocaleString()}円${R.end!=null?` → 最終 <b>${R.end.toLocaleString()}円</b>`:''}</small>`}</div>`;
+  return `<div class="panel"><h3><span class="mark" style="background:#7c3aed">転がし</span>3レース転がし（${dateSel.slice(4,6)}/${dateSel.slice(6)}、1日2本まで）</h3>
+    <div style="display:grid;gap:10px">${RS.length?RS.map(card).join(''):'<p class="sub">今日は組めません。</p>'}</div>
+    <p class="foot">1・2レース目は池予想の穴、3レース目は2レース目の締切から${ROLL_GAP}分以上あとで最初に見つかった固いレース（AIの確率が高い順に4点以内で40%以上）。2・3レース目は前の払戻を全部入れ、どの目が当たっても同じくらい戻るように配分。2本目は1本目と別のレースで組み、並行して走ります。</p></div>`;
+}
+function tanpatsuHtml(){ // 今日の単発（池予想の穴）一覧
+  if(ODDS.date!==dateSel)return '';const rows=[];
+  for(const r of races.slice().sort((x,y)=>toMin(x.deadline)-toMin(y.deadline))){const a=A(r);if(!a)continue;const F=personForms('ike',a,r);if(!F.a)continue;const res=resultOf(r),u=PERSONS.ike.unit(F.a.n);
+    const got=res&&res.order&&F.a.keys.includes(res.order);rows.push(`<tr${r.id===raceId?' style="background:var(--sunk)"':''}><td>${esc(r.deadline)}</td><td>${esc(r.venue||VENUES[r.jcd])} ${r.rno}R</td><td>${esc(F.a.label)}</td><td>${F.a.n}点</td><td>${(F.a.n*u).toLocaleString()}円</td><td>${res&&res.order?(got?`<b>的中 ${Math.round(u*res.payout/100).toLocaleString()}円</b>`:'外れ'):'これから'}</td></tr>`);}
+  return `<div class="panel"><h3><span class="mark">単発</span>今日の単発レース（池予想の穴、${rows.length}R）</h3>
+    <details><summary class="sub">一覧を開く</summary><div style="overflow-x:auto"><table class="rec" style="min-width:0"><thead><tr><th>締切</th><th>レース</th><th>買い目</th><th>点数</th><th>購入</th><th>結果</th></tr></thead><tbody>${rows.join('')}</tbody></table></div></details></div>`;
 }
 function battleHtml(){
   if(ODDS.date!==dateSel)return '';
   const rows=battleRows();
   return `<div class="panel"><h3>対戦成績（${dateSel.slice(4,6)}/${dateSel.slice(6)}、結果が出た全レース）</h3>
-    <div style="overflow-x:auto"><table class="rec" style="min-width:0"><thead><tr><th></th><th>買ったR</th><th>的中R</th><th>購入</th><th>払戻</th><th>回収率</th></tr></thead><tbody>
+    <div style="overflow-x:auto"><table class="rec" style="min-width:0"><thead><tr><th></th><th>買った</th><th>的中</th><th>購入</th><th>払戻</th><th>回収率</th></tr></thead><tbody>
     ${rows.map(t=>`<tr><th>${t.lab}</th><td>${t.races}</td><td>${t.hit}</td><td>${t.st.toLocaleString()}円</td><td>${Math.round(t.ret).toLocaleString()}円</td><td><b>${t.st?Math.round(t.ret/t.st*100)+'%':'-'}</b></td></tr>`).join('')}</tbody></table></div>
-    <p class="foot">予想は本線・穴フォーメーションを1点100円。金予想は1万円をオッズで配分、池予想は1点1,000円（6点以下は2,000円）。払戻は確定の払戻金。</p></div>`;
+    <p class="foot">予想は本線・穴フォーメーションを1点100円。金予想は1万円をオッズで配分、池予想（単発）は1点1,000円（6点以下は2,000円）。転がしは1本を1つと数え、購入はスタートの金額、払戻は3レース目までの最終金額。払戻は確定の払戻金。</p></div>`;
 }
 function renderPerson(pid){
   const el=$('#v-'+pid),P=PERSONS[pid],r=cur();
@@ -808,8 +831,10 @@ function renderPerson(pid){
         ${S?`<p class="foot">合計${S.tot.toLocaleString()}円。${S.flat?`1点${S.u.toLocaleString()}円（当たったときは${Math.round(S.minRet*100)}%以上）`:`どの目が当たっても${Math.round(S.minRet*100)}%以上戻る配分`}。オッズは${F.od.kind}。</p>`:''}`;};
     el.innerHTML=`<div style="display:grid;gap:14px">${raceHead(r,a)}
       <div class="picks"><div class="panel honsen"><h3><span class="mark">本線</span>${P.short}予想（${rule(P.honsen)}）</h3>${block('フォーメーション',F.h,P.honsen)}</div>
-      <div class="panel ana"><h3><span class="mark">穴</span>${P.short}予想（${rule(P.ana)}）</h3>${block('フォーメーション',F.a,P.ana)}</div></div>
-      ${pid==='ike'?rollHtml():''}
+      <div class="panel ana"><h3><span class="mark">${pid==='ike'?'単発':'穴'}</span>${P.short}予想（${rule(P.ana)}）</h3>
+        ${pid==='ike'&&ODDS.date===dateSel&&(()=>{const x=rollOf(r);return x?`<p class="sub"><span class="pill" style="background:#ede9fe">このレースは転がし${'①②'[x.i]}の${x.j+1}レース目</span></p>`:'';})()||''}
+        ${block('フォーメーション',F.a,P.ana)}</div></div>
+      ${pid==='ike'?rollHtml()+tanpatsuHtml():''}
       ${battleHtml()}
       <div class="panel"><h3>${P.name}さんのルール</h3>
         <p class="sub">確率は艇読みAIと同じものを使い、買い目の組み方だけを${P.name}さんの考えで決めています。まだ聞いていない項目は艇読みAIと同じです。</p>
@@ -1799,7 +1824,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='70';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='71';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
