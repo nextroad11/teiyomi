@@ -691,7 +691,7 @@ const PERSONS={
             {d:'11/21',t:'転がしもやる（3レース転がし）。※どのレースを選ぶか・各レースの買い方は確認中'},
             {d:'11/22',t:'基本は3連単フォーメーション。12点以内・1点1,000円。6点のときは1点2,000円'},
             {d:'11/22',t:'1〜2点でも勝負できるなら買う'},{d:'11/22',t:'2,000円にする点数は任せる → 6点以下は1点2,000円（1レース最大12,000円にそろえる）'},
-            {d:'11/22',t:'穴の的中見込みは15%以上'}]},
+            {d:'11/22',t:'穴の的中見込みは15%以上'},{d:'11/22',t:'回収率重視。ただし的中も大事'}]},
 };
 let ODDS={date:null,races:{}};
 async function loadOdds(){if(ODDS.date===dateSel)return;try{const d=await fetchJSON('odds/'+dateSel+'.json');ODDS={date:dateSel,races:d.races||{}};}catch(_){ODDS={date:dateSel,races:{}};}}
