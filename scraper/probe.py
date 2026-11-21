@@ -12,11 +12,12 @@ if top.status_code != 200: (out / "odds_probe.txt").write_text("\n".join(lines))
 srcs = sorted(set(re.findall(r'src="([^"]+\.js[^"]*)"', top.text)))
 lines.append("scripts: " + " ".join(srcs))
 found = set()
+srcs += ["/assets/js/OddsThreeWayBet.js", "/assets/js/OddsTwoWayBet.js", "/assets/js/OddsPopularHigh.js"]
 for s in srcs[:15]:
     u = s if s.startswith("http") else B + ("" if s.startswith("/") else "/") + s
     if "boatcast" not in u: continue
     t = get(u).text
-    for m in re.findall(r'["\'`]([^"\'`]*(?:odds|Odds|ODDS|oz|_o3|3t|bc_[a-z0-9_]+)[^"\'`]{0,60})["\'`]', t):
+    for m in re.findall(r'["\'`]([^"\'`]*(?:odds|Odds|ODDS|\\.txt|txt/|bc_[a-z0-9_]+|api)[^"\'`]{0,60})["\'`]', t):
         if len(m) < 120: found.add(m)
 lines.append("候補:"); lines += sorted(found)[:400]
 (out / "odds_probe.txt").write_text("\n".join(lines), encoding="utf-8")
