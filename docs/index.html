@@ -684,14 +684,15 @@ const PERSONS={
             {d:'11/22',t:'展開予想から3着以内に一番絡みづらい1艇を完全に切る'},{d:'11/22',t:'1レース4〜18点'},
             {d:'11/22',t:'1レース1万円を、オッズに合わせて配分'},{d:'11/22',t:'50倍以下の目は完全に切る'},
             {d:'11/22',t:'切る前の段階で、組んだ目の40%以上が50倍以下ならそのレースは見送り'},{d:'11/22',t:'（確認中）50倍以下を切っても18点を超えるときは、いまは見送り'}]},
-  ike:{name:'池田',short:'池',honsen:null,ana:{hit:0.15,ret:null,minOdds:50,maxPts:12},unit:n=>n<=6?2000:1000,
+  ike:{name:'池田',short:'池',honsen:null,ana:{hit:0.15,ret:null,minOdds:50,maxPts:12,wide:{minOdds:100,maxPts:18}},unit:n=>n<=6?2000:1000,
        log:[{d:'11/21',t:'穴1500%なら倍率どれくらい狙ってるの？（質問）'},
             {d:'11/21',t:'本線は捨てて、穴狙い1本。1点50倍から。最終的に「予想」「金予想」と戦う'},
             {d:'11/21',t:'目標：1日10万円の利益（1週間で70万円）。1日負けても週で取り返す考え'},
             {d:'11/21',t:'転がしもやる（3レース転がし）。※どのレースを選ぶか・各レースの買い方は確認中'},
             {d:'11/22',t:'基本は3連単フォーメーション。12点以内・1点1,000円。6点のときは1点2,000円'},
             {d:'11/22',t:'1〜2点でも勝負できるなら買う'},{d:'11/22',t:'2,000円にする点数は任せる → 6点以下は1点2,000円（1レース最大12,000円にそろえる）'},
-            {d:'11/22',t:'穴の的中見込みは15%以上'},{d:'11/22',t:'回収率重視。ただし的中も大事'}]},
+            {d:'11/22',t:'穴の的中見込みは15%以上'},{d:'11/22',t:'回収率重視。ただし的中も大事'},
+            {d:'11/22',t:'期待値（オッズ）が100倍以上の場合は、フォーメーションを18点まで広げる → 12点以内で組めないとき、全部100倍以上の目なら18点まで（1点1,000円）'}]},
 };
 let ODDS={date:null,races:{}};
 async function loadOdds(){if(ODDS.date===dateSel)return;try{const d=await fetchJSON('odds/'+dateSel+'.json');ODDS={date:dateSel,races:d.races||{}};}catch(_){ODDS={date:dateSel,races:{}};}}
@@ -732,6 +733,9 @@ function personForms(pid,a,r){
   const h=P.honsen?formationOf(a,P.honsen.hit,null,opt(P.honsen)):null;
   let an=P.ana?formationOf(a,P.ana.hit,h?new Set(h.keys):null,opt(P.ana)):null,skip=null;
   if(an&&P.ana.maxPts&&an.n>P.ana.maxPts){skip={skip:`条件を満たす一番少ない組み方でも${an.n}点（${P.ana.maxPts}点を超える）`};an=null;}
+  // 12点以内で組めないとき：全部の目が100倍以上なら18点まで広げる（池田さん 11/22）
+  if(!an&&P.ana&&P.ana.wide){const w=formationOf(a,P.ana.hit,h?new Set(h.keys):null,{minOdds:P.ana.wide.minOdds,odds:o});
+    if(w&&w.n<=P.ana.wide.maxPts){an={...w,wide:true};skip=null;}}
   return {h,a:an,od,skip};
 }
 // 対戦成績：予想（艇読みAIの本線・穴フォーメーション、1点100円）、金予想・池予想（オッズがあれば配分した金額、なければ1点100円）
@@ -764,6 +768,7 @@ function renderPerson(pid){
       if(!f)return F.skip?`<p class="sub">見送り：${esc(F.skip.skip)}。${F.skip.cut?`（切った艇：${F.skip.cut}号艇）`:''}</p>`:`<p class="sub">${lab}：条件（${rule(x)}）を満たす組み方がないので見送り。</p>`;
       const S=f.S?f.S:F.od?(x.ret?stakesOf(f.keys,F.od.o,x.ret):(()=>{const u=P.unit?P.unit(f.n):100,st={};f.keys.forEach(k=>st[k]=u);return {st,tot:f.keys.length*u,u,minRet:Math.min(...f.keys.map(k=>F.od.o[k]))/f.keys.length,flat:true};})()):null;
       return `${formRow(lab,f)}<ul class="combo-list">${f.keys.map(k=>{const c=a.combos.find(c=>c.k===k);return `<li class="combo${res&&res.order===k?' hit':''}"><span class="nums">${comboHtml(k)}</span><span class="bar"><span style="width:${Math.min(100,c.pAi/a.combos[0].pAi*100)}%"></span></span><span class="val">${pct(c.pAi)}${S?`<small>${F.od.o[k]}倍・${S.st[k]}円</small>`:''}</span></li>`;}).join('')}</ul>
+        ${f.wide?`<p class="sub">全部100倍以上の目なので、18点まで広げて組んでいます。</p>`:''}
         ${f.cut?`<p class="sub">切った艇：${f.cut}号艇（3着以内に一番絡みづらい）</p>`:''}
         ${S?`<p class="foot">合計${S.tot.toLocaleString()}円。${S.flat?`1点${S.u.toLocaleString()}円（当たったときは${Math.round(S.minRet*100)}%以上）`:`どの目が当たっても${Math.round(S.minRet*100)}%以上戻る配分`}。オッズは${F.od.kind}。</p>`:''}`;};
     el.innerHTML=`<div style="display:grid;gap:14px">${raceHead(r,a)}
@@ -1758,7 +1763,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='68';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='69';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
