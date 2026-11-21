@@ -683,7 +683,8 @@ const PERSONS={
        log:[{d:'11/21',t:'穴1500%なら倍率どれくらい狙ってるの？（質問）'},
             {d:'11/21',t:'本線は捨てて、穴狙い1本。1点50倍から。最終的に「予想」「金予想」と戦う'},
             {d:'11/21',t:'（まだ聞いていないので艇読みAIと同じ）穴の的中見込み10%以上'},
-            {d:'11/21',t:'目標：1日10万円の利益（1週間で70万円）。1日負けても週で取り返す考え'}]},
+            {d:'11/21',t:'目標：1日10万円の利益（1週間で70万円）。1日負けても週で取り返す考え'},
+            {d:'11/21',t:'転がしもやる（3レース転がし）。※どのレースを選ぶか・各レースの買い方は確認中'}]},
 };
 let ODDS={date:null,races:{}};
 async function loadOdds(){if(ODDS.date===dateSel)return;try{const d=await fetchJSON('odds/'+dateSel+'.json');ODDS={date:dateSel,races:d.races||{}};}catch(_){ODDS={date:dateSel,races:{}};}}
