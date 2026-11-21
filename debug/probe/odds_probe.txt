@@ -1,12 +1,35 @@
 200 https://race.boatcast.jp/ 2091
 scripts: /assets/js/main.js
 200 https://race.boatcast.jp/assets/js/main.js 104478
+200 https://race.boatcast.jp/assets/js/OddsThreeWayBet.js 3933
+200 https://race.boatcast.jp/assets/js/OddsTwoWayBet.js 4814
+200 https://race.boatcast.jp/assets/js/OddsPopularHigh.js 4917
 候補:
 ${h}/${e.value}/bc_j_str3_${t.value}_${e.value}_${n.value}.txt
+);return{rank:t[0],combination:[t[1],t[2],t[3]],odds:t[4]}},$=n=>{const t=n.split(
+,R(a.odds)])},i(a.odds),3)]))),128))])])]),s(
+,R(a.odds)])},i(a.odds),3)]))),128))])])])])])]))}},Is=X(Ps,[[
+,odds:n(l-1,e)}}}).filter(Boolean)}),h=a=>a%2===0?
 ./OddsOtherBet.js
 ./OddsPopularHigh.js
 ./OddsThreeWayBet.js
 ./OddsTwoWayBet.js
+/api_txt/getEndRaceList2_${t}_${e}.json
+/api_txt/getHoldingList2_${e.value}.json
+/api_txt/getHoldingList2_${t}.json
+/bc_j_best_worst2_20_
+/bc_kakutei_best_worst20_
+/bc_smt_best_worst20_
+/hp_txt/
+/txt/
+/txt/${a.value}/bc_kakutei_od2_${n.value}_${a.value}_${t.value}.txt
+/txt/${a.value}/bc_smt_od2_${n.value}_${a.value}_${t.value}.txt
+/txt/${s.value}/bc_kakutei_od3_${a.value}_${s.value}_${t.value}.txt
+/txt/${s.value}/bc_smt_od3_${a.value}_${s.value}_${t.value}.txt
+/txt/replay/${w}
+OddsPopularHigh
+OddsThreeWayBet
+OddsTwoWayBet
 assets/css/OddsOtherBet.css
 assets/css/OddsPopularHigh.css
 assets/css/OddsThreeWayBet.css
@@ -15,3 +38,23 @@ assets/js/OddsOtherBet.js
 assets/js/OddsPopularHigh.js
 assets/js/OddsThreeWayBet.js
 assets/js/OddsTwoWayBet.js
+https://www.youtube.com/embed/${s}?autoplay=1&modestbranding=1&playsinline=1&rel=0&enablejsapi=1&origin=${i}
+odds ${T(t.waku,e.second)} ${H(e.isWithdrawSec)}
+odds ${T(t.waku,e.second)} ${I(e.value)} ${M(e.popular)}
+odds ${h(l)} ${f(s.isWithdraw)} ${j(s.value)} ${R(s.popular)}
+odds ${h(t.waku,s.second)} ${f(t.isWithdraw)}
+odds odds-absent
+odds-absent
+oddsTable str2Fuk
+oddsTable str2Tan
+oddsTable str3Tan
+oddsTableOuter
+par-table01 odds2Fuk
+par-table01 odds2Tan
+par-table01 odds3Tan
+popularOdds
+table-category-odds-three-way-bet
+table-category-odds-two-way-bet
+table-category-popularity-high-odds
+},k(t.racerName),3)]),(u(!0),r(i,null,m(t.odds,(s,l)=>(u(),r(
+},k(t.racerName),3)])]),(n(!0),r(h,null,$(A(t.odds),(o,u)=>(n(),r(
