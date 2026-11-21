@@ -1,0 +1,17 @@
+200 https://race.boatcast.jp/ 2091
+scripts: /assets/js/main.js
+200 https://race.boatcast.jp/assets/js/main.js 104478
+候補:
+${h}/${e.value}/bc_j_str3_${t.value}_${e.value}_${n.value}.txt
+./OddsOtherBet.js
+./OddsPopularHigh.js
+./OddsThreeWayBet.js
+./OddsTwoWayBet.js
+assets/css/OddsOtherBet.css
+assets/css/OddsPopularHigh.css
+assets/css/OddsThreeWayBet.css
+assets/css/OddsTwoWayBet.css
+assets/js/OddsOtherBet.js
+assets/js/OddsPopularHigh.js
+assets/js/OddsThreeWayBet.js
+assets/js/OddsTwoWayBet.js
