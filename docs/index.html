@@ -378,6 +378,8 @@ table.card.st-tbl{min-width:0}.st-tbl td,.st-tbl th{padding-left:6px;padding-rig
   <h1 class="brand">艇読みAI <small>BOATRACE ANALYZER</small></h1>
   <nav class="tabs" role="tablist">
     <button role="tab" id="tab-yoso" aria-selected="true" data-view="yoso">予想</button>
+    <button role="tab" id="tab-kin" aria-selected="false" data-view="kin">金予想</button>
+    <button role="tab" id="tab-ike" aria-selected="false" data-view="ike">池予想</button>
     <button role="tab" id="tab-table" aria-selected="false" data-view="table">出走表</button>
     <button role="tab" id="tab-self" aria-selected="false" data-view="self">自分で予想</button>
     <button role="tab" id="tab-bw" aria-selected="false" data-view="bw">B級ウォッチ</button>
@@ -401,6 +403,8 @@ table.card.st-tbl{min-width:0}.st-tbl td,.st-tbl th{padding-left:6px;padding-rig
   </div>
   <div class="chips" id="chips" role="group" aria-label="レースを選ぶ"></div>
   <section id="v-yoso"></section>
+  <section id="v-kin" hidden></section>
+  <section id="v-ike" hidden></section>
   <section id="v-tobu" hidden></section>
   <section id="v-bw" hidden></section>
   <section id="v-man" hidden></section>
@@ -647,7 +651,7 @@ function formCands(){
     if(!ks.length)continue;ks.sort((x,y)=>x-y);const key=ks.join(',');if(seen.has(key))continue;seen.add(key);list.push({F1,F2,F3,ks});}
   list.sort((x,y)=>x.ks.length-y.ks.length);return FORM_CANDS=list;
 }
-function formationOf(a,target=FORM_TARGET,avoid=null){
+function formationOf(a,target=FORM_TARGET,avoid=null,opt=null){
   if(!a||!a.combos)return null;
   const rk=a.boats.slice().sort((x,y)=>y.pWin-x.pWin).map(b=>b.waku),M={};a.combos.forEach(c=>M[c.k]=c.pAi);
   const pr=new Float64Array(216);for(let i=0;i<6;i++)for(let j=0;j<6;j++)for(let k=0;k<6;k++)if(i!==j&&j!==k&&i!==k)pr[i*36+j*6+k]=M[`${rk[i]}-${rk[j]}-${rk[k]}`]||0;
@@ -655,7 +659,10 @@ function formationOf(a,target=FORM_TARGET,avoid=null){
   const K=x=>`${rk[Math.floor(x/36)]}-${rk[Math.floor(x/6)%6]}-${rk[x%6]}`;
   for(const c of formCands()){if(best&&c.ks.length>best.ks.length)break;
     if(avoid&&c.ks.some(x=>avoid.has(K(x))))continue;
-    let p=0;for(const x of c.ks)p+=pr[x];if(p>=target&&(!best||p>best.p))best={...c,p};}
+    let p=0;for(const x of c.ks)p+=pr[x];if(p<target)continue;
+    // opt.ret：どの目が当たっても購入額のret倍以上戻るように金額を配分できるか（各目の 1÷オッズ の合計が 1÷ret 以下）
+    if(opt&&opt.ret){let I=0,miss=false;for(const x of c.ks){const o=opt.odds[K(x)];if(!o){miss=true;break;}I+=1/o;}if(miss||I>1/opt.ret)continue;}
+    if(!best||p>best.p)best={...c,p};}
   if(!best)return null;
   // 表示：実際に使う艇だけで書ける形ならそちらで（例 1-12-12346 → 1-2-346）
   let F1=best.F1,F2=best.F2,F3=best.F3;
@@ -665,6 +672,51 @@ function formationOf(a,target=FORM_TARGET,avoid=null){
   const W=F=>F.map(i=>rk[i]).sort((x,y)=>x-y).join('');
   const keys=best.ks.map(K).sort((x,y)=>(M[y]||0)-(M[x]||0));
   return {label:`${W(F1)}-${W(F2)}-${W(F3)}`,n:best.ks.length,p:best.p,keys};
+}
+// ===== 金予想・池予想（11/21）：同じAIの確率から、金城さん・池田さんそれぞれのルールでフォーメーションを組む =====
+// ルールは二人から聞いたことだけを入れる。まだ聞いていない項目は艇読みAIの予想と同じ（本線 見込み30%・穴 10%）。
+// ret は「当たったときの最低回収率（倍）」。入っているときは締切前オッズ（なければ確定オッズ）で金額を配分し、満たせなければ見送り。
+const PERSONS={
+  kin:{name:'金城',short:'金',honsen:{hit:0.30,ret:null},ana:{hit:0.10,ret:null},log:[]},
+  ike:{name:'池田',short:'池',honsen:{hit:0.30,ret:null},ana:{hit:0.10,ret:null},
+       log:[{d:'11/21',t:'穴1500%なら倍率どれくらい狙ってるの？（質問。ルールはまだ）'}]},
+};
+let ODDS={date:null,races:{}};
+async function loadOdds(){if(ODDS.date===dateSel)return;try{const d=await fetchJSON('odds/'+dateSel+'.json');ODDS={date:dateSel,races:d.races||{}};}catch(_){ODDS={date:dateSel,races:{}};}}
+function oddsOf(r){const e=ODDS.races[r.id]||{};if(e.pre&&e.pre.o)return {o:e.pre.o,kind:`締切前（${e.pre.at.slice(11,16)}時点）`};if(e.final&&e.final.o)return {o:e.final.o,kind:'確定'};return null;}
+function stakesOf(keys,odds,need=0){ // どの目が当たっても同じくらい戻るように100円単位で配分。100円単位の端数で need 倍を割らないよう、必要なら全体を大きくする
+  const mx=Math.max(...keys.map(k=>odds[k]));let out=null;
+  for(let m=1;m<=30;m++){const R=100*m*mx,st={};keys.forEach(k=>st[k]=Math.max(100,Math.ceil(R/odds[k]/100)*100));
+    const tot=keys.reduce((s,k)=>s+st[k],0),minRet=Math.min(...keys.map(k=>st[k]*odds[k]))/tot;out={st,tot,minRet};if(minRet>=need-1e-9)break;}
+  return out;}
+function personForms(pid,a,r){
+  const P=PERSONS[pid],od=oddsOf(r),need=P.honsen.ret||P.ana.ret;
+  if(need&&!od)return {wait:true};
+  const o=od?od.o:null;
+  const h=formationOf(a,P.honsen.hit,null,P.honsen.ret?{ret:P.honsen.ret,odds:o}:null);
+  const an=formationOf(a,P.ana.hit,h?new Set(h.keys):null,P.ana.ret?{ret:P.ana.ret,odds:o}:null);
+  return {h,a:an,od};
+}
+function renderPerson(pid){
+  const el=$('#v-'+pid),P=PERSONS[pid],r=cur();
+  if(!r){el.innerHTML=emptyState();return;}
+  const a=A(r);if(!a){el.innerHTML=`<div class="empty">このレースは出走データが不完全です。</div>`;return;}
+  const res=resultOf(r);
+  const draw=()=>{const F=personForms(pid,a,r);
+    const rule=x=>`的中見込み${Math.round(x.hit*100)}%以上${x.ret?`・当たったら${Math.round(x.ret*100)}%以上`:''}`;
+    const block=(lab,f,x)=>{if(F.wait)return `<p class="sub">${lab}：オッズがまだ出ていません（締切15分前から取り込みます）。</p>`;
+      if(!f)return `<p class="sub">${lab}：条件（${rule(x)}）を満たす組み方がないので見送り。</p>`;
+      const S=F.od?stakesOf(f.keys,F.od.o,x.ret||0):null;
+      return `${formRow(lab,f)}<ul class="combo-list">${f.keys.map(k=>{const c=a.combos.find(c=>c.k===k);return `<li class="combo${res&&res.order===k?' hit':''}"><span class="nums">${comboHtml(k)}</span><span class="bar"><span style="width:${Math.min(100,c.pAi/a.combos[0].pAi*100)}%"></span></span><span class="val">${pct(c.pAi)}${S?`<small>${F.od.o[k]}倍・${S.st[k]}円</small>`:''}</span></li>`;}).join('')}</ul>
+        ${S?`<p class="foot">合計${S.tot.toLocaleString()}円。どの目が当たっても${Math.round(S.minRet*100)}%以上戻る配分（オッズは${F.od.kind}）。</p>`:''}`;};
+    el.innerHTML=`<div style="display:grid;gap:14px">${raceHead(r,a)}
+      <div class="picks"><div class="panel honsen"><h3><span class="mark">本線</span>${P.short}予想（${rule(P.honsen)}）</h3>${block('フォーメーション',F.h,P.honsen)}</div>
+      <div class="panel ana"><h3><span class="mark">穴</span>${P.short}予想（${rule(P.ana)}）</h3>${block('フォーメーション',F.a,P.ana)}</div></div>
+      <div class="panel"><h3>${P.name}さんのルール</h3>
+        <p class="sub">確率は艇読みAIと同じものを使い、買い目の組み方だけを${P.name}さんの考えで決めています。まだ聞いていない項目は艇読みAIと同じです。</p>
+        ${P.log.length?`<ul class="sub">${P.log.map(x=>`<li>${x.d}：${esc(x.t)}</li>`).join('')}</ul>`:'<p class="sub">まだご意見をうかがっていません。</p>'}</div></div>`;};
+  draw();
+  if(ODDS.date!==dateSel)loadOdds().then(()=>{if(view===pid&&cur()===r)draw();});
 }
 function formsOf(a){const h=formationOf(a,FORM_TARGET);if(!h)return null;return {h,a:formationOf(a,FORM_ANA,new Set(h.keys))};}
 function formRow(lab,f){return `<div class="expect"><span class="lbl">${lab}</span><b style="font-size:1.25em;letter-spacing:.04em">${f.label}</b><span class="num">${f.n}点で的中確率 ${pct(f.p)}</span></div>`;}
@@ -883,9 +935,9 @@ function renderChips(){
 }
 const cur=()=>races.find(r=>r.id===raceId)||null;
 function renderView(){
-  ['yoso','table','self','bw','tobu','man','pl','rec'].forEach(v=>{$('#v-'+v).hidden=v!==view;$('#tab-'+v).setAttribute('aria-selected',v===view);});
+  ['yoso','kin','ike','table','self','bw','tobu','man','pl','rec'].forEach(v=>{$('#v-'+v).hidden=v!==view;$('#tab-'+v).setAttribute('aria-selected',v===view);});
   $('#chips').hidden=view==='rec'||view==='tobu'||view==='pl'||view==='bw'||view==='man';
-  if(view==='yoso')renderYoso();else if(view==='tobu')renderTobu();else if(view==='bw')renderBW();else if(view==='man')renderMan();else if(view==='pl')renderPlayers();else if(view==='self')renderSelf();else if(view==='table')renderTable();else renderRec();
+  if(view==='yoso')renderYoso();else if(view==='kin'||view==='ike')renderPerson(view);else if(view==='tobu')renderTobu();else if(view==='bw')renderBW();else if(view==='man')renderMan();else if(view==='pl')renderPlayers();else if(view==='self')renderSelf();else if(view==='table')renderTable();else renderRec();
 }
 const emptyState=()=>`<div class="empty"><b>この日のレースデータはまだありません。</b><br>毎朝7時ごろに、その日の全場の出走表を自動で取り込みます。</div>`;
 const WIND=['','北','北北東','北東','東北東','東','東南東','南東','南南東','南','南南西','南西','西南西','西','西北西','北西','北北西'];
@@ -1648,7 +1700,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='62';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='63';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
