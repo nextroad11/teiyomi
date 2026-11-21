@@ -337,6 +337,70 @@ def update_result(r: dict, D: str, now: dt.datetime) -> bool:
     return bool(r["result"].get("payout")) and bool(r["result"].get("km"))
 
 
+# ---------------------------------------------------------------- オッズ（11/21 殿の指示で再開。予想には使わず、回収率の検証と買い目の判断にだけ使う）
+# 3連単：/txt/{jj}/bc_kakutei_od3_{D}_{jj}_{rr}.txt（確定）、bc_smt_od3_（締切前）。
+# 1着の艇ごとに1行、2着（小さい順・1着を除く）×3着（小さい順・1・2着を除く）の20個。0は無し。
+# アプリが毎回読む日のファイルを重くしないよう、odds/{日付}.json に分けて置く。
+def parse_od3(txt: str) -> dict | None:
+    rows = [l for l in txt.replace("\r", "").split("\n")[2:] if "\t" in l]
+    if len(rows) != 6:
+        return None
+    o = {}
+    for a, line in enumerate(rows, 1):
+        v = line.split("\t")[1:21]
+        i = 0
+        for b in range(1, 7):
+            if b == a:
+                continue
+            for c in range(1, 7):
+                if c in (a, b):
+                    continue
+                try:
+                    x = float(v[i])
+                except (ValueError, IndexError):
+                    x = 0
+                if x > 0:
+                    o[f"{a}-{b}-{c}"] = x
+                i += 1
+    return o or None
+
+
+def fetch_od3(jcd: int, rno: int, D: str, kind: str) -> dict | None:
+    t = get(f"/txt/{jcd:02d}/bc_{kind}_od3_{D}_{jcd:02d}_{rno:02d}.txt")
+    return parse_od3(t) if t else None
+
+
+ODDS_PRE_MIN = 15   # 締切の何分前から締切前オッズを取るか（3分ごと、いちばん新しいものを残す）
+
+
+def update_odds(root: Path, D: str, day: dict, now: dt.datetime) -> int:
+    path = root / "odds" / f"{D}.json"
+    od = read_json(path, {"date": D, "races": {}})
+    n = 0
+    for r in day["races"]:
+        d0 = deadline_dt(r)
+        if not d0 or r.get("cancel"):
+            continue
+        mins = (d0 - now).total_seconds() / 60
+        e = od["races"].setdefault(r["id"], {})
+        if (r.get("result") or {}).get("order") and not e.get("final") and mins >= -720:
+            la = ts(e, "finalTry")
+            if not la or (now - la).total_seconds() >= RECHECK:
+                o = fetch_od3(r["jcd"], r["rno"], D, "kakutei"); e["finalTry"] = now.isoformat(timespec="seconds"); n += 1
+                if o:
+                    e["final"] = {"at": now.isoformat(timespec="seconds"), "o": o}
+        elif 0 < mins <= ODDS_PRE_MIN:
+            la = ts(e.get("pre") or {}, "at")
+            if not la or (now - la).total_seconds() >= RECHECK:
+                o = fetch_od3(r["jcd"], r["rno"], D, "smt"); n += 1
+                if o:
+                    e["pre"] = {"at": now.isoformat(timespec="seconds"), "mins": round(mins, 1), "o": o}
+    od["races"] = {k: v for k, v in od["races"].items() if v}
+    if n:
+        write_json(path, od)
+    return n
+
+
 # ---------------------------------------------------------------- 1回分
 def ts(r, k):
     v = r.get(k)
@@ -383,6 +447,12 @@ def tick(root: Path, D: str, now: dt.datetime) -> dict:
                 if not update_result(r, D, now):
                     r["result"] = {**(r.get("result") or {}), "at": now.isoformat(timespec="seconds")}
                 st["result"] += 1
+    try:
+        st["odds"] = update_odds(root, D, day, now)
+    except Blocked:
+        raise
+    except Exception as e:
+        log("オッズの取得に失敗", e)
     day["updated"] = now.isoformat(timespec="seconds")
     day["src"] = "boatcast"
     write_json(path, day)
@@ -417,6 +487,7 @@ def main():
     ap.add_argument("--date")
     ap.add_argument("--fill-ori", nargs="*")
     ap.add_argument("--force-load", action="store_true")
+    ap.add_argument("--fill-odds", nargs="*")
     a = ap.parse_args()
     root = Path(a.data)
     flag = root / "bcast_blocked.json"
@@ -426,6 +497,12 @@ def main():
         log("BOATCAST に断られているため、今日は取得しません", b); return
     try:
         sv = check_alive()
+        if a.fill_odds is not None:
+            for D in a.fill_odds:
+                day = read_json(root / f"{D}.json", None)
+                if day:
+                    log(D, "確定オッズを取得", update_odds(root, D, day, now), "件")
+            return
         if a.fill_ori is not None:
             for D in a.fill_ori:
                 log(D, "オリジナル展示を補完", fill_ori(root, D), "R")

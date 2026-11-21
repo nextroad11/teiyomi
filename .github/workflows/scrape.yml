@@ -19,6 +19,9 @@ on:
       fill_ori:
         description: "オリジナル展示を補完する日付（YYYYMMDD をスペース区切り）"
         required: false
+      fill_odds:
+        description: "確定オッズ（3連単）を取る日付（YYYYMMDD をスペース区切り）"
+        required: false
 
 permissions:
   contents: write
@@ -75,6 +78,9 @@ jobs:
           ARGS="--data data"
           if [ "${{ inputs.force_load }}" = "true" ]; then ARGS="$ARGS --force-load"; fi
           if [ -n "${{ inputs.date }}" ]; then ARGS="$ARGS --date ${{ inputs.date }}"; fi
+          if [ -n "${{ inputs.fill_odds }}" ]; then
+            python scraper/bcast.py --data data --fill-odds ${{ inputs.fill_odds }}; save; exit 0
+          fi
           if [ -n "${{ inputs.fill_ori }}" ]; then
             python scraper/bcast.py --data data --fill-ori ${{ inputs.fill_ori }}; save; exit 0
           fi
