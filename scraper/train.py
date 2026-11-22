@@ -350,30 +350,34 @@ def tri_probs(Lw, Lp):
 
 # ---------------------------------------------------------------- 展開（11/20 追加）：2着・3着は1着の艇のコースで変わる
 # 2着の強さに B2[1着のコース, 候補のコース]、3着に B3[1着のコース, 候補]＋C3[2着のコース, 候補] を足す
-def fit_tenkai(D, Lp):
-    """11/20 追加：2着・3着の強さに 選手の残り方のクセ×kz を足す（テストで3連単損失3.7890→3.7874）"""
+def fit_tenkai(D, Lp, S):
+    """11/20 追加：2着・3着の強さに 選手の残り方のクセ×kz を足す（テストで3連単損失3.7890→3.7874）
+    11/23 追加：1コースの艇だけ、2着・3着の強さに e[0]/e[1]×点数 と e[2]/e[3]×残り方のクセ を足す
+    （逃げられなかった1号艇の2・3着の言いすぎを直す。テストで3連単損失3.7874→3.7839）。S: (R,6) 点数"""
     R = len(D["w1"]); C = D["course"]; w1, w2, w3 = D["w1"], D["w2"], D["w3"]
     m = (w2 >= 0) & (w3 >= 0); idx = np.where(m)[0]; Rm = len(idx)
     c1 = C[idx, w1[idx]]; c2 = C[idx, w2[idx]]; Ci = C[idx]; Lpi = Lp[idx]; Zi = D["zan"][idx]
+    I1 = (Ci == 0) * 1.0; Si = S[idx] * I1; ZI = Zi * I1
     def nll(p):
-        B2 = p[:36].reshape(6, 6); B3 = p[36:72].reshape(6, 6); C3 = p[72:108].reshape(6, 6)
-        L2 = Lpi + p[108] * Zi + B2[c1[:, None], Ci]; L2[np.arange(Rm), w1[idx]] = -np.inf
-        L3 = Lpi + p[109] * Zi + B3[c1[:, None], Ci] + C3[c2[:, None], Ci]
+        B2 = p[:36].reshape(6, 6); B3 = p[36:72].reshape(6, 6); C3 = p[72:108].reshape(6, 6); e = p[110:114]
+        L2 = Lpi + p[108] * Zi + B2[c1[:, None], Ci] + e[0] * Si + e[2] * ZI; L2[np.arange(Rm), w1[idx]] = -np.inf
+        L3 = Lpi + p[109] * Zi + B3[c1[:, None], Ci] + C3[c2[:, None], Ci] + e[1] * Si + e[3] * ZI
         L3[np.arange(Rm), w1[idx]] = -np.inf; L3[np.arange(Rm), w2[idx]] = -np.inf
         return -((L2[np.arange(Rm), w2[idx]] - logsumexp(L2, 1)) + (L3[np.arange(Rm), w3[idx]] - logsumexp(L3, 1))).mean() + 1e-3 * (p[:108] ** 2).sum()
-    p = minimize(nll, np.zeros(110), method="L-BFGS-B").x
-    return p[:36].reshape(6, 6), p[36:72].reshape(6, 6), p[72:108].reshape(6, 6), p[108:110]
+    p = minimize(nll, np.zeros(114), method="L-BFGS-B").x
+    return p[:36].reshape(6, 6), p[36:72].reshape(6, 6), p[72:108].reshape(6, 6), p[108:110], p[110:114]
 
 
-def tri_probs_t(Lw, Lp, C, TK, Z):
-    """展開つきの3連単の確率。C: (R,6) 枠→コース(0-5)、Z: (R,6) 残り方のクセ"""
-    B2, B3, C3, kz = TK
+def tri_probs_t(Lw, Lp, C, TK, Z, S):
+    """展開つきの3連単の確率。C: (R,6) 枠→コース(0-5)、Z: (R,6) 残り方のクセ、S: (R,6) 点数"""
+    B2, B3, C3, kz, e = TK
+    I1 = (C == 0) * 1.0; S1 = S * I1; Z1 = Z * I1
     W = np.exp(Lw - logsumexp(Lw, 1)[:, None]); R = len(Lw)
     out = np.zeros((R, 120))
     for n, (i, j, k) in enumerate(PERMS):
         ci, cj = C[:, i], C[:, j]
-        L2 = Lp + kz[0] * Z + B2[ci[:, None], C]; L2[:, i] = -np.inf
-        L3 = Lp + kz[1] * Z + B3[ci[:, None], C] + C3[cj[:, None], C]; L3[:, i] = -np.inf; L3[:, j] = -np.inf
+        L2 = Lp + kz[0] * Z + B2[ci[:, None], C] + e[0] * S1 + e[2] * Z1; L2[:, i] = -np.inf
+        L3 = Lp + kz[1] * Z + B3[ci[:, None], C] + C3[cj[:, None], C] + e[1] * S1 + e[3] * Z1; L3[:, i] = -np.inf; L3[:, j] = -np.inf
         out[:, n] = W[:, i] * np.exp(L2[:, j] - logsumexp(L2, 1)) * np.exp(L3[:, k] - logsumexp(L3, 1))
     return out
 
@@ -691,14 +695,14 @@ def main():
         lnplace = np.log(place)
         th, c0 = fit_market(Dt, lnbase, lnplace)
         s_ = Dt["x"] @ beta
-        TK = fit_tenkai(Dt, lnplace[Dt["course"]] + kPl * s_)
+        TK = fit_tenkai(Dt, lnplace[Dt["course"]] + kPl * s_, s_)
         return dict(A=A, beta=beta, g=g, place=place, kPl=kPl, lnbase=lnbase, lnplace=lnplace, th=th, c0=c0, TK=TK)
 
     def predict(M, Dx):
         s = Dx["x"] @ M["beta"]
         Lw = M["lnbase"][Dx["venue"][:, None], Dx["course"]] + s + M["g"] * Dx["f"]
         Lp = M["lnplace"][Dx["course"]] + M["kPl"] * s
-        PA = tri_probs_t(Lw, Lp, Dx["course"], M["TK"], Dx["zan"])
+        PA = tri_probs_t(Lw, Lp, Dx["course"], M["TK"], Dx["zan"], s)
         mw, mp = market_logits(Dx, M["lnbase"], M["lnplace"], M["th"])
         PM = tri_probs(mw, mp)
         win = np.exp(Lw - logsumexp(Lw, 1)[:, None])
@@ -767,7 +771,7 @@ def main():
                    "cls": {"A1": th[4], "A2": th[5], "B1": 0.0, "B2": th[6]}, "kPlace": th[7], "c0": round(Mall["c0"], 4)},
         "ana": best_rule,
         "tenkai": {"B2": Mall["TK"][0].round(4).tolist(), "B3": Mall["TK"][1].round(4).tolist(), "C3": Mall["TK"][2].round(4).tolist(),
-                   "kz": Mall["TK"][3].round(4).tolist()},
+                   "kz": Mall["TK"][3].round(4).tolist(), "e1": Mall["TK"][4].round(4).tolist()},
         "inkm": {"PL": PL.round(5).tolist(), "PW": PW.round(5).tolist(), "K": INK, "lose": t1.round(4).tolist(), "km": tk.round(4).tolist()},
     }
     report = {
