@@ -690,7 +690,7 @@ const PERSONS={
             {d:'11/22',t:'（こちらで決めたこと）条件を満たす組み方が複数あるときは、的中見込みが一番高いものを選ぶ'},
             {d:'11/22',t:'▲と△の1着率（AIの合計）が20%未満のレースは見送り'},
             {d:'11/22',t:'基本的に5艇立てのレースは買わない → 展示に出ていない艇がいるレース（欠場の可能性）は見送り'}]},
-  ike:{name:'池田',short:'池',honsen:null,ana:{hit:0.15,ret:null,minOdds:50,maxPts:12,wide:{minOdds:100,maxPts:18}},unit:n=>n<=6?2000:1000,
+  ike:{name:'池田',short:'池',honsen:null,ana:{hit:0.15,ret:null,minOdds:60,maxPts:12,wide:{minOdds:100,maxPts:18}},minP50:0.50,unit:n=>n<=6?2000:1000,
        log:[{d:'11/21',t:'穴1500%なら倍率どれくらい狙ってるの？（質問）'},
             {d:'11/21',t:'本線は捨てて、穴狙い1本。1点50倍から。最終的に「予想」「金予想」と戦う'},
             {d:'11/21',t:'目標：1日10万円の利益（1週間で70万円）。1日負けても週で取り返す考え'},
@@ -702,6 +702,8 @@ const PERSONS={
             {d:'11/22',t:'転がしは全部50倍以上だと難しいので、3レース目に固いレースを入れる → 1・2レース目は池予想の穴、3レース目は固いレースの本線'},
             {d:'11/22',t:'転がしは行けそうなら1日2本まで。3レース目の選び方は任せる → 2レース目のあとで最初に見つかった固いレース'},
             {d:'11/22',t:'単発レースと転がしレースを分かりやすく分ける'},
+            {d:'11/22',t:'（任せる → 検証して決定）「50倍以上」は締切前オッズ60倍以上で判定する（締切前50〜60倍の目は28%が確定で50倍を割るため）'},
+            {d:'11/22',t:'（任せる → 検証して決定）AIが見た「このレースが50倍以上で決まる確率」が50%未満なら見送り（過去のテストで回収率78%→97%、前半・後半とも良くなった）'},
             {d:'11/22',t:'トリガミはしょうがないが、できるだけ減らす → 今のルールでは当たれば必ず購入額の約2.8倍以上戻る（50倍×1,000円 ÷ 最大18,000円）'}]},
 };
 let ODDS={date:null,races:{}};
@@ -756,6 +758,8 @@ function personForms(pid,a,r){
     if(!KIN_CACHE[ck]){const k=kinForm(a,r,od);KIN_CACHE[ck]={h:null,a:k.skip?null:k,skip:k.skip?k:null,od};}return KIN_CACHE[ck];}
   const P=PERSONS[pid],od=oddsOf(r),X=[P.honsen,P.ana].filter(Boolean),need=X.some(x=>x.ret||x.minOdds);
   if(need&&!od)return {wait:true};
+  if(P.minP50&&od){const p50=a.combos.reduce((s,c)=>s+(od.o[c.k]>=50?c.pAi:0),0);
+    if(p50<P.minP50)return {h:null,a:null,od,skip:{skip:`このレースが50倍以上で決まる確率（AI）が${(p50*100).toFixed(0)}%（${Math.round(P.minP50*100)}%未満）`}};}
   const o=od?od.o:null,opt=x=>(x.ret||x.minOdds)?{ret:x.ret,minOdds:x.minOdds,odds:o}:null;
   const h=P.honsen?formationOf(a,P.honsen.hit,null,opt(P.honsen)):null;
   let an=P.ana?formationOf(a,P.ana.hit,h?new Set(h.keys):null,opt(P.ana)):null,skip=null;
@@ -868,7 +872,7 @@ function renderPerson(pid){
   const a=A(r);if(!a){el.innerHTML=`<div class="empty">このレースは出走データが不完全です。</div>`;return;}
   const res=resultOf(r);
   const draw=()=>{const F=personForms(pid,a,r);
-    const rule=x=>x?`的中見込み${Math.round(x.hit*100)}%以上${x.minOdds?`・1点${x.minOdds}倍以上`:''}${x.maxPts?`・${x.maxPts}点以内`:''}${x.ret?`・当たったら${Math.round(x.ret*100)}%以上`:''}`:'買わない';
+    const rule=x=>x?`的中見込み${Math.round(x.hit*100)}%以上${x.minOdds?`・1点${x.minOdds}倍以上${pid==='ike'?'（締切前）':''}`:''}${x.maxPts?`・${x.maxPts}点以内`:''}${x.ret?`・当たったら${Math.round(x.ret*100)}%以上`:''}`:'買わない';
     const block=(lab,f,x)=>{if(!x)return `<p class="sub">${P.custom==='kin'?'金城さんの買い目は1種類です（下の欄）。':P.name+'さんは本線を買いません。'}</p>`;if(F.wait)return `<p class="sub">${lab}：オッズがまだ出ていません（締切15分前から取り込みます）。</p>`;
       if(!f)return F.skip?`<p class="sub">見送り：${esc(F.skip.skip)}。${F.skip.cut?`（切った艇：${F.skip.cut}号艇）`:''}</p>`:`<p class="sub">${lab}：条件（${rule(x)}）を満たす組み方がないので見送り。</p>`;
       const S=f.S?f.S:F.od?(x.ret?stakesOf(f.keys,F.od.o,x.ret):(()=>{const u=P.unit?P.unit(f.n):100,st={};f.keys.forEach(k=>st[k]=u);return {st,tot:f.keys.length*u,u,minRet:Math.min(...f.keys.map(k=>F.od.o[k]))/f.keys.length,flat:true};})()):null;
@@ -1873,7 +1877,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='75';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='76';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
