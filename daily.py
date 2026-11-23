@@ -69,6 +69,55 @@ def convert(jcd, have):
             out.append(f"{key}|{';'.join(boats)}|,0,{t.get('order','')},{t.get('payout') or 0},,0")
     return out
 
+BC = 'bc'  # 当日ファイル（BOATCAST）から作った行の印（払戻欄の4番目）。history が届いたら正式な行で置き換える
+
+def is_bc(line):
+    p = line.strip().split('|')
+    return len(p) == 3 and p[2].split(',')[4:5] == [BC]
+
+def convert_bcast(jcd, have):
+    """history/ がまだ無い日を、data ブランチ直下の当日ファイル（BOATCAST の出走表・展示・オリ展・結果）から作る。
+    公式配布（mbrace）は 11/18 から自動取得できず、history/ は手動で置いた分しか増えないため。
+    BOATCAST の結果は1〜3着しか無いので、4着以下はまとめて「4」にする（足スコアの判定は1着・3連対しか使わない）。
+    進入は結果の ST の並び（コース順）から取る。ST に出てこない艇は欠場扱い。"""
+    out = []
+    for f in sorted(glob.glob(os.path.join(DATA, '2*.json'))):
+        day = os.path.basename(f)[:8]
+        if not day.isdigit() or os.path.exists(os.path.join(DATA, 'history', day + '.json')): continue
+        try: rs = json.load(open(f, encoding='utf-8'))['races']
+        except Exception: continue
+        for r in rs:
+            if r.get('jcd') != jcd: continue
+            key = f"{day}_{r['rno']}"
+            if key in have: continue
+            res = r.get('result') or {}; bf = r.get('before') or {}
+            order = [int(x) for x in (res.get('order') or '').split('-') if x.isdigit()]
+            st = res.get('st') or []
+            o = bf.get('ori') or {}
+            if len(order) != 3 or not st or not o.get('boats') or not r.get('boats'): continue
+            # ST が空の艇は欠場・出遅れ（進入なし）。進入は ST のある艇だけを並び順に数える
+            ran = [int(w) for w, s in st if str(s).strip()]
+            course = {w: i + 1 for i, w in enumerate(ran)}
+            stv = {int(w): str(s) for w, s in st}
+            exs = {w: x.get('exTime') for w, x in (bf.get('boats') or {}).items()}
+            if any(exs.get(str(w)) is None for w in ran): continue  # 展示タイムがそろっていないレースは次回に回す
+            boats = []
+            for b in sorted(r['boats'], key=lambda b: b['waku']):
+                w = b['waku']; v = o['boats'].get(str(w))
+                if not v: continue
+                m = dict(zip(o.get('items', []), v))
+                ex = exs.get(str(w)) if w in course else None  # 欠場艇は history と同じく展示なし扱い（集計から外れる）
+                if w in order: fin = str(order.index(w) + 1)
+                elif w not in course: fin = '欠'
+                elif stv[w].startswith('F'): fin = 'F'
+                elif stv[w].startswith('L'): fin = 'L'
+                else: fin = '4'
+                boats.append(','.join([str(w), b.get('cls') or '', fmt(ex), fmt(m.get('一周', m.get('半周ラップ'))),
+                                       fmt(m.get('まわり足')), fmt(m.get('直線')), fin, str(course.get(w, ''))]))
+            if len(boats) < 5: continue
+            out.append(f"{key}|{';'.join(boats)}|,0,{res['order']},{res.get('payout') or 0},{BC},0")
+    return out
+
 def series_of(days):
     """連続する開催日を1節とみなす（2日以上空いたら別の節）"""
     days = sorted(set(days)); lab = {}; start = prev = None
@@ -201,17 +250,23 @@ for jcd_s, v in CFG['venues'].items():
         if NS and k != v['adopted'] and any(wstr(w2) == wstr(x) for x in FORMS.values()): continue
         FORMS[k] = w2
     GRv = [w for w in GR if w['直線'] == 0] if NS else GR
-    have = {l.split('|')[0] for l in open(path) if l.strip()}
+    alll = [l for l in open(path) if l.strip()]
+    bck = {l.split('|')[0] for l in alll if is_bc(l)}  # 当日ファイルから作った仮の行（history が届いたら置き換える）
+    have = {l.split('|')[0] for l in alll} - bck
     added = []
     if UPDATE:
         for day in sorted({os.path.basename(f)[:8] for f in glob.glob(os.path.join(DATA, 'oriten', '2*.json')) + glob.glob(os.path.join(DATA, '2*.json'))} | {today}):
             if day not in grades[jcd_s]:
                 g = grade_from_root(day, jcd)
                 if g: grades[jcd_s][day] = g
-        added = convert(jcd, have)
-        if added:
+        hl = convert(jcd, have)
+        hk = {l.split('|')[0] for l in hl}
+        bl = convert_bcast(jcd, have | bck | hk)
+        upd = hl + bl
+        added = [l for l in upd if l.split('|')[0] not in bck]  # 仮の行を正式な行に置き換えた分は「追加」に数えない
+        if upd:
             allk = {l.split('|')[0]: l.strip() for l in open(path) if l.strip()}
-            for l in added: allk[l.split('|')[0]] = l
+            for l in upd: allk[l.split('|')[0]] = l
             ks = sorted(allk, key=lambda k: (k[:8], int(k[9:])))
             open(path, 'w').write('\n'.join(allk[k] for k in ks) + '\n')
     d, _ = G.load_compact([path])
