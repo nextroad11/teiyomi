@@ -682,7 +682,7 @@ function formationOf(a,target=FORM_TARGET,avoid=null,opt=null){
 // ルールは二人から聞いたことだけを入れる。まだ聞いていない項目は艇読みAIの予想と同じ（本線 見込み30%・穴 10%）。
 // ret は「当たったときの最低回収率（倍）」。入っているときは締切前オッズ（なければ確定オッズ）で金額を配分し、満たせなければ見送り。
 const PERSONS={
-  kin:{name:'金城',short:'金',honsen:null,ana:{hit:0.03,ret:10,minOdds:50},custom:'kin',budget:10000,minHeadWin:0.20,
+  kin:{name:'金城',short:'金',honsen:null,ana:{hit:0.03,ret:10,minOdds:50},custom:'kin',budget:10000,maxBudget:15000,wideNeed:{minPts:13,need:80000},minHeadWin:0.20,
        log:[{d:'11/22',t:'1レースの的中率3%以上（10%→5%→3%に変更）・回収率1000%以上'},{d:'11/22',t:'イン逃げは買わない'},
             {d:'11/22',t:'2〜6号艇のうち▲・△を1着に固定してフォーメーションを組む'},
             {d:'11/22',t:'展開予想から3着以内に一番絡みづらい1艇を完全に切る'},
@@ -691,7 +691,9 @@ const PERSONS={
             {d:'11/22',t:'切る前の段階で、組んだ目の40%以上が50倍以下ならそのレースは見送り'},
             {d:'11/22',t:'（こちらで決めたこと）条件を満たす組み方が複数あるときは、的中見込みが一番高いものを選ぶ'},
             {d:'11/22',t:'▲と△の1着率（AIの合計）が20%未満のレースは見送り'},
-            {d:'11/22',t:'基本的に5艇立てのレースは買わない → 展示に出ていない艇がいるレース（欠場の可能性）は見送り'}]},
+            {d:'11/22',t:'基本的に5艇立てのレースは買わない → 展示に出ていない艇がいるレース（欠場の可能性）は見送り'},
+            {d:'11/23',t:'（びわこ12Rの振り返りから）資金は1万円を基本に、足りなければ最大1.5万円まで広げてよい'},
+            {d:'11/23',t:'（同）13〜18点の形は、当たったときの払戻の条件を10万円→8万円に緩める'}]},
   ike:{name:'池田',short:'池',honsen:null,ana:{hit:0.15,ret:null,minOdds:60,maxPts:12,wide:{minOdds:100,maxPts:18}},minP50:0.50,unit:n=>n<=6?2000:1000,
        log:[{d:'11/21',t:'穴1500%なら倍率どれくらい狙ってるの？（質問）'},
             {d:'11/21',t:'本線は捨てて、穴狙い1本。1点50倍から。最終的に「予想」「金予想」と戦う'},
@@ -748,8 +750,9 @@ function kinForm(a,r,od){
     if(keys.length<4||keys.length>18){note('4〜18点の外');continue;}
     const p=keys.reduce((s,k)=>s+(M[k]||0),0);if(p<P.ana.hit){note(`的中見込み${Math.round(P.ana.hit*100)}%未満`);continue;}
     // どの目が当たっても「予算×1000%」以上戻るように100円単位で切り上げて配分し、合計が予算（1万円）以内に収まる形だけ
-    const need=P.budget*P.ana.ret,st={};let tot=0;for(const k of keys){st[k]=Math.max(100,Math.ceil(need/od.o[k]/100)*100);tot+=st[k];}
-    if(tot>P.budget){note('当たったとき1000%に届かない');continue;}
+    // 11/23 金城さん：当たったときの払戻は 10万円（13点以上は8万円）以上。資金は1万円を基本に、足りなければ1.5万円まで
+    const need=(P.wideNeed&&keys.length>=P.wideNeed.minPts)?P.wideNeed.need:P.budget*P.ana.ret,st={};let tot=0;for(const k of keys){st[k]=Math.max(100,Math.ceil(need/od.o[k]/100)*100);tot+=st[k];}
+    if(tot>(P.maxBudget||P.budget)){note(`当たったとき${need/10000}万円に届かない（資金${((P.maxBudget||P.budget)/10000)}万円まで）`);continue;}
     if(!best||p>best.p)best={label:c.label,keys,p,st,tot};}
   if(!best){const top=Object.entries(reason).sort((x,y)=>y[1]-x[1])[0];return why(top?`どの組み方も条件を満たさない（一番多い理由：${top[0]}）`:'組める形がない');}
   best.keys.sort((x,y)=>(M[y]||0)-(M[x]||0));const minRet=Math.min(...best.keys.map(k=>best.st[k]*od.o[k]))/best.tot;
@@ -1884,7 +1887,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='78';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='79';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
