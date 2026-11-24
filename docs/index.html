@@ -1389,7 +1389,10 @@ function anaPostWhy(r,a0,a){
 // 11/5〜24の一般戦・G3の特別戦792R（展示後のAI）では、この条件で50倍以上31.2%・100倍以上16.4%（特別戦全体は26.1%・15.4%、予選・一般戦全体は30.5%・17.3%）。
 const isTokuName=n=>['ドリーム','優勝','選抜','特選','特賞'].some(k=>(n||'').includes(k));
 // 一般開催＝SG・G1・G2以外（一般戦とG3。G3b＝オールレディース等も含む）。11/24 殿の指摘で戸田（G3b）の選抜戦・優勝戦が漏れていたのを直した
-const tokuOK=(r,a)=>['ippan','G3','G3b'].includes(r.grade)&&isTokuName(r.name)&&a&&a.one.tobu>=0.10&&a.manP>=0.10;
+// 11/24 殿「SG・G1はとりあえず出さない」：グレードの値に加え、その場のその日の出走選手のA1級の割合が5割以上ならSG・G1・G2とみなして外す
+// （常滑のチャレンジカップ＋G2レディースCCがデータ上「一般」になっていた。A1割合は一般・G3で0.3以下、SG・G1で0.9以上）
+function bigGradeDay(r){const L=races.filter(x=>x.jcd===r.jcd);let a=0,n=0;for(const x of L)for(const b of x.boats||[]){n++;if(b.cls==='A1')a++;}return n>0&&a/n>=0.5;}
+const tokuOK=(r,a)=>['ippan','G3','G3b'].includes(r.grade)&&!bigGradeDay(r)&&isTokuName(r.name)&&a&&a.one.tobu>=0.10&&a.manP>=0.10;
 function renderTobu(kind='ana'){
   const TK=kind==='toku';
   const el=$(TK?'#v-toku':'#v-tobu');if(!races.length){el.innerHTML=emptyState();return;}
@@ -2018,7 +2021,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='88';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='89';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));

@@ -21,6 +21,15 @@ S = requests.Session()
 S.headers.update({"User-Agent": "teiyomi-bot/1.0 (personal race analysis; GitHub Actions)", "Referer": "https://race.boatcast.jp/"})
 SLEEP, _last, NREQ = 1.0, 0.0, 0
 GRADE = {"SG": "SG", "G1": "G1b", "G2": "G2b", "G3": "G3b", "IP": "ippan"}
+def grade_of(x) -> str:
+    """BOATCAST のグレード。併催は「SG:G2」のように来るので、一番上（先頭）を使う（11/24 常滑 チャレンジカップ＋G2レディースCC が一般になっていた）"""
+    for g in str(x or "").replace("：", ":").split(":"):
+        g = g.strip()
+        if g in GRADE:
+            return GRADE[g]
+    return "ippan"
+
+
 WEATHER = {"1": "晴", "2": "曇り", "3": "雨", "4": "雪", "5": "霧", "6": "台風"}
 DIRS = ['北', '北北東', '北東', '東北東', '東', '東南東', '南東', '南南東', '南', '南南西', '南西', '西南西', '西', '西北西', '北西', '北北西']
 # 方角 → 水面図の矢印番号（アプリの windDir、1=上・時計回り、5=右=1マーク向き）。過去1年の向かい風・追い風で場ごとに確認済み
@@ -84,7 +93,7 @@ def mon_venues(D: str, root: Path) -> dict:
         for l in lines_of(t or "")[1:]:
             c2 = l.split("\t")
             if len(c2) >= 4 and c2[0].isdigit() and c2[0] <= D <= c2[1]:
-                out[j] = {"title": z(c2[3]) and c2[3].replace("　", " ").strip(), "grade": GRADE.get(c2[2].strip(), "ippan"),
+                out[j] = {"title": z(c2[3]) and c2[3].replace("　", " ").strip(), "grade": grade_of(c2[2]),
                           "start": c2[0], "end": c2[1]}
     cache.parent.mkdir(exist_ok=True)
     write_json(cache, {str(k): v for k, v in out.items()})
@@ -127,7 +136,7 @@ def holding(D: str) -> dict:
         except (KeyError, ValueError):
             continue
         out[j] = {"title": (h.get("HoldingTitle") or "").replace("　", " ").strip(), "day": z(h.get("DailyTitle")) or None,
-                  "grade": GRADE.get(h.get("RaceGrade"), "ippan"), "deadlines": h.get("DeadlineTimeAll") or [],
+                  "grade": grade_of(h.get("RaceGrade")), "deadlines": h.get("DeadlineTimeAll") or [],
                   "names": [z(x) for x in (h.get("RaceTitleAll") or [])], "cancel": h.get("CancelStatusAll") or []}
     return out
 
