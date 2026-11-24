@@ -1759,16 +1759,17 @@ function makuriHtml(r,a){
 function ashiHtml(r,a){
   const f=v=>v==null?'-':(v>=0?'+':'')+v.toFixed(2), cls=v=>v>=0.5?'pos':v<=-0.5?'neg':'';
   if(a.ashi){const rows=a.boats.slice().sort((x,y)=>(x.ashi?.rank||9)-(y.ashi?.rank||9));
-    return `<div class="panel ashi"><h3>足評価（足スコア）</h3>
+    // 11/25 殿：負け方の予想を足スコアの上に
+    return `${inkHtml(r,a)}<div class="panel ashi"><h3>足評価（足スコア）</h3>
       <p class="sub">枠ごとの計測のクセを補正し、同じレースの中で速いほど＋。${a.ashi.venueCorr?'この場専用の補正':'全場共通の補正'}をかけ、${a.ashi.kind==='場別'?`この場で検証した重み${a.ashi.sep!=null?`（判別力sep ${a.ashi.sep}）`:''}`:'未検証の場なので既定の戸田新式（一周1・まわり足0.5・直線0.5・展示1）'}で合計。${a.ashi.notes.length?'※'+esc(a.ashi.notes.join('・')):''}</p>
       <div class="tablebox"><table class="card"><thead><tr><th>順位</th><th>艇</th><th>一周</th><th>まわり足</th><th>直線</th><th>展示</th><th>足スコア</th><th>評価</th></tr></thead><tbody>
       ${rows.map(b=>b.ashi?`<tr><td>${b.ashi.rank}位</td><td>${bn(b.waku)}</td>${b.ashi.z.map(z=>`<td class="n ${cls(z)}">${f(z)}</td>`).join('')}<td class="n"><b>${f(b.ashi.score)}</b></td><td><b class="fg fg-${fgCls(b.footGrade)}">${b.footGrade}</b></td></tr>`:`<tr><td>-</td><td>${bn(b.waku)}</td><td colspan="6" class="n">展示なし</td></tr>`).join('')}
-      </tbody></table></div>${makuriHtml(r,a)}</div>${inkHtml(r,a)}`;}
+      </tbody></table></div>${makuriHtml(r,a)}</div>`;}
   const jc=String(r.jcd).padStart(2,'0');
-  return `<div class="panel ashi"><h3>足評価</h3><p class="sub">${ASHI_SKIP_NOTE(jc,r)}展示タイム・オリジナル展示・モーターの遍歴（交換後に乗った選手たちの実測の足と、乗り手の腕を差し引いた成績。2連率は使いません）を、AIが学んだ重みで合計した評価です。</p>
+  return `${inkHtml(r,a)}<div class="panel ashi"><h3>足評価</h3><p class="sub">${ASHI_SKIP_NOTE(jc,r)}展示タイム・オリジナル展示・モーターの遍歴（交換後に乗った選手たちの実測の足と、乗り手の腕を差し引いた成績。2連率は使いません）を、AIが学んだ重みで合計した評価です。</p>
     <div class="tablebox"><table class="card"><thead><tr><th>艇</th><th>展示</th><th>オリ展</th><th>モーター</th><th>合計</th><th>評価</th></tr></thead><tbody>
     ${a.boats.slice().sort((x,y)=>y.foot-x.foot).map(b=>{const o=(b.parts.olap||0)+(b.parts.oturn||0)+(b.parts.ostr||0);return `<tr><td>${bn(b.waku)}</td><td class="n">${f(b.parts.ex||0)}</td><td class="n">${f(o)}</td><td class="n">${f((b.parts.mfoot||0)+(b.parts.madj||0))}</td><td class="n"><b>${f(b.foot)}</b></td><td><b class="fg fg-${fgCls(b.footGrade)}">${b.footGrade}</b></td></tr>`;}).join('')}
-    </tbody></table></div>${makuriHtml(r,a)}</div>${inkHtml(r,a)}`;}
+    </tbody></table></div>${makuriHtml(r,a)}</div>`;}
 const ASHI_SKIP_NOTE=(jc,r)=>'展示タイムがまだ無いため、';
 function oriHtml(r,a){
   const o=r.before&&r.before.ori, bf=(r.before&&r.before.boats)||{};
@@ -2029,7 +2030,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='94';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='95';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
