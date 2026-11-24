@@ -417,6 +417,16 @@ def tick(root: Path, D: str, now: dt.datetime) -> dict:
     if not day["races"] or not all(r.get("bcCard") for r in day["races"]) and not day.get("bcCardAt"):
         st["card"] = build_card(D, day, root)
         day["bcCardAt"] = now.isoformat(timespec="seconds")
+    # 11/24 尼崎10R：前の晩の読み込みで一部のレースだけ出走表が取れないことがある。抜けているレースがあれば10分ごとに取り直す
+    elif day["races"]:
+        have = {}
+        for r in day["races"]:
+            have.setdefault(r["jcd"], set()).add(r["rno"])
+        if any(set(range(1, 13)) - s for s in have.values()):
+            t = ts(day, "cardRetryAt")
+            if not t or (now - t).total_seconds() > 600:
+                st["card"] = build_card(D, day, root)
+                day["cardRetryAt"] = now.isoformat(timespec="seconds")
     h = ts(day, "holdingAt")
     if not h or (now - h).total_seconds() > 1800 or any(not r.get("deadline") for r in day["races"]):
         if not h or (now - h).total_seconds() > 300:
