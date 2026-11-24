@@ -694,7 +694,8 @@ const PERSONS={
             {d:'11/22',t:'基本的に5艇立てのレースは買わない → 展示に出ていない艇がいるレース（欠場の可能性）は見送り'},
             {d:'11/23',t:'（びわこ12Rの振り返りから）資金は1万円を基本に、足りなければ最大1.5万円まで広げてよい'},
             {d:'11/23',t:'（同）13〜18点の形は、当たったときの払戻の条件を10万円→8万円に緩める'},
-            {d:'11/23',t:'2着に残る確率が1号艇と他の艇で同じくらいなら1号艇を残す → 的中見込みの差が1ポイント以内なら、1コースの艇を2着に入れた形を選ぶ'}]},
+            {d:'11/23',t:'2着に残る確率が1号艇と他の艇で同じくらいなら1号艇を残す → 的中見込みの差が1ポイント以内なら、1コースの艇を2着に入れた形を選ぶ'},
+            {d:'11/24',t:'1レースの最低投資は1万円 → 必要な分が1万円未満のときも、オッズで配分したまま1万円まで増やす'}]},
   ike:{name:'池田',short:'池',honsen:null,ana:{hit:0.15,ret:null,minOdds:60,maxPts:12,wide:{minOdds:100,maxPts:18}},minP50:0.50,unit:n=>n<=6?2000:1000,
        log:[{d:'11/21',t:'穴1500%なら倍率どれくらい狙ってるの？（質問）'},
             {d:'11/21',t:'本線は捨てて、穴狙い1本。1点50倍から。最終的に「予想」「金予想」と戦う'},
@@ -761,6 +762,9 @@ function kinForm(a,r,od){
   // 11/23 金城さん：的中見込みが同じくらい（差がprefer1ポイント以内）なら、1コースの艇を2着に残す形を選ぶ
   if(best&&best1&&!best.in1&&best.p-best1.p<=P.prefer1)best=best1;
   if(!best){const top=Object.entries(reason).sort((x,y)=>y[1]-x[1])[0];return why(top?`どの組み方も条件を満たさない（一番多い理由：${top[0]}）`:'組める形がない');}
+  // 11/24 金城さん：1レースの最低投資は1万円。必要な分が1万円に届かないときは、どの目が当たっても同じくらい戻る配分のまま1万円まで増やす
+  if(best.tot<P.budget){const inv=best.keys.reduce((s,k)=>s+1/od.o[k],0),R=P.budget/inv;let tot=0;
+    for(const k of best.keys){best.st[k]=Math.max(best.st[k],Math.ceil(R/od.o[k]/100)*100);tot+=best.st[k];}best.tot=tot;}
   best.keys.sort((x,y)=>(M[y]||0)-(M[x]||0));const minRet=Math.min(...best.keys.map(k=>best.st[k]*od.o[k]))/best.tot;
   return {label:best.label,n:best.keys.length,p:best.p,keys:best.keys,cut,S:{st:best.st,tot:best.tot,minRet}};
 }
@@ -1894,7 +1898,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='81';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='82';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
