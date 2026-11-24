@@ -183,6 +183,16 @@ def apply_holding(D: str, day: dict) -> int:
         r["grade"] = h["grade"] or r.get("grade")
         if i < len(h["names"]) and h["names"][i]: r["name"] = h["names"][i]
         if i < len(h["cancel"]) and h["cancel"][i]: r["cancel"] = h["cancel"][i]
+    # 締切後に出走表が入ったレースは、開催一覧の締切が「確定」になっていて時刻が分からない。前後のレースの締切の中間で見積もる（11/24 尼崎10R）
+    for r in day["races"]:
+        if r.get("deadline"):
+            continue
+        same = {x["rno"]: x.get("deadline") for x in day["races"] if x["jcd"] == r["jcd"] and x.get("deadline")}
+        a = max((k for k in same if k < r["rno"]), default=None); b = min((k for k in same if k > r["rno"]), default=None)
+        if a and b:
+            m = lambda t: int(t.split(":")[0]) * 60 + int(t.split(":")[1])
+            v = m(same[a]) + (m(same[b]) - m(same[a])) * (r["rno"] - a) // (b - a)
+            r["deadline"] = f"{v // 60:02d}:{v % 60:02d}"; r["deadlineEst"] = True; r["lateCard"] = True; n += 1
     day["holdingAt"] = now_jst().isoformat(timespec="seconds")
     day["races"].sort(key=lambda r: (r.get("deadline") or "99", r["jcd"], r["rno"]))
     return n
@@ -425,7 +435,11 @@ def tick(root: Path, D: str, now: dt.datetime) -> dict:
         if any(set(range(1, 13)) - s for s in have.values()):
             t = ts(day, "cardRetryAt")
             if not t or (now - t).total_seconds() > 600:
+                before_ids = {r["id"] for r in day["races"]}
                 st["card"] = build_card(D, day, root)
+                for r in day["races"]:
+                    if r["id"] not in before_ids and (deadline_dt(r) is None or deadline_dt(r) < now):
+                        r["lateCard"] = True   # 締切後に入った＝その時点では買えなかったレース
                 day["cardRetryAt"] = now.isoformat(timespec="seconds")
     h = ts(day, "holdingAt")
     if not h or (now - h).total_seconds() > 1800 or any(not r.get("deadline") for r in day["races"]):
@@ -440,7 +454,8 @@ def tick(root: Path, D: str, now: dt.datetime) -> dict:
         bf = r.get("before") or {}
         last = ts(bf, "fetchedAt")
         need_ori = bf.get("complete") and (not bf.get("ori") or ori_incomplete(bf["ori"])) and mins > -30
-        if (-5 <= mins <= 25 and not bf.get("complete")) or (need_ori and mins <= 20):
+        late = r.get("deadlineEst") and not bf and mins > -360   # 締切後に入ったレース：展示を1回だけ取りに行く
+        if (-5 <= mins <= 25 and not bf.get("complete")) or (need_ori and mins <= 20) or late:
             if not last or (now - last).total_seconds() >= RECHECK:
                 update_before(r, D, now, sui); st["before"] += 1
         if bf.get("complete") and not bf.get("stt2") and mins > -360:  # 11/20 朝の展示STの読み違いを直す（1回だけ）

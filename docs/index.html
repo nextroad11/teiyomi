@@ -766,6 +766,7 @@ function kinForm(a,r,od){
 }
 const KIN_CACHE={};
 function personForms(pid,a,r){
+  if(r.lateCard)return {h:null,a:null,skip:{skip:'出走表が締切のあとに入ったレース（その時点では買えなかったので数えない）'}};
   if(PERSONS[pid].custom==='kin'){const od=oddsOf(r);if(!od)return {wait:true};const ck=r.id+'|'+od.kind;
     if(!KIN_CACHE[ck]){const k=kinForm(a,r,od);KIN_CACHE[ck]={h:null,a:k.skip?null:k,skip:k.skip?k:null,od};}return KIN_CACHE[ck];}
   const P=PERSONS[pid],od=oddsOf(r),X=[P.honsen,P.ana].filter(Boolean),need=X.some(x=>x.ret||x.minOdds);
@@ -784,7 +785,7 @@ function personForms(pid,a,r){
 // 対戦成績：予想（艇読みAIの本線・穴フォーメーション、1点100円）、金予想・池予想（オッズがあれば配分した金額、なければ1点100円）
 function battleRows(){
   const T={ai:{lab:'予想（艇読みAI）',st:0,ret:0,races:0,hit:0},kin:{lab:'金予想',st:0,ret:0,races:0,hit:0},ike:{lab:'池予想',st:0,ret:0,races:0,hit:0}};
-  for(const r of races){const res=resultOf(r);if(!res||!res.order||!res.payout)continue;const a=A(r);if(!a)continue;
+  for(const r of races){if(r.lateCard)continue;const res=resultOf(r);if(!res||!res.order||!res.payout)continue;const a=A(r);if(!a)continue;
     const add=(t,fs,stake)=>{let any=false,got=false;for(const f of fs){if(!f)continue;any=true;const S=stake(f);t.st+=S.tot;if(f.keys.includes(res.order)){got=true;t.ret+=res.payout*S.st[res.order]/100;}}if(any){t.races++;if(got)t.hit++;}};
     const flat=(f,u=100)=>{const st={};f.keys.forEach(k=>st[k]=u);return {st,tot:f.keys.length*u};};
     if(a.form)add(T.ai,[a.form.h,a.form.a],flat);
@@ -1893,7 +1894,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='80';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='81';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
