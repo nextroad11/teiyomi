@@ -1439,7 +1439,7 @@ function renderTobu(kind='ana'){
       <details><summary class="sub">選び方と実績（11/5〜24の一般戦・G3の特別戦792R）</summary>
         <p class="hint">この条件のレースは 50倍以上31.2%・100倍以上16.4%（特別戦全体は26.1%・15.4%、予選・一般戦全体は30.5%・17.3%）。特別戦は1号艇が残りやすい（1号艇が飛ぶのは特別戦13.5%・予選一般戦24.6%）ので、条件を満たしても荒れ方は予選・一般戦の平均並みです。荒れやすさがはっきり上がるのは「1号艇が飛ぶ確率30%以上」（50倍以上38.4%）です。この期間はAIの学習にも入っているので、先のレースでは少し下がる可能性があります。</p></details>
       <div class="seg" role="group" aria-label="並べ方"><button data-s="p" aria-pressed="${tobuSort==='p'}">穴度の高い順</button><button data-s="t" aria-pressed="${tobuSort==='t'}">締切順</button></div></div>
-    ${pick.length?pick.map(card).join(''):'<div class="panel"><p class="sub">この日は条件に合うレースがありません（一般開催の特別戦がない日もあります）。</p></div>'}
+    ${pick.length?pick.map(card).join(''):(races.every(r=>!(r.name||'').trim())?'<div class="panel"><p class="sub">レース名（特選・選抜・準優勝戦など）は、当日の朝7時ごろに開催一覧が入ってから分かります。前の晩には出ていないので、朝になったらここに出ます（選び方は前日の出走表の段階のAIのままです）。</p></div>':'<div class="panel"><p class="sub">この日は条件に合うレースがありません（一般開催の特別戦がない日もあります）。</p></div>')}
     ${rise.length?`<div class="panel"><h3>展示で浮上（参考）</h3><p class="sub">前日は条件に届きませんでしたが、展示後のAIで「1号艇が飛ぶ10%以上」かつ「万舟期待10%以上」になった特別戦です。</p></div>${rise.map(card).join('')}`:''}
   </div>`:`<div style="display:grid;gap:12px">
     <div class="panel"><h3>穴レース</h3>
@@ -2026,7 +2026,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='91';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='92';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
