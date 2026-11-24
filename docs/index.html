@@ -1254,20 +1254,31 @@ function anaPickIds(){ // その日の穴レース（前日の出走表の段階
   anaRank(rows);ANA_PICK={date:dateSel,n:races.length,ids:new Set(rows.filter(x=>x.pick).map(x=>x.r.id))};return ANA_PICK.ids;}
 // 穴予想（AI）：穴レースを全部買う。11/24 殿「狙うのは100倍以上だけ。誰も口出さないのでAIが全部判断。毎日の結果から良くする。
 // 決まりは3連単フォーメーションのみ。点数・賭け金は任せる。回収率は意識だけ。1週間ごとに報告」
-// 11/12〜17・11/21〜24（穴レース308R）で決めた形：全部の目が締切前100倍以上のフォーメーションのうち、AIの的中見込み8%以上を最少点数で（18点まで）。
+// 形（11/24 見直し）：全部の目が締切前100倍以上・6点以内のフォーメーション（1着はどの艇でも）のうち、AIの的中見込みが一番高いもの。
 // 1レース1万円を、どの目が当たっても同じくらい戻るように配分。AIはこの帯の確率を約3倍高く見ている（見込み8.7%→実際2.9%）ので、
 // 見込みは「組み方を決める目安」で、当たる確率そのものではない。ほかの組み方も裏で毎日計算し、1週間ごとに比べて良いほうへ切り替える。
-const AIANA={hit:0.08,maxPts:18,minOdds:100,budget:10000,
+const AIANA={maxPts:6,minOdds:100,budget:10000,
   log:[{d:'11/24',t:'穴レースを全部買う。狙うのは締切前100倍以上の目だけ。3連単フォーメーションのみ。点数・賭け金はAIが決め、回収率を意識する（殿）'},
-       {d:'11/24',t:'最初の形：全部の目が100倍以上のフォーメーションで、AIの的中見込み8%以上を最少点数（18点まで）。1レース1万円を同じ払戻になるように配分。10日分（穴レース204R）で回収率約75%・的中6本。ほかの見込み（3〜15%）・点数の上限も裏で計算して、1週間ごとに見直す'}]};
-const AIANA_CACHE={};
+       {d:'11/24',t:'最初の形：全部の目が100倍以上のフォーメーションで、AIの的中見込み8%以上を最少点数（18点まで）。1レース1万円を同じ払戻になるように配分。10日分（穴レース204R）で回収率約75%・的中6本。ほかの見込み（3〜15%）・点数の上限も裏で計算して、1週間ごとに見直す'},
+       {d:'11/24',t:'組み方を変更：1着1〜2艇・2着・3着1〜5艇（どの艇でも）のフォーメーションのうち、全部の目が締切前100倍以上・6点以内で、AIの的中見込みが一番高い形。9日分（11/12〜17・11/22〜24の締切前オッズ）で比べ、全レースでは前半・後半とも回収率83%（的中24本・16本）と一番ぶれが少なく、穴レース274Rでは88%（的中9本、前の形は約79%・7本）。AIとオッズの見方の差が大きい目を選ぶ形は、前半だけ良くて後半は悪かったので使わない'}]};
+const AIANA_CACHE={};let AIANA_FORMS=null;
+function aiAnaBest(a,o){ // 1着1〜2艇・2着1〜5艇・3着1〜5艇（どの艇でも）の形のうち、全部の目が minOdds 以上・maxPts 点以内で、AIの的中見込みが一番高いもの
+  if(!AIANA_FORMS){const subs=(mn,mx)=>{const out=[];for(let m=1;m<64;m++){const x=[0,1,2,3,4,5].filter(i=>m>>i&1);if(x.length>=mn&&x.length<=mx)out.push(x);}return out;};
+    const seen=new Set();AIANA_FORMS=[];
+    for(const F1 of subs(1,2))for(const F2 of subs(1,5))for(const F3 of subs(1,5)){const ks=[];for(const x of F1)for(const y of F2)for(const z of F3)if(x!==y&&y!==z&&x!==z)ks.push([x,y,z]);
+      if(!ks.length||ks.length>18)continue;const key=ks.map(k=>k.join('')).sort().join(',');if(seen.has(key))continue;seen.add(key);AIANA_FORMS.push({F1,F2,F3,ks});}}
+  const W=[1,2,3,4,5,6],M={};a.combos.forEach(c=>M[c.k]=c.pAi);let best=null;
+  for(const c of AIANA_FORMS){if(c.ks.length>AIANA.maxPts)continue;let p=0,ok=true;const keys=[];
+    for(const [x,y,z] of c.ks){const k=`${W[x]}-${W[y]}-${W[z]}`,v=o[k];if(!v||v<AIANA.minOdds){ok=false;break;}p+=M[k]||0;keys.push(k);}
+    if(!ok)continue;if(!best||p>best.p+1e-12||(Math.abs(p-best.p)<=1e-12&&keys.length<best.n))best={keys,p,n:keys.length,label:[c.F1,c.F2,c.F3].map(F=>F.map(i=>W[i]).join('')).join('-')};}
+  if(best)best.keys.sort((x,y)=>(M[y]||0)-(M[x]||0));
+  return best;}
 function aiAnaForm(r,a){
   if(!anaPickIds().has(r.id))return null;
   if(r.lateCard)return {skip:'出走表が締切のあとに入ったレース（その時点では買えなかったので数えない）'};
   const od=oddsOf(r);if(!od)return {wait:true};const ck=r.id+'|'+od.kind;if(AIANA_CACHE[ck])return AIANA_CACHE[ck];
-  const f=formationOf(a,AIANA.hit,null,{minOdds:AIANA.minOdds,odds:od.o});let out;
-  if(!f)out={skip:`全部の目が${AIANA.minOdds}倍以上で、的中見込み${Math.round(AIANA.hit*100)}%に届くフォーメーションがない`,od};
-  else if(f.n>AIANA.maxPts)out={skip:`条件を満たす一番少ない組み方でも${f.n}点（${AIANA.maxPts}点を超える）`,od};
+  const f=aiAnaBest(a,od.o);let out;
+  if(!f)out={skip:`全部の目が${AIANA.minOdds}倍以上で、${AIANA.maxPts}点以内のフォーメーションが組めない`,od};
   else{const inv=f.keys.reduce((t,k)=>t+1/od.o[k],0);let R=AIANA.budget/inv,st,tot;
     for(let i=0;i<50;i++){st={};tot=0;for(const k of f.keys){st[k]=Math.max(100,Math.floor(R/od.o[k]/100)*100);tot+=st[k];}if(tot<=AIANA.budget)break;R*=0.98;}
     out={f,S:{st,tot,minRet:Math.min(...f.keys.map(k=>st[k]*od.o[k]))/tot},od};}
@@ -1948,7 +1959,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='84';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='85';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
