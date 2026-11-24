@@ -1280,7 +1280,7 @@ function renderPlayers(){
 function openPlayer(t){plFill();plSel=String(t);LS.set('pls',plSel);const v=STATS&&STATS.p[plSel];if(v&&v.nm){plQuery=v.nm;LS.set('plq',plQuery);}view='pl';LS.set('view',view);renderView();window.scrollTo(0,0);}
 
 // ---------------------------------------------------------------- イン飛び: その日の全レースの「1号艇が飛ぶ確率」
-let tobuSort=LS.get('tobuSort','p');
+let tobuSort=LS.get('tobuSort','p'), tokuSort=LS.get('tokuSort','t'); // 11/25 殿：特別戦は締切順が基本
 // ---------------------------------------------------------------- 穴レース（前日に選び、展示で変わったことを書き足す）
 function anaRank(rows){ // rows: {r,a0}。万舟期待と1号艇が飛ぶ確率、それぞれのその日の順位を足した点数の上位 ANA_SHARE を選ぶ
   const n=rows.length,kM=x=>x.a0.manP,kT=x=>x.a0.one.tobu;
@@ -1412,7 +1412,8 @@ function renderTobu(kind='ana'){
   if(TK)rows.forEach(x=>{x.pick=tokuOK(x.r,x.a0);x.rise=!x.pick&&!!x.a&&tokuOK(x.r,x.a);});
   else rows.forEach(x=>{x.rise=!x.pick&&x.a&&x.a.one.tobu>=0.35&&x.a.manP>=0.20;});
   const pick=rows.filter(x=>x.pick), rise=rows.filter(x=>x.rise);
-  const sorter=tobuSort==='p'?(x,y)=>x.rank-y.rank:(x,y)=>(x.r.deadline||'').localeCompare(y.r.deadline||'')||x.r.jcd-y.r.jcd;
+  const SO=TK?tokuSort:tobuSort;
+  const sorter=SO==='p'?(x,y)=>x.rank-y.rank:(x,y)=>(x.r.deadline||'').localeCompare(y.r.deadline||'')||x.r.jcd-y.r.jcd;
   pick.sort(sorter);rise.sort(sorter);
   const done=pick.filter(x=>x.res&&x.res.order&&x.res.payout);
   const man=done.filter(x=>x.res.payout>=10000).length;
@@ -1438,7 +1439,7 @@ function renderTobu(kind='ana'){
       ${done.length?`<p class="sub">今日の結果：${done.length}レース中 50倍以上${m50}レース（${pc(m50/done.length)}）・万舟${man}レース（${pc(man/done.length)}）。</p>`:''}
       <details><summary class="sub">選び方と実績（11/5〜24の一般戦・G3の特別戦792R）</summary>
         <p class="hint">この条件のレースは 50倍以上31.2%・100倍以上16.4%（特別戦全体は26.1%・15.4%、予選・一般戦全体は30.5%・17.3%）。特別戦は1号艇が残りやすい（1号艇が飛ぶのは特別戦13.5%・予選一般戦24.6%）ので、条件を満たしても荒れ方は予選・一般戦の平均並みです。荒れやすさがはっきり上がるのは「1号艇が飛ぶ確率30%以上」（50倍以上38.4%）です。この期間はAIの学習にも入っているので、先のレースでは少し下がる可能性があります。</p></details>
-      <div class="seg" role="group" aria-label="並べ方"><button data-s="p" aria-pressed="${tobuSort==='p'}">穴度の高い順</button><button data-s="t" aria-pressed="${tobuSort==='t'}">締切順</button></div></div>
+      <div class="seg" role="group" aria-label="並べ方"><button data-s="t" aria-pressed="${tokuSort==='t'}">締切順</button><button data-s="p" aria-pressed="${tokuSort==='p'}">穴度の高い順</button></div></div>
     ${pick.length?pick.map(card).join(''):(races.every(r=>!(r.name||'').trim())?'<div class="panel"><p class="sub">レース名（特選・選抜・準優勝戦など）は、当日の朝7時ごろに開催一覧が入ってから分かります。前の晩には出ていないので、朝になったらここに出ます（選び方は前日の出走表の段階のAIのままです）。</p></div>':'<div class="panel"><p class="sub">この日は条件に合うレースがありません（一般開催の特別戦がない日もあります）。</p></div>')}
     ${rise.length?`<div class="panel"><h3>展示で浮上（参考）</h3><p class="sub">前日は条件に届きませんでしたが、展示後のAIで「1号艇が飛ぶ10%以上」かつ「万舟期待10%以上」になった特別戦です。</p></div>${rise.map(card).join('')}`:''}
   </div>`:`<div style="display:grid;gap:12px">
@@ -1454,7 +1455,7 @@ function renderTobu(kind='ana'){
     ${pick.map(card).join('')}
     ${rise.length?`<div class="panel"><h3>展示で浮上（参考）</h3><p class="sub">前日は対象外でしたが、展示後に「1号艇が飛ぶ35%以上」かつ「万舟期待20%以上」になったレースです。11/5〜16の試しでは前日に選んだレースほどは当たっていません。</p></div>${rise.map(card).join('')}`:''}
   </div>`;
-  el.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{tobuSort=b.dataset.s;LS.set('tobuSort',tobuSort);renderTobu(kind);}));
+  el.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{if(TK){tokuSort=b.dataset.s;LS.set('tokuSort',tokuSort);}else{tobuSort=b.dataset.s;LS.set('tobuSort',tobuSort);}renderTobu(kind);}));
   el.querySelectorAll('.ana-card').forEach(b=>b.addEventListener('click',()=>{const r=races.find(x=>x.id===b.dataset.id);if(!r)return;
     jcdSel=r.jcd;LS.set('jcd',jcdSel);raceId=r.id;view='yoso';LS.set('view',view);const s2=$('#venue');if(s2)s2.value=String(jcdSel);renderChips();renderView();window.scrollTo(0,0);}));
 }
@@ -2026,7 +2027,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='92';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='93';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
