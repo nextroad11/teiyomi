@@ -1,6 +1,8 @@
-"""一回きり：BOATCASTのオッズのファイル（3連単・確定と締切前）の形を確認。"""
-import sys, requests
+"""一回きり：11/24 尼崎10R の開催一覧（締切時刻・中止）の中身を確認。"""
+import json, requests
 H = {"User-Agent": "teiyomi-bot/1.0 (personal race analysis; GitHub Actions)", "Referer": "https://race.boatcast.jp/"}
-for kind in ("kakutei_od3", "smt_od3"):
-    t = requests.get(f"https://race.boatcast.jp/txt/01/bc_{kind}_20261121_01_01.txt", headers=H, timeout=20); t.encoding = "utf-8"
-    print("=====", kind, t.status_code, len(t.text)); print(repr(t.text[:900]))
+t = requests.get("https://race.boatcast.jp/api_txt/getHoldingList2_20261124.json", headers=H, timeout=20); t.encoding = "utf-8"
+print(t.status_code)
+for h in json.loads(t.text).get("return_info", []):
+    if str(h.get("RaceStudiumNo")).lstrip("0") == "13":
+        for k, v in h.items(): print(k, json.dumps(v, ensure_ascii=False)[:400])
