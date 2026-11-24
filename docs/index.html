@@ -386,6 +386,7 @@ table.card.st-tbl{min-width:0}.st-tbl td,.st-tbl th{padding-left:6px;padding-rig
     <button role="tab" id="tab-self" aria-selected="false" data-view="self">自分で予想</button>
     <button role="tab" id="tab-bw" aria-selected="false" data-view="bw">B級ウォッチ</button>
     <button role="tab" id="tab-tobu" aria-selected="false" data-view="tobu">穴レース</button>
+    <button role="tab" id="tab-toku" aria-selected="false" data-view="toku">特別戦</button>
     <button role="tab" id="tab-man" aria-selected="false" data-view="man">万舟</button>
     <button role="tab" id="tab-pl" aria-selected="false" data-view="pl">選手</button>
     <button role="tab" id="tab-rec" aria-selected="false" data-view="rec">成績</button>
@@ -408,6 +409,7 @@ table.card.st-tbl{min-width:0}.st-tbl td,.st-tbl th{padding-left:6px;padding-rig
   <section id="v-kin" hidden></section>
   <section id="v-ike" hidden></section>
   <section id="v-tobu" hidden></section>
+  <section id="v-toku" hidden></section>
   <section id="v-bw" hidden></section>
   <section id="v-man" hidden></section>
   <section id="v-pl" hidden></section>
@@ -1114,7 +1116,7 @@ let picks=LS.get('picks',{}), exMan=LS.get('ex',{}), resMan=LS.get('res',{}), hi
 
 /* ============ 状態とデータ ============ */
 let dates=[], dateSel=null, races=[], jcdSel=null, raceId=null, view=LS.get('view','yoso');
-if(!['yoso','table','self','bw','tobu','man','pl','rec'].includes(view))view='yoso';
+if(!['yoso','table','self','bw','tobu','toku','man','pl','rec'].includes(view))view='yoso';
 const calc={mode:'form',sel:[new Set([1]),new Set([2,3]),new Set([2,3,4])],stake:100};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -1180,9 +1182,9 @@ function renderChips(){
 }
 const cur=()=>races.find(r=>r.id===raceId)||null;
 function renderView(){
-  ['yoso','kin','ike','table','self','bw','tobu','man','pl','rec'].forEach(v=>{$('#v-'+v).hidden=v!==view;$('#tab-'+v).setAttribute('aria-selected',v===view);});
-  $('#chips').hidden=view==='rec'||view==='tobu'||view==='pl'||view==='bw'||view==='man';
-  if(view==='yoso')renderYoso();else if(view==='kin'||view==='ike')renderPerson(view);else if(view==='tobu')renderTobu();else if(view==='bw')renderBW();else if(view==='man')renderMan();else if(view==='pl')renderPlayers();else if(view==='self')renderSelf();else if(view==='table')renderTable();else renderRec();
+  ['yoso','kin','ike','table','self','bw','tobu','toku','man','pl','rec'].forEach(v=>{$('#v-'+v).hidden=v!==view;$('#tab-'+v).setAttribute('aria-selected',v===view);});
+  $('#chips').hidden=view==='rec'||view==='tobu'||view==='toku'||view==='pl'||view==='bw'||view==='man';
+  if(view==='yoso')renderYoso();else if(view==='kin'||view==='ike')renderPerson(view);else if(view==='tobu')renderTobu();else if(view==='toku')renderTobu('toku');else if(view==='bw')renderBW();else if(view==='man')renderMan();else if(view==='pl')renderPlayers();else if(view==='self')renderSelf();else if(view==='table')renderTable();else renderRec();
 }
 const emptyState=()=>`<div class="empty"><b>この日のレースデータはまだありません。</b><br>毎朝7時ごろに、その日の全場の出走表を自動で取り込みます。</div>`;
 const WIND=['','北','北北東','北東','東北東','東','東南東','南東','南南東','南','南南西','南西','西南西','西','西北西','北西','北北西'];
@@ -1382,8 +1384,14 @@ function anaPostWhy(r,a0,a){
   if(!note)why.push('展示後も変わりなし');
   return why;
 }
-function renderTobu(){
-  const el=$('#v-tobu');if(!races.length){el.innerHTML=emptyState();return;}
+// 11/24 殿：特別戦のページ。一般開催の予選・一般戦以外（ドリーム戦・特選・特賞・選抜・準優勝戦・優勝戦など）で、
+// 1号艇が飛ぶ確率10%以上かつ万舟期待10%以上のレース。穴レースと同じく前日（出走表の段階）のAIで選び、展示で変わったことを書き足す。
+// 11/5〜24の729R（展示後のAI）では、この条件で50倍以上31.2%・100倍以上16.0%（特別戦全体は26.2%・15.1%、予選・一般戦全体は30.2%・17.1%）。
+const isTokuName=n=>['ドリーム','優勝','選抜','特選','特賞'].some(k=>(n||'').includes(k));
+const tokuOK=(r,a)=>r.grade==='ippan'&&isTokuName(r.name)&&a&&a.one.tobu>=0.10&&a.manP>=0.10;
+function renderTobu(kind='ana'){
+  const TK=kind==='toku';
+  const el=$(TK?'#v-toku':'#v-tobu');if(!races.length){el.innerHTML=emptyState();return;}
   const pc=v=>Math.round(v*100)+'%';
   const rows=races.map(r=>{let a0=null,a=null;try{a0=analyze({...r,before:null,odds:null});}catch(_){}
     const hasEx=!!(r.before&&r.before.complete);if(hasEx){try{a=analyze(r);}catch(_){}}
@@ -1391,7 +1399,9 @@ function renderTobu(){
   if(!rows.length){el.innerHTML=emptyState();return;}
   const n=rows.length;anaRank(rows);
   // 展示で浮上（参考）：前日は選ばれず、展示後の万舟期待と飛ぶ確率が両方高いもの
-  rows.forEach(x=>{x.rise=!x.pick&&x.a&&x.a.one.tobu>=0.35&&x.a.manP>=0.20;});
+  rows.forEach(x=>{x.anaPick=x.pick;});
+  if(TK)rows.forEach(x=>{x.pick=tokuOK(x.r,x.a0);x.rise=!x.pick&&!!x.a&&tokuOK(x.r,x.a);});
+  else rows.forEach(x=>{x.rise=!x.pick&&x.a&&x.a.one.tobu>=0.35&&x.a.manP>=0.20;});
   const pick=rows.filter(x=>x.pick), rise=rows.filter(x=>x.rise);
   const sorter=tobuSort==='p'?(x,y)=>x.rank-y.rank:(x,y)=>(x.r.deadline||'').localeCompare(y.r.deadline||'')||x.r.jcd-y.r.jcd;
   pick.sort(sorter);rise.sort(sorter);
@@ -1403,13 +1413,26 @@ function renderTobu(){
     return `<button class="ana-card${x.rise?' rise':''}" data-id="${esc(r.id)}">
       <div class="ana-head"><b>${esc(r.venue||VENUES[r.jcd])} ${r.rno}R</b><span>${esc(r.deadline||'')}</span>
         ${x.pick?`<span class="ana-star">${'★'.repeat(x.star)}${'☆'.repeat(3-x.star)}</span>`:'<span class="tag">展示で浮上</span>'}
+        ${TK?`<span class="tag">${esc((r.name||'').trim())}</span>`:''}
         <span class="tag">1号艇が飛ぶ ${pc(x.a0.one.tobu)}${x.a?'→'+pc(x.a.one.tobu):''}</span>
+        ${TK?`<span class="tag">万舟期待 ${pc(x.a0.manP)}${x.a?'→'+pc(x.a.manP):''}</span>`:''}
         ${done?`<span class="ana-res ${res.payout>=10000?'man':''}">結果 ${esc(res.order)} ${yen(res.payout)}</span>`:''}</div>
       <div class="ana-why"><p class="ana-lbl">前日の理由</p><ul>${pre.map(t=>`<li>${t}</li>`).join('')}</ul></div>
       <div class="ana-why"><p class="ana-lbl">展示後</p>${post?`<ul>${post.map(t=>`<li>${t}</li>`).join('')}</ul>`:'<p class="sub">展示が出たら、変わったことをここに書きます。</p>'}</div>
-      ${x.pick?((x.a&&ODDS.date===dateSel)?aiAnaHtml(r,x.a,res):''):(af&&!done?`<p class="ana-form">狙うなら（参考）：${[af.F,af.S,af.T].map(s=>s.join('')).join('→')}・${af.pts}点</p>`:'')}
+      ${x.anaPick?((x.a&&ODDS.date===dateSel)?aiAnaHtml(r,x.a,res):''):(af&&!done?`<p class="ana-form">狙うなら（参考）：${[af.F,af.S,af.T].map(s=>s.join('')).join('→')}・${af.pts}点</p>`:'')}
+      ${TK&&x.anaPick?'<p class="sub">このレースは穴レースにも選ばれています。</p>':''}
     </button>`;};
-  el.innerHTML=`<div style="display:grid;gap:12px">
+  const m50=done.filter(x=>x.res.payout>=5000).length;
+  el.innerHTML=TK?`<div style="display:grid;gap:12px">
+    <div class="panel"><h3>特別戦</h3>
+      <p class="sub">${fmtDate(dateSel)}の一般開催のうち、<b>予選・一般戦以外</b>（ドリーム戦・特選・特賞・選抜・準優勝戦・優勝戦など）で、<b>前日（出走表の段階）</b>のAIが「1号艇が飛ぶ確率10%以上」かつ「万舟期待10%以上」と見たレース（${pick.length}レース）です。穴レースと同じく前日に決まり、展示が出たら変わったことを書き足します。</p>
+      ${done.length?`<p class="sub">今日の結果：${done.length}レース中 50倍以上${m50}レース（${pc(m50/done.length)}）・万舟${man}レース（${pc(man/done.length)}）。</p>`:''}
+      <details><summary class="sub">選び方と実績（11/5〜24の一般開催の特別戦729R）</summary>
+        <p class="hint">この条件のレースは 50倍以上31.2%・100倍以上16.0%（特別戦全体は26.2%・15.1%、予選・一般戦全体は30.2%・17.1%）。特別戦は1号艇が残りやすい（1号艇が飛ぶのは特別戦13.5%・予選一般戦24.6%）ので、条件を満たしても荒れ方は予選・一般戦の平均並みです。荒れやすさがはっきり上がるのは「1号艇が飛ぶ確率30%以上」（50倍以上38.4%）です。この期間はAIの学習にも入っているので、先のレースでは少し下がる可能性があります。</p></details>
+      <div class="seg" role="group" aria-label="並べ方"><button data-s="p" aria-pressed="${tobuSort==='p'}">穴度の高い順</button><button data-s="t" aria-pressed="${tobuSort==='t'}">締切順</button></div></div>
+    ${pick.length?pick.map(card).join(''):'<div class="panel"><p class="sub">この日は条件に合うレースがありません（一般開催の特別戦がない日もあります）。</p></div>'}
+    ${rise.length?`<div class="panel"><h3>展示で浮上（参考）</h3><p class="sub">前日は条件に届きませんでしたが、展示後のAIで「1号艇が飛ぶ10%以上」かつ「万舟期待10%以上」になった特別戦です。</p></div>${rise.map(card).join('')}`:''}
+  </div>`:`<div style="display:grid;gap:12px">
     <div class="panel"><h3>穴レース</h3>
       <p class="sub">${fmtDate(dateSel)}の${n}レースから、<b>前日（出走表の段階）</b>のAIで荒れやすいレース上位20%（${pick.length}レース）を選んでいます。前日23時に出走表が入った時点で決まり、展示が出たら変わったことを書き足します。</p>
       ${done.length?`<p class="sub">今日の結果：${done.length}レース中 万舟${man}レース（${pc(man/done.length)}）。</p>`:''}
@@ -1422,7 +1445,7 @@ function renderTobu(){
     ${pick.map(card).join('')}
     ${rise.length?`<div class="panel"><h3>展示で浮上（参考）</h3><p class="sub">前日は対象外でしたが、展示後に「1号艇が飛ぶ35%以上」かつ「万舟期待20%以上」になったレースです。11/5〜16の試しでは前日に選んだレースほどは当たっていません。</p></div>${rise.map(card).join('')}`:''}
   </div>`;
-  el.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{tobuSort=b.dataset.s;LS.set('tobuSort',tobuSort);renderTobu();}));
+  el.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{tobuSort=b.dataset.s;LS.set('tobuSort',tobuSort);renderTobu(kind);}));
   el.querySelectorAll('.ana-card').forEach(b=>b.addEventListener('click',()=>{const r=races.find(x=>x.id===b.dataset.id);if(!r)return;
     jcdSel=r.jcd;LS.set('jcd',jcdSel);raceId=r.id;view='yoso';LS.set('view',view);const s2=$('#venue');if(s2)s2.value=String(jcdSel);renderChips();renderView();window.scrollTo(0,0);}));
 }
@@ -1994,7 +2017,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='86';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='87';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
