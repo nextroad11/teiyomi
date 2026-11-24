@@ -714,7 +714,8 @@ const PERSONS={
             {d:'11/22',t:'（任せる → 検証して決定）「50倍以上」は締切前オッズ60倍以上で判定する（締切前50〜60倍の目は28%が確定で50倍を割るため）'},
             {d:'11/22',t:'（任せる → 検証して決定）AIが見た「このレースが50倍以上で決まる確率」が50%未満なら見送り（過去のテストで回収率78%→97%、前半・後半とも良くなった）'},
             {d:'11/22',t:'トリガミはしょうがないが、できるだけ減らす → 今のルールでは当たれば必ず購入額の約2.8倍以上戻る（50倍×1,000円 ÷ 最大18,000円）'},
-            {d:'11/24',t:'賭け金は1レース15,000円まで。7点などの配分は任せる（回収率を上げる方向）→ 12点以内は15,000円を、どの目が当たっても同じくらい戻るようにオッズで配分（データで配分の差は見分けられず、AIの確率に寄せる配分は長いオッズを信じすぎるので使わない）'},{d:'11/24',t:'18点フォーメーションは1点1,000円のまま'}]},
+            {d:'11/24',t:'賭け金は1レース15,000円まで。7点などの配分は任せる（回収率を上げる方向）→ 12点以内は15,000円を、どの目が当たっても同じくらい戻るようにオッズで配分（データで配分の差は見分けられず、AIの確率に寄せる配分は長いオッズを信じすぎるので使わない）'},{d:'11/24',t:'18点フォーメーションは1点1,000円のまま'},
+            {d:'11/24',t:'転がしは1レース目が一番大事。無理に穴を狙わなくていい（本線でも金額が大きければ配当はデカい）。狙えるときは狙う → 3レースとも固い本線に（データ：穴スタートは3つとも当たる確率約0.7%、本線だけなら約5.3%）。「穴を狙える1レース目」の見分け方はデータがたまったら提案'},{d:'11/24',t:'今後、転がしは帯（100万円）を狙いに行く方針'}]},
 };
 let ODDS={date:null,races:{}};
 async function loadOdds(){if(ODDS.date===dateSel)return;try{const d=await fetchJSON('odds/'+dateSel+'.json');ODDS={date:dateSel,races:d.races||{}};}catch(_){ODDS={date:dateSel,races:{}};}}
@@ -824,7 +825,10 @@ function solidBet(a){let p=0;const ks=[];for(const c of a.combos){ks.push(c.k);p
 function splitAll(keys,odds,money){ // money を、どの目が当たっても同じくらい戻るように100円単位で（端数は切り捨て）
   const I=keys.reduce((s,k)=>s+1/odds[k],0),st={};let tot=0;keys.forEach(k=>{st[k]=Math.max(100,Math.floor(money/I/odds[k]/100)*100);tot+=st[k];});return {st,tot};}
 // 11/23 池田さん：転がしは本線も混ぜて的中率を上げる → 1レース目だけ池予想の穴、2・3レース目は固いレースの本線（前の払戻を全部入れるので本線でも金額が大きい）
-const ROLL_PATTERN=['ana','solid','solid'];
+// 11/24 池田さん：1レース目が一番大事。無理に穴を狙わなくていい（本線でも金額が大きければ配当はデカい）→ 3レースとも固い本線。
+// 11/12〜24の9日分：固い本線は的中37.6%・当たると約2.4倍・回収率90%、池予想の穴は的中5.1%・約13.9倍・71%。
+// 3つとも当たるのは 穴スタート約0.7% → 本線だけ約5.3%（回収率の見込み 約57%→約73%）。今後は「帯（100万円）を狙う」方針（池田さん）。
+const ROLL_PATTERN=['solid','solid','solid'], ROLL_START=12000;
 function rollPlans(){ // 1日2本まで。2本目は1本目と別のレースで、同じ決まりで組む（並行して走る）
   const list=races.filter(r=>r.deadline&&A(r)).sort((x,y)=>toMin(x.deadline)-toMin(y.deadline)),used=new Set(),out=[];
   for(let c=0;c<2;c++){const legs=[];let fail=null;
@@ -841,7 +845,7 @@ function rollPlans(){ // 1日2本まで。2本目は1本目と別のレースで
 function rollSim(legs){ // 結果が出ていれば、払戻を全部次へ入れていく
   let money=null,alive=true,p=1;
   legs.forEach((L,i)=>{p*=L.f.p;const res=resultOf(L.r);
-    if(i===0){const u=PERSONS.ike.unit(L.f.n);L.stake=L.f.n*u;L.st=Object.fromEntries(L.f.keys.map(k=>[k,u]));}
+    if(i===0){if(L.solid&&L.od&&L.f.keys.every(k=>L.od.o[k])){const S=splitAll(L.f.keys,L.od.o,ROLL_START);L.stake=S.tot;L.st=S.st;}else{const u=PERSONS.ike.unit(L.f.n);L.stake=L.f.n*u;L.st=Object.fromEntries(L.f.keys.map(k=>[k,u]));}}
     else if(alive&&money!=null&&L.od){const S=splitAll(L.f.keys,L.od.o,money);L.stake=S.tot;L.st=S.st;}
     if(!alive){L.state='—';return;}
     if(!res||!res.order){L.state='これから';money=null;alive=false;L.pending=true;return;}
@@ -860,7 +864,7 @@ function rollHtml(){
       ${R.need?`<p class="sub">${R.need}。</p>`:`<small class="sub">3つとも当たる見込み ${pct(R.p)}・スタート${R.start.toLocaleString()}円${R.end!=null?` → 最終 <b>${R.end.toLocaleString()}円</b>`:''}</small>`}</div>`;
   return `<div class="panel"><h3><span class="mark" style="background:#7c3aed">転がし</span>3レース転がし（${dateSel.slice(4,6)}/${dateSel.slice(6)}、1日2本まで）</h3>
     <div style="display:grid;gap:10px">${RS.length?RS.map(card).join(''):'<p class="sub">今日は組めません。</p>'}</div>
-    <p class="foot">1レース目は池予想の穴、2・3レース目は前のレースの締切から${ROLL_GAP}分以上あとで最初に見つかった固いレース（AIの確率が高い順に4点以内で40%以上）の本線。2・3レース目は前の払戻を全部入れ、どの目が当たっても同じくらい戻るように配分。2本目は1本目と別のレースで組み、並行して走ります。</p></div>`;
+    <p class="foot">3レースとも固いレース（AIの確率が高い順に4点以内で40%以上）の本線。1レース目はその日最初に見つかった固いレースに${ROLL_START.toLocaleString()}円、2・3レース目は前のレースの締切から${ROLL_GAP}分以上あとで最初に見つかった固いレースに前の払戻を全部入れ、どの目が当たっても同じくらい戻るように配分。2本目は1本目と別のレースで組み、並行して走ります。</p></div>`;
 }
 function tanpatsuHtml(){ // 今日の単発（池予想の穴）一覧
   if(ODDS.date!==dateSel)return '';const rows=[];
@@ -2021,7 +2025,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='89';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='90';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
