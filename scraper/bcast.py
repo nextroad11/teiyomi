@@ -437,23 +437,34 @@ def tick(root: Path, D: str, now: dt.datetime) -> dict:
         st["card"] = build_card(D, day, root)
         day["bcCardAt"] = now.isoformat(timespec="seconds")
     # 11/24 尼崎10R：前の晩の読み込みで一部のレースだけ出走表が取れないことがある。抜けているレースがあれば10分ごとに取り直す
+    # 11/25 大村：ナイター場は前の晩21時に翌日の出走表がまだ出ておらず、場ごと抜けていた → 開催一覧にあるのにレースが無い場も取り直す
     elif day["races"]:
         have = {}
         for r in day["races"]:
             have.setdefault(r["jcd"], set()).add(r["rno"])
+        try:
+            for j in mon_venues(D, root):
+                have.setdefault(int(j), set())
+        except Exception:
+            pass
         if any(set(range(1, 13)) - s for s in have.values()):
             t = ts(day, "cardRetryAt")
             if not t or (now - t).total_seconds() > 600:
                 before_ids = {r["id"] for r in day["races"]}
                 st["card"] = build_card(D, day, root)
                 for r in day["races"]:
-                    if r["id"] not in before_ids and (deadline_dt(r) is None or deadline_dt(r) < now):
-                        r["lateCard"] = True   # 締切後に入った＝その時点では買えなかったレース
+                    if r["id"] not in before_ids:
+                        r["cardAddedAt"] = now.isoformat(timespec="seconds")   # 締切との前後は、締切時刻が入ってから決める
                 day["cardRetryAt"] = now.isoformat(timespec="seconds")
     h = ts(day, "holdingAt")
     if not h or (now - h).total_seconds() > 1800 or any(not r.get("deadline") for r in day["races"]):
         if not h or (now - h).total_seconds() > 300:
             st["dl"] = apply_holding(D, day)
+    for r in day["races"]:   # あとから入ったレース：締切がその時刻より前なら「その時点では買えなかった」
+        if r.get("cardAddedAt") and "lateCard" not in r and r.get("deadline"):
+            d0 = deadline_dt(r)
+            if d0:
+                r["lateCard"] = d0 < dt.datetime.fromisoformat(r["cardAddedAt"])
     sui = {}
     for r in day["races"]:
         d0 = deadline_dt(r)
