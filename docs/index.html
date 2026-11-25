@@ -1724,8 +1724,11 @@ function outerWinHtml(r,a){
     <p class="sub">今日入るコースで1着になったときの決まり手の回数。各艇で一番多い決まり手（2回以上）を太字にしています。</p>
     <table class="ol-tbl"><thead><tr><th>艇</th><th>選手</th><th>コース</th><th>差し</th><th>まくり</th><th>まくり差し</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
-function courseHtml(r,a){
+// 11/25 殿：レースが終わったら本番の進入で。結果の st はコース順（[艇番, ST]）に並んでいる
+function raceCourses(r){const st=r.result&&r.result.st;if(!st||st.length<6)return null;const m={};st.forEach((x,i)=>{m[+x[0]]=i+1;});return Object.keys(m).length===6?m:null;}
+function courseHtml(r,a0){
   if(!STATS||!STATS.cbase)return '';
+  const RC=raceCourses(r),a=RC?{...a0,boats:a0.boats.map(b=>({...b,course:RC[b.waku]||b.course}))}:a0;
   const rd=r.date||String(r.id||'').slice(0,8), dd=(x,y)=>Math.abs((new Date(x.slice(0,4)+'-'+x.slice(4,6)+'-'+x.slice(6))-new Date(y.slice(0,4)+'-'+y.slice(4,6)+'-'+y.slice(6)))/864e5);
   const pc=v=>(v*100).toFixed(1)+'%';
   const rate=(x,n,base)=>{if(!n)return '<td class="n cd-na">-</td>';const v=x/n,cl=n<5?'cd-few':v>=base*1.3&&v>=base+0.03?'cd-hi':v<=base*0.6?'cd-lo':'';return `<td class="n ${cl}">${pc(v)}</td>`;};
@@ -1744,7 +1747,7 @@ function courseHtml(r,a){
   const ROWS=[['n','走数'],['w','1着率'],['t2','2連率'],['t3','3連率'],['st','平均ST'],['kon','今節ST']];
   const rows=ROWS.map(([k,l])=>`<tr><th class="cdv-l">${l}</th>${cols.map(c=>c[k]).join('')}</tr>`).join('');
   return `<div class="panel cdata"><h3>コース別データ（直近1年）</h3>
-    <p class="sub">今日入るコース${r.before&&r.before.complete?'（展示の進入）':'（枠なりの想定）'}での、その選手の直近1年の成績。<span class="cd-hi">緑</span>は全国のそのコースの平均よりはっきり良い、<span class="cd-lo">灰色</span>は悪い。STの「番」は6艇中で何番目に早いか（平均）。今節は同じ場で続けて走っている日（昨日まで）の平均STと順番。</p>
+    <p class="sub">今日入るコース${RC?'（<b>本番の進入</b>）':r.before&&r.before.complete?'（展示の進入）':'（枠なりの想定）'}${RC&&a0.boats.some(b=>RC[b.waku]&&RC[b.waku]!==b.course)?`（展示と違った艇：${a0.boats.filter(b=>RC[b.waku]&&RC[b.waku]!==b.course).map(b=>`${b.waku}号艇 展示${b.course}→本番${RC[b.waku]}コース`).join('、')}）`:''}での、その選手の直近1年の成績。<span class="cd-hi">緑</span>は全国のそのコースの平均よりはっきり良い、<span class="cd-lo">灰色</span>は悪い。STの「番」は6艇中で何番目に早いか（平均）。今節は同じ場で続けて走っている日（昨日まで）の平均STと順番。</p>
     <div class="tablebox"><table class="card cdv"><thead><tr><th class="cdv-l">コース</th>${cols.map(c=>c.head).join('')}</tr></thead><tbody>${rows}</tbody>
     <tfoot><tr><td colspan="7" class="cd-base">全国平均の1着率（1〜6コース）${STATS.cbase.map(B=>pc(B.win)).join('・')}</td></tr></tfoot></table></div>${oneLossHtml(r,a)}${outerWinHtml(r,a)}</div>`;}
 
@@ -2089,7 +2092,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='99';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='100';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
