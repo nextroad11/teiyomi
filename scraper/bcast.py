@@ -198,10 +198,18 @@ def apply_holding(D: str, day: dict) -> int:
             continue
         same = {x["rno"]: x.get("deadline") for x in day["races"] if x["jcd"] == r["jcd"] and x.get("deadline")}
         a = max((k for k in same if k < r["rno"]), default=None); b = min((k for k in same if k > r["rno"]), default=None)
+        m = lambda t: int(t.split(":")[0]) * 60 + int(t.split(":")[1])
+        ks = sorted(same)
+        step = (m(same[ks[-1]]) - m(same[ks[0]])) / (ks[-1] - ks[0]) if len(ks) >= 2 and ks[-1] > ks[0] else 30
         if a and b:
-            m = lambda t: int(t.split(":")[0]) * 60 + int(t.split(":")[1])
             v = m(same[a]) + (m(same[b]) - m(same[a])) * (r["rno"] - a) // (b - a)
-            r["deadline"] = f"{v // 60:02d}:{v % 60:02d}"; r["deadlineEst"] = True; r["lateCard"] = True; n += 1
+        elif b:   # 11/25 大村：前半のレースが全部終わってから入ったときは、後ろのレースの間隔から見積もる
+            v = int(m(same[b]) - step * (b - r["rno"]))
+        elif a:
+            v = int(m(same[a]) + step * (r["rno"] - a))
+        else:
+            continue
+        r["deadline"] = f"{v // 60:02d}:{v % 60:02d}"; r["deadlineEst"] = True; r["lateCard"] = True; n += 1
     day["holdingAt"] = now_jst().isoformat(timespec="seconds")
     day["races"].sort(key=lambda r: (r.get("deadline") or "99", r["jcd"], r["rno"]))
     return n
