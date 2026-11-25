@@ -205,6 +205,8 @@ def corr_section(d, W0, adopted, jcd_s, AC=None):
         L.append(f"| {w} | " + " | ".join(cells) + " |")
     L.append("（6号艇を0にそろえた値。全艇に同じ数を足しても結果は同じ）")
     dN = rez(d, nc)
+    # その場だけの候補式（extra_forms）は式の比較で見ているので、補正の比較には入れない（採用中なら入れる）
+    FORMS = {fn: fw for fn, fw in globals()['FORMS'].items() if fn not in CORR_SKIP}
     names = sorted(d['節'].unique()); lo = {fn: [] for fn in FORMS}; loC = []; nr = []
     for n in names:
         tr = d[d['節'] != n]; te = d[d['節'] == n]
@@ -249,7 +251,11 @@ for jcd_s, v in CFG['venues'].items():
         w2 = dict(w, 直線=0) if NS else w
         if NS and k != v['adopted'] and any(wstr(w2) == wstr(x) for x in FORMS.values()): continue
         FORMS[k] = w2
-    GRv = [w for w in GR if w['直線'] == 0] if NS else GR
+    # その場だけで見る式（切り替え候補の固定の重みなど）。adopted にも使える
+    for k, w in v.get('extra_forms', {}).items():
+        FORMS[k] = dict(zip(KEYS, w))
+    CORR_SKIP = set(v.get('extra_forms', {})) - {v['adopted']}
+    GRv =[w for w in GR if w['直線'] == 0] if NS else GR
     alll = [l for l in open(path) if l.strip()]
     bck = {l.split('|')[0] for l in alll if is_bc(l)}  # 当日ファイルから作った仮の行（history が届いたら置き換える）
     have = {l.split('|')[0] for l in alll} - bck
