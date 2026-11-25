@@ -139,6 +139,8 @@ td.who{min-width:6.5em}td.who b{white-space:nowrap}td.who span{white-space:nowra
 .cdata .cd-lo,.cdata td.cd-lo{color:var(--muted)}.cdata .cd-few{color:var(--muted);font-style:italic}.cdata .cd-na{color:var(--muted);font-size:12px}
 .cdata .cd-km{white-space:nowrap;font-size:12px}.cdata .cd-km span{margin-right:6px}.cdata .cd-strong{color:var(--ana);font-weight:700}
 .cdata .cd-base{font-size:11px;color:var(--muted);text-align:left}
+table.card.cdv{table-layout:fixed;width:100%;min-width:0}.card.cdv th,.card.cdv td,.card.cdv td.n{text-align:center;padding:6px 1px;font-size:12px}.card.cdv td small{font-size:9.5px}.cdv .cdv-l{width:58px;font-size:11px;color:var(--muted);text-align:left;white-space:nowrap}.cdv .cdv-l small{display:block;font-size:8.5px;font-weight:400;line-height:1.3}
+.cdv .cdv-h{font-size:11px;vertical-align:top}.cdv .cdv-h div{color:var(--muted);margin-bottom:2px}.cdv .cdv-name{display:block;font-size:12px;margin-top:3px;word-break:break-all;line-height:1.25}.cdv .cdv-km{font-size:12px;white-space:nowrap}
 .one-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:4px 0 8px}
 .one-grid div{background:var(--bg);border-radius:10px;padding:8px;text-align:center}.one-grid span{display:block;font-size:11px;color:var(--muted)}
 .one-grid b{font:700 18px var(--f-num)}.one-grid em{display:block;font-style:normal;font-size:11px;font-weight:700}
@@ -1727,18 +1729,24 @@ function courseHtml(r,a){
   const rd=r.date||String(r.id||'').slice(0,8), dd=(x,y)=>Math.abs((new Date(x.slice(0,4)+'-'+x.slice(4,6)+'-'+x.slice(6))-new Date(y.slice(0,4)+'-'+y.slice(4,6)+'-'+y.slice(6)))/864e5);
   const pc=v=>(v*100).toFixed(1)+'%';
   const rate=(x,n,base)=>{if(!n)return '<td class="n cd-na">-</td>';const v=x/n,cl=n<5?'cd-few':v>=base*1.3&&v>=base+0.03?'cd-hi':v<=base*0.6?'cd-lo':'';return `<td class="n ${cl}">${pc(v)}</td>`;};
-  const rows=a.boats.slice().sort((x,y)=>x.course-y.course).map(b=>{
+  // 11/25 殿：写真（出走表サイト）のように縦に（1〜6コースを横に並べ、項目を縦に）
+  const cols=a.boats.slice().sort((x,y)=>x.course-y.course).map(b=>{
     const e=STATS.p[String(b.toban)]||{},cy=(e.cy||[])[b.course-1],B=STATS.cbase[b.course-1];
     const k=e.kon,konOk=k&&k.jcd===r.jcd&&rd&&dd(k.last,rd)<=2;
     const kon=konOk?`<td class="n ${k.rk<=B.rk-0.6?'cd-hi':k.rk>=B.rk+0.6?'cd-lo':''}">${k.st.toFixed(2).slice(1)}<small>${k.rk.toFixed(1)}番・${k.days}日</small></td>`:'<td class="n cd-na">-</td>';
-    if(!cy||!cy[0])return `<tr><td class="n">${b.course}</td><td>${bn(b.waku)}</td><td class="who"><b class="pl-link" data-t="${b.toban}" role="button" tabindex="0">${esc(b.name)}</b></td><td class="n cd-na" colspan="5">このコースの出走なし（直近1年）</td>${kon}</tr>`;
+    const head=`<th class="cdv-h"><div>${b.course}</div>${bn(b.waku)}<b class="pl-link cdv-name" data-t="${b.toban}" role="button" tabindex="0">${esc((b.name||'').replace(/\s+/g,''))}</b></th>`;
+    if(!cy||!cy[0]){const na='<td class="n cd-na">-</td>';return {head,n:'<td class="n cd-na">0</td>',w:na,t2:na,t3:na,st:na,kon,km:na};}
     const [n,w,t2,t3,stS,stN,rkS,sa,ma,mz,ni]=cy, st=stN?stS/stN:null, rk=stN?rkS/stN:null;
     const stc=st==null?'':(st<=B.st-0.015?'cd-hi':st>=B.st+0.015?'cd-lo':''), rkc=rk==null?'':(rk<=B.rk-0.6?'cd-hi':rk>=B.rk+0.6?'cd-lo':'');
-    return `<tr><td class="n"><b>${b.course}</b></td><td>${bn(b.waku)}</td><td class="who"><b class="pl-link" data-t="${b.toban}" role="button" tabindex="0">${esc(b.name)}</b></td><td class="n">${n}</td>${rate(w,n,B.win)}${rate(t2,n,B.top2)}${rate(t3,n,B.top3)}<td class="n ${stc}">${st!=null?st.toFixed(2).slice(1):'-'}<small class="${rkc}">${rk!=null?rk.toFixed(1)+'番':''}</small></td>${kon}</tr>`;}).join('');
+    const km=b.course===1?`<td class="n">${w}</td>`:`<td class="n cdv-km">${sa}/${ma}/${b.course===2?'-':mz}</td>`;
+    return {head,n:`<td class="n">${n}</td>`,w:rate(w,n,B.win),t2:rate(t2,n,B.top2),t3:rate(t3,n,B.top3),
+      st:`<td class="n ${stc}">${st!=null?st.toFixed(2).slice(1):'-'}<small class="${rkc}">${rk!=null?rk.toFixed(1)+'番':''}</small></td>`,kon,km};});
+  const ROWS=[['n','走数'],['w','1着率'],['t2','2連率'],['t3','3連率'],['st','平均ST'],['kon','今節ST'],['km','決まり手<small>1コースは逃げ<br>他は差/捲/捲差</small>']];
+  const rows=ROWS.map(([k,l])=>`<tr><th class="cdv-l">${l}</th>${cols.map(c=>c[k]).join('')}</tr>`).join('');
   return `<div class="panel cdata"><h3>コース別データ（直近1年）</h3>
     <p class="sub">今日入るコース${r.before&&r.before.complete?'（展示の進入）':'（枠なりの想定）'}での、その選手の直近1年の成績。<span class="cd-hi">緑</span>は全国のそのコースの平均よりはっきり良い、<span class="cd-lo">灰色</span>は悪い。STの「番」は6艇中で何番目に早いか（平均）。今節は同じ場で続けて走っている日（昨日まで）の平均STと順番。</p>
-    <div class="tablebox"><table class="card"><thead><tr><th>コース</th><th>艇</th><th>選手</th><th>走</th><th>1着率</th><th>2連率</th><th>3連率</th><th>平均ST</th><th>今節ST</th></tr></thead><tbody>${rows}</tbody>
-    <tfoot><tr><td colspan="9" class="cd-base">全国平均（1〜6コース）1着率 ${STATS.cbase.map(B=>pc(B.win)).join('・')}</td></tr></tfoot></table></div>${oneLossHtml(r,a)}${outerWinHtml(r,a)}</div>`;}
+    <div class="tablebox"><table class="card cdv"><thead><tr><th class="cdv-l">コース</th>${cols.map(c=>c.head).join('')}</tr></thead><tbody>${rows}</tbody>
+    <tfoot><tr><td colspan="7" class="cd-base">全国平均の1着率（1〜6コース）${STATS.cbase.map(B=>pc(B.win)).join('・')}</td></tr></tfoot></table></div>${oneLossHtml(r,a)}${outerWinHtml(r,a)}</div>`;}
 
 // ---------------------------------------------------------------- 自分で予想: 足評価・オリジナル展示
 // まくりアラート：補正後の展示タイムが ①すぐ内側の艇より0.06秒以上速い ②内側の全艇より速い（進入コースで判定）
@@ -2081,7 +2089,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='97';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='98';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
