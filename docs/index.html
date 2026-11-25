@@ -702,7 +702,7 @@ const PERSONS={
             {d:'11/23',t:'（同）13〜18点の形は、当たったときの払戻の条件を10万円→8万円に緩める'},
             {d:'11/23',t:'2着に残る確率が1号艇と他の艇で同じくらいなら1号艇を残す → 的中見込みの差が1ポイント以内なら、1コースの艇を2着に入れた形を選ぶ'},
             {d:'11/24',t:'1レースの最低投資は1万円 → 必要な分が1万円未満のときも、オッズで配分したまま1万円まで増やす'}]},
-  ike:{name:'池田',short:'池',honsen:null,ana:{hit:0.15,ret:null,minOdds:60,maxPts:12,wide:{minOdds:100,maxPts:18}},minP50:0.50,unit:n=>n<=6?2000:1000,cap:15000,
+  ike:{name:'池田',short:'池',honsen:null,ana:{hit:0.15,ret:null,minOdds:60,maxPts:12,best:true,wide:{minOdds:100,maxPts:18}},minP50:0.50,unit:n=>n<=6?2000:1000,cap:15000,
        log:[{d:'11/21',t:'穴1500%なら倍率どれくらい狙ってるの？（質問）'},
             {d:'11/21',t:'本線は捨てて、穴狙い1本。1点50倍から。最終的に「予想」「金予想」と戦う'},
             {d:'11/21',t:'目標：1日10万円の利益（1週間で70万円）。1日負けても週で取り返す考え'},
@@ -719,7 +719,8 @@ const PERSONS={
             {d:'11/22',t:'（任せる → 検証して決定）AIが見た「このレースが50倍以上で決まる確率」が50%未満なら見送り（過去のテストで回収率78%→97%、前半・後半とも良くなった）'},
             {d:'11/22',t:'トリガミはしょうがないが、できるだけ減らす → 今のルールでは当たれば必ず購入額の約2.8倍以上戻る（50倍×1,000円 ÷ 最大18,000円）'},
             {d:'11/24',t:'賭け金は1レース15,000円まで。7点などの配分は任せる（回収率を上げる方向）→ 12点以内は15,000円を、どの目が当たっても同じくらい戻るようにオッズで配分（データで配分の差は見分けられず、AIの確率に寄せる配分は長いオッズを信じすぎるので使わない）'},{d:'11/24',t:'18点フォーメーションは1点1,000円のまま'},
-            {d:'11/24',t:'転がしは1レース目が一番大事。無理に穴を狙わなくていい（本線でも金額が大きければ配当はデカい）。狙えるときは狙う → 3レースとも固い本線に（データ：穴スタートは3つとも当たる確率約0.7%、本線だけなら約5.3%）。「穴を狙える1レース目」の見分け方はデータがたまったら提案'},{d:'11/24',t:'今後、転がしは帯（100万円）を狙いに行く方針'},{d:'11/24',t:'転がしのスタート金を25,000円に（11月末まで試す）'}]},
+            {d:'11/24',t:'転がしは1レース目が一番大事。無理に穴を狙わなくていい（本線でも金額が大きければ配当はデカい）。狙えるときは狙う → 3レースとも固い本線に（データ：穴スタートは3つとも当たる確率約0.7%、本線だけなら約5.3%）。「穴を狙える1レース目」の見分け方はデータがたまったら提案'},{d:'11/24',t:'今後、転がしは帯（100万円）を狙いに行く方針'},{d:'11/24',t:'転がしのスタート金を25,000円に（11月末まで試す）'},
+            {d:'11/25',t:'「見込み15%に届く一番少ない点数」のルールはやめる（三国9Rで、点数を減らすために2-3-4が抜け、見込みの低い2-4-5・2-5-4が残った）→ 12点以内で全部の目が60倍以上のうち、AIの的中見込みが一番高いフォーメーション（1着はどの艇でも）'}]},
 };
 let ODDS={date:null,races:{}};
 async function loadOdds(){if(ODDS.date===dateSel)return;try{const d=await fetchJSON('odds/'+dateSel+'.json');ODDS={date:dateSel,races:d.races||{}};}catch(_){ODDS={date:dateSel,races:{}};}}
@@ -787,10 +788,12 @@ function personForms(pid,a,r){
     if(p50<P.minP50)return {h:null,a:null,od,skip:{skip:`このレースが50倍以上で決まる確率（AI）が${(p50*100).toFixed(0)}%（${Math.round(P.minP50*100)}%未満）`}};}
   const o=od?od.o:null,opt=x=>(x.ret||x.minOdds)?{ret:x.ret,minOdds:x.minOdds,odds:o}:null;
   const h=P.honsen?formationOf(a,P.honsen.hit,null,opt(P.honsen)):null;
-  let an=P.ana?formationOf(a,P.ana.hit,h?new Set(h.keys):null,opt(P.ana)):null,skip=null;
+  // 11/25 池田さん「このルール（見込み15%に届く一番少ない点数）やめよ」→ 12点以内で全部の目が60倍以上のフォーメーションのうち、AIの的中見込みが一番高い形（1着はどの艇でも、見込み15%以上）
+  let an=P.ana?(P.ana.best&&o?bestForm(a,o,P.ana.minOdds,P.ana.maxPts,P.ana.hit):formationOf(a,P.ana.hit,h?new Set(h.keys):null,opt(P.ana))):null,skip=null;
+  if(P.ana&&P.ana.best&&o&&!an)skip={skip:`${P.ana.maxPts}点以内で、全部の目が${P.ana.minOdds}倍以上・的中見込み${Math.round(P.ana.hit*100)}%以上のフォーメーションが組めない`};
   if(an&&P.ana.maxPts&&an.n>P.ana.maxPts){skip={skip:`条件を満たす一番少ない組み方でも${an.n}点（${P.ana.maxPts}点を超える）`};an=null;}
   // 12点以内で組めないとき：全部の目が100倍以上なら18点まで広げる（池田さん 11/22）
-  if(!an&&P.ana&&P.ana.wide){const w=formationOf(a,P.ana.hit,h?new Set(h.keys):null,{minOdds:P.ana.wide.minOdds,odds:o});
+  if(!an&&P.ana&&P.ana.wide){const w=(P.ana.best&&o)?bestForm(a,o,P.ana.wide.minOdds,P.ana.wide.maxPts,P.ana.hit):formationOf(a,P.ana.hit,h?new Set(h.keys):null,{minOdds:P.ana.wide.minOdds,odds:o});
     if(w&&w.n<=P.ana.wide.maxPts){an={...w,wide:true};skip=null;}}
   // 11/24 池田さん：1レース15,000円まで、配分は任せる（回収率を上げる方向）→ どの目が当たっても同じくらい戻る配分。18点に広げた形は1点1,000円のまま
   if(an&&o&&P.cap)an={...an,S:ikeStakes(an,o,P.cap)};
@@ -1345,6 +1348,12 @@ const AIANA={maxPts:6,minOdds:100,budget:10000,
        {d:'11/24',t:'最初の形：全部の目が100倍以上のフォーメーションで、AIの的中見込み8%以上を最少点数（18点まで）。1レース1万円を同じ払戻になるように配分。10日分（穴レース204R）で回収率約75%・的中6本。ほかの見込み（3〜15%）・点数の上限も裏で計算して、1週間ごとに見直す'},
        {d:'11/24',t:'組み方を変更：1着1〜2艇・2着・3着1〜5艇（どの艇でも）のフォーメーションのうち、全部の目が締切前100倍以上・6点以内で、AIの的中見込みが一番高い形。9日分（11/12〜17・11/22〜24の締切前オッズ）で比べ、全レースでは前半・後半とも回収率83%（的中24本・16本）と一番ぶれが少なく、穴レース274Rでは88%（的中9本、前の形は約79%・7本）。AIとオッズの見方の差が大きい目を選ぶ形は、前半だけ良くて後半は悪かったので使わない'}]};
 const AIANA_CACHE={};let AIANA_FORMS=null;
+function bestForm(a,o,minOdds,maxPts,minP){ // 全部の目が minOdds 以上・maxPts 点以内・見込み minP 以上で、AIの見込みが一番高いフォーメーション
+  aiAnaBest({combos:[]},{});const W=[1,2,3,4,5,6],M={};a.combos.forEach(c=>M[c.k]=c.pAi);let bb=null;
+  for(const c of AIANA_FORMS){if(c.ks.length>maxPts)continue;let p=0,ok=true;const keys=[];
+    for(const [x,y,z] of c.ks){const k=`${W[x]}-${W[y]}-${W[z]}`,v=o[k];if(!v||v<minOdds){ok=false;break;}p+=M[k]||0;keys.push(k);}
+    if(!ok||p<minP)continue;if(!bb||p>bb.p+1e-12||(Math.abs(p-bb.p)<=1e-12&&keys.length<bb.n))bb={keys,p,n:keys.length,label:[c.F1,c.F2,c.F3].map(F=>F.map(i=>W[i]).join('')).join('-')};}
+  if(bb)bb.keys.sort((x,y)=>(M[y]||0)-(M[x]||0));return bb;}
 function aiAnaBest(a,o){ // 1着1〜2艇・2着1〜5艇・3着1〜5艇（どの艇でも）の形のうち、全部の目が minOdds 以上・maxPts 点以内で、AIの的中見込みが一番高いもの
   if(!AIANA_FORMS){const subs=(mn,mx)=>{const out=[];for(let m=1;m<64;m++){const x=[0,1,2,3,4,5].filter(i=>m>>i&1);if(x.length>=mn&&x.length<=mx)out.push(x);}return out;};
     const seen=new Set();AIANA_FORMS=[];
@@ -2072,7 +2081,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='96';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='97';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
