@@ -1741,7 +1741,7 @@ function courseHtml(r,a){
     const km=b.course===1?`<td class="n">${w}</td>`:`<td class="n cdv-km">${sa}/${ma}/${b.course===2?'-':mz}</td>`;
     return {head,n:`<td class="n">${n}</td>`,w:rate(w,n,B.win),t2:rate(t2,n,B.top2),t3:rate(t3,n,B.top3),
       st:`<td class="n ${stc}">${st!=null?st.toFixed(2).slice(1):'-'}<small class="${rkc}">${rk!=null?rk.toFixed(1)+'番':''}</small></td>`,kon,km};});
-  const ROWS=[['n','走数'],['w','1着率'],['t2','2連率'],['t3','3連率'],['st','平均ST'],['kon','今節ST'],['km','決まり手<small>1コースは逃げ<br>他は差/捲/捲差</small>']];
+  const ROWS=[['n','走数'],['w','1着率'],['t2','2連率'],['t3','3連率'],['st','平均ST'],['kon','今節ST']];
   const rows=ROWS.map(([k,l])=>`<tr><th class="cdv-l">${l}</th>${cols.map(c=>c[k]).join('')}</tr>`).join('');
   return `<div class="panel cdata"><h3>コース別データ（直近1年）</h3>
     <p class="sub">今日入るコース${r.before&&r.before.complete?'（展示の進入）':'（枠なりの想定）'}での、その選手の直近1年の成績。<span class="cd-hi">緑</span>は全国のそのコースの平均よりはっきり良い、<span class="cd-lo">灰色</span>は悪い。STの「番」は6艇中で何番目に早いか（平均）。今節は同じ場で続けて走っている日（昨日まで）の平均STと順番。</p>
@@ -2089,7 +2089,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='98';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='99';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
