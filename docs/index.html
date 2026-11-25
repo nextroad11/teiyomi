@@ -138,6 +138,7 @@ td.who{min-width:6.5em}td.who b{white-space:nowrap}td.who span{white-space:nowra
 .cdata .cd-hi,.cdata td.cd-hi{color:var(--good);font-weight:700}.cdata td.cd-hi{background:color-mix(in srgb,var(--good) 12%,transparent)}
 .cdata .cd-lo,.cdata td.cd-lo{color:var(--muted)}.cdata .cd-few{color:var(--muted);font-style:italic}.cdata .cd-na{color:var(--muted);font-size:12px}
 .cdata .cd-km{white-space:nowrap;font-size:12px}.cdata .cd-km span{margin-right:6px}.cdata .cd-strong{color:var(--ana);font-weight:700}
+.tc-ok{color:var(--good)}.tc-ng{color:var(--muted)}
 .cdata .cd-base{font-size:11px;color:var(--muted);text-align:left}
 table.card.cdv{table-layout:fixed;width:100%;min-width:0}.card.cdv th,.card.cdv td,.card.cdv td.n{text-align:center;padding:6px 1px;font-size:12px}.card.cdv td small{font-size:9.5px}.cdv .cdv-l{width:58px;font-size:11px;color:var(--muted);text-align:left;white-space:nowrap}.cdv .cdv-l small{display:block;font-size:8.5px;font-weight:400;line-height:1.3}
 .cdv .cdv-h{font-size:11px;vertical-align:top}.cdv .cdv-h div{color:var(--muted);margin-bottom:2px}.cdv .cdv-name{display:block;font-size:12px;margin-top:3px;word-break:break-all;line-height:1.25}.cdv .cdv-km{font-size:12px;white-space:nowrap}
@@ -1566,6 +1567,44 @@ function slitSvg(T){
     <text class="st" x="${cx-16}" y="${y+15}" text-anchor="end">${x.pred.toFixed(2).slice(1)}</text>
     ${x.dent?`<text class="mk-dn" x="${X1-4}" y="${y+15}" text-anchor="end">凹</text>`:x.course>1&&x.lead>=0.03?`<text class="mk-up" x="${X1-4}" y="${y+15}" text-anchor="end">先</text>`:''}`;}).join('');
   return `<div class="slit"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="スリット予測"><line class="line" x1="${X1}" x2="${X1}" y1="6" y2="${H-6}"/>${lanes}</svg></div>`;}
+// 11/26 殿：展開予想＝1周目1マークを回った6艇の位置関係。映像は見られないので、確かめられる前後2つで答え合わせする
+// ① スリット隊形：予測ST と 本番ST（結果のスタート順＝コース順）。② 1マークの先頭とその形：一番ありそうな決着（艇×決まり手）と 1着・決まり手
+// 11/14〜25の1,203R（展示と本番の進入が同じ）：並びの順位相関 0.36（82%のレースで正）、凹みの予測→実際に凹んだ 42%（予測なし17%）、
+// のぞきの予測→実際に内より0.03秒早い 45%（予測なし21%）。1マーク：一番ありそうな形が当たり 50.6%（AIの見込み50.1%、いつも1コース逃げなら51.2%）、
+// 逃げ以外を一番に置いたレース214Rでは当たり21.5%、上位3つで69.7%
+function stVal(s){s=String(s||'').trim();if(!s||/^[FLK]/.test(s)||!/^\.?\d/.test(s))return null;return parseFloat(s[0]==='.'?'0'+s:s);}
+function tenkaiCheck(r,a){
+  const res=r.result;if(!res||!res.order||!res.st||res.st.length!==6||!a||a.boats.length!==6)return null;
+  let T;try{T=tenkaiOf(r,a);}catch(e){return null;}
+  const act={};res.st.forEach((x,i)=>{act[i+1]={waku:+x[0],st:stVal(x[1]),raw:String(x[1])};});
+  const same=T.sl.every(x=>act[x.course]&&act[x.course].waku===x.waku);
+  const rows=T.sl.map(x=>{const A=act[x.course],nb=[act[x.course-1],act[x.course+1]].filter(v=>v&&v.st!=null).map(v=>v.st);
+    const dent=A&&A.st!=null&&nb.length&&A.st-Math.min(...nb)>=0.03&&nb.every(v=>A.st-v>=0.015);
+    const lead=x.course>1&&A&&A.st!=null&&act[x.course-1]&&act[x.course-1].st!=null&&act[x.course-1].st-A.st>=0.03;
+    return {...x,act:A,actDent:!!dent,actLead:!!lead};});
+  let rho=null;if(same&&rows.every(x=>x.act&&x.act.st!=null)){const n=6,rk=v=>{const o=v.map((x,i)=>[x,i]).sort((p,q)=>p[0]-q[0]),r=[];o.forEach((p,k)=>r[p[1]]=k);return r;};
+    const ra=rk(rows.map(x=>x.pred)),rb=rk(rows.map(x=>x.act.st));rho=1-6*ra.reduce((t,v,i)=>t+(v-rb[i])**2,0)/(n*(n*n-1));}
+  const win=+res.order[0],top=T.sc[0],k3=T.sc.slice(0,3);
+  return {rows,same,rho,win,km:res.km,top,hit1:!!res.km&&top.waku===win&&top.km===res.km,hit3:!!res.km&&k3.some(c=>c.waku===win&&c.km===res.km),
+    dentP:rows.filter(x=>x.dent),leadP:rows.filter(x=>x.course>1&&x.lead>=0.03)};}
+function tenkaiCheckHtml(r,a){
+  const C=tenkaiCheck(r,a);if(!C)return '';
+  const f=v=>v==null?'-':v.toFixed(2).slice(1),ok=b=>b?'<b class="tc-ok">◯</b>':'<span class="tc-ng">×</span>';
+  // 今日の分（結果の出たレース）
+  let n=0,rs=0,rn=0,dp=0,dh=0,lp=0,lh=0,h1=0,h3=0,kn=0;
+  for(const q of races){let aa=null;try{aa=A(q);}catch(_){}const X=tenkaiCheck(q,aa);if(!X)continue;n++;
+    if(X.rho!=null){rs+=X.rho;rn++;}if(X.same){X.dentP.forEach(x=>{dp++;dh+=x.actDent;});X.leadP.forEach(x=>{lp++;lh+=x.actLead;});}
+    if(X.km){kn++;h1+=X.hit1;h3+=X.hit3;}}
+  const pc=(x,y)=>y?Math.round(x/y*100)+'%':'-';
+  return `<div class="panel tenkai"><h3>展開の答え合わせ（このレース）</h3>
+    ${C.same?'':'<p class="sub"><b>本番の進入が展示と違った</b>ので、スリットの答え合わせは参考です。</p>'}
+    <div class="tablebox"><table class="card st-tbl"><thead><tr><th>コース</th><th>艇</th><th>予測ST</th><th>本番ST</th><th>凹み</th><th>のぞき</th></tr></thead><tbody>
+    ${C.rows.map(x=>`<tr><td>${x.course}</td><td>${bn(x.waku)}</td><td class="n">${f(x.pred)}</td><td class="n">${x.act?esc(x.act.raw):'-'}${x.act&&x.act.waku!==x.waku?`<small>（${x.act.waku}号艇）</small>`:''}</td>
+      <td>${x.dent?`予測 ${ok(x.actDent)}`:x.actDent?'<small>予測なし・凹んだ</small>':''}</td><td>${x.course>1&&x.lead>=0.03?`予測 ${ok(x.actLead)}`:x.actLead?'<small>予測なし・のぞいた</small>':''}</td></tr>`).join('')}</tbody></table></div>
+    <p class="sub">${C.rho!=null?`予測STと本番STの並びの一致（順位相関）：<b>${C.rho.toFixed(2)}</b>（1で完全一致・0で無関係）。`:''}
+    1マーク：一番ありそうな形は「${C.top.waku}号艇の${C.top.km}」→ 結果は「${C.win}号艇の${esc(C.km||'?')}」 ${C.km?ok(C.hit1):''}${!C.hit1&&C.hit3?'（上位3つには入っていた）':''}</p>
+    <p class="sub"><b>今日ここまで（${n}R）</b>：並びの一致 ${rn?(rs/rn).toFixed(2):'-'}・凹みの予測が当たり ${pc(dh,dp)}（${dp}艇）・のぞきの予測が当たり ${pc(lh,lp)}（${lp}艇）・1マークの形が当たり ${pc(h1,kn)}（上位3つで ${pc(h3,kn)}）</p>
+    <p class="hint">これまで（11/14〜25の1,203R）：並びの一致0.36、凹みの予測が当たり42%（予測しないところで凹んだのは17%）、のぞきの予測が当たり45%（予測なし21%）、1マークの形が当たり51%（いつも「1コース逃げ」と言っても51%なので、差が出るのは逃げ以外を一番に置いたとき：214Rで22%）。1周目1マークを回った後の2〜6番手の並びは、データが無いのでまだ確かめられません。</p></div>`;}
 function tenkaiHtml(r,a){
   const T=tenkaiOf(r,a),sl=T.sl;
   const maxP=T.sc[0].p;
@@ -2080,7 +2119,7 @@ function renderSelf(){
     <div id="s-course">${courseHtml(r,a)}</div>
     <div id="s-ashi">${ashiHtml(r,a)}</div>
     <div id="s-ori">${oriHtml(r,a)}</div>
-    <div id="s-tenkai">${tenkaiHtml(r,a)}</div>
+    <div id="s-tenkai">${tenkaiHtml(r,a)}${tenkaiCheckHtml(r,a)}</div>
     <div class="comment">
       <p>${esc(commentary(r,a))}</p>
       <button class="btn ghost" id="ask" type="button">Claudeに相談する文をコピー</button>
@@ -2092,7 +2131,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='102';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='103';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
