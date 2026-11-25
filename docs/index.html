@@ -2150,7 +2150,7 @@ function renderSelf(){
     <div id="s-course">${courseHtml(r,a)}</div>
     <div id="s-ashi">${ashiHtml(r,a)}</div>
     <div id="s-ori">${oriHtml(r,a)}</div>
-    <div id="s-tenkai">${tenkaiHtml(r,a)}${tenkaiCheckHtml(r,a)}</div>
+    <div id="s-tenkai">${tenkaiHtml(r,a)}</div>
     <div class="comment">
       <p>${esc(commentary(r,a))}</p>
       <button class="btn ghost" id="ask" type="button">Claudeに相談する文をコピー</button>
@@ -2162,7 +2162,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='105';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='106';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
