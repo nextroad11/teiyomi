@@ -390,9 +390,9 @@ table.card.st-tbl{min-width:0}.st-tbl td,.st-tbl th{padding-left:6px;padding-rig
     <button role="tab" id="tab-ike" aria-selected="false" data-view="ike">池予想</button>
     <button role="tab" id="tab-table" aria-selected="false" data-view="table">出走表</button>
     <button role="tab" id="tab-self" aria-selected="false" data-view="self">自分で予想</button>
-    <button role="tab" id="tab-bw" aria-selected="false" data-view="bw">B級ウォッチ</button>
     <button role="tab" id="tab-tobu" aria-selected="false" data-view="tobu">穴レース</button>
     <button role="tab" id="tab-toku" aria-selected="false" data-view="toku">特別戦</button>
+    <button role="tab" id="tab-bw" aria-selected="false" data-view="bw">B級ウォッチ</button>
     <button role="tab" id="tab-man" aria-selected="false" data-view="man">万舟</button>
     <button role="tab" id="tab-pl" aria-selected="false" data-view="pl">選手</button>
     <button role="tab" id="tab-rec" aria-selected="false" data-view="rec">成績</button>
@@ -2092,7 +2092,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='101';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='102';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
