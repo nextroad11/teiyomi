@@ -391,7 +391,6 @@ table.card.st-tbl{min-width:0}.st-tbl td,.st-tbl th{padding-left:6px;padding-rig
     <button role="tab" id="tab-ike" aria-selected="false" data-view="ike">池予想</button>
     <button role="tab" id="tab-table" aria-selected="false" data-view="table">出走表</button>
     <button role="tab" id="tab-self" aria-selected="false" data-view="self">自分で予想</button>
-    <button role="tab" id="tab-tk" aria-selected="false" data-view="tk">展開</button>
     <button role="tab" id="tab-tobu" aria-selected="false" data-view="tobu">穴レース</button>
     <button role="tab" id="tab-toku" aria-selected="false" data-view="toku">特別戦</button>
     <button role="tab" id="tab-bw" aria-selected="false" data-view="bw">B級ウォッチ</button>
@@ -418,7 +417,6 @@ table.card.st-tbl{min-width:0}.st-tbl td,.st-tbl th{padding-left:6px;padding-rig
   <section id="v-ike" hidden></section>
   <section id="v-tobu" hidden></section>
   <section id="v-toku" hidden></section>
-  <section id="v-tk" hidden></section>
   <section id="v-bw" hidden></section>
   <section id="v-man" hidden></section>
   <section id="v-pl" hidden></section>
@@ -1170,7 +1168,7 @@ let picks=LS.get('picks',{}), exMan=LS.get('ex',{}), resMan=LS.get('res',{}), hi
 
 /* ============ 状態とデータ ============ */
 let dates=[], dateSel=null, races=[], jcdSel=null, raceId=null, view=LS.get('view','yoso');
-if(!['yoso','table','self','bw','tobu','toku','tk','man','pl','rec'].includes(view))view='yoso';
+if(!['yoso','table','self','bw','tobu','toku','man','pl','rec'].includes(view))view='yoso';
 const calc={mode:'form',sel:[new Set([1]),new Set([2,3]),new Set([2,3,4])],stake:100};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -1236,9 +1234,9 @@ function renderChips(){
 }
 const cur=()=>races.find(r=>r.id===raceId)||null;
 function renderView(){
-  ['yoso','kin','ike','table','self','bw','tobu','toku','tk','man','pl','rec'].forEach(v=>{$('#v-'+v).hidden=v!==view;$('#tab-'+v).setAttribute('aria-selected',v===view);});
-  $('#chips').hidden=view==='rec'||view==='tobu'||view==='toku'||view==='tk'||view==='pl'||view==='bw'||view==='man';
-  if(view==='yoso')renderYoso();else if(view==='kin'||view==='ike')renderPerson(view);else if(view==='tobu')renderTobu();else if(view==='toku')renderTobu('toku');else if(view==='tk')renderTk();else if(view==='bw')renderBW();else if(view==='man')renderMan();else if(view==='pl')renderPlayers();else if(view==='self')renderSelf();else if(view==='table')renderTable();else renderRec();
+  ['yoso','kin','ike','table','self','bw','tobu','toku','man','pl','rec'].forEach(v=>{$('#v-'+v).hidden=v!==view;$('#tab-'+v).setAttribute('aria-selected',v===view);});
+  $('#chips').hidden=view==='rec'||view==='tobu'||view==='toku'||view==='pl'||view==='bw'||view==='man';
+  if(view==='yoso')renderYoso();else if(view==='kin'||view==='ike')renderPerson(view);else if(view==='tobu')renderTobu();else if(view==='toku')renderTobu('toku');else if(view==='bw')renderBW();else if(view==='man')renderMan();else if(view==='pl')renderPlayers();else if(view==='self')renderSelf();else if(view==='table')renderTable();else renderRec();
 }
 const emptyState=()=>`<div class="empty"><b>この日のレースデータはまだありません。</b><br>毎朝7時ごろに、その日の全場の出走表を自動で取り込みます。</div>`;
 const WIND=['','北','北北東','北東','東北東','東','東南東','南東','南南東','南','南南西','南西','西南西','西','西北西','北西','北北西'];
@@ -1589,7 +1587,7 @@ function tenkaiCheck(r,a){
   const win=+res.order[0],top=T.sc[0],k3=T.sc.slice(0,3);
   return {rows,same,rho,win,km:res.km,top,hit1:!!res.km&&top.waku===win&&top.km===res.km,hit3:!!res.km&&k3.some(c=>c.waku===win&&c.km===res.km),
     dentP:rows.filter(x=>x.dent),leadP:rows.filter(x=>x.course>1&&x.lead>=0.03)};}
-// 11/26 殿：展開の答え合わせを、池予想とは別のページで日ごとに
+// 11/26 殿：展開の答え合わせの日ごとの集計（アプリのページは不要・毎日のレポートで使う）
 const TK_DAILY={rows:{},busy:false,at:0};
 function tkDayCalc(){const o={n:0,rs:0,rn:0,dp:0,dh:0,dn:0,dnh:0,lp:0,lh:0,ln:0,lnh:0,kn:0,h1:0,h3:0,nige:0,non:0,nonh:0,miss:[]};
   for(const q of races){let aa=null;try{aa=A(q);}catch(_){}const X=tenkaiCheck(q,aa);if(!X)continue;o.n++;
@@ -2164,7 +2162,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='104';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='105';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
