@@ -342,6 +342,8 @@ table.rec{border-collapse:collapse;width:100%;min-width:560px;font-variant-numer
 
 /* ---- 穴レース */
 .ana-card{display:grid;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;text-align:left;color:inherit;font:inherit;width:100%;cursor:pointer;min-width:0}
+.panel.shobu{border:2px solid #c92a2a;background:color-mix(in srgb,#c92a2a 5%,var(--surface))}
+.panel.shobu .combo-list li{display:flex;gap:10px;align-items:center}
 .ana-card.rise{border:2px solid var(--ana);background:color-mix(in srgb,var(--ana) 7%,var(--surface))}
 .rise-badge{background:var(--ana);color:#fff;font-weight:700;font-size:12px;border-radius:999px;padding:2px 9px}
 .rise-note{border-left:4px solid var(--ana);padding:6px 10px;background:color-mix(in srgb,var(--ana) 8%,transparent);border-radius:6px;font-size:13px}
@@ -809,6 +811,9 @@ function battleRows(){
     if(a.form)add(T.ai,[a.form.h,a.form.a],flat);
     for(const pid of ['kin','ike']){const F=personForms(pid,a,r);if(F.wait)continue;const P=PERSONS[pid];
       add(T[pid],[F.h,F.a],f=>f.S?f.S:F.od&&((f===F.h&&P.honsen&&P.honsen.ret)||(f===F.a&&P.ana&&P.ana.ret))?stakesOf(f.keys,F.od.o,f===F.h?P.honsen.ret:P.ana.ret):flat(f,P.unit?P.unit(f.n):100));}}
+  T.shobu={lab:'勝負レース（本線）',st:0,ret:0,races:0,hit:0};
+  for(const r of races){if(r.lateCard)continue;const res=resultOf(r);if(!res||!res.order||!res.payout)continue;const a=A(r);const X=shobuBet(r,a);if(!X||!X.S)continue;
+    T.shobu.races++;T.shobu.st+=X.S.tot;if(X.keys.includes(res.order)){T.shobu.hit++;T.shobu.ret+=X.S.st[res.order]*res.payout/100;}}
   T.aiana={lab:'穴予想（AI）',st:0,ret:0,races:0,hit:0};
   for(const r of races){if(r.lateCard)continue;const res=resultOf(r);if(!res||!res.order||!res.payout)continue;if(!anaPickIds().has(r.id))continue;const a=A(r);if(!a)continue;
     const X=aiAnaForm(r,a);if(!X||!X.f)continue;T.aiana.races++;T.aiana.st+=X.S.tot;if(X.f.keys.includes(res.order)){T.aiana.hit++;T.aiana.ret+=X.S.st[res.order]*res.payout/100;}}
@@ -824,6 +829,40 @@ function battleRows(){
 const ROLL_GAP=25, ROLL_SOLID={maxPts:4,hit:0.40};
 const toMin=t=>{const [h,m]=(t||'99:99').split(':').map(Number);return h*60+m;};
 function solidBet(a){let p=0;const ks=[];for(const c of a.combos){ks.push(c.k);p+=c.pAi;if(p>=ROLL_SOLID.hit)break;if(ks.length>=ROLL_SOLID.maxPts)return null;}return p>=ROLL_SOLID.hit?{keys:ks,p,n:ks.length,label:ks.join(' ')}:null;}
+// 11/25 殿：勝負レース（本線）。AIの確率が高い順に2点以内で見込み30%以上のレースだけ、5,000円を同じ払戻になるように配分。
+// 当たっても購入額以下（回収率100%以下）になる形は出さない（殿「本線予想だから」）。
+// 11/12〜24の締切前オッズ9日分（学習にも入っている期間）：146R・的中36.3%（AIの見込み36%）・回収率127%（前半135%・後半112%、最大の当たりを除いて121%）。
+// 3〜4点に広げると90%前後に落ちる。これから先のレースでの成績は12/7の報告で確かめる。
+const SHOBU={maxPts:2,hit:0.30,budget:5000};
+function shobuBet(r,a){
+  if(!a||!a.combos||!a.combos.length)return null;
+  const ks=[];let p=0;for(const c of a.combos){ks.push(c.k);p+=c.pAi;if(p>=SHOBU.hit||ks.length>=SHOBU.maxPts)break;}
+  if(p<SHOBU.hit)return null;
+  if(r.lateCard)return {keys:ks,p,skip:'出走表が締切のあとに入ったレース'};
+  const od=oddsOf(r);if(!od)return {keys:ks,p,wait:true};
+  if(!ks.every(k=>od.o[k]))return {keys:ks,p,skip:'オッズが欠けている'};
+  const S=splitAll(ks,od.o,SHOBU.budget),ret=Math.min(...ks.map(k=>S.st[k]*od.o[k]));
+  if(ret<=S.tot)return {keys:ks,p,skip:'当たっても購入額以下になる（回収率100%以下）',hide:true};
+  return {keys:ks,p,od,S,ret};}
+function shobuHtml(r,a,res){
+  const X=shobuBet(r,a);if(!X||X.hide)return '';
+  const yen=v=>Math.round(v).toLocaleString()+'円';
+  const got=X.S&&res&&res.order&&X.keys.includes(res.order);
+  return `<div class="panel shobu"><h3>🔥 勝負レース（本線）</h3>
+    <p class="sub">AIが上位${X.keys.length}点に確率をまとめて置いている固いレースです（的中見込み${Math.round(X.p*100)}%）。</p>
+    ${X.wait?`<p>買い目：${X.keys.map(k=>`<span class="cmb">${comboHtml(k)}</span>`).join(' ')}　<span class="sub">オッズが出たら（締切15分前から）金額を出します。当たっても購入額以下になるときは出しません。</span></p>`
+     :X.skip?`<p class="sub">見送り：${esc(X.skip)}</p>`
+     :`<ul class="combo-list">${X.keys.map(k=>`<li class="combo${res&&res.order===k?' hit':''}"><span class="nums">${comboHtml(k)}</span><span>${X.od.o[k]}倍</span><b>${yen(X.S.st[k])}</b></li>`).join('')}</ul>
+       <p>合計 <b>${yen(X.S.tot)}</b>・当たれば <b>${yen(X.ret)}</b> 以上（${(X.ret/X.S.tot).toFixed(1)}倍）<span class="sub">　オッズは${X.od.kind}</span></p>
+       ${res&&res.order?(got?`<p class="hitbadge">🎯 的中 ${yen(X.S.st[res.order]*res.payout/100)}</p>`:'<p class="sub">外れ</p>'):''}`}
+    <p class="foot">AIの確率が高い順に${SHOBU.maxPts}点以内で見込み${Math.round(SHOBU.hit*100)}%以上のレースだけ。${SHOBU.budget.toLocaleString()}円を、どの目が当たっても同じ払戻になるように配分。11/12〜24の9日分（学習にも入っている期間）では146R・的中36%・回収率127%。これから先のレースでの成績はまだ確かめ中です。</p></div>`;}
+function shobuListHtml(){ // 今日の勝負レースの一覧（締切順）
+  const L=[];for(const r of races){let a=null;try{a=A(r);}catch(_){}if(!a)continue;const X=shobuBet(r,a);if(!X||X.hide||X.skip)continue;L.push({r,X});}
+  if(!L.length)return '';L.sort((x,y)=>(x.r.deadline||'').localeCompare(y.r.deadline||''));
+  const now=new Date(Date.now()+9*3600e3).toISOString().slice(11,16);
+  return `<details class="panel shobu-list"><summary><b>🔥 今日の勝負レース ${L.length}レース</b><span class="sub">（押すと一覧）</span></summary><ul class="sub" style="list-style:none;padding:0;margin:8px 0 0;display:grid;gap:4px">
+    ${L.map(({r,X})=>{const res=resultOf(r);const st=res&&res.order?(X.S&&X.keys.includes(res.order)?'🎯的中':'外れ'):X.wait?'オッズ待ち':`${X.S.tot.toLocaleString()}円`;
+      return `<li><a href="#" data-go="${esc(r.id)}">${esc(r.deadline||'')} ${esc(r.venue||VENUES[r.jcd])} ${r.rno}R</a>　${X.keys.join(' ')}　${st}</li>`;}).join('')}</ul></details>`;}
 function splitAll(keys,odds,money){ // money を、どの目が当たっても同じくらい戻るように100円単位で（端数は切り捨て）
   const I=keys.reduce((s,k)=>s+1/odds[k],0),st={};let tot=0;keys.forEach(k=>{st[k]=Math.max(100,Math.floor(money/I/odds[k]/100)*100);tot+=st[k];});return {st,tot};}
 // 11/23 池田さん：転がしは本線も混ぜて的中率を上げる → 1レース目だけ池予想の穴、2・3レース目は固いレースの本線（前の払戻を全部入れるので本線でも金額が大きい）
@@ -882,7 +921,7 @@ function battleHtml(){
   return `<div class="panel"><h3>対戦成績（${dateSel.slice(4,6)}/${dateSel.slice(6)}、結果が出た全レース）</h3>
     <div style="overflow-x:auto"><table class="rec" style="min-width:0"><thead><tr><th></th><th>買った</th><th>的中</th><th>購入</th><th>払戻</th><th>回収率</th></tr></thead><tbody>
     ${rows.map(t=>`<tr><th>${t.lab}</th><td>${t.races}</td><td>${t.hit}</td><td>${t.st.toLocaleString()}円</td><td>${Math.round(t.ret).toLocaleString()}円</td><td><b>${t.st?Math.round(t.ret/t.st*100)+'%':'-'}</b></td></tr>`).join('')}</tbody></table></div>
-    <p class="foot">予想は本線・穴フォーメーションを1点100円。金予想は1万円をオッズで配分、池予想（単発）は1レース15,000円をオッズで配分（18点に広げた形は1点1,000円）。穴予想（AI）は穴レースを、締切前100倍以上の目だけのフォーメーションで1万円をオッズで配分。転がしは1本を1つと数え、購入はスタートの金額、払戻は3レース目までの最終金額。払戻は確定の払戻金。</p></div>`;
+    <p class="foot">予想は本線・穴フォーメーションを1点100円。金予想は1万円をオッズで配分、池予想（単発）は1レース15,000円をオッズで配分（18点に広げた形は1点1,000円）。勝負レース（本線）は2点以内で見込み30%以上のレースに5,000円をオッズで配分（当たっても購入額以下になるときは出さない）。穴予想（AI）は穴レースを、締切前100倍以上の目だけのフォーメーションで1万円をオッズで配分。転がしは1本を1つと数え、購入はスタートの金額、払戻は3レース目までの最終金額。払戻は確定の払戻金。</p></div>`;
 }
 // 11/24 池田さん：日付ごとの結果を1ページで（オッズのある日を全部、今のルールで計算し直して並べる）
 const IKE_DAILY={rows:{},busy:false,err:null};
@@ -1852,6 +1891,8 @@ function renderYoso(){
     ${jumpNav([['j-picks','本線・穴'],['j-are','荒れ狙い'],['j-slit','スリット'],['j-plan','買い方'],['j-rec','記録']])}
     ${shinnyuHtml(r,a)}
     ${changeHtml(r,a)}
+    ${shobuHtml(r,a,res)}
+    ${shobuListHtml()}
     <div class="picks" id="j-picks">
       <div class="panel honsen"><h3><span class="mark">本線</span>確率の高い順</h3>
         <div class="expect ex-${expectOf(a.cover).cls}"><span class="lbl">当たる期待度</span><b class="stars">${expectOf(a.cover).st}</b><b>${expectOf(a.cover).t}</b><span class="num">${a.honsen.length}点で的中確率 ${pct(a.cover)}</span></div>
@@ -1882,6 +1923,7 @@ function renderYoso(){
   </div>`;
   $('#save').addEventListener('click',()=>{picks[r.id]={chatgpt:$('#pk-chatgpt').value.trim(),ikkun:$('#pk-ikkun').value.trim(),mine:$('#pk-mine').value.trim()};LS.set('picks',picks);toast('保存しました');});
   $('#unit')?.addEventListener('change',e=>{LS.set('unit',+e.target.value);renderYoso();});
+  el.querySelectorAll('.shobu-list [data-go]').forEach(g=>g.addEventListener('click',e=>{e.preventDefault();const x=races.find(q=>q.id===g.dataset.go);if(x){raceId=x.id;jcdSel=x.jcd;renderAll();window.scrollTo({top:0,behavior:'smooth'});}}));
   el.querySelectorAll('.jump a').forEach(a=>{const t=document.getElementById(a.dataset.jump);if(!t||!t.textContent.trim())a.remove();});
   const hh=document.querySelector('header.top');if(hh)document.documentElement.style.setProperty('--top-h',hh.offsetHeight+'px');
 }
@@ -2030,7 +2072,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='95';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='96';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
