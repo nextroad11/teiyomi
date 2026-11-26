@@ -1,0 +1,13 @@
+name: 通知テスト（金城さん）
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install requests
+      - run: python scraper/notify.py "艇読みAI（金城さん）" "テスト通知です。これが届いたら準備OK！特別戦のアラートがここに届きます。" 4 "speedboat,tada"
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC_KIN }}

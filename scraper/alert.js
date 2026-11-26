@@ -5,6 +5,7 @@
 //   平文の学習結果ディレクトリには model.json / stats.json を置く（GitHub Actions で合言葉を使って復号したもの）
 //   通知済みのレースは <data>/alerts/YYYYMMDD.json に残し、同じレースで二度送らない。
 // 環境変数: NTFY_TOPIC（未設定なら通知せず、出すはずだった内容を表示するだけ）
+//           NTFY_TOPIC_KIN（金城さん専用。特別戦アラートだけ送る）
 'use strict';
 const fs = require('fs');
 const path = require('path');
@@ -74,9 +75,9 @@ const html = fs.readFileSync(path.join(__dirname, '..', 'docs', 'index.html'), '
 const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1]);
 vm.runInContext(scripts[scripts.length - 1], ctx, { filename: 'index.html' });
 
-async function notify(title, body, tags) {
-  const topic = (process.env.NTFY_TOPIC || '').trim();
-  if (!topic) { console.log('[通知なし・NTFY_TOPIC未設定]', title, '|', body); return true; }
+async function notify(title, body, tags, env = 'NTFY_TOPIC') {
+  const topic = (process.env[env] || '').trim();
+  if (!topic) { console.log(`[通知なし・${env}未設定]`, title, '|', body); return env === 'NTFY_TOPIC'; }
   const r = await fetch(`https://ntfy.sh/${topic}`, {
     method: 'POST', body,
     headers: { Title: Buffer.from(title).toString('latin1') === title ? title : `=?UTF-8?B?${Buffer.from(title).toString('base64')}?=`, Priority: '4', Tags: tags, Click: APP_URL },
@@ -158,6 +159,8 @@ async function notify(title, body, tags) {
         b.ori ? '' : '※オリジナル展示はまだ（展示タイムまでで判定）',
       ].filter(Boolean).join('\n');
       if (await notify(title, body, 'trophy,speedboat')) { sent.toku.push(r.id); k++; }
+      // 金城さん専用の通知先（NTFY_TOPIC_KIN）にも同じ内容を送る（11/27 殿）。未登録なら何もしない
+      try { await notify(title, body, 'trophy,speedboat', 'NTFY_TOPIC_KIN'); } catch (e) {}
     }
     fs.writeFileSync(sentFile, JSON.stringify(sent));
     console.log(`特別戦アラート ${k}件`);

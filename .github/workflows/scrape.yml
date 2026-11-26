@@ -54,6 +54,7 @@ jobs:
         env:
           APP_PASS: ${{ secrets.APP_PASS }}
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          NTFY_TOPIC_KIN: ${{ secrets.NTFY_TOPIC_KIN }}
         run: |
           cd data
           git config user.name "teiyomi-bot"
