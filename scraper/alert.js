@@ -127,6 +127,42 @@ async function notify(title, body, tags) {
   fs.writeFileSync(sentFile, JSON.stringify(sent));
   console.log(`1号艇が飛ぶアラート ${n}件`);
 
+  // ---- 特別戦アラート（11/26 殿）：特別戦ページに載るレース（前日のAIで選んだもの＋展示で浮上したもの）で、
+  //      展示とオリジナル展示が入って足スコアが確定したら通知する。オリ展が来ないまま締切5分前になったら、その時点で送る。
+  try {
+    sent.toku = sent.toku || [];
+    vm.runInContext('races=__races', ctx);
+    let k = 0;
+    for (const r of races) {
+      if (sent.toku.includes(r.id)) continue;
+      const b = r.before;
+      if (!b || !b.complete || !r.deadline) continue;
+      const [h, m] = r.deadline.split(':').map(Number);
+      const left = h * 60 + m - nowMin;
+      if (!process.env.ALERT_TEST && (r.result || left < 0)) continue;
+      if (!b.ori && left > 5 && !process.env.ALERT_TEST) continue;          // 足スコアの確定（オリ展）を待つ
+      ctx.__r = r;
+      const x = vm.runInContext(`(()=>{let a0=null;try{a0=analyze({...__r,before:null,odds:null});}catch(e){}const a=analyze(__r);if(!a)return null;
+        const pick=!!(a0&&tokuOK(__r,a0)),rise=!pick&&tokuOK(__r,a);if(!pick&&!rise)return null;
+        const ink=a.ink?a.ink.km.slice(0,3).map(q=>q.waku+'号艇の'+q.km):[];
+        const ashi=a.boats.filter(q=>q.ashi).sort((p,q)=>p.ashi.rank-q.ashi.rank).slice(0,3).map(q=>q.waku+'号艇'+(q.footGrade?'（足'+q.footGrade+'）':''));
+        return {pick,rise,name:(__r.name||'').trim(),tobu0:a0?a0.one.tobu:null,tobu:a.one.tobu,man0:a0?a0.manP:null,man:a.manP,ink,ashi,lose:a.ink?a.ink.lose:null};})()`, ctx);
+      if (!x) continue;
+      const pc = v => v == null ? '-' : Math.round(v * 100) + '%';
+      const title = `${x.rise ? '⬆ 展示で浮上・' : ''}特別戦 ${r.venue}${r.rno}R ${x.name}（締切${r.deadline}）`;
+      const body = [
+        `1号艇が飛ぶ ${pc(x.tobu0)} → ${pc(x.tobu)}（前日→展示後）`,
+        `万舟期待 ${pc(x.man0)} → ${pc(x.man)}`,
+        x.ink.length ? `インの負け方（上位）：${x.ink.join('・')}` : '',
+        x.ashi.length ? `足スコア上位：${x.ashi.join('・')}` : '',
+        b.ori ? '' : '※オリジナル展示はまだ（展示タイムまでで判定）',
+      ].filter(Boolean).join('\n');
+      if (await notify(title, body, 'trophy,speedboat')) { sent.toku.push(r.id); k++; }
+    }
+    fs.writeFileSync(sentFile, JSON.stringify(sent));
+    console.log(`特別戦アラート ${k}件`);
+  } catch (e) { console.log('特別戦アラートでエラー（ほかの通知には影響なし）', String(e && e.message || e)); }
+
   // ---- B級ウォッチ「勝負候補」：今節の足の評価S・Aの B級選手が出走し、展示後・公式オッズで
   //      その選手を1着か2着に置いた3連単に期待値の基準を満たす組があり、2着以内の確率が20%以上のとき
   try {
