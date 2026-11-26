@@ -914,6 +914,15 @@ function rollHtml(){
     <div style="display:grid;gap:10px">${RS.length?RS.map(card).join(''):'<p class="sub">今日は組めません。</p>'}</div>
     <p class="foot">3レースとも固いレース（AIの確率が高い順に4点以内で40%以上）の本線。1レース目はその日最初に見つかった固いレースに${ROLL_START.toLocaleString()}円、2・3レース目は前のレースの締切から${ROLL_GAP}分以上あとで最初に見つかった固いレースに前の払戻を全部入れ、どの目が当たっても同じくらい戻るように配分。2本目は1本目と別のレースで組み、並行して走ります。</p></div>`;
 }
+function kinListHtml(){ // 11/26 金城さん：今日の金予想で勝負したレースの一覧（池予想と同じ形）
+  if(ODDS.date!==dateSel)return '';const rows=[];let st=0,ret=0,h=0;
+  for(const r of races.slice().sort((x,y)=>toMin(x.deadline)-toMin(y.deadline))){const a=A(r);if(!a)continue;const F=personForms('kin',a,r);if(!F.a)continue;const res=resultOf(r),S=F.a.S;
+    const got=res&&res.order&&F.a.keys.includes(res.order),g=got?S.st[res.order]*res.payout/100:0;if(res&&res.order){st+=S.tot;ret+=g;h+=got?1:0;}
+    rows.push(`<tr${r.id===raceId?' style="background:var(--sunk)"':''}><td>${esc(r.deadline)}</td><td style="white-space:nowrap"><a href="#" data-go="${esc(r.id)}">${esc(r.venue||VENUES[r.jcd])} ${r.rno}R</a></td><td style="white-space:nowrap">${esc(F.a.label)}</td><td>${F.a.n}点</td><td>${S.tot.toLocaleString()}円</td><td>${res&&res.order?(got?`<b>的中 ${Math.round(g).toLocaleString()}円</b>`:`外れ<small>（${esc(res.order)}）</small>`):'-'}</td></tr>`);}
+  return `<div class="panel"><h3><span class="mark">勝負</span>今日の勝負レース（金予想、${rows.length}R）</h3>
+    ${st?`<p class="sub">結果の出た分：購入 ${st.toLocaleString()}円・払戻 ${Math.round(ret).toLocaleString()}円（的中${h}・回収率${Math.round(ret/st*100)}%）</p>`:''}
+    <details><summary class="sub">一覧を開く（レース名を押すとそのレースへ）</summary><div style="overflow-x:auto"><table class="rec" style="min-width:0"><thead><tr><th>締切</th><th>レース</th><th>買い目</th><th>点数</th><th>購入</th><th>結果</th></tr></thead><tbody>${rows.join('')}</tbody></table></div></details></div>`;
+}
 function tanpatsuHtml(){ // 今日の単発（池予想の穴）一覧
   if(ODDS.date!==dateSel)return '';const rows=[];
   for(const r of races.slice().sort((x,y)=>toMin(x.deadline)-toMin(y.deadline))){const a=A(r);if(!a)continue;const F=personForms('ike',a,r);if(!F.a)continue;const res=resultOf(r),S=F.a.S||{st:Object.fromEntries(F.a.keys.map(k=>[k,PERSONS.ike.unit(F.a.n)])),tot:F.a.n*PERSONS.ike.unit(F.a.n)};
@@ -1007,14 +1016,14 @@ function renderPerson(pid){
         ${pid==='ike'&&ODDS.date===dateSel&&(()=>{const x=rollOf(r);return x?`<p class="sub"><span class="pill" style="background:#ede9fe">このレースは転がし${'①②'[x.i]}の${x.j+1}レース目</span></p>`:'';})()||''}
         ${block('フォーメーション',F.a,P.ana)}</div></div>
       ${hitsHtml(pid)}
-      ${pid==='ike'?ikeDailyHtml()+rollHtml()+tanpatsuHtml():''}
+      ${pid==='ike'?ikeDailyHtml()+rollHtml()+tanpatsuHtml():''}${pid==='kin'?kinListHtml():''}
       ${battleHtml()}
       <div class="panel"><h3>${P.name}さんのルール</h3>
         <p class="sub">確率は艇読みAIと同じものを使い、買い目の組み方だけを${P.name}さんの考えで決めています。まだ聞いていない項目は艇読みAIと同じです。</p>
         ${P.log.length?`<ul class="sub">${P.log.map(x=>`<li>${x.d}：${esc(x.t)}</li>`).join('')}</ul>`:'<p class="sub">まだご意見をうかがっていません。</p>'}</div></div>`;};
   draw();
   el.onclick=e=>{const dg=e.target.closest('.ike-go');if(dg){e.preventDefault();dateSel=dg.dataset.d;raceId=null;const ds=$('#date');if(ds)ds.value=dateSel;loadDay();window.scrollTo({top:0,behavior:'smooth'});return;}
-    const g=e.target.closest('[data-go]');if(!g)return;const x=races.find(q=>q.id===g.dataset.go);if(x){raceId=x.id;jcdSel=x.jcd;renderAll();window.scrollTo({top:0,behavior:'smooth'});}};
+    const g=e.target.closest('[data-go]');if(!g)return;e.preventDefault();const x=races.find(q=>q.id===g.dataset.go);if(x){raceId=x.id;jcdSel=x.jcd;renderAll();window.scrollTo({top:0,behavior:'smooth'});}};
   if(ODDS.date!==dateSel)loadOdds().then(()=>{if(view===pid&&cur()===r)draw();});
 }
 function formsOf(a){const h=formationOf(a,FORM_TARGET);if(!h)return null;return {h,a:formationOf(a,FORM_ANA,new Set(h.keys))};}
@@ -2163,7 +2172,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='107';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='108';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
