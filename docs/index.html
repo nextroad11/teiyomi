@@ -1450,7 +1450,8 @@ const isTokuName=n=>['ドリーム','優勝','選抜','特選','特賞'].some(k=
 // 11/24 殿「SG・G1はとりあえず出さない」：グレードの値に加え、その場のその日の出走選手のA1級の割合が5割以上ならSG・G1・G2とみなして外す
 // （常滑のチャレンジカップ＋G2レディースCCがデータ上「一般」になっていた。A1割合は一般・G3で0.3以下、SG・G1で0.9以上）
 function bigGradeDay(r){const L=races.filter(x=>x.jcd===r.jcd);let a=0,n=0;for(const x of L)for(const b of x.boats||[]){n++;if(b.cls==='A1')a++;}return n>0&&a/n>=0.5;}
-const tokuOK=(r,a)=>['ippan','G3','G3b'].includes(r.grade)&&!bigGradeDay(r)&&isTokuName(r.name)&&a&&a.one.tobu>=0.10&&a.manP>=0.10;
+// 11/26 殿：江戸川（jcd 3）は特別戦に出さない
+const tokuOK=(r,a)=>r.jcd!==3&&['ippan','G3','G3b'].includes(r.grade)&&!bigGradeDay(r)&&isTokuName(r.name)&&a&&a.one.tobu>=0.10&&a.manP>=0.10;
 function renderTobu(kind='ana'){
   const TK=kind==='toku';
   const el=$(TK?'#v-toku':'#v-tobu');if(!races.length){el.innerHTML=emptyState();return;}
@@ -1510,7 +1511,7 @@ function renderTobu(kind='ana'){
   </div>`;
   el.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{if(TK){tokuSort=b.dataset.s;LS.set('tokuSort',tokuSort);}else{tobuSort=b.dataset.s;LS.set('tobuSort',tobuSort);}renderTobu(kind);}));
   el.querySelectorAll('.ana-card').forEach(b=>b.addEventListener('click',()=>{const r=races.find(x=>x.id===b.dataset.id);if(!r)return;
-    jcdSel=r.jcd;LS.set('jcd',jcdSel);raceId=r.id;view='yoso';LS.set('view',view);const s2=$('#venue');if(s2)s2.value=String(jcdSel);renderChips();renderView();window.scrollTo(0,0);}));
+    jcdSel=r.jcd;LS.set('jcd',jcdSel);raceId=r.id;view=TK?'self':'yoso'; /* 11/26 殿：特別戦は自分で予想へ */LS.set('view',view);const s2=$('#venue');if(s2)s2.value=String(jcdSel);renderChips();renderView();window.scrollTo(0,0);}));
 }
 
 // ---------------------------------------------------------------- スリット予測・展開予想
@@ -2162,7 +2163,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='106';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='107';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
