@@ -705,7 +705,8 @@ const PERSONS={
             {d:'11/23',t:'（同）13〜18点の形は、当たったときの払戻の条件を10万円→8万円に緩める'},
             {d:'11/23',t:'2着に残る確率が1号艇と他の艇で同じくらいなら1号艇を残す → 的中見込みの差が1ポイント以内なら、1コースの艇を2着に入れた形を選ぶ'},
             {d:'11/24',t:'1レースの最低投資は1万円 → 必要な分が1万円未満のときも、オッズで配分したまま1万円まで増やす'},
-            {d:'11/26',t:'江戸川はやらない。禁止。'}]},
+            {d:'11/26',t:'江戸川はやらない。禁止。'},
+            {d:'11/26',t:'負け方の予想（自分で予想ページ）に載った艇が2艇だけのときは見送る（10日分で102%→109%、前半・後半とも上がった）'}]},
   ike:{name:'池田',short:'池',honsen:null,value:{p1:0.20,p2:0.30,evMin:1.0,tiers:[[1.5,20000],[1.2,15000],[1.0,10000]]},ana:{hit:0.15,ret:null,minOdds:60,maxPts:12,best:true,wide:{minOdds:100,maxPts:18}},minP50:0.50,unit:n=>n<=6?2000:1000,cap:15000,
        log:[{d:'11/21',t:'穴1500%なら倍率どれくらい狙ってるの？（質問）'},
             {d:'11/21',t:'本線は捨てて、穴狙い1本。1点50倍から。最終的に「予想」「金予想」と戦う'},
@@ -803,7 +804,10 @@ function personForms(pid,a,r){
     const B=V.tiers.find(t=>ev>=t[0])[1],S=splitAll(keys,od.o,B);S.minRet=Math.min(...keys.map(k=>S.st[k]*od.o[k]))/S.tot;
     const an={keys,n:keys.length,p:P,label:keys.join(' '),S,ev,mult};
     return {h:null,a:an,od,skip:null};}
-  if(pid==='kin'&&r.jcd===3)return {h:null,a:null,skip:{skip:'江戸川はやらない（金城さんのルール）'}}; // 11/26 金城さん「江戸川はやらない。禁止。」
+  if(pid==='kin'&&r.jcd===3)return {h:null,a:null,skip:{skip:'江戸川はやらない（金城さんのルール）'}};
+  // 11/26 金城さん：負け方の予想（自分で予想ページ・上位5つ）に載った艇が2艇だけのときは見送る。
+  // AIがインの負け方を◯・◎側に絞っているレースで、▲△の1着が少ない（11/14〜26：見送る約70Rは回収率62%。入れると102%→109%、前半121→127%・後半90→98%）
+  if(pid==='kin'&&a&&a.ink&&new Set(a.ink.km.slice(0,5).map(x=>x.waku)).size===2)return {h:null,a:null,skip:{skip:'負け方の予想に載った艇が2艇だけ（インが負けるなら◯・◎側で決まりやすく、▲△の1着が少ない）'}}; // 11/26 金城さん「江戸川はやらない。禁止。」
   if(PERSONS[pid].custom==='kin'){const od=oddsOf(r);if(!od)return {wait:true};const ck=r.id+'|'+od.kind;
     if(!KIN_CACHE[ck]){const k=kinForm(a,r,od);KIN_CACHE[ck]={h:null,a:k.skip?null:k,skip:k.skip?k:null,od};}return KIN_CACHE[ck];}
   const P=PERSONS[pid],od=oddsOf(r),X=[P.honsen,P.ana].filter(Boolean),need=X.some(x=>x.ret||x.minOdds);
@@ -2231,7 +2235,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='113';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='114';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
