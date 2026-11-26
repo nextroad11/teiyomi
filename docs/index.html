@@ -726,6 +726,7 @@ const PERSONS={
             {d:'11/24',t:'転がしは1レース目が一番大事。無理に穴を狙わなくていい（本線でも金額が大きければ配当はデカい）。狙えるときは狙う → 3レースとも固い本線に（データ：穴スタートは3つとも当たる確率約0.7%、本線だけなら約5.3%）。「穴を狙える1レース目」の見分け方はデータがたまったら提案'},{d:'11/24',t:'今後、転がしは帯（100万円）を狙いに行く方針'},{d:'11/24',t:'転がしのスタート金を25,000円に（11月末まで試す）'},
             {d:'11/26',t:'転がしの1レース分を「4点以内で見込み40%」から「2点以内で見込み30%」に（11日分で比べて一番良かった形。3つとも当たる確率はほぼ同じで、成功したときの払戻が約3倍＝25,000円が約107万円。トリガミになる形は使わない）'},
             {d:'11/26',t:'単発は50倍の縛りを外し、回収率狙いに（1日5万〜10万の利益が目標・1レース1万〜2万円・12月末までに完成）→ AIが確率を上位1〜2点にまとめているレース（1点で20%以上か2点で30%以上）で、期待値の目安（AIの見込み×当たったときの倍率）が1.0以上のときだけ買う。1.5以上は2万円・1.2以上は1.5万円・それ以外は1万円を、どの目が当たっても同じ払戻になるように配分'},
+            {d:'11/26',t:'穴レースを追加：1レースにつき当たれば回収率500%以上（5〜15倍）の3連単フォーメーション（6点以内）で、期待値の目安が一番高い形。目安3.0以上のレースだけ1万円。11日分で110R・的中13%・回収率144%（前半167%・後半109%）だが、ほかの線では100%を割るものが多く、まだ試しの段階。データを取りながら見直す'},
             {d:'11/25',t:'「見込み15%に届く一番少ない点数」のルールはやめる（三国9Rで、点数を減らすために2-3-4が抜け、見込みの低い2-4-5・2-5-4が残った）→ 12点以内で全部の目が60倍以上のうち、AIの的中見込みが一番高いフォーメーション（1着はどの艇でも）'}]},
 };
 let ODDS={date:null,races:{}};
@@ -837,6 +838,9 @@ function battleRows(){
     if(a.form)add(T.ai,[a.form.h,a.form.a],flat);
     for(const pid of ['kin','ike']){const F=personForms(pid,a,r);if(F.wait)continue;const P=PERSONS[pid];
       add(T[pid],[F.h,F.a],f=>f.S?f.S:F.od&&((f===F.h&&P.honsen&&P.honsen.ret)||(f===F.a&&P.ana&&P.ana.ret))?stakesOf(f.keys,F.od.o,f===F.h?P.honsen.ret:P.ana.ret):flat(f,P.unit?P.unit(f.n):100));}}
+  T.ikeana={lab:'池予想（穴）',st:0,ret:0,races:0,hit:0};
+  for(const r of races){if(r.lateCard)continue;const res=resultOf(r);if(!res||!res.order||!res.payout)continue;const a=A(r);const X=ikeAnaBet(r,a);if(!X||!X.f)continue;
+    T.ikeana.races++;T.ikeana.st+=X.f.S.tot;if(X.f.keys.includes(res.order)){T.ikeana.hit++;T.ikeana.ret+=X.f.S.st[res.order]*res.payout/100;}}
   T.shobu={lab:'勝負レース（本線）',st:0,ret:0,races:0,hit:0};
   for(const r of races){if(r.lateCard)continue;const res=resultOf(r);if(!res||!res.order||!res.payout)continue;const a=A(r);const X=shobuBet(r,a);if(!X||!X.S)continue;
     T.shobu.races++;T.shobu.st+=X.S.tot;if(X.keys.includes(res.order)){T.shobu.hit++;T.shobu.ret+=X.S.st[res.order]*res.payout/100;}}
@@ -938,6 +942,34 @@ function rollHtml(){
     <div style="display:grid;gap:10px">${RS.length?RS.map(card).join(''):'<p class="sub">今日は組めません。</p>'}</div>
     <p class="foot">3レースとも固いレース（AIの確率が高い順に2点以内で見込み30%以上）の本線。1レース目はその日最初に見つかった固いレースに${ROLL_START.toLocaleString()}円、2・3レース目は前のレースの締切から${ROLL_GAP}分以上あとで最初に見つかった固いレースに前の払戻を全部入れ、どの目が当たっても同じくらい戻るように配分。2本目は1本目と別のレースで組み、並行して走ります。</p></div>`;
 }
+// 11/26 池田さん「穴レース作ろう。1レースにつき回収率500%以上。3連単フォーメーション、点数・金額お任せ。後はデータ取りながら学習して」
+// → 当たれば購入額の5〜15倍になる3連単フォーメーション（6点以内・1着は1〜2艇）のうち、期待値の目安（AIの見込み×当たったときの倍率）が一番高い形。
+//   その目安が3.0以上のレースだけ1万円を同じ払戻に配分。AIは高い配当の目の確率を高く見すぎるので、目安の線は高め（3.0）にしている。
+//   11/12〜26の11日分：110R（1日約10R）・的中14（13%）・回収率144%（前半167%・後半109%）。ほかの線（倍率の上限・点数・目安2.0〜4.0）は前半・後半で順位が入れ替わり、
+//   100%を安定して超える形はまだ見つかっていない＝試しの段階。先のレースの結果で週ごとに見直す。
+const IKE_ANA={maxPts:6,mLo:5,mHi:15,evMin:3.0,budget:10000};const IKE_ANA_CACHE={};
+function ikeAnaBet(r,a){
+  if(!a||!a.combos)return null;if(r.lateCard)return {skip:'出走表が締切のあとに入ったレース'};
+  const od=oddsOf(r);if(!od)return {wait:true};const ck=r.id+'|'+od.kind+'|'+(od.at||'');if(IKE_ANA_CACHE[ck])return IKE_ANA_CACHE[ck];
+  aiAnaBest({combos:[]},{});const W=[1,2,3,4,5,6],M={};a.combos.forEach(c=>M[c.k]=c.pAi);let bb=null;
+  for(const c of AIANA_FORMS){if(c.ks.length>IKE_ANA.maxPts)continue;let p=0,inv=0,ok=true;const keys=[];
+    for(const [x,y,z] of c.ks){const k=`${W[x]}-${W[y]}-${W[z]}`,v=od.o[k];if(!v){ok=false;break;}p+=M[k]||0;inv+=1/v;keys.push(k);}
+    if(!ok)continue;const mult=1/inv;if(mult<IKE_ANA.mLo||mult>IKE_ANA.mHi)continue;const ev=p*mult;
+    if(!bb||ev>bb.ev)bb={keys,p,n:keys.length,mult,ev,label:[c.F1,c.F2,c.F3].map(F=>F.map(i=>W[i]).join('')).join('-')};}
+  let out;
+  if(!bb)out={skip:`当たれば${IKE_ANA.mLo}〜${IKE_ANA.mHi}倍になる${IKE_ANA.maxPts}点以内のフォーメーションがない`,od};
+  else if(bb.ev<IKE_ANA.evMin)out={skip:`一番良い形（${bb.label}）でも期待値の目安が${bb.ev.toFixed(2)}（${IKE_ANA.evMin.toFixed(1)}未満）`,od,cand:bb};
+  else{bb.keys.sort();const S=splitAll(bb.keys,od.o,IKE_ANA.budget);S.minRet=Math.min(...bb.keys.map(k=>S.st[k]*od.o[k]))/S.tot;bb.S=S;out={f:bb,od};}
+  return IKE_ANA_CACHE[ck]=out;}
+function ikeAnaHtml(r,a,res){
+  const X=ikeAnaBet(r,a);const head=`<div class="panel ana"><h3><span class="mark">穴</span>池予想（当たれば${IKE_ANA.mLo}〜${IKE_ANA.mHi}倍・${IKE_ANA.maxPts}点以内・期待値の目安${IKE_ANA.evMin.toFixed(1)}以上・1万円）</h3>`;
+  if(!X)return head+'<p class="sub">-</p></div>';
+  if(X.wait)return head+'<p class="sub">オッズが出たら組みます（締切15分前から）。</p></div>';
+  if(X.skip)return head+`<p class="sub">見送り：${esc(X.skip)}</p></div>`;
+  const f=X.f,S=f.S,got=res&&res.order&&f.keys.includes(res.order);
+  return head+`<div class="expect"><span class="lbl">フォーメーション</span><b style="font-size:1.25em">${esc(f.label)}</b><span class="sub">${f.n}点・期待値の目安 ${f.ev.toFixed(2)}（AIの見込み${Math.round(f.p*100)}% × 当たると${f.mult.toFixed(1)}倍）</span></div>
+    <ul class="combo-list">${f.keys.map(k=>`<li class="combo${res&&res.order===k?' hit':''}"><span class="nums">${comboHtml(k)}</span><span class="val">${X.od.o[k]}倍・${S.st[k].toLocaleString()}円${res&&res.order===k?`<span class="hitbadge">的中 ${Math.round(S.st[k]*res.payout/100).toLocaleString()}円</span>`:''}</span></li>`).join('')}</ul>
+    <p class="foot">合計${S.tot.toLocaleString()}円。どの目が当たっても${Math.round(S.minRet*100)}%以上戻る配分。オッズは${X.od.kind}。${res&&res.order&&!got?`結果 ${esc(res.order)}（外れ）`:''}</p></div>`;}
 function kinListHtml(){ // 11/26 金城さん：今日の金予想で勝負したレースの一覧（池予想と同じ形）
   if(ODDS.date!==dateSel)return '';const rows=[];let st=0,ret=0,h=0;
   for(const r of races.slice().sort((x,y)=>toMin(x.deadline)-toMin(y.deadline))){const a=A(r);if(!a)continue;const F=personForms('kin',a,r);if(!F.a)continue;const res=resultOf(r),S=F.a.S;
@@ -969,6 +1001,8 @@ function ikeDayCalc(){ // 今の races / ODDS / dateSel で、その日の池予
   for(const r of races){const a=A(r);if(!a)continue;o.all++;const res=resultOf(r);if(!res||!res.order||!res.payout)continue;o.done++;
     const F=personForms('ike',a,r);if(!F.a)continue;const S=F.a.S||{st:Object.fromEntries(F.a.keys.map(k=>[k,PERSONS.ike.unit(F.a.n)])),tot:F.a.n*PERSONS.ike.unit(F.a.n)};
     o.n++;o.st+=S.tot;if(F.a.keys.includes(res.order)){const g=S.st[res.order]*res.payout/100;o.h++;o.ret+=g;o.hits.push({id:r.id,t:`${r.venue||VENUES[r.jcd]} ${r.rno}R`,order:res.order,pay:res.payout,g,tot:S.tot});}}
+  o.an=0;o.ah=0;o.ast=0;o.aret=0;for(const r of races){const a=A(r);if(!a)continue;const res=resultOf(r);if(!res||!res.order||!res.payout)continue;const X=ikeAnaBet(r,a);if(!X||!X.f)continue;
+    o.an++;o.ast+=X.f.S.tot;if(X.f.keys.includes(res.order)){o.ah++;o.aret+=X.f.S.st[res.order]*res.payout/100;o.hits.push({id:r.id,t:`${r.venue||VENUES[r.jcd]} ${r.rno}R（穴）`,order:res.order,pay:res.payout,g:X.f.S.st[res.order]*res.payout/100,tot:X.f.S.tot});}}
   for(const R of rollPlans().filter(R=>!R.need&&R.done)){o.rn++;o.rst+=R.start;o.rret+=R.end||0;if(R.end>0)o.rhit++;}
   return o;}
 async function ikeDailyLoad(){
@@ -988,20 +1022,21 @@ function ikeDailyHtml(){
   const ds=Object.keys(IKE_DAILY.rows).sort().reverse();
   if(!ds.length)return `<div class="panel"><h3>日付ごとの結果（池予想）</h3><p class="sub">${IKE_DAILY.busy||!IKE_DAILY.at?'計算中です…（オッズのある日を全部読み込みます）':'オッズのある日がまだありません。'}</p></div>`;
   const yen=v=>Math.round(v).toLocaleString()+'円',pc=(r,s)=>s?Math.round(r/s*100)+'%':'-';
-  const T={n:0,h:0,st:0,ret:0,rn:0,rst:0,rret:0,rhit:0};ds.forEach(d=>{const x=IKE_DAILY.rows[d];for(const k in T)T[k]+=x[k];});
+  const T={n:0,h:0,st:0,ret:0,an:0,ah:0,ast:0,aret:0,rn:0,rst:0,rret:0,rhit:0};ds.forEach(d=>{const x=IKE_DAILY.rows[d];for(const k in T)T[k]+=x[k];});
   const md=d=>`${+d.slice(4,6)}/${+d.slice(6)}`;
   return `<div class="panel"><h3>日付ごとの結果（池予想）</h3>
     <p class="sub">オッズのある日（11/12〜）を、今のルールで計算し直して並べています。日付を押すとその日に移動します。${IKE_DAILY.busy?'（更新中…）':''}</p>
-    <div style="overflow-x:auto"><table class="rec" style="min-width:0"><thead><tr><th>日付</th><th>単発</th><th>的中</th><th>購入</th><th>払戻</th><th>回収率</th><th>転がし</th></tr></thead><tbody>
-    ${ds.map(d=>{const x=IKE_DAILY.rows[d];return `<tr><th><a href="#" class="ike-go" data-d="${d}">${md(d)}</a>${x.partial?'<small>（途中）</small>':''}${x.fewOdds?'<small>（オッズは一部のレースだけ）</small>':''}</th><td>${x.n}R</td><td>${x.h}</td><td>${yen(x.st)}</td><td>${yen(x.ret)}</td><td><b>${pc(x.ret,x.st)}</b></td><td>${x.rn?`${x.rn}本・${x.rhit?`成功${x.rhit}（${yen(x.rret)}）`:'失敗'}`:'-'}</td></tr>`;}).join('')}
-    <tr><th>合計</th><td>${T.n}R</td><td>${T.h}</td><td>${yen(T.st)}</td><td>${yen(T.ret)}</td><td><b>${pc(T.ret,T.st)}</b></td><td>${T.rn}本・成功${T.rhit}（${pc(T.rret,T.rst)}）</td></tr></tbody></table></div>
+    <div style="overflow-x:auto"><table class="rec" style="min-width:0"><thead><tr><th>日付</th><th>単発</th><th>的中</th><th>購入</th><th>払戻</th><th>回収率</th><th>穴</th><th>転がし</th></tr></thead><tbody>
+    ${ds.map(d=>{const x=IKE_DAILY.rows[d];return `<tr><th><a href="#" class="ike-go" data-d="${d}">${md(d)}</a>${x.partial?'<small>（途中）</small>':''}${x.fewOdds?'<small>（オッズは一部のレースだけ）</small>':''}</th><td>${x.n}R</td><td>${x.h}</td><td>${yen(x.st)}</td><td>${yen(x.ret)}</td><td><b>${pc(x.ret,x.st)}</b></td><td>${x.an?`${x.an}R・的中${x.ah}・${pc(x.aret,x.ast)}`:'-'}</td><td>${x.rn?`${x.rn}本・${x.rhit?`成功${x.rhit}（${yen(x.rret)}）`:'失敗'}`:'-'}</td></tr>`;}).join('')}
+    <tr><th>合計</th><td>${T.n}R</td><td>${T.h}</td><td>${yen(T.st)}</td><td>${yen(T.ret)}</td><td><b>${pc(T.ret,T.st)}</b></td><td>${T.an}R・的中${T.ah}・${pc(T.aret,T.ast)}</td><td>${T.rn}本・成功${T.rhit}（${pc(T.rret,T.rst)}）</td></tr></tbody></table></div>
     <details><summary class="sub">当たったレース（${T.h}本）</summary><ul class="sub">${ds.flatMap(d=>IKE_DAILY.rows[d].hits.map(h=>`<li>${md(d)} ${esc(h.t)}　${h.order}（${h.pay.toLocaleString()}円）　購入${yen(h.tot)} → 払戻${yen(h.g)}</li>`)).join('')}</ul></details></div>`;}
 function personBets(pid,r){ // そのレースで買った目と金額（単発）
   const a=A(r);if(!a)return null;const F=personForms(pid,a,r);if(F.wait)return {wait:true};const P=PERSONS[pid],out=[];
   for(const f of [F.h,F.a]){if(!f)continue;const x=f===F.h?P.honsen:P.ana;
     const S=f.S?f.S:(F.od&&x&&x.ret)?stakesOf(f.keys,F.od.o,x.ret):(()=>{const u=P.unit?P.unit(f.n):100,st={};f.keys.forEach(k=>st[k]=u);return {st,tot:f.keys.length*u};})();
     out.push({f,S,od:F.od});}
-  return {bets:out,skip:F.skip};
+  if(pid==='ike'){const X=ikeAnaBet(r,a);if(X&&X.f)out.push({f:X.f,S:X.f.S,od:X.od});}
+  return {bets:out,skip:out.length?null:F.skip};
 }
 function personBanner(pid,r){
   const res=resultOf(r);if(!res||!res.order)return '';const B=personBets(pid,r);if(!B||B.wait)return '';
@@ -1035,7 +1070,7 @@ function renderPerson(pid){
         ${f.cut?`<p class="sub">切った艇：${f.cut}号艇（3着以内に一番絡みづらい）</p>`:''}
         ${S?`<p class="foot">合計${S.tot.toLocaleString()}円。${S.flat?`1点${S.u.toLocaleString()}円（当たったときは${Math.round(S.minRet*100)}%以上）`:`どの目が当たっても${Math.round(S.minRet*100)}%以上戻る配分`}。オッズは${F.od.kind}。</p>`:''}`;};
     el.innerHTML=`<div style="display:grid;gap:14px">${raceHead(r,a)}${personBanner(pid,r)}
-      <div class="picks"><div class="panel honsen"><h3><span class="mark">本線</span>${P.short}予想（${rule(P.honsen)}）</h3>${block('フォーメーション',F.h,P.honsen)}</div>
+      <div class="picks">${pid==='ike'?ikeAnaHtml(r,a,res):`<div class="panel honsen"><h3><span class="mark">本線</span>${P.short}予想（${rule(P.honsen)}）</h3>${block('フォーメーション',F.h,P.honsen)}</div>`}
       <div class="panel ana"><h3><span class="mark">${pid==='ike'?'単発':'穴'}</span>${P.short}予想（${rule(P.ana)}）</h3>
         ${pid==='ike'&&ODDS.date===dateSel&&(()=>{const x=rollOf(r);return x?`<p class="sub"><span class="pill" style="background:#ede9fe">このレースは転がし${'①②'[x.i]}の${x.j+1}レース目</span></p>`:'';})()||''}
         ${block('フォーメーション',F.a,P.ana)}</div></div>
@@ -2196,7 +2231,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='112';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='113';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
