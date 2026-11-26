@@ -704,7 +704,8 @@ const PERSONS={
             {d:'11/23',t:'（びわこ12Rの振り返りから）資金は1万円を基本に、足りなければ最大1.5万円まで広げてよい'},
             {d:'11/23',t:'（同）13〜18点の形は、当たったときの払戻の条件を10万円→8万円に緩める'},
             {d:'11/23',t:'2着に残る確率が1号艇と他の艇で同じくらいなら1号艇を残す → 的中見込みの差が1ポイント以内なら、1コースの艇を2着に入れた形を選ぶ'},
-            {d:'11/24',t:'1レースの最低投資は1万円 → 必要な分が1万円未満のときも、オッズで配分したまま1万円まで増やす'}]},
+            {d:'11/24',t:'1レースの最低投資は1万円 → 必要な分が1万円未満のときも、オッズで配分したまま1万円まで増やす'},
+            {d:'11/26',t:'江戸川はやらない。禁止。'}]},
   ike:{name:'池田',short:'池',honsen:null,ana:{hit:0.15,ret:null,minOdds:60,maxPts:12,best:true,wide:{minOdds:100,maxPts:18}},minP50:0.50,unit:n=>n<=6?2000:1000,cap:15000,
        log:[{d:'11/21',t:'穴1500%なら倍率どれくらい狙ってるの？（質問）'},
             {d:'11/21',t:'本線は捨てて、穴狙い1本。1点50倍から。最終的に「予想」「金予想」と戦う'},
@@ -783,6 +784,7 @@ function kinForm(a,r,od){
 const KIN_CACHE={};
 function personForms(pid,a,r){
   if(r.lateCard)return {h:null,a:null,skip:{skip:'出走表が締切のあとに入ったレース（その時点では買えなかったので数えない）'}};
+  if(pid==='kin'&&r.jcd===3)return {h:null,a:null,skip:{skip:'江戸川はやらない（金城さんのルール）'}}; // 11/26 金城さん「江戸川はやらない。禁止。」
   if(PERSONS[pid].custom==='kin'){const od=oddsOf(r);if(!od)return {wait:true};const ck=r.id+'|'+od.kind;
     if(!KIN_CACHE[ck]){const k=kinForm(a,r,od);KIN_CACHE[ck]={h:null,a:k.skip?null:k,skip:k.skip?k:null,od};}return KIN_CACHE[ck];}
   const P=PERSONS[pid],od=oddsOf(r),X=[P.honsen,P.ana].filter(Boolean),need=X.some(x=>x.ret||x.minOdds);
@@ -2172,7 +2174,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='109';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='110';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
