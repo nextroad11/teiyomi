@@ -1006,7 +1006,7 @@ function renderPerson(pid){
     const block=(lab,f,x)=>{if(!x)return `<p class="sub">${P.custom==='kin'?'金城さんの買い目は1種類です（下の欄）。':P.name+'さんは本線を買いません。'}</p>`;if(F.wait)return `<p class="sub">${lab}：オッズがまだ出ていません（締切15分前から取り込みます）。</p>`;
       if(!f)return F.skip?`<p class="sub">見送り：${esc(F.skip.skip)}。${F.skip.cut?`（切った艇：${F.skip.cut}号艇）`:''}</p>`:`<p class="sub">${lab}：条件（${rule(x)}）を満たす組み方がないので見送り。</p>`;
       const S=f.S?f.S:F.od?(x.ret?stakesOf(f.keys,F.od.o,x.ret):(()=>{const u=P.unit?P.unit(f.n):100,st={};f.keys.forEach(k=>st[k]=u);return {st,tot:f.keys.length*u,u,minRet:Math.min(...f.keys.map(k=>F.od.o[k]))/f.keys.length,flat:true};})()):null;
-      return `${formRow(lab,f)}<ul class="combo-list">${f.keys.map(k=>{const c=a.combos.find(c=>c.k===k);return `<li class="combo${res&&res.order===k?' hit':''}"><span class="nums">${comboHtml(k)}</span><span class="bar"><span style="width:${Math.min(100,c.pAi/a.combos[0].pAi*100)}%"></span></span><span class="val">${pct(c.pAi)}${S?`<small>${F.od.o[k]}倍・${S.st[k]}円</small>`:''}${res&&res.order===k?`<span class="hitbadge">的中${S&&res.payout?` ${Math.round(S.st[k]*res.payout/100).toLocaleString()}円`:''}</span>`:''}</span></li>`;}).join('')}</ul>
+      return `${formRow(lab,f)}<ul class="combo-list">${(pid==='kin'?f.keys.slice().sort():f.keys).map(k=>{const c=a.combos.find(c=>c.k===k);return `<li class="combo${res&&res.order===k?' hit':''}"><span class="nums">${comboHtml(k)}</span><span class="bar"><span style="width:${Math.min(100,c.pAi/a.combos[0].pAi*100)}%"></span></span><span class="val">${pct(c.pAi)}${S?`<small>${F.od.o[k]}倍・${S.st[k]}円</small>`:''}${res&&res.order===k?`<span class="hitbadge">的中${S&&res.payout?` ${Math.round(S.st[k]*res.payout/100).toLocaleString()}円`:''}</span>`:''}</span></li>`;}).join('')}</ul>
         ${f.wide?`<p class="sub">全部100倍以上の目なので、18点まで広げて組んでいます。</p>`:''}
         ${f.cut?`<p class="sub">切った艇：${f.cut}号艇（3着以内に一番絡みづらい）</p>`:''}
         ${S?`<p class="foot">合計${S.tot.toLocaleString()}円。${S.flat?`1点${S.u.toLocaleString()}円（当たったときは${Math.round(S.minRet*100)}%以上）`:`どの目が当たっても${Math.round(S.minRet*100)}%以上戻る配分`}。オッズは${F.od.kind}。</p>`:''}`;};
@@ -2172,7 +2172,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='108';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='109';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
