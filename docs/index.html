@@ -706,7 +706,7 @@ const PERSONS={
             {d:'11/23',t:'2着に残る確率が1号艇と他の艇で同じくらいなら1号艇を残す → 的中見込みの差が1ポイント以内なら、1コースの艇を2着に入れた形を選ぶ'},
             {d:'11/24',t:'1レースの最低投資は1万円 → 必要な分が1万円未満のときも、オッズで配分したまま1万円まで増やす'},
             {d:'11/26',t:'江戸川はやらない。禁止。'}]},
-  ike:{name:'池田',short:'池',honsen:null,ana:{hit:0.15,ret:null,minOdds:60,maxPts:12,best:true,wide:{minOdds:100,maxPts:18}},minP50:0.50,unit:n=>n<=6?2000:1000,cap:15000,
+  ike:{name:'池田',short:'池',honsen:null,value:{p1:0.20,p2:0.30,evMin:1.0,tiers:[[1.5,20000],[1.2,15000],[1.0,10000]]},ana:{hit:0.15,ret:null,minOdds:60,maxPts:12,best:true,wide:{minOdds:100,maxPts:18}},minP50:0.50,unit:n=>n<=6?2000:1000,cap:15000,
        log:[{d:'11/21',t:'穴1500%なら倍率どれくらい狙ってるの？（質問）'},
             {d:'11/21',t:'本線は捨てて、穴狙い1本。1点50倍から。最終的に「予想」「金予想」と戦う'},
             {d:'11/21',t:'目標：1日10万円の利益（1週間で70万円）。1日負けても週で取り返す考え'},
@@ -725,6 +725,7 @@ const PERSONS={
             {d:'11/24',t:'賭け金は1レース15,000円まで。7点などの配分は任せる（回収率を上げる方向）→ 12点以内は15,000円を、どの目が当たっても同じくらい戻るようにオッズで配分（データで配分の差は見分けられず、AIの確率に寄せる配分は長いオッズを信じすぎるので使わない）'},{d:'11/24',t:'18点フォーメーションは1点1,000円のまま'},
             {d:'11/24',t:'転がしは1レース目が一番大事。無理に穴を狙わなくていい（本線でも金額が大きければ配当はデカい）。狙えるときは狙う → 3レースとも固い本線に（データ：穴スタートは3つとも当たる確率約0.7%、本線だけなら約5.3%）。「穴を狙える1レース目」の見分け方はデータがたまったら提案'},{d:'11/24',t:'今後、転がしは帯（100万円）を狙いに行く方針'},{d:'11/24',t:'転がしのスタート金を25,000円に（11月末まで試す）'},
             {d:'11/26',t:'転がしの1レース分を「4点以内で見込み40%」から「2点以内で見込み30%」に（11日分で比べて一番良かった形。3つとも当たる確率はほぼ同じで、成功したときの払戻が約3倍＝25,000円が約107万円。トリガミになる形は使わない）'},
+            {d:'11/26',t:'単発は50倍の縛りを外し、回収率狙いに（1日5万〜10万の利益が目標・1レース1万〜2万円・12月末までに完成）→ AIが確率を上位1〜2点にまとめているレース（1点で20%以上か2点で30%以上）で、期待値の目安（AIの見込み×当たったときの倍率）が1.0以上のときだけ買う。1.5以上は2万円・1.2以上は1.5万円・それ以外は1万円を、どの目が当たっても同じ払戻になるように配分'},
             {d:'11/25',t:'「見込み15%に届く一番少ない点数」のルールはやめる（三国9Rで、点数を減らすために2-3-4が抜け、見込みの低い2-4-5・2-5-4が残った）→ 12点以内で全部の目が60倍以上のうち、AIの的中見込みが一番高いフォーメーション（1着はどの艇でも）'}]},
 };
 let ODDS={date:null,races:{}};
@@ -785,6 +786,22 @@ function kinForm(a,r,od){
 const KIN_CACHE={};
 function personForms(pid,a,r){
   if(r.lateCard)return {h:null,a:null,skip:{skip:'出走表が締切のあとに入ったレース（その時点では買えなかったので数えない）'}};
+  // 11/26 池田さん「50倍は外してもいい。回収率を狙って、1日5万〜10万の利益。1レース上限2万円、レースによって1万〜2万。12月末までに完成」
+  // → AIが確率を上位1〜2点にまとめているレースで、AIの見込み×当たったときの倍率（期待値の目安）が1.0以上のときだけ買う。期待値が高いほど金額を上げる。
+  // 11/12〜26の締切前オッズ11日分：123R・的中34・回収率146%（前半168%・後半114%）・1日平均の利益 約8万円（学習にも入っている期間。先のレースでは11/25 +6.6万・11/26 −9.2万）。
+  //   期待値の目安の帯ごとの回収率：1.0未満95%・1.0〜1.2 116%・1.2〜1.5 142%・1.5以上159%（前半・後半とも同じ順）。
+  if(pid==='ike'&&PERSONS.ike.value){const V=PERSONS.ike.value;
+    if(r.lateCard)return {h:null,a:null,skip:{skip:'出走表が締切のあとに入ったレース'}};
+    const cs=a.combos,p1=cs[0]?cs[0].pAi:0,p2=p1+(cs[1]?cs[1].pAi:0);let keys=null,P=0;
+    if(p1>=V.p1){keys=[cs[0].k];P=p1;}else if(p2>=V.p2){keys=[cs[0].k,cs[1].k];P=p2;}
+    if(!keys)return {h:null,a:null,skip:{skip:`AIの確率が上位1〜2点にまとまっていない（1点目${Math.round(p1*100)}%・2点で${Math.round(p2*100)}%）`}};
+    const od=oddsOf(r);if(!od)return {h:null,a:null,wait:true,skip:{skip:'オッズ待ち（締切15分前から）'}};
+    if(!keys.every(k=>od.o[k]))return {h:null,a:null,od,skip:{skip:'オッズが欠けている'}};
+    const inv=keys.reduce((t,k)=>t+1/od.o[k],0),mult=1/inv,ev=P*mult;
+    if(mult<=1||ev<V.evMin)return {h:null,a:null,od,skip:{skip:`期待値の目安 ${ev.toFixed(2)}（AIの見込み${Math.round(P*100)}%×当たると${mult.toFixed(1)}倍）が${V.evMin.toFixed(1)}未満`}};
+    const B=V.tiers.find(t=>ev>=t[0])[1],S=splitAll(keys,od.o,B);S.minRet=Math.min(...keys.map(k=>S.st[k]*od.o[k]))/S.tot;
+    const an={keys,n:keys.length,p:P,label:keys.join(' '),S,ev,mult};
+    return {h:null,a:an,od,skip:null};}
   if(pid==='kin'&&r.jcd===3)return {h:null,a:null,skip:{skip:'江戸川はやらない（金城さんのルール）'}}; // 11/26 金城さん「江戸川はやらない。禁止。」
   if(PERSONS[pid].custom==='kin'){const od=oddsOf(r);if(!od)return {wait:true};const ck=r.id+'|'+od.kind;
     if(!KIN_CACHE[ck]){const k=kinForm(a,r,od);KIN_CACHE[ck]={h:null,a:k.skip?null:k,skip:k.skip?k:null,od};}return KIN_CACHE[ck];}
@@ -1009,11 +1026,11 @@ function renderPerson(pid){
   const a=A(r);if(!a){el.innerHTML=`<div class="empty">このレースは出走データが不完全です。</div>`;return;}
   const res=resultOf(r);
   const draw=()=>{const F=personForms(pid,a,r);
-    const rule=x=>x?`的中見込み${Math.round(x.hit*100)}%以上${x.minOdds?`・1点${x.minOdds}倍以上${pid==='ike'?'（締切前）':''}`:''}${x.maxPts?`・${x.maxPts}点以内`:''}${x.ret?`・当たったら${Math.round(x.ret*100)}%以上`:''}`:'買わない';
+    const rule=x=>(pid==='ike'&&P.value&&x===P.ana)?`AIの上位1点で${Math.round(P.value.p1*100)}%以上か2点で${Math.round(P.value.p2*100)}%以上・期待値の目安${P.value.evMin.toFixed(1)}以上・1レース1〜2万円`:x?`的中見込み${Math.round(x.hit*100)}%以上${x.minOdds?`・1点${x.minOdds}倍以上${pid==='ike'?'（締切前）':''}`:''}${x.maxPts?`・${x.maxPts}点以内`:''}${x.ret?`・当たったら${Math.round(x.ret*100)}%以上`:''}`:'買わない';
     const block=(lab,f,x)=>{if(!x)return `<p class="sub">${P.custom==='kin'?'金城さんの買い目は1種類です（下の欄）。':P.name+'さんは本線を買いません。'}</p>`;if(F.wait)return `<p class="sub">${lab}：オッズがまだ出ていません（締切15分前から取り込みます）。</p>`;
       if(!f)return F.skip?`<p class="sub">見送り：${esc(F.skip.skip)}。${F.skip.cut?`（切った艇：${F.skip.cut}号艇）`:''}</p>`:`<p class="sub">${lab}：条件（${rule(x)}）を満たす組み方がないので見送り。</p>`;
       const S=f.S?f.S:F.od?(x.ret?stakesOf(f.keys,F.od.o,x.ret):(()=>{const u=P.unit?P.unit(f.n):100,st={};f.keys.forEach(k=>st[k]=u);return {st,tot:f.keys.length*u,u,minRet:Math.min(...f.keys.map(k=>F.od.o[k]))/f.keys.length,flat:true};})()):null;
-      return `${formRow(lab,f)}<ul class="combo-list">${(pid==='kin'?f.keys.slice().sort():f.keys).map(k=>{const c=a.combos.find(c=>c.k===k);return `<li class="combo${res&&res.order===k?' hit':''}"><span class="nums">${comboHtml(k)}</span><span class="bar"><span style="width:${Math.min(100,c.pAi/a.combos[0].pAi*100)}%"></span></span><span class="val">${pct(c.pAi)}${S?`<small>${F.od.o[k]}倍・${S.st[k]}円</small>`:''}${res&&res.order===k?`<span class="hitbadge">的中${S&&res.payout?` ${Math.round(S.st[k]*res.payout/100).toLocaleString()}円`:''}</span>`:''}</span></li>`;}).join('')}</ul>
+      return `${formRow(lab,f)}${f.ev?`<p class="sub">期待値の目安 <b>${f.ev.toFixed(2)}</b>（AIの見込み${Math.round(f.p*100)}% × 当たると${f.mult.toFixed(1)}倍）→ ${f.ev>=1.5?'2万円':f.ev>=1.2?'1.5万円':'1万円'}で勝負</p>`:''}<ul class="combo-list">${(pid==='kin'?f.keys.slice().sort():f.keys).map(k=>{const c=a.combos.find(c=>c.k===k);return `<li class="combo${res&&res.order===k?' hit':''}"><span class="nums">${comboHtml(k)}</span><span class="bar"><span style="width:${Math.min(100,c.pAi/a.combos[0].pAi*100)}%"></span></span><span class="val">${pct(c.pAi)}${S?`<small>${F.od.o[k]}倍・${S.st[k]}円</small>`:''}${res&&res.order===k?`<span class="hitbadge">的中${S&&res.payout?` ${Math.round(S.st[k]*res.payout/100).toLocaleString()}円`:''}</span>`:''}</span></li>`;}).join('')}</ul>
         ${f.wide?`<p class="sub">全部100倍以上の目なので、18点まで広げて組んでいます。</p>`:''}
         ${f.cut?`<p class="sub">切った艇：${f.cut}号艇（3着以内に一番絡みづらい）</p>`:''}
         ${S?`<p class="foot">合計${S.tot.toLocaleString()}円。${S.flat?`1点${S.u.toLocaleString()}円（当たったときは${Math.round(S.minRet*100)}%以上）`:`どの目が当たっても${Math.round(S.minRet*100)}%以上戻る配分`}。オッズは${F.od.kind}。</p>`:''}`;};
@@ -2179,7 +2196,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='111';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='112';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
