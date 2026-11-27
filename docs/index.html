@@ -1007,7 +1007,7 @@ function ikeDayCalc(){ // 今の races / ODDS / dateSel で、その日の池予
     const F=personForms('ike',a,r);if(!F.a)continue;const S=F.a.S||{st:Object.fromEntries(F.a.keys.map(k=>[k,PERSONS.ike.unit(F.a.n)])),tot:F.a.n*PERSONS.ike.unit(F.a.n)};
     o.n++;o.st+=S.tot;if(F.a.keys.includes(res.order)){const g=S.st[res.order]*res.payout/100;o.h++;o.ret+=g;o.hits.push({id:r.id,t:`${r.venue||VENUES[r.jcd]} ${r.rno}R`,order:res.order,pay:res.payout,g,tot:S.tot});}}
   o.an=0;o.ah=0;o.ast=0;o.aret=0;for(const r of races){const a=A(r);if(!a)continue;const res=resultOf(r);if(!res||!res.order||!res.payout)continue;const X=ikeAnaBet(r,a);if(!X||!X.f)continue;
-    o.an++;o.ast+=X.f.S.tot;if(X.f.keys.includes(res.order)){o.ah++;o.aret+=X.f.S.st[res.order]*res.payout/100;o.hits.push({id:r.id,t:`${r.venue||VENUES[r.jcd]} ${r.rno}R（穴）`,order:res.order,pay:res.payout,g:X.f.S.st[res.order]*res.payout/100,tot:X.f.S.tot});}}
+    o.an++;o.ast+=X.f.S.tot;if(X.f.keys.includes(res.order)){o.ah++;o.aret+=X.f.S.st[res.order]*res.payout/100;o.hits.push({ana:1,id:r.id,t:`${r.venue||VENUES[r.jcd]} ${r.rno}R`,order:res.order,pay:res.payout,g:X.f.S.st[res.order]*res.payout/100,tot:X.f.S.tot});}}
   for(const R of rollPlans().filter(R=>!R.need&&R.done)){o.rn++;o.rst+=R.start;o.rret+=R.end||0;if(R.end>0)o.rhit++;}
   return o;}
 async function ikeDailyLoad(){
@@ -1034,7 +1034,7 @@ function ikeDailyHtml(){
     <div style="overflow-x:auto"><table class="rec" style="min-width:0"><thead><tr><th>日付</th><th>単発</th><th>的中</th><th>購入</th><th>払戻</th><th>回収率</th><th>穴</th><th>転がし</th></tr></thead><tbody>
     ${ds.map(d=>{const x=IKE_DAILY.rows[d];return `<tr><th><a href="#" class="ike-go" data-d="${d}">${md(d)}</a>${x.partial?'<small>（途中）</small>':''}${x.fewOdds?'<small>（オッズは一部のレースだけ）</small>':''}</th><td>${x.n}R</td><td>${x.h}</td><td>${yen(x.st)}</td><td>${yen(x.ret)}</td><td><b>${pc(x.ret,x.st)}</b></td><td>${x.an?`${x.an}R・的中${x.ah}・${pc(x.aret,x.ast)}`:'-'}</td><td>${x.rn?`${x.rn}本・${x.rhit?`成功${x.rhit}（${yen(x.rret)}）`:'失敗'}`:'-'}</td></tr>`;}).join('')}
     <tr><th>合計</th><td>${T.n}R</td><td>${T.h}</td><td>${yen(T.st)}</td><td>${yen(T.ret)}</td><td><b>${pc(T.ret,T.st)}</b></td><td>${T.an}R・的中${T.ah}・${pc(T.aret,T.ast)}</td><td>${T.rn}本・成功${T.rhit}（${pc(T.rret,T.rst)}）</td></tr></tbody></table></div>
-    <details><summary class="sub">当たったレース（${T.h}本）</summary><ul class="sub">${ds.flatMap(d=>IKE_DAILY.rows[d].hits.map(h=>`<li>${md(d)} ${esc(h.t)}　${h.order}（${h.pay.toLocaleString()}円）　購入${yen(h.tot)} → 払戻${yen(h.g)}</li>`)).join('')}</ul></details></div>`;}
+    ${[['単発',0,T.h],['穴',1,T.ah]].map(([nm,an,cnt])=>`<details><summary class="sub">当たったレース・${nm}（${cnt}本）</summary>${cnt?`<ul class="sub">${ds.flatMap(d=>IKE_DAILY.rows[d].hits.filter(h=>!!h.ana===!!an).map(h=>`<li>${md(d)} ${esc(h.t)}　${h.order}（${h.pay.toLocaleString()}円）　購入${yen(h.tot)} → 払戻${yen(h.g)}</li>`)).join('')}</ul>`:'<p class="sub">まだありません。</p>'}</details>`).join('')}</div>`;}
 function personBets(pid,r){ // そのレースで買った目と金額（単発）
   const a=A(r);if(!a)return null;const F=personForms(pid,a,r);if(F.wait)return {wait:true};const P=PERSONS[pid],out=[];
   for(const f of [F.h,F.a]){if(!f)continue;const x=f===F.h?P.honsen:P.ana;
@@ -2248,7 +2248,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='116';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='117';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
