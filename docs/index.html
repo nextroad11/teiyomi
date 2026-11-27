@@ -1928,15 +1928,16 @@ function inkmOf(boats){
   return {lose,loseAI:1-p1,b1:{waku:bs[0].waku,name:bs[0].name},km,other:lose*ex[ex.length-1]/Z,
     vul:v.map(x=>Math.exp(x)),n1:lk[0]};
 }
-// 11/27 殿：負け方の予想に載った艇のうち、上から先に出てくる2艇を「AI推奨艇」として出す。
-// 11/5〜26の検証（インが負けたレースで、この2艇のどちらかが1着になった割合）：載った艇が2艇→83%・3艇→70%・4艇→64%。
-// ％の合計・AIの1着率で選んでも同じくらい、足スコアや展示タイムで選び直すと下がった。
-const INK_PICK_RATE={2:83,3:70,4:64};
+// 11/27 殿：負け方の予想に載った艇のうち、上から先に出てくる艇を「1着候補（当たりやすい順）」として出す。
+// 2艇・3艇のときは上から2艇、4艇のときは上から3艇。
+// 11/5〜26の検証（インが負けたレースで、出した艇のどれかが1着になった割合）：2艇→83%・3艇（2艇に絞る）→70%・4艇（3艇に絞る）→80%。
+// ％の合計・AIの1着率で選んでも同じくらい、足スコアや展示タイムで選び直すと下がった。的中率で選んでおり、回収率は確かめていない。
+const INK_PICK={2:[2,83],3:[2,70],4:[3,80]};
 function inkPickHtml(top){
   const W=[...new Set(top.map(x=>x.waku))];if(W.length<2)return '';
-  const pick=W.slice(0,2),rate=INK_PICK_RATE[W.length];
-  return `<div class="ink-pick"><span class="ink-pick-h">AI推奨艇</span>${pick.map(w=>bn(w)).join('')}
-    <span class="sub">${rate?`インが負けたとき、この2艇のどちらかが1着：約${rate}%（載った艇が${W.length}艇のレース・11/5〜26）`:`載った艇が${W.length}艇のレースは少なく（11/5〜26で2レース）、的中率はまだ出せません`}</span></div>`;
+  const [n,rate]=INK_PICK[W.length]||[2,null],pick=W.slice(0,n);
+  return `<div class="ink-pick"><span class="ink-pick-h">1着候補（当たりやすい順）</span>${pick.map(w=>bn(w)).join('')}
+    <span class="sub">${rate?`インが負けたとき、この${n}艇のどれかが1着：約${rate}%（載った艇が${W.length}艇のレース・11/5〜26）`:`載った艇が${W.length}艇のレースは少なく（11/5〜26で2レース）、的中率はまだ出せません`}。当たりやすさで選んでいて、回収率はオッズを見て判断してください。</span></div>`;
 }
 function inkHtml(r,a){
   const k=a&&a.ink;if(!k)return '';
@@ -2247,7 +2248,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='115';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='116';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
