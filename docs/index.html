@@ -233,6 +233,7 @@ table.card.cdv{table-layout:fixed;width:100%;min-width:0}.card.cdv th,.card.cdv 
 .sh-warn{margin:6px 0 0;padding:8px 10px;border-radius:8px;background:var(--ana-soft);color:var(--ana);font-weight:700}
 .pill.sh-pill{background:var(--ana-soft);color:var(--ana);font-weight:700}
 .ink-lose{margin:4px 0;font-size:15px}.ink-lose b{color:var(--ana)}
+.ink-pick{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:8px 0 2px;padding:8px 10px;border-radius:10px;background:var(--bg)}.ink-pick-h{font-weight:700;margin-right:2px}.ink-pick .sub{flex-basis:100%;margin:2px 0 0}
 .ink-list{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px}
 .ink-list li{display:grid;grid-template-columns:minmax(0,11em) 1fr 3.2em;gap:8px;align-items:center}
 .ink-list li b{text-align:right}.ink-list .bar{height:6px;border-radius:3px;background:var(--bg);overflow:hidden}.ink-list .bar i{display:block;height:100%;background:var(--ana)}
@@ -1927,6 +1928,16 @@ function inkmOf(boats){
   return {lose,loseAI:1-p1,b1:{waku:bs[0].waku,name:bs[0].name},km,other:lose*ex[ex.length-1]/Z,
     vul:v.map(x=>Math.exp(x)),n1:lk[0]};
 }
+// 11/27 殿：負け方の予想に載った艇のうち、上から先に出てくる2艇を「AI推奨艇」として出す。
+// 11/5〜26の検証（インが負けたレースで、この2艇のどちらかが1着になった割合）：載った艇が2艇→83%・3艇→70%・4艇→64%。
+// ％の合計・AIの1着率で選んでも同じくらい、足スコアや展示タイムで選び直すと下がった。
+const INK_PICK_RATE={2:83,3:70,4:64};
+function inkPickHtml(top){
+  const W=[...new Set(top.map(x=>x.waku))];if(W.length<2)return '';
+  const pick=W.slice(0,2),rate=INK_PICK_RATE[W.length];
+  return `<div class="ink-pick"><span class="ink-pick-h">AI推奨艇</span>${pick.map(w=>bn(w)).join('')}
+    <span class="sub">${rate?`インが負けたとき、この2艇のどちらかが1着：約${rate}%（載った艇が${W.length}艇のレース・11/5〜26）`:`載った艇が${W.length}艇のレースは少なく（11/5〜26で2レース）、的中率はまだ出せません`}</span></div>`;
+}
 function inkHtml(r,a){
   const k=a&&a.ink;if(!k)return '';
   const pc=x=>Math.round(x*100)+'%';
@@ -1935,6 +1946,7 @@ function inkHtml(r,a){
   return `<div class="panel ink"><h3>負け方の予想</h3>
     <p class="ink-lose">1コースの ${bn(k.b1.waku)} ${esc(k.b1.name||'')} が<b>1着を逃す確率 ${pc(k.lose)}</b><span class="sub">（AIの1着率だけなら ${pc(k.loseAI)}）</span></p>
     ${vu.length?`<p class="sub">この選手は1コースで${vu.join('・')}（通算${k.n1}回の1コースから）。</p>`:''}
+    ${inkPickHtml(top)}
     <ul class="ink-list">${top.map(x=>`<li><span>${bn(x.waku)} ${x.course}コース<b>${x.km}</b></span><span class="bar"><i style="width:${Math.round(x.p/mx*100)}%"></i></span><b>${pc(x.p)}</b></li>`).join('')}
       <li class="sub"><span>その他（抜き・恵まれ）</span><span></span><b>${pc(k.other)}</b></li></ul>
     <p class="hint">％はレース全体に対する確率です。1コースの艇の「差され・まくられ・まくり差され」の率と、攻める艇の「差し・まくり・まくり差し」の率（過去1年）でAIの見立てを補正しています。学習に使っていない期間で、1着を逃す確率の損失0.6222→0.6184、決まり手の一番手の的中24.6%→25.2%でした。</p></div>`;
@@ -2235,7 +2247,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='114';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='115';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
