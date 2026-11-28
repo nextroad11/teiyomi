@@ -1917,7 +1917,11 @@ function inkmOf(boats){
     return [0,1,2].map(j=>Math.log(Math.max(rate(row[1+j],row[0],PW[b.course-1][j]),1e-4)/Math.max(PW[b.course-1][j],1e-4)));});
   const p1=cl(bs[0].pWin,1e-4,1-1e-4);
   const f=[1,Math.log(p1/(1-p1)),...v,...[0,1,2].map(j=>Math.max(...a.map(r=>r[j]))),...[0,1,2].map(j=>Math.log(a.reduce((s,r)=>s+Math.exp(r[j]),0)/a.length))].map(x=>cl(x,-8,8));
-  const lose=1/(1+Math.exp(-f.reduce((s,x,i)=>s+x*IK.lose[i],0)));
+  const loseRaw=1/(1+Math.exp(-f.reduce((s,x,i)=>s+x*IK.lose[i],0)));
+  // 11/28 殿OK：負ける確率を高く出しすぎていたので、実際の率に合わせて直す（11/12〜27の1,992R、1号艇が1着を逃したかで当てはめ。
+  // 11/12〜20で決めた直しは11/21〜27でも合った：AI 40〜50%→実際38%、60〜70%→53%、70%以上→68%）。46%→42%・60%→51%・80%→67% くらいになる
+  const LOSE_CAL=[0.653,-0.215],lr=Math.log(cl(loseRaw,1e-3,1-1e-3)/(1-cl(loseRaw,1e-3,1-1e-3)));
+  const lose=1/(1+Math.exp(-(LOSE_CAL[0]*lr+LOSE_CAL[1])));
   const pr=bs.map(b=>b.pWin),ps=pr.slice(1).reduce((s,x)=>s+x,0)||1e-9,us=[],keys=[],nf=IK.km.length-1;
   for(let c=2;c<=6;c++)for(let j=0;j<3;j++){const sw=PW[c-1].reduce((s,x)=>s+x,0)||1e-9;
     const fe=[Math.log(pr[c-1]/ps+1e-9),Math.log(PW[c-1][j]/sw),a[c-2][j],v[j]];
@@ -1928,7 +1932,7 @@ function inkmOf(boats){
   us.push(IK.km[nf]);
   const mx=Math.max(...us),ex=us.map(u=>Math.exp(u-mx)),Z=ex.reduce((s,x)=>s+x,0);
   const km=keys.map((k,i)=>({...k,pc:ex[i]/Z,p:lose*ex[i]/Z})).sort((x,y)=>y.p-x.p);
-  return {lose,loseAI:1-p1,b1:{waku:bs[0].waku,name:bs[0].name},km,other:lose*ex[ex.length-1]/Z,
+  return {lose,loseRaw,loseAI:1-p1,b1:{waku:bs[0].waku,name:bs[0].name},km,other:lose*ex[ex.length-1]/Z,
     vul:v.map(x=>Math.exp(x)),n1:lk[0]};
 }
 // 11/27 殿：負け方の予想に載った艇のうち、上から先に出てくる艇を「1着候補（当たりやすい順）」として出す。
@@ -2251,7 +2255,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='119';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='120';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
