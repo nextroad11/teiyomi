@@ -233,7 +233,7 @@ table.card.cdv{table-layout:fixed;width:100%;min-width:0}.card.cdv th,.card.cdv 
 .sh-warn{margin:6px 0 0;padding:8px 10px;border-radius:8px;background:var(--ana-soft);color:var(--ana);font-weight:700}
 .pill.sh-pill{background:var(--ana-soft);color:var(--ana);font-weight:700}
 .ink-lose{margin:4px 0;font-size:15px}.ink-lose b{color:var(--ana)}
-.tag-stack{display:flex;flex-direction:column;align-items:flex-start;gap:4px;flex-basis:100%}
+.tag-stack{display:flex;flex-wrap:wrap;gap:4px 6px;flex-basis:100%}.tag-stack .brk{flex-basis:100%;height:0}
 .cancel-tag{font-size:12px;font-weight:700;color:#b42318;background:#fdecea;border-radius:999px;padding:1px 8px}
 .ink-pick{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:8px 0 2px;padding:8px 10px;border-radius:10px;background:var(--bg)}.ink-pick-h{font-weight:700;margin-right:2px}.ink-pick .sub{flex-basis:100%;margin:2px 0 0}
 .ink-list{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px}
@@ -1556,8 +1556,8 @@ function renderTobu(kind='ana'){
         ${x.pick?`<span class="ana-star">${'★'.repeat(x.star)}${'☆'.repeat(3-x.star)}</span>`:'<span class="rise-badge">⬆ 展示で浮上</span>'}
         ${TK?`<span class="tag">${esc((r.name||'').trim())}</span>`:''}
         ${TK?'<span class="tag-stack">':''}<span class="tag">1号艇が飛ぶ ${pc(x.a0.one.tobu)}${x.a?'→'+pc(x.a.one.tobu):''}</span>
-        ${TK&&((x.a0&&x.a0.ink)||(x.a&&x.a.ink))?`<span class="tag">1着を逃す（負け方の予想） ${x.a0&&x.a0.ink?pc(x.a0.ink.lose):'-'}${x.a&&x.a.ink?'→'+pc(x.a.ink.lose):''}</span>`:''}
-        ${TK?`<span class="tag">万舟期待 ${pc(x.a0.manP)}${x.a?'→'+pc(x.a.manP):''}</span></span>`:''}
+        ${TK?`<span class="tag">万舟期待 ${pc(x.a0.manP)}${x.a?'→'+pc(x.a.manP):''}</span>`:''}
+        ${TK&&((x.a0&&x.a0.ink)||(x.a&&x.a.ink))?`<span class="brk"></span><span class="tag">1着を逃す（負け方の予想） ${x.a0&&x.a0.ink?pc(x.a0.ink.lose):'-'}${x.a&&x.a.ink?'→'+pc(x.a.ink.lose):''}</span>`:''}${TK?'</span>':''}
         ${done?`<span class="ana-res ${res.payout>=10000?'man':''}">結果 ${esc(res.order)} ${yen(res.payout)}</span>`:''}</div>
       <div class="ana-why"><p class="ana-lbl">前日の理由</p><ul>${pre.map(t=>`<li>${t}</li>`).join('')}</ul></div>
       <div class="ana-why"><p class="ana-lbl">展示後</p>${post?`<ul>${post.map(t=>`<li>${t}</li>`).join('')}</ul>`:'<p class="sub">展示が出たら、変わったことをここに書きます。</p>'}</div>
@@ -2257,7 +2257,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='122';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='123';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
