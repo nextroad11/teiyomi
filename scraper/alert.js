@@ -137,7 +137,7 @@ async function notify(title, body, tags, env = 'NTFY_TOPIC') {
     for (const r of races) {
       if (sent.toku.includes(r.id)) continue;
       const b = r.before;
-      if (!b || !b.complete || !r.deadline) continue;
+      if (r.cancel || !b || !b.complete || !r.deadline) continue;   // 中止・順延のレースは送らない
       const [h, m] = r.deadline.split(':').map(Number);
       const left = h * 60 + m - nowMin;
       if (!process.env.ALERT_TEST && (r.result || left < 0)) continue;

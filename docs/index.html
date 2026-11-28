@@ -233,6 +233,7 @@ table.card.cdv{table-layout:fixed;width:100%;min-width:0}.card.cdv th,.card.cdv 
 .sh-warn{margin:6px 0 0;padding:8px 10px;border-radius:8px;background:var(--ana-soft);color:var(--ana);font-weight:700}
 .pill.sh-pill{background:var(--ana-soft);color:var(--ana);font-weight:700}
 .ink-lose{margin:4px 0;font-size:15px}.ink-lose b{color:var(--ana)}
+.cancel-tag{font-size:12px;font-weight:700;color:#b42318;background:#fdecea;border-radius:999px;padding:1px 8px}
 .ink-pick{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:8px 0 2px;padding:8px 10px;border-radius:10px;background:var(--bg)}.ink-pick-h{font-weight:700;margin-right:2px}.ink-pick .sub{flex-basis:100%;margin:2px 0 0}
 .ink-list{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px}
 .ink-list li{display:grid;grid-template-columns:minmax(0,11em) 1fr 3.2em;gap:8px;align-items:center}
@@ -1540,7 +1541,9 @@ function renderTobu(kind='ana'){
   else rows.forEach(x=>{x.rise=!x.pick&&x.a&&x.a.one.tobu>=0.35&&x.a.manP>=0.20;});
   const pick=rows.filter(x=>x.pick), rise=rows.filter(x=>x.rise);
   const SO=TK?tokuSort:tobuSort;
-  const sorter=SO==='p'?(x,y)=>x.rank-y.rank:(x,y)=>(x.r.deadline||'').localeCompare(y.r.deadline||'')||x.r.jcd-y.r.jcd;
+  // 11/28 殿：中止・順延のレースは締切の時刻がおかしく入るので、時刻の代わりに「中止」などを出し、一覧の最後に回す
+  const sorter0=SO==='p'?(x,y)=>x.rank-y.rank:(x,y)=>(x.r.deadline||'').localeCompare(y.r.deadline||'')||x.r.jcd-y.r.jcd;
+  const sorter=(x,y)=>(!!x.r.cancel-!!y.r.cancel)||sorter0(x,y);
   pick.sort(sorter);rise.sort(sorter);
   const done=pick.filter(x=>x.res&&x.res.order&&x.res.payout);
   const man=done.filter(x=>x.res.payout>=10000).length;
@@ -1548,7 +1551,7 @@ function renderTobu(kind='ana'){
     const pre=anaPreWhy(r,x.a0), post=x.hasEx&&x.a?anaPostWhy(r,x.a0,x.a):null;
     const af=areForm(x.a||x.a0);
     return `<button class="ana-card${x.rise?' rise':''}" data-id="${esc(r.id)}">
-      <div class="ana-head"><b>${esc(r.venue||VENUES[r.jcd])} ${r.rno}R</b><span>${esc(r.deadline||'')}</span>
+      <div class="ana-head"><b>${esc(r.venue||VENUES[r.jcd])} ${r.rno}R</b>${r.cancel?`<span class="cancel-tag">${esc(r.cancel)}</span>`:`<span>${esc(r.deadline||'')}</span>`}
         ${x.pick?`<span class="ana-star">${'★'.repeat(x.star)}${'☆'.repeat(3-x.star)}</span>`:'<span class="rise-badge">⬆ 展示で浮上</span>'}
         ${TK?`<span class="tag">${esc((r.name||'').trim())}</span>`:''}
         <span class="tag">1号艇が飛ぶ ${pc(x.a0.one.tobu)}${x.a?'→'+pc(x.a.one.tobu):''}</span>
@@ -1564,7 +1567,7 @@ function renderTobu(kind='ana'){
     <div class="panel"><h3>特別戦</h3>
       <p class="sub">${fmtDate(dateSel)}の一般開催（一般戦・G3）のうち、<b>予選・一般戦以外</b>（ドリーム戦・特選・特賞・選抜・準優勝戦・優勝戦など）で、<b>前日（出走表の段階）</b>のAIが「1号艇が飛ぶ確率10%以上」かつ「万舟期待10%以上」と見たレース（${pick.length}レース）です。穴レースと同じく前日に決まり、展示が出たら変わったことを書き足します。</p>
       ${done.length?`<p class="sub">今日の結果：${done.length}レース中 50倍以上${m50}レース（${pc(m50/done.length)}）・万舟${man}レース（${pc(man/done.length)}）。</p>`:''}
-      ${rise.length?`<p class="rise-note"><b>⬆ 展示で浮上 ${rise.length}レース</b>：${rise.map(x=>`${esc(x.r.venue||VENUES[x.r.jcd])} ${x.r.rno}R（${esc(x.r.deadline||'')}）`).join('・')}<br><span class="sub">前日は条件に届かず、展示後のAIで「1号艇が飛ぶ10%以上」かつ「万舟期待10%以上」になったレースです。下の一覧に締切順でまざっています（太い枠）。</span></p>`:''}
+      ${rise.length?`<p class="rise-note"><b>⬆ 展示で浮上 ${rise.length}レース</b>：${rise.map(x=>`${esc(x.r.venue||VENUES[x.r.jcd])} ${x.r.rno}R（${esc(x.r.cancel||x.r.deadline||'')}）`).join('・')}<br><span class="sub">前日は条件に届かず、展示後のAIで「1号艇が飛ぶ10%以上」かつ「万舟期待10%以上」になったレースです。下の一覧に締切順でまざっています（太い枠）。</span></p>`:''}
       <details><summary class="sub">選び方と実績（11/5〜24の一般戦・G3の特別戦792R）</summary>
         <p class="hint">この条件のレースは 50倍以上31.2%・100倍以上16.4%（特別戦全体は26.1%・15.4%、予選・一般戦全体は30.5%・17.3%）。特別戦は1号艇が残りやすい（1号艇が飛ぶのは特別戦13.5%・予選一般戦24.6%）ので、条件を満たしても荒れ方は予選・一般戦の平均並みです。荒れやすさがはっきり上がるのは「1号艇が飛ぶ確率30%以上」（50倍以上38.4%）です。この期間はAIの学習にも入っているので、先のレースでは少し下がる可能性があります。</p></details>
       <div class="seg" role="group" aria-label="並べ方"><button data-s="t" aria-pressed="${tokuSort==='t'}">締切順</button><button data-s="p" aria-pressed="${tokuSort==='p'}">穴度の高い順</button></div></div>
@@ -2248,7 +2251,7 @@ function renderSelf(){
 }
 
 // SAIONJI 用：表示中の日付の全レースを analyze() した結果を1つのJSONにしてコピー（予想ロジックは使うだけで変えない）
-const APP_VERSION='118';  // 公開のたびに上げる（URLの ?v= と同じ番号）
+const APP_VERSION='119';  // 公開のたびに上げる（URLの ?v= と同じ番号）
 // 結果（取れているレースだけ）。返還艇＝本番のSTが F・L の艇と、STの記録が無い艇（欠場）
 function saionjiResult(r){
   const res=r.result||{}, voidR=!!(r.cancel||/中止|不成立/.test(res.note||''));
